@@ -181,7 +181,7 @@ def page(title, body, active="", desc="", og_image=""):
 </main>
 <footer class="site-footer">
   <div class="wrap">
-    <p><strong>Toujours cap&nbsp;!</strong> — ressources pédagogiques pour le cycle 2, par Fabrice Girardeau.</p>
+    <p><strong>Toujours cap&nbsp;!</strong> — ressources pédagogiques pour le cycle 2.</p>
     <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! Tous droits réservés.</p>
   </div>
 </footer>
