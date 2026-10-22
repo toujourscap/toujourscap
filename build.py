@@ -6,6 +6,10 @@ from datetime import datetime
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "site")
 WIX = "https://static.wixstatic.com/media/"
+SITE = "https://toujourscap.com"
+SITE_NAME = "Toujours cap !"
+DEFAULT_IMAGE = WIX + "5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg"
+SITEMAP = []  # (chemin, date de modification)
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
 
 CATS = {
@@ -145,12 +149,16 @@ FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "
          "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
 
 
-def page(title, body, active="", desc="", og_image=""):
+def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
     fond = FONDS.get(active, "canopee")
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
     full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Outils pédagogiques cycle 2 : GS, CP, CE1"
     desc = desc or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
-    og = f'<meta property="og:image" content="{esc(og_image)}">' if og_image else ""
+    og_image = og_image or DEFAULT_IMAGE
+    if og_image.startswith("/"):
+        og_image = SITE + og_image
+    robots = '<meta name="robots" content="noindex">\n' if noindex else ""
+    ld = "".join(f'<script type="application/ld+json">{json.dumps(j, ensure_ascii=False)}</script>\n' for j in (jsonld or []))
     return f"""<!doctype html>
 <html lang="fr">
 <head>
@@ -158,11 +166,16 @@ def page(title, body, active="", desc="", og_image=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(full_title)}</title>
 <meta name="description" content="{esc(desc)}">
+{robots}<link rel="canonical" href="__CANONICAL__">
+<meta property="og:type" content="{og_type}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="__CANONICAL__">
 <meta property="og:title" content="{esc(full_title)}">
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:site_name" content="Toujours cap !">
-{og}
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:image" content="{esc(og_image)}">
+<meta name="twitter:card" content="summary_large_image">
+{ld}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -208,7 +221,11 @@ def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
 
-def write(path, content):
+def write(path, content, canonical=None, lastmod=None, sitemap=True):
+    """Écrit une page ; `canonical` désigne la page de référence si le contenu est dupliqué ailleurs."""
+    content = content.replace("__CANONICAL__", SITE + (canonical or path))
+    if sitemap and not canonical and not path.endswith(".html"):
+        SITEMAP.append((path, lastmod))
     full = os.path.join(OUT, path.strip("/"), "index.html") if not path.endswith(".html") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w") as f:
@@ -256,7 +273,18 @@ def main():
   <h2>À lire aussi</h2>
   {grid(recent)}
 </section>"""
-        write(f"/post/{p['slug']}/", page(p["title"], body, "/blog/", p["excerpt"], p["cover"]))
+        url = f"{SITE}/post/{p['slug']}/"
+        crumbs = [("Blog", "/blog/"), (cat["name"], f"/blog/{p['cat']}/"), (p["title"], f"/post/{p['slug']}/")]
+        ld = [{"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"],
+               "description": p["excerpt"], "datePublished": p["date"], "inLanguage": "fr-FR",
+               "mainEntityOfPage": url, "url": url, "articleSection": cat["name"],
+               **({"image": SITE + p["cover"] if p["cover"].startswith("/") else p["cover"]} if p["cover"] else {}),
+               "author": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"},
+               "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"}},
+              {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                  {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
+        write(f"/post/{p['slug']}/", page(p["title"], body, "/blog/", p["excerpt"], p["cover"], "article", ld),
+              lastmod=p["date"][:10])
 
     # Blog + catégories
     chips = '<div class="chips"><a class="chip active" href="/blog/">Toutes</a>' + "".join(
@@ -275,7 +303,8 @@ def main():
   <p class="lead">{v['desc']}</p>
   {chips_k}
   {grid(sub)}
-</section>""", "/blog/", v["desc"]))
+</section>""", "/blog/", v["desc"]),
+              canonical=f"/francais/{k}/" if v["domain"] == "francais" else None)
 
     # Domaines
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
@@ -339,11 +368,16 @@ def main():
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
   </div>
-</section>""", "/"))
+</section>""", "/", jsonld=[
+        {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
+         "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1, CE2) : lecture, contes du cercle conteur, numération."},
+        {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/favicon.svg"}]),
+        lastmod=max(p["date"] for p in posts)[:10])
 
     # 404 + redirections Cloudflare
     write("/404.html", page("Page introuvable", """<section class="wrap narrow"><h1>Page introuvable</h1>
-<p class="lead">Cette page n'existe pas ou a déménagé.</p><p><a class="btn" href="/">Retour à l'accueil</a></p></section>"""))
+<p class="lead">Cette page n'existe pas ou a déménagé.</p><p><a class="btn" href="/">Retour à l'accueil</a></p></section>""", noindex=True),
+          sitemap=False)
     redirects = ["/langue-francaise /francais/ 301",
                  "/langue-francaise-1 /maths/ 301", "/langue-francaise-2 /divers/ 301",
                  "/blog/categories/cercle-conteur /blog/cercle-conteur/ 301",
@@ -355,7 +389,13 @@ def main():
             redirects.append(f"/post/{quote(p['slug'])} /post/{ascii_slug(p['slug'])}/ 301")
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
-    print(f"OK : {len(posts)} articles")
+    with open(os.path.join(OUT, "robots.txt"), "w") as f:
+        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+    urls = "".join(f"  <url><loc>{SITE}{path}</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}</url>\n"
+                   for path, lm in sorted(SITEMAP, key=lambda x: (x[0] != "/", x[0])))
+    with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
+        f.write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+    print(f"OK : {len(posts)} articles, {len(SITEMAP)} pages dans le sitemap")
 
 
 if __name__ == "__main__":
