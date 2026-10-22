@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tachistoscope : Paramétrable avec Audio</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 { color: #0056b3; }
+        #app-container {
+            background-color: white;
+            width: 80%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Styles de l'écran de paramétrage */
+        #settings-area {
+            font-size: 20px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .setting-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        .input-number {
+            font-size: 24px;
+            text-align: center;
+            width: 90px;
+            padding: 8px;
+            margin: 0 10px;
+            border: 2px solid #0056b3;
+            border-radius: 8px;
+            -moz-appearance: textfield;
+        }
+        .input-number::-webkit-outer-spin-button,
+        .input-number::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Styles de la zone de jeu */
+        #display-number {
+            font-size: 120px;
+            font-weight: bold;
+            color: #0056b3;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        #score-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #5bc0de;
+        }
+        
+        /* Boutons */
+        button {
+            font-size: 20px;
+            padding: 12px 24px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 15px 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #4cae4c; }
+        #btn-stop { background-color: #d9534f; }
+        #btn-stop:hover { background-color: #c9302c; }
+        #btn-restart { background-color: #f0ad4e; }
+        #btn-restart:hover { background-color: #eea236; }
+        
+        .hidden { display: none !important; }
+        #feedback { font-size: 22px; margin-top: 20px; font-weight: bold; }
+        .correct { color: #5cb85c; }
+        .error { color: #d9534f; }
+    </style>
+</head>
+<body>
+
+    <h1>Tachistoscope</h1>
+    
+    <div id="app-container">
+        
+        <!-- ÉCRAN DE PARAMÉTRAGE -->
+        <div id="settings-area">
+            <div class="setting-group">
+                <p><strong>1. Intervalle des nombres :</strong></p>
+                <div>
+                    De <input type="number" id="min-val" class="input-number" value="60"> 
+                    à <input type="number" id="max-val" class="input-number" value="99">
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <p><strong>2. Temps de lecture par nombre :</strong></p>
+                <div>
+                    <input type="number" id="time-val" class="input-number" value="4" step="0.5" min="0.5"> secondes
+                </div>
+            </div>
+
+            <button id="btn-start" onclick="demarrerJeu()">Commencer</button>
+            <p style="font-size: 14px; color: #666; margin-top: 15px;">
+                <em>Assurez-vous que le son de votre ordinateur est activé.</em>
+            </p>
+        </div>
+
+        <!-- ZONE DE JEU -->
+        <div id="game-area" class="hidden">
+            <div id="score-display">Nombres lus correctement : <span id="score">0</span></div>
+            
+            <div id="display-number"></div>
+            
+            <div id="controls">
+                <button id="btn-stop" class="hidden" onclick="arreterJeu()">Stop (Erreur)</button>
+                <div id="feedback"></div>
+                <button id="btn-restart" class="hidden" onclick="retourParametres()">Rejouer / Modifier les réglages</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- PARAMÈTRES GLOBAUX ---
+        let tempsAffichage = 4000; 
+        const tempsPause = 500; // Légère pause après la voix avant le prochain nombre
+        
+        let nombresPossibles = [];
+        let indexCourant = 0;
+        let timeoutBoucle = null;
+
+        function genererNombres(min, max) {
+            nombresPossibles = [];
+            for (let i = min; i <= max; i++) {
+                nombresPossibles.push(i);
+            }
+            // Mélange aléatoire
+            for (let i = nombresPossibles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [nombresPossibles[i], nombresPossibles[j]] = [nombresPossibles[j], nombresPossibles[i]];
+            }
+        }
+
+        function demarrerJeu() {
+            // Coupe toute voix en cours
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            const minInput = parseInt(document.getElementById('min-val').value);
+            const maxInput = parseInt(document.getElementById('max-val').value);
+            const timeInput = parseFloat(document.getElementById('time-val').value);
+
+            if (isNaN(minInput) || isNaN(maxInput) || minInput > maxInput) {
+                alert("Attention, vérifie l'intervalle choisi. Le premier nombre doit être plus petit ou égal au deuxième.");
+                return;
+            }
+            if (isNaN(timeInput) || timeInput <= 0) {
+                alert("Attention, le temps de lecture doit être un nombre supérieur à 0.");
+                return;
+            }
+
+            tempsAffichage = timeInput * 1000;
+
+            document.getElementById('settings-area').classList.add('hidden');
+            document.getElementById('game-area').classList.remove('hidden');
+            
+            indexCourant = 0;
+            document.getElementById('score').textContent = "0";
+            document.getElementById('feedback').textContent = "";
+            document.getElementById('btn-restart').classList.add('hidden');
+            document.getElementById('btn-stop').classList.remove('hidden');
+            
+            genererNombres(minInput, maxInput);
+            afficherProchainNombre();
+        }
+
+        function lireNombre(nombre, callback) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(nombre.toString());
+                utterance.lang = 'fr-FR'; // Voix française
+                utterance.rate = 0.9;     // Vitesse un peu ralentie pour plus de clarté
+                
+                // Quand la voix a fini de parler, on déclenche la suite
+                utterance.onend = callback;
+                
+                // Sécurité si la voix bug, on passe au suivant après 2 secondes max
+                utterance.onerror = callback; 
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                // Si le navigateur ne gère pas la voix, on attend juste 1 seconde
+                setTimeout(callback, 1000);
+            }
+        }
+
+        function afficherProchainNombre() {
+            if (indexCourant >= nombresPossibles.length) {
+                finDePartie(true);
+                return;
+            }
+
+            document.getElementById('score').textContent = indexCourant;
+            let nombreActuel = nombresPossibles[indexCourant];
+            document.getElementById('display-number').textContent = nombreActuel;
+
+            timeoutBoucle = setTimeout(() => {
+                // Efface le nombre de l'écran
+                document.getElementById('display-number').textContent = "";
+                
+                // Lit le nombre à haute voix
+                lireNombre(nombreActuel, () => {
+                    indexCourant++;
+                    // Après la lecture, fait une petite pause puis affiche le suivant
+                    timeoutBoucle = setTimeout(afficherProchainNombre, tempsPause);
+                });
+
+            }, tempsAffichage);
+        }
+
+        function arreterJeu() {
+            clearTimeout(timeoutBoucle);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Coupe le son immédiatement
+            }
+            finDePartie(false);
+        }
+
+        function finDePartie(reussiteTotale) {
+            document.getElementById('display-number').textContent = "";
+            document.getElementById('btn-stop').classList.add('hidden');
+            
+            const scoreFinal = indexCourant;
+            const feedbackDiv = document.getElementById('feedback');
+            
+            if (reussiteTotale) {
+                document.getElementById('score').textContent = nombresPossibles.length;
+                feedbackDiv.innerHTML = "Félicitations ! L'enfant a lu tous les nombres de la série.<br>Total : <strong>" + nombresPossibles.length + "</strong> réussites.";
+                feedbackDiv.className = "correct";
+            } else {
+                feedbackDiv.innerHTML = "Arrêt du défilement.<br>L'enfant a lu <strong>" + scoreFinal + "</strong> nombre(s) d'affilée sans se tromper.";
+                feedbackDiv.className = "error";
+            }
+            
+            document.getElementById('btn-restart').classList.remove('hidden');
+        }
+
+        function retourParametres() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            document.getElementById('game-area').classList.add('hidden');
+            document.getElementById('settings-area').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

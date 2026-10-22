@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tachistoscope - Lecture sans stress</title>
+    <style>
+        #tachi-container {
+            font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #word-display {
+            font-size: clamp(4rem, 12vw, 10rem); 
+            font-weight: bold;
+            color: #212529;
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            border: 1px dashed #adb5bd;
+            margin-bottom: 20px;
+            overflow: hidden;
+            word-break: break-word;
+            padding: 20px;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
+        
+        #btn-play { background-color: #198754; }
+        #btn-next { background-color: #0d6efd; }
+        #btn-reset { background-color: #6c757d; }
+        
+        #btn-stop { 
+            background-color: #dc3545; 
+            font-size: 1.4rem; 
+            padding: 15px 30px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+            display: block;
+            box-shadow: 0 4px 0 #a71d2a;
+        }
+        #btn-stop:active {
+            box-shadow: 0 0 0 #a71d2a;
+            transform: translateY(4px);
+        }
+        
+        .settings-panel {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        input[type="range"] { width: 250px; }
+        textarea {
+            width: 90%;
+            height: 80px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            resize: vertical;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            color: #495057;
+            cursor: pointer;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="tachi-container">
+    <div id="word-display">Prêt ?</div>
+    
+    <button id="btn-stop">🛑 STOP (Je me suis trompé)</button>
+    
+    <div class="controls">
+        <button id="btn-play">▶️ Démarrer</button>
+        <button id="btn-next">⏭️ Mot Suivant</button>
+        <button id="btn-reset">🔄 Recommencer</button>
+    </div>
+
+    <div class="settings-panel">
+        <div class="slider-container">
+            <label for="audio-slider">Temps de lecture avant l'aide audio : <strong id="audio-val">5.0</strong> s</label>
+            <input type="range" id="audio-slider" min="1.0" max="15.0" step="0.5" value="5.0">
+        </div>
+        
+        <label class="checkbox-container">
+            <input type="checkbox" id="random-mode"> 
+            <strong>Lecture aléatoire</strong> (mélanger l'ordre des mots)
+        </label>
+
+        <p style="margin: 10px 0 5px 0; font-size: 0.9rem; color: #495057;">Liste des mots :</p>
+        <textarea id="word-list">maison poisson château garçon lapin bouton oiseau peinture cloche dragon</textarea>
+    </div>
+</div>
+
+<script>
+    const wordDisplay = document.getElementById('word-display');
+    const btnPlay = document.getElementById('btn-play');
+    const btnNext = document.getElementById('btn-next');
+    const btnReset = document.getElementById('btn-reset');
+    const btnStop = document.getElementById('btn-stop');
+    
+    const audioSlider = document.getElementById('audio-slider');
+    const audioVal = document.getElementById('audio-val');
+    const randomMode = document.getElementById('random-mode');
+    
+    const wordListInput = document.getElementById('word-list');
+
+    let words = [];
+    let currentIndex = 0;
+    let isPlaying = false;
+    let audioTimeout = null;
+    let actionTimeout = null;
+
+    // Charge les mots, les nettoie, et les mélange si l'option est cochée
+    function loadWords() {
+        const rawText = wordListInput.value.replace(/,/g, ' ');
+        words = rawText.split(/\s+/).filter(word => word.trim().length > 0);
+        
+        if (randomMode.checked) {
+            // Algorithme de mélange (Fisher-Yates)
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+        }
+        currentIndex = 0;
+    }
+
+    function stopAllActions() {
+        isPlaying = false;
+        clearTimeout(audioTimeout);
+        clearTimeout(actionTimeout);
+        window.speechSynthesis.cancel();
+        btnPlay.innerHTML = "▶️ Reprendre";
+    }
+    
+    // Fonction dédiée pour afficher l'écran de victoire détaillé
+    function afficherVictoire() {
+        const totalWords = words.length;
+        wordDisplay.innerHTML = `
+            <div style="font-size: 0.5em; line-height: 1.4; color: #198754;">
+                🎉 <strong style="font-size: 1.3em;">SUPER BRAVO !</strong> 🎉<br><br>
+                Tu as réussi à lire les <strong style="color: #0d6efd;">${totalWords}</strong> mots de la liste !<br>
+                Champion(ne) de la lecture ! 🏆
+            </div>
+        `;
+        stopAllActions();
+        btnPlay.innerHTML = "▶️ Recommencer";
+        currentIndex = words.length; // Pour forcer la recharge au prochain clic sur démarrer
+    }
+
+    function speakWordAndContinue(word) {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.85; 
+        
+        utterance.onend = () => {
+            if (isPlaying) {
+                // Laisse 1.5s après l'audio avant de passer au mot suivant
+                actionTimeout = setTimeout(() => {
+                    if (isPlaying) {
+                        currentIndex++;
+                        processCurrentWord();
+                    }
+                }, 1500); 
+            }
+        };
+
+        utterance.onerror = () => {
+            if (isPlaying) {
+                currentIndex++;
+                processCurrentWord();
+            }
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function processCurrentWord() {
+        if (!isPlaying) return;
+
+        if (currentIndex < words.length) {
+            wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;
+            
+            const audioMs = parseFloat(audioSlider.value) * 1000;
+            
+            // Lance la voix après le délai choisi
+            audioTimeout = setTimeout(() => {
+                if (isPlaying) {
+                    speakWordAndContinue(words[currentIndex]);
+                }
+            }, audioMs);
+
+        } else {
+            afficherVictoire();
+        }
+    }
+
+    function startReading() {
+        if (words.length === 0 || currentIndex >= words.length) {
+            loadWords();
+        }
+        
+        isPlaying = true;
+        btnPlay.innerHTML = "⏸️ Pause";
+        
+        window.speechSynthesis.cancel();
+        processCurrentWord();
+    }
+
+    // --- Écouteurs d'événements ---
+
+    btnPlay.addEventListener('click', () => {
+        if (isPlaying) {
+            stopAllActions();
+        } else {
+            startReading();
+        }
+    });
+
+    btnStop.addEventListener('click', () => {
+        stopAllActions();
+        
+        const score = currentIndex; 
+        const currentWord = words[currentIndex] || "";
+        
+        wordDisplay.innerHTML = `
+            <div style="font-size: 0.3em; color: #dc3545; margin-bottom: 15px;">
+                Erreur sur : <span style="text-decoration: underline;">${currentWord}</span>
+            </div>
+            <div style="font-size: 0.4em; color: #198754;">
+                Tu as lu <strong>${score}</strong> mot(s) juste(s) !
+            </div>
+        `;
+    });
+
+    btnNext.addEventListener('click', () => {
+        stopAllActions();
+        if (currentIndex < words.length) {
+            currentIndex++;
+            if (currentIndex < words.length) {
+                wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;
+            } else {
+                afficherVictoire();
+            }
+        }
+    });
+
+    btnReset.addEventListener('click', () => {
+        stopAllActions();
+        loadWords();
+        wordDisplay.textContent = "Prêt ?";
+        btnPlay.innerHTML = "▶️ Démarrer";
+    });
+
+    audioSlider.addEventListener('input', () => {
+        audioVal.textContent = parseFloat(audioSlider.value).toFixed(1);
+    });
+
+    // Si on change la liste de mots ou qu'on active/désactive le mode aléatoire, on réinitialise
+    wordListInput.addEventListener('change', () => {
+        stopAllActions();
+        loadWords();
+        wordDisplay.textContent = "Prêt ?";
+        btnPlay.innerHTML = "▶️ Démarrer";
+    });
+
+    randomMode.addEventListener('change', () => {
+        stopAllActions();
+        loadWords();
+        wordDisplay.textContent = "Prêt ?";
+        btnPlay.innerHTML = "▶️ Démarrer";
+    });
+</script>
+
+</body>
+</html>
