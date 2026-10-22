@@ -1,0 +1,3480 @@
+{
+ "count": 11,
+ "posts": [
+  {
+   "title": "Le radis géant",
+   "slug": "le-radis-géant",
+   "excerpt": "Un conte de randonnée russe illustré, à raconter en cercle conteur en GS ou en CP : hisse et ho !",
+   "date": "2026-10-21T17:23:23.994Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "wixMedia": {
+     "image": {
+      "id": "5e2b25_2a7ef24cb4b04b92bc0f97af5a4647fc~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/5e2b25_2a7ef24cb4b04b92bc0f97af5a4647fc~mv2.jpg",
+      "height": 717,
+      "width": 960,
+      "filename": "radis-01.jpg"
+     }
+    },
+    "displayed": true,
+    "custom": true
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte de randonnée traditionnel russe à raconter en cercle conteur, en GS ou en CP. Sa structure est une accumulation : à chaque étape, un nouveau personnage s'ajoute à la chaîne et la formule se rallonge, jusqu'à la plus petite, la souris, qui fait tout basculer.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseil : les formules en gras se disent en chœur avec le groupe, en mimant le geste de tirer. Une image par étape, à projeter pendant la narration.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte en images",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2,
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_8e1e3a5e38e34c2e87be88227464213b~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Le papi plante une graine de radis"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un papi et une mamie ont un tout petit jardin.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Si petit qu’il n’y a de place que pour une seule graine.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le papi plante une graine de radis :",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "« Pousse, pousse, petit radis, pousse bien rond, pousse bien rouge ! »",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_2a7ef24cb4b04b92bc0f97af5a4647fc~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Le radis devenu géant devant la maison"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis pousse, pousse…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Gros comme une pomme, gros comme un ballon, gros comme une brouette !",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Ses feuilles montent au-dessus du toit.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis cache le soleil !",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_eef56e7531914e43a4d6815921dc9cad~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Le papi tire seul sur le radis"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le papi attrape les feuilles du radis.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Il tire, il tire…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis ne bouge pas d’un poil !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_60baf114cf9e47c7abc67d1132765c74~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "La mamie tire le papi"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le papi appelle la mamie.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La mamie tire le papi, le papi tire le radis…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis ne bouge pas d’un poil !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_cf0a9f31e4024e3598c38d177a035852~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "La petite fille rejoint la chaîne"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La mamie appelle la petite fille.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La petite fille tire la mamie, la mamie tire le papi, le papi tire le radis…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis ne bouge pas d’un poil !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_da49de5ef5ea4abea3d3d75926444dd2~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Le chien rejoint la chaîne"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La petite fille appelle le chien.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le chien tire la petite fille, la petite fille tire la mamie, la mamie tire le papi, le papi tire le radis…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis ne bouge pas d’un poil !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_a46eda32a3894ae3a428f84cdf200631~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Le chat rejoint la chaîne"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le chien appelle le chat.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le chat tire le chien, le chien tire la petite fille, la petite fille tire la mamie, la mamie tire le papi, le papi tire le radis…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis ne bouge pas d’un poil !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_a8791a9d613648e6918ec94bdb9c01f5~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "La toute petite souris tire aussi"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le chat appelle une toute petite souris.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "« Toi ? Tu es bien trop petite ! »",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La souris tire le chat, le chat tire le chien, le chien tire la petite fille, la petite fille tire la mamie, la mamie tire le papi, le papi tire le radis…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Hisse et ho ! Hisse et…",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_5f68ac9bbc6a4c68a532937c9eab83cb~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "Tout le monde tombe à la renverse"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le radis sort de terre…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "et tout le monde tombe à la renverse, les pattes en l’air !",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "PLOP !",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "DIVIDER",
+      "id": "",
+      "nodes": [],
+      "dividerData": {
+       "lineStyle": "SINGLE",
+       "width": "MEDIUM",
+       "alignment": "CENTER"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "IMAGE",
+      "id": "",
+      "nodes": [],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER"
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_651e0f1b36634860b8a30def4faf8eef~mv2.jpg"
+        },
+        "width": 960,
+        "height": 717
+       },
+       "altText": "La soupe de radis partagée"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le soir, la mamie fait une grande soupe de radis.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Il y en a pour le papi, la mamie, la petite fille, le chien, le chat…",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "et la plus grosse part pour la toute petite souris.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     }
+    ]
+   }
+  },
+  {
+   "title": "Le Jackpot des contes",
+   "slug": "le-jackpot-des-contes",
+   "excerpt": "Une machine à histoires pour le cercle conteur : personnage, lieu et objet tirés au sort.",
+   "date": "2026-10-21T13:21:05.613Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Une machine à histoires pour lancer un cercle conteur, en GS ou en CP : on tire le levier, la machine propose un personnage, un lieu de conte et un objet du quotidien, et le groupe invente une histoire qui les relie.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "HTML",
+      "id": "",
+      "nodes": [],
+      "htmlData": {
+       "containerData": {
+        "width": {
+         "custom": "740"
+        },
+        "alignment": "CENTER",
+        "height": {
+         "custom": "760"
+        }
+       },
+       "url": "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html",
+       "source": "HTML"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "BUTTON",
+      "id": "",
+      "nodes": [],
+      "buttonData": {
+       "containerData": {
+        "width": {
+         "size": "ORIGINAL"
+        },
+        "alignment": "CENTER",
+        "textWrap": true
+       },
+       "type": "LINK",
+       "styles": {
+        "borderWidth": 0,
+        "borderRadius": 8,
+        "textColor": "#FFFFFF",
+        "backgroundColor": "#1F6F5C"
+       },
+       "text": "Ouvrir le jeu en plein écran",
+       "link": {
+        "url": "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html",
+        "target": "BLANK"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Comment l'utiliser",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2,
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": []
+     },
+     {
+      "type": "ORDERED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Tirer le levier devant le groupe et lire à voix haute les trois cartes.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {
+           "textStyle": {
+            "textAlignment": "AUTO"
+           }
+          }
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Chaque enfant ajoute à son tour une phrase à l'histoire, en utilisant le personnage, le lieu et l'objet.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {
+           "textStyle": {
+            "textAlignment": "AUTO"
+           }
+          }
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le journal des tirages garde les combinaisons : on peut y revenir pour raconter à nouveau.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {
+           "textStyle": {
+            "textAlignment": "AUTO"
+           }
+          }
+         }
+        ]
+       }
+      ],
+      "orderedListData": {
+       "indentation": 0
+      }
+     }
+    ]
+   }
+  },
+  {
+   "title": "Pourquoi le moustique bourdonne à nos oreilles",
+   "slug": "pourquoi-le-moustique-bourdonne-à-nos-oreilles",
+   "excerpt": "Un conte circulaire d'Afrique de l'Ouest pour le cercle conteur en GS et CP : une petite bêtise déclenche une chaîne de catastrophes.",
+   "date": "2026-10-20T18:58:00.533Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte traditionnel d'Afrique de l'Ouest à raconter en cercle conteur, en GS ou en CP. Sa structure est circulaire : une action insignifiante déclenche une chaîne de réactions de plus en plus graves. Durée de narration : 5 à 6 minutes.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un moustique raconte une bêtise à l'oreille d'un iguane. Vexé, l'iguane se bouche les oreilles avec des bâtonnets et n'entend plus rien. Un python, le croisant sur le chemin, lui adresse la parole : pas de réponse ! Persuadé que l'iguane complote contre lui, le python, affolé, se précipite dans le premier trou venu, justement le terrier d'un lapin.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le lapin, voyant surgir le python, détale à toute vitesse et donne l'alerte au corbeau, qui sonne l'alarme dans toute la savane. Dans la panique générale, un singe bondissant casse une branche, qui tombe et blesse un jeune hibou. La maman hibou est si triste qu'elle cesse de hululer chaque nuit pour réveiller le soleil, et le soleil ne se lève plus !",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le roi lion réunit alors tous les animaux pour comprendre ce qui a détraqué le monde. On interroge chacun à son tour, et la chaîne des causes remonte jusqu'au tout premier maillon : le moustique et sa bêtise. Honteux, celui-ci se cache désormais dans les buissons, mais il veut toujours savoir si on lui en veut encore : c'est pour cela qu'il vient, encore aujourd'hui, bourdonner à l'oreille des gens.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Faites une voix et un geste différents pour chaque animal de la chaîne (l'iguane qui se bouche les oreilles, le python affolé, le lapin qui détale, le corbeau qui crie) : les enfants les enchaîneront tout seuls dès la deuxième écoute.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "En fin de conte, remontez la chaîne des causes avec les enfants, comme le fait le roi lion : « Pourquoi le soleil ne s'est pas levé ? — Parce que… ». C'est un excellent point de départ pour un rappel collectif.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour aller plus loin : l'adaptation de Verna Aardema, « Pourquoi le moustique bourdonne à nos oreilles » (Messidor-La Farandole).",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     }
+    ]
+   }
+  },
+  {
+   "title": "Qui de l'œuf, qui du poussin ?",
+   "slug": "qui-de-l-œuf-qui-du-poussin",
+   "excerpt": "Un mythe bambara pour le cercle conteur en GS et CP : un rire qui se propage jusqu'à faire trembler la Terre.",
+   "date": "2026-10-20T18:58:00.173Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un mythe traditionnel bambara (Mali) à raconter en cercle conteur, en GS ou en CP. Sa structure est circulaire : un petit geste devient une catastrophe. Durée de narration : 4 à 5 minutes.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Au tout début du monde, un œuf et un poussin, deux bons amis, se promènent ensemble sur le chemin. Ils ont faim, et voilà qu'ils trouvent un citronnier chargé de fruits. Le poussin grimpe secouer les branches pendant que l'œuf, resté en bas, l'attend sur un tapis de poussière : c'est plus confortable en cas de chute.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Quand vient le tour de l'œuf de grimper, le poussin, en bon ami, lui prépare à son tour un tapis de poussière… mais il y cache une pierre ! L'œuf tombe, se casse, et le poussin éclate de rire. Ce rire se propage : le citronnier se met à rire lui aussi, puis le feu, puis la rivière, puis la terre tout entière, chacun reprenant le rire du précédent, de plus en plus fort.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le vacarme finit par agacer le Créateur lui-même, qui n'en peut plus d'entendre rire ainsi jour et nuit. Furieux, il secoue la Terre pour la faire taire. Et c'est ainsi, raconte le mythe, que la Terre a tremblé pour la première fois.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Faites reprendre le rire par les enfants à chaque étape, de plus en plus fort et de plus en plus nombreux (un enfant rit, puis deux, puis tout le cercle) : la propagation devient un jeu collectif très concret.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Ce conte fonctionne bien en écho avec « Pourquoi le moustique bourdonne à nos oreilles » : proposez-les à deux séances d'écart pour que les enfants remarquent eux-mêmes la même mécanique.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour aller plus loin : l'album de Muriel Bloch, « Qui de l'œuf, qui du poussin ? », illustrations de May Angeli (Didier Jeunesse).",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     }
+    ]
+   }
+  },
+  {
+   "title": "Comment Anansi devint le maître des histoires",
+   "slug": "comment-anansi-devint-le-maître-des-histoires",
+   "excerpt": "Un conte ashanti pour le cercle conteur en GS et CP : la petite araignée Anansi relève trois épreuves pour obtenir toutes les histoires du monde.",
+   "date": "2026-10-20T18:58:00.159Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte traditionnel du peuple ashanti (Ghana) à raconter en cercle conteur, en GS ou en CP. Sa structure est une accumulation d'épreuves : chaque défi suit la même mécanique, avec une ruse renouvelée. Durée de narration : 5 à 6 minutes.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Il y a très longtemps, toutes les histoires du monde appartenaient à Nyamé, le dieu du ciel. La petite araignée Anansi, qui rêvait de les posséder, vint les lui demander. Nyamé, amusé par tant d'audace, accepta, mais à un prix immense : Anansi devrait lui apporter Onini le python, Mbroro les frelons et Osebo le léopard, trois créatures que personne n'avait jamais réussi à capturer.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour les frelons, Anansi perça un trou dans une calebasse, arrosa leur nid et leur proposa de s'abriter de la pluie à l'intérieur : dès qu'ils furent tous entrés, il boucha le trou. Pour le python, il le mit au défi de se mesurer à une branche de palmier, puis, pendant qu'Onini s'étirait de tout son long, il l'attacha solidement à la branche. Pour le léopard, il creusa un grand trou sur son chemin ; quand Osebo y tomba, Anansi fit mine de le secourir avec sa toile, et c'est empêtré dans les fils gluants que le léopard fut livré à Nyamé.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Nyamé, stupéfait qu'une si petite araignée ait réussi là où tous les grands animaux avaient échoué, tint parole : il lui donna toutes les histoires du monde. Depuis ce jour, dit-on, les contes s'appellent « Anansesem », les histoires de l'araignée.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Gardez une formule d'introduction identique pour chaque épreuve (« Anansi réfléchit, sourit dans sa barbe… et voici ce qu'il inventa ! ») : les enfants savent qu'une nouvelle ruse arrive, sans en connaître le contenu.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le conte fonctionne très bien avec des marionnettes à doigts (une petite araignée, un serpent, un léopard) pour que les enfants miment chaque piège juste après l'avoir entendu.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour aller plus loin : « Anansi l'Araignée » de Gerald McDermott.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     }
+    ]
+   }
+  },
+  {
+   "title": "Les calebasses de Kouss",
+   "slug": "les-calebasses-de-kouss",
+   "excerpt": "Un conte sénégalais pour le cercle conteur en GS et CP : Leuk le Lièvre obéit au génie Kouss, Bouki l'Hyène désobéit.",
+   "date": "2026-10-20T18:58:00.113Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte traditionnel du Sénégal à raconter en cercle conteur, en GS ou en CP. Sa structure est en miroir : deux personnages reçoivent les mêmes consignes ; l'un obéit et est récompensé, l'autre désobéit et est puni. Durée de narration : 4 à 5 minutes.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Leuk le Lièvre et Bouki l'Hyène sont chacun mariés : Leuk à une épouse douce et joyeuse, Bouki à une épouse acariâtre qui ne cesse de réclamer de beaux bijoux. Un jour, en chemin, Leuk rencontre un petit génie, le Kouss, qui lui propose de l'aider, à une seule condition : suivre ses instructions à la lettre, sans jamais poser de question ni se retourner.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Leuk obéit exactement, pas à pas, malgré sa curiosité. Au bout du chemin, le Kouss lui offre une calebasse remplie des plus beaux bijoux qui soient. Bouki, jalouse en apprenant la nouvelle, se précipite à son tour vers le Kouss et réclame le même traitement.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Mais Bouki, impatiente, désobéit à chaque consigne : elle se retourne, elle proteste, elle veut aller plus vite. Le Kouss lui remet tout de même une calebasse, mais à peine ouverte, ce ne sont pas des bijoux qui en sortent : c'est un bâton qui se met à la frapper sans s'arrêter ! Depuis ce jour, dit-on, l'Hyène garde une démarche de travers.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Racontez les deux parcours en miroir, avec la même formule pour chaque consigne du Kouss (« Marche, et ne te retourne surtout pas ! »), d'abord pour Leuk, puis à l'identique pour Bouki : les enfants perçoivent d'eux-mêmes que tout se joue sur l'obéissance.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Bon point de départ pour une discussion après le conte : pourquoi Leuk a-t-il été récompensé et pas Bouki ? Une manière simple d'aborder la patience et l'écoute des consignes.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour aller plus loin : « Les Contes d'Amadou Koumba » de Birago Diop (1947).",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     }
+    ]
+   }
+  },
+  {
+   "title": "Rafara",
+   "slug": "rafara",
+   "excerpt": "Un conte de poursuite malgache pour le cercle conteur en GS et CP : la petite Rafara fuit le monstre Trimobe grâce aux objets magiques de la souris.",
+   "date": "2026-10-20T18:35:27.806Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte populaire de Madagascar à raconter en cercle conteur, en fin de GS ou en CP. C'est un conte de poursuite : la petite Rafara fuit le monstre Trimobe, et à chaque fois qu'il va la rattraper, un objet magique fait surgir un obstacle. Durée de narration : 5 à 6 minutes.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte en 6 étapes",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "ORDERED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Abandonnée — Pendant la cueillette, les deux sœurs de Rafara l'abandonnent dans la forêt.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Capturée — Le monstre Trimobe l'enferme et la nourrit, bien décidé à la manger dès qu'elle sera bien grasse.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "La souris — Une nuit, une petite souris se glisse sous son oreiller. Rafara, qui a bon cœur, lui donne un peu de son riz. En remerciement, la souris lui confie trois objets magiques : un bâton, une pierre et un œuf, et l'aide à s'échapper pendant que Trimobe dort.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "La poursuite — Trimobe découvre la fuite et se lance à sa poursuite. Rafara lance le bâton : il devient une forêt immense. Puis la pierre : elle devient une haute montagne. Chaque fois, Trimobe franchit l'obstacle, mais il perd un temps précieux.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le dernier objet — Épuisée, Rafara jette l'œuf, qui la fait basculer au sommet d'une montagne.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Vovondréo — Un grand oiseau passe par là. Rafara l'appelle à l'aide, et il la porte sur son dos jusqu'à la case de ses parents, bien loin des griffes de Trimobe.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "orderedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Ici, c'est le geste qui se répète : mimez le lancer de chaque objet et l'obstacle qui surgit (les mains qui dessinent une forêt, puis une montagne). Les enfants anticipent vite la mécanique du conte.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "La marionnette fonctionne très bien pour Rafara ou pour la souris : elle aide les enfants à entrer dans l'histoire et à la reprendre.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "C'est un conte plus long et plus intense que les contes de randonnée classiques (un vrai monstre, un vrai suspense) : à réserver à un groupe déjà à l'aise avec le cercle conteur.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Pour aller plus loin : une version très connue en classe est l'album « Rafara, un conte populaire africain », texte d'Anne Prigent, illustrations d'Anne-Catherine De Boel (Pastel - L'école des loisirs).",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     }
+    ]
+   }
+  },
+  {
+   "title": "La petite poule et le grain de mil",
+   "slug": "la-petite-poule-et-le-grain-de-mil",
+   "excerpt": "Un conte de randonnée sahélien pour le cercle conteur en GS et CP, avec sa formule à dire en chœur et des conseils de mise en voix.",
+   "date": "2026-10-20T12:37:44.803Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Un conte de randonnée à raconter en cercle conteur, en GS ou en CP. C'est une adaptation sahélienne de « La petite poule rousse » : le blé devient du mil, le moulin devient le mortier et le pilon, le pain devient des galettes cuites sur le feu. Les amis paresseux sont la chèvre, le singe et la pintade.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La formule à dire en chœur",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BLOCKQUOTE",
+      "id": "",
+      "nodes": [
+       {
+        "type": "PARAGRAPH",
+        "id": "",
+        "nodes": [
+         {
+          "type": "TEXT",
+          "id": "",
+          "nodes": [],
+          "textData": {
+           "text": "« Qui veut m'aider ? » — « Pas moi ! » dit la chèvre. « Pas moi ! » dit le singe. « Pas moi ! » dit la pintade. — « Eh bien, je le ferai toute seule ! »",
+           "decorations": []
+          }
+         }
+        ],
+        "paragraphData": {}
+       }
+      ],
+      "blockquoteData": {
+       "indentation": 1
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "La formule revient à chaque étape : c'est elle qui permet aux enfants d'entrer dans le récit et de le reprendre avec vous.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {}
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le conte en 9 images",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "ORDERED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le grain de mil — Au village, la petite poule gratte la terre devant sa case et trouve un grain de mil.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Qui veut m'aider à semer ? — La chèvre, le singe et la pintade se reposent sous le baobab.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Elle le sème toute seule — « Eh bien, je le sèmerai toute seule ! » La pluie arrive et arrose la graine.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le mil pousse — Le soleil chauffe, le mil pousse, pousse… plus haut que la petite poule !",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Qui veut m'aider à couper le mil ? — Les trois amis refusent encore. La petite poule coupe les épis toute seule.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Qui veut m'aider à piler le mil ? — Pan, pan, pan ! Elle pile les grains dans le mortier pour faire la farine.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Qui veut m'aider à faire les galettes ? — Elle allume le feu entre les trois pierres et fait cuire les galettes de mil.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Qui veut m'aider à manger les galettes ? — Ça sent si bon que tout le monde accourt !",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Avec mes poussins ! — « Vous n'avez pas voulu m'aider : je les mangerai avec mes poussins ! » Et c'est ce qu'elle fait.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "orderedListData": {
+       "indentation": 0
+      }
+     },
+     {
+      "type": "HEADING",
+      "id": "",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Conseils pour le cercle",
+         "decorations": []
+        }
+       }
+      ],
+      "headingData": {
+       "level": 2
+      }
+     },
+     {
+      "type": "BULLETED_LIST",
+      "id": "",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Trois groupes, trois voix : chaque groupe d'enfants joue un animal. La chèvre bêle « Pas moi ! », le singe le crie en sautillant, la pintade le caquette.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Un geste par étape : semer (jeter les grains), couper (faucher), piler (le pilon qui monte et descend), retourner les galettes sur le feu.",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "id": "",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "id": "",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "id": "",
+            "nodes": [],
+            "textData": {
+             "text": "Le rythme du pilon : pendant le pilage, tapez le rythme sur les genoux avec les enfants : « Pan, pan, je pile le mil ! »",
+             "decorations": []
+            }
+           }
+          ],
+          "paragraphData": {}
+         }
+        ]
+       }
+      ],
+      "bulletedListData": {
+       "indentation": 0
+      }
+     }
+    ]
+   }
+  },
+  {
+   "title": "lecture rapide de nombres",
+   "slug": "lecture-rapide-de-nombres",
+   "excerpt": "Sélectionnez la durée d'affichage par nombre et l'intervalle, puis arrêtez lorsque l'enfant fait une erreur.",
+   "date": "2026-05-21T11:36:44Z",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "o6x5c417",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Sélectionnez la durée d'affichage par nombre et l'intervalle, puis arrêtez lorsque l'enfant fait une erreur.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "HTML",
+      "id": "7qjtr287",
+      "nodes": [],
+      "htmlData": {
+       "containerData": {
+        "width": {
+         "custom": "350"
+        },
+        "alignment": "CENTER",
+        "spoiler": {},
+        "height": {
+         "custom": "776"
+        },
+        "textWrap": true
+       },
+       "html": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Tachistoscope : Paramétrable avec Audio</title>\n    <style>\n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background-color: #f0f8ff;\n            color: #333;\n            text-align: center;\n            margin-top: 50px;\n        }\n        h1 { color: #0056b3; }\n        #app-container {\n            background-color: white;\n            width: 80%;\n            max-width: 600px;\n            margin: 0 auto;\n            padding: 30px;\n            border-radius: 15px;\n            box-shadow: 0 4px 10px rgba(0,0,0,0.1);\n        }\n        \n        /* Styles de l'écran de paramétrage */\n        #settings-area {\n            font-size: 20px;\n            margin-bottom: 20px;\n            line-height: 1.6;\n        }\n        .setting-group {\n            margin-bottom: 20px;\n            padding: 15px;\n            background-color: #f9f9f9;\n            border-radius: 10px;\n            border: 1px solid #e0e0e0;\n        }\n        .input-number {\n            font-size: 24px;\n            text-align: center;\n            width: 90px;\n            padding: 8px;\n            margin: 0 10px;\n            border: 2px solid #0056b3;\n            border-radius: 8px;\n            -moz-appearance: textfield;\n        }\n        .input-number::-webkit-outer-spin-button,\n        .input-number::-webkit-inner-spin-button {\n            -webkit-appearance: none;\n            margin: 0;\n        }\n\n        /* Styles de la zone de jeu */\n        #display-number {\n            font-size: 120px;\n            font-weight: bold;\n            color: #0056b3;\n            height: 150px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            margin: 20px 0;\n        }\n        #score-display {\n            font-size: 24px;\n            font-weight: bold;\n            margin-bottom: 20px;\n            color: #5bc0de;\n        }\n        \n        /* Boutons */\n        button {\n            font-size: 20px;\n            padding: 12px 24px;\n            background-color: #5cb85c;\n            color: white;\n            border: none;\n            border-radius: 8px;\n            cursor: pointer;\n            margin: 15px 10px;\n            transition: background-color 0.3s;\n        }\n        button:hover { background-color: #4cae4c; }\n        #btn-stop { background-color: #d9534f; }\n        #btn-stop:hover { background-color: #c9302c; }\n        #btn-restart { background-color: #f0ad4e; }\n        #btn-restart:hover { background-color: #eea236; }\n        \n        .hidden { display: none !important; }\n        #feedback { font-size: 22px; margin-top: 20px; font-weight: bold; }\n        .correct { color: #5cb85c; }\n        .error { color: #d9534f; }\n    </style>\n</head>\n<body>\n\n    <h1>Tachistoscope</h1>\n    \n    <div id=\"app-container\">\n        \n        <!-- ÉCRAN DE PARAMÉTRAGE -->\n        <div id=\"settings-area\">\n            <div class=\"setting-group\">\n                <p><strong>1. Intervalle des nombres :</strong></p>\n                <div>\n                    De <input type=\"number\" id=\"min-val\" class=\"input-number\" value=\"60\"> \n                    à <input type=\"number\" id=\"max-val\" class=\"input-number\" value=\"99\">\n                </div>\n            </div>\n            \n            <div class=\"setting-group\">\n                <p><strong>2. Temps de lecture par nombre :</strong></p>\n                <div>\n                    <input type=\"number\" id=\"time-val\" class=\"input-number\" value=\"4\" step=\"0.5\" min=\"0.5\"> secondes\n                </div>\n            </div>\n\n            <button id=\"btn-start\" onclick=\"demarrerJeu()\">Commencer</button>\n            <p style=\"font-size: 14px; color: #666; margin-top: 15px;\">\n                <em>Assurez-vous que le son de votre ordinateur est activé.</em>\n            </p>\n        </div>\n\n        <!-- ZONE DE JEU -->\n        <div id=\"game-area\" class=\"hidden\">\n            <div id=\"score-display\">Nombres lus correctement : <span id=\"score\">0</span></div>\n            \n            <div id=\"display-number\"></div>\n            \n            <div id=\"controls\">\n                <button id=\"btn-stop\" class=\"hidden\" onclick=\"arreterJeu()\">Stop (Erreur)</button>\n                <div id=\"feedback\"></div>\n                <button id=\"btn-restart\" class=\"hidden\" onclick=\"retourParametres()\">Rejouer / Modifier les réglages</button>\n            </div>\n        </div>\n\n    </div>\n\n    <script>\n        // --- PARAMÈTRES GLOBAUX ---\n        let tempsAffichage = 4000; \n        const tempsPause = 500; // Légère pause après la voix avant le prochain nombre\n        \n        let nombresPossibles = [];\n        let indexCourant = 0;\n        let timeoutBoucle = null;\n\n        function genererNombres(min, max) {\n            nombresPossibles = [];\n            for (let i = min; i <= max; i++) {\n                nombresPossibles.push(i);\n            }\n            // Mélange aléatoire\n            for (let i = nombresPossibles.length - 1; i > 0; i--) {\n                const j = Math.floor(Math.random() * (i + 1));\n                [nombresPossibles[i], nombresPossibles[j]] = [nombresPossibles[j], nombresPossibles[i]];\n            }\n        }\n\n        function demarrerJeu() {\n            // Coupe toute voix en cours\n            if ('speechSynthesis' in window) {\n                window.speechSynthesis.cancel();\n            }\n\n            const minInput = parseInt(document.getElementById('min-val').value);\n            const maxInput = parseInt(document.getElementById('max-val').value);\n            const timeInput = parseFloat(document.getElementById('time-val').value);\n\n            if (isNaN(minInput) || isNaN(maxInput) || minInput > maxInput) {\n                alert(\"Attention, vérifie l'intervalle choisi. Le premier nombre doit être plus petit ou égal au deuxième.\");\n                return;\n            }\n            if (isNaN(timeInput) || timeInput <= 0) {\n                alert(\"Attention, le temps de lecture doit être un nombre supérieur à 0.\");\n                return;\n            }\n\n            tempsAffichage = timeInput * 1000;\n\n            document.getElementById('settings-area').classList.add('hidden');\n            document.getElementById('game-area').classList.remove('hidden');\n            \n            indexCourant = 0;\n            document.getElementById('score').textContent = \"0\";\n            document.getElementById('feedback').textContent = \"\";\n            document.getElementById('btn-restart').classList.add('hidden');\n            document.getElementById('btn-stop').classList.remove('hidden');\n            \n            genererNombres(minInput, maxInput);\n            afficherProchainNombre();\n        }\n\n        function lireNombre(nombre, callback) {\n            if ('speechSynthesis' in window) {\n                const utterance = new SpeechSynthesisUtterance(nombre.toString());\n                utterance.lang = 'fr-FR'; // Voix française\n                utterance.rate = 0.9;     // Vitesse un peu ralentie pour plus de clarté\n                \n                // Quand la voix a fini de parler, on déclenche la suite\n                utterance.onend = callback;\n                \n                // Sécurité si la voix bug, on passe au suivant après 2 secondes max\n                utterance.onerror = callback; \n                \n                window.speechSynthesis.speak(utterance);\n            } else {\n                // Si le navigateur ne gère pas la voix, on attend juste 1 seconde\n                setTimeout(callback, 1000);\n            }\n        }\n\n        function afficherProchainNombre() {\n            if (indexCourant >= nombresPossibles.length) {\n                finDePartie(true);\n                return;\n            }\n\n            document.getElementById('score').textContent = indexCourant;\n            let nombreActuel = nombresPossibles[indexCourant];\n            document.getElementById('display-number').textContent = nombreActuel;\n\n            timeoutBoucle = setTimeout(() => {\n                // Efface le nombre de l'écran\n                document.getElementById('display-number').textContent = \"\";\n                \n                // Lit le nombre à haute voix\n                lireNombre(nombreActuel, () => {\n                    indexCourant++;\n                    // Après la lecture, fait une petite pause puis affiche le suivant\n                    timeoutBoucle = setTimeout(afficherProchainNombre, tempsPause);\n                });\n\n            }, tempsAffichage);\n        }\n\n        function arreterJeu() {\n            clearTimeout(timeoutBoucle);\n            if ('speechSynthesis' in window) {\n                window.speechSynthesis.cancel(); // Coupe le son immédiatement\n            }\n            finDePartie(false);\n        }\n\n        function finDePartie(reussiteTotale) {\n            document.getElementById('display-number').textContent = \"\";\n            document.getElementById('btn-stop').classList.add('hidden');\n            \n            const scoreFinal = indexCourant;\n            const feedbackDiv = document.getElementById('feedback');\n            \n            if (reussiteTotale) {\n                document.getElementById('score').textContent = nombresPossibles.length;\n                feedbackDiv.innerHTML = \"Félicitations ! L'enfant a lu tous les nombres de la série.<br>Total : <strong>\" + nombresPossibles.length + \"</strong> réussites.\";\n                feedbackDiv.className = \"correct\";\n            } else {\n                feedbackDiv.innerHTML = \"Arrêt du défilement.<br>L'enfant a lu <strong>\" + scoreFinal + \"</strong> nombre(s) d'affilée sans se tromper.\";\n                feedbackDiv.className = \"error\";\n            }\n            \n            document.getElementById('btn-restart').classList.remove('hidden');\n        }\n\n        function retourParametres() {\n            if ('speechSynthesis' in window) {\n                window.speechSynthesis.cancel();\n            }\n            document.getElementById('game-area').classList.add('hidden');\n            document.getElementById('settings-area').classList.remove('hidden');\n        }\n    </script>\n</body>\n</html>",
+       "source": "HTML"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "er6v9289",
+      "nodes": [],
+      "paragraphData": {}
+     }
+    ],
+    "documentStyle": {}
+   }
+  },
+  {
+   "title": "Lecture rapide de mots avec le tachitoscope",
+   "slug": "lecture-rapide-de-mots-avec-le-tachitoscope",
+   "excerpt": "Vous pouvez utiliser ce site pour améliorer la rapidité de lecture : https://lecturerapideblog.com/outils/tachistoscope/",
+   "date": "2026-05-21T11:09:13Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "ncic6308",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Vous pouvez utiliser ce site pour améliorer la rapidité de lecture : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "https://lecturerapideblog.com/outils/tachistoscope/",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "https://lecturerapideblog.com/outils/tachistoscope/",
+             "target": "BLANK",
+             "rel": {
+              "noreferrer": true
+             }
+            }
+           }
+          },
+          {
+           "type": "UNDERLINE"
+          }
+         ]
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "HTML",
+      "id": "giqjp1681",
+      "nodes": [],
+      "htmlData": {
+       "containerData": {
+        "width": {
+         "custom": "350"
+        },
+        "alignment": "CENTER",
+        "spoiler": {},
+        "height": {
+         "custom": "1210"
+        },
+        "textWrap": true
+       },
+       "html": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Tachistoscope - Lecture sans stress</title>\n    <style>\n        #tachi-container {\n            font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;\n            background-color: #f8f9fa;\n            border: 2px solid #dee2e6;\n            border-radius: 12px;\n            padding: 20px;\n            max-width: 800px;\n            margin: 0 auto;\n            text-align: center;\n            box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n        }\n        #word-display {\n            font-size: clamp(4rem, 12vw, 10rem); \n            font-weight: bold;\n            color: #212529;\n            min-height: 40vh;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            text-align: center;\n            background: white;\n            border-radius: 8px;\n            border: 1px dashed #adb5bd;\n            margin-bottom: 20px;\n            overflow: hidden;\n            word-break: break-word;\n            padding: 20px;\n        }\n        .controls {\n            display: flex;\n            flex-wrap: wrap;\n            gap: 15px;\n            justify-content: center;\n            align-items: center;\n            margin-bottom: 20px;\n        }\n        button {\n            padding: 12px 24px;\n            font-size: 1.1rem;\n            cursor: pointer;\n            border: none;\n            border-radius: 6px;\n            color: white;\n            font-weight: bold;\n            transition: opacity 0.2s, transform 0.1s;\n        }\n        button:hover { opacity: 0.9; }\n        button:active { transform: scale(0.98); }\n        \n        #btn-play { background-color: #198754; }\n        #btn-next { background-color: #0d6efd; }\n        #btn-reset { background-color: #6c757d; }\n        \n        #btn-stop { \n            background-color: #dc3545; \n            font-size: 1.4rem; \n            padding: 15px 30px;\n            width: 100%;\n            max-width: 400px;\n            margin: 0 auto 20px auto;\n            display: block;\n            box-shadow: 0 4px 0 #a71d2a;\n        }\n        #btn-stop:active {\n            box-shadow: 0 0 0 #a71d2a;\n            transform: translateY(4px);\n        }\n        \n        .settings-panel {\n            background: #e9ecef;\n            padding: 15px;\n            border-radius: 8px;\n            margin-bottom: 20px;\n        }\n        .slider-container {\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            gap: 15px;\n            margin-bottom: 15px;\n            font-size: 1.1rem;\n            max-width: 600px;\n            margin-left: auto;\n            margin-right: auto;\n        }\n        input[type=\"range\"] { width: 250px; }\n        textarea {\n            width: 90%;\n            height: 80px;\n            padding: 10px;\n            font-size: 1rem;\n            border: 1px solid #ced4da;\n            border-radius: 6px;\n            resize: vertical;\n        }\n        .checkbox-container {\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            gap: 10px;\n            margin-bottom: 10px;\n            font-size: 1.05rem;\n            color: #495057;\n            cursor: pointer;\n        }\n        input[type=\"checkbox\"] {\n            width: 20px;\n            height: 20px;\n            cursor: pointer;\n        }\n    </style>\n</head>\n<body>\n\n<div id=\"tachi-container\">\n    <div id=\"word-display\">Prêt ?</div>\n    \n    <button id=\"btn-stop\">🛑 STOP (Je me suis trompé)</button>\n    \n    <div class=\"controls\">\n        <button id=\"btn-play\">▶️ Démarrer</button>\n        <button id=\"btn-next\">⏭️ Mot Suivant</button>\n        <button id=\"btn-reset\">🔄 Recommencer</button>\n    </div>\n\n    <div class=\"settings-panel\">\n        <div class=\"slider-container\">\n            <label for=\"audio-slider\">Temps de lecture avant l'aide audio : <strong id=\"audio-val\">5.0</strong> s</label>\n            <input type=\"range\" id=\"audio-slider\" min=\"1.0\" max=\"15.0\" step=\"0.5\" value=\"5.0\">\n        </div>\n        \n        <label class=\"checkbox-container\">\n            <input type=\"checkbox\" id=\"random-mode\"> \n            <strong>Lecture aléatoire</strong> (mélanger l'ordre des mots)\n        </label>\n\n        <p style=\"margin: 10px 0 5px 0; font-size: 0.9rem; color: #495057;\">Liste des mots :</p>\n        <textarea id=\"word-list\">maison poisson château garçon lapin bouton oiseau peinture cloche dragon</textarea>\n    </div>\n</div>\n\n<script>\n    const wordDisplay = document.getElementById('word-display');\n    const btnPlay = document.getElementById('btn-play');\n    const btnNext = document.getElementById('btn-next');\n    const btnReset = document.getElementById('btn-reset');\n    const btnStop = document.getElementById('btn-stop');\n    \n    const audioSlider = document.getElementById('audio-slider');\n    const audioVal = document.getElementById('audio-val');\n    const randomMode = document.getElementById('random-mode');\n    \n    const wordListInput = document.getElementById('word-list');\n\n    let words = [];\n    let currentIndex = 0;\n    let isPlaying = false;\n    let audioTimeout = null;\n    let actionTimeout = null;\n\n    // Charge les mots, les nettoie, et les mélange si l'option est cochée\n    function loadWords() {\n        const rawText = wordListInput.value.replace(/,/g, ' ');\n        words = rawText.split(/\\s+/).filter(word => word.trim().length > 0);\n        \n        if (randomMode.checked) {\n            // Algorithme de mélange (Fisher-Yates)\n            for (let i = words.length - 1; i > 0; i--) {\n                const j = Math.floor(Math.random() * (i + 1));\n                [words[i], words[j]] = [words[j], words[i]];\n            }\n        }\n        currentIndex = 0;\n    }\n\n    function stopAllActions() {\n        isPlaying = false;\n        clearTimeout(audioTimeout);\n        clearTimeout(actionTimeout);\n        window.speechSynthesis.cancel();\n        btnPlay.innerHTML = \"▶️ Reprendre\";\n    }\n    \n    // Fonction dédiée pour afficher l'écran de victoire détaillé\n    function afficherVictoire() {\n        const totalWords = words.length;\n        wordDisplay.innerHTML = `\n            <div style=\"font-size: 0.5em; line-height: 1.4; color: #198754;\">\n                🎉 <strong style=\"font-size: 1.3em;\">SUPER BRAVO !</strong> 🎉<br><br>\n                Tu as réussi à lire les <strong style=\"color: #0d6efd;\">${totalWords}</strong> mots de la liste !<br>\n                Champion(ne) de la lecture ! 🏆\n            </div>\n        `;\n        stopAllActions();\n        btnPlay.innerHTML = \"▶️ Recommencer\";\n        currentIndex = words.length; // Pour forcer la recharge au prochain clic sur démarrer\n    }\n\n    function speakWordAndContinue(word) {\n        const utterance = new SpeechSynthesisUtterance(word);\n        utterance.lang = 'fr-FR';\n        utterance.rate = 0.85; \n        \n        utterance.onend = () => {\n            if (isPlaying) {\n                // Laisse 1.5s après l'audio avant de passer au mot suivant\n                actionTimeout = setTimeout(() => {\n                    if (isPlaying) {\n                        currentIndex++;\n                        processCurrentWord();\n                    }\n                }, 1500); \n            }\n        };\n\n        utterance.onerror = () => {\n            if (isPlaying) {\n                currentIndex++;\n                processCurrentWord();\n            }\n        };\n\n        window.speechSynthesis.speak(utterance);\n    }\n\n    function processCurrentWord() {\n        if (!isPlaying) return;\n\n        if (currentIndex < words.length) {\n            wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;\n            \n            const audioMs = parseFloat(audioSlider.value) * 1000;\n            \n            // Lance la voix après le délai choisi\n            audioTimeout = setTimeout(() => {\n                if (isPlaying) {\n                    speakWordAndContinue(words[currentIndex]);\n                }\n            }, audioMs);\n\n        } else {\n            afficherVictoire();\n        }\n    }\n\n    function startReading() {\n        if (words.length === 0 || currentIndex >= words.length) {\n            loadWords();\n        }\n        \n        isPlaying = true;\n        btnPlay.innerHTML = \"⏸️ Pause\";\n        \n        window.speechSynthesis.cancel();\n        processCurrentWord();\n    }\n\n    // --- Écouteurs d'événements ---\n\n    btnPlay.addEventListener('click', () => {\n        if (isPlaying) {\n            stopAllActions();\n        } else {\n            startReading();\n        }\n    });\n\n    btnStop.addEventListener('click', () => {\n        stopAllActions();\n        \n        const score = currentIndex; \n        const currentWord = words[currentIndex] || \"\";\n        \n        wordDisplay.innerHTML = `\n            <div style=\"font-size: 0.3em; color: #dc3545; margin-bottom: 15px;\">\n                Erreur sur : <span style=\"text-decoration: underline;\">${currentWord}</span>\n            </div>\n            <div style=\"font-size: 0.4em; color: #198754;\">\n                Tu as lu <strong>${score}</strong> mot(s) juste(s) !\n            </div>\n        `;\n    });\n\n    btnNext.addEventListener('click', () => {\n        stopAllActions();\n        if (currentIndex < words.length) {\n            currentIndex++;\n            if (currentIndex < words.length) {\n                wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;\n            } else {\n                afficherVictoire();\n            }\n        }\n    });\n\n    btnReset.addEventListener('click', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n\n    audioSlider.addEventListener('input', () => {\n        audioVal.textContent = parseFloat(audioSlider.value).toFixed(1);\n    });\n\n    // Si on change la liste de mots ou qu'on active/désactive le mode aléatoire, on réinitialise\n    wordListInput.addEventListener('change', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n\n    randomMode.addEventListener('change', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n</script>\n\n</body>\n</html>",
+       "source": "HTML"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "cd1ef1684",
+      "nodes": [],
+      "paragraphData": {}
+     }
+    ],
+    "documentStyle": {}
+   }
+  },
+  {
+   "title": "Puissance 4 syllabique ",
+   "slug": "puissance-4-syllabiques",
+   "excerpt": "Le jeu est facile. Il vous suffit d'imprimer ce document, d'utiliser des jetons de deux couleurs et de les glisser comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent. Le vainqueur est celui qui place 4 jetons alignés à la verticale, à l'horizontale ou en diagonale. Syllabes avec sons simples Jeux avec les sons complexes",
+   "date": "2026-04-27T11:47:49.161Z",
+   "categoryIds": [],
+   "media": {
+    "wixMedia": {
+     "image": {
+      "id": "5e2b25_3bc9778b15314e008890c72950529f64~mv2.png",
+      "url": "https://static.wixstatic.com/media/5e2b25_3bc9778b15314e008890c72950529f64~mv2.png",
+      "height": 1536,
+      "width": 2816,
+      "filename": "jeu puissance 4 syllabes sons simples.png"
+     }
+    },
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "id": "qe926593",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le jeu est facile. Il vous suffit d'imprimer ce document, d'utiliser des jetons de deux couleurs et de les glisser comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "o26p5363",
+      "nodes": [],
+      "paragraphData": {}
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "u0fyk509",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "id": "",
+        "nodes": [],
+        "textData": {
+         "text": "Le vainqueur est celui qui place 4 jetons alignés à la verticale, à l'horizontale ou en diagonale.",
+         "decorations": []
+        }
+       }
+      ],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "eg93w639",
+      "nodes": [],
+      "paragraphData": {
+       "textStyle": {
+        "textAlignment": "AUTO"
+       }
+      }
+     },
+     {
+      "type": "IMAGE",
+      "id": "1t97d680",
+      "nodes": [
+       {
+        "type": "CAPTION",
+        "id": "pe50o684",
+        "nodes": [
+         {
+          "type": "TEXT",
+          "id": "",
+          "nodes": [],
+          "textData": {
+           "text": "Syllabes avec sons simples",
+           "decorations": []
+          }
+         }
+        ]
+       }
+      ],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER",
+        "textWrap": true
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_3bc9778b15314e008890c72950529f64~mv2.png"
+        },
+        "width": 2816,
+        "height": 1536
+       },
+       "caption": "Syllabes avec sons simples"
+      }
+     },
+     {
+      "type": "IMAGE",
+      "id": "bwd5u1011",
+      "nodes": [
+       {
+        "type": "CAPTION",
+        "id": "cgjtt1016",
+        "nodes": [
+         {
+          "type": "TEXT",
+          "id": "",
+          "nodes": [],
+          "textData": {
+           "text": "Jeux avec les sons complexes",
+           "decorations": []
+          }
+         }
+        ]
+       }
+      ],
+      "imageData": {
+       "containerData": {
+        "width": {
+         "size": "CONTENT"
+        },
+        "alignment": "CENTER",
+        "textWrap": true
+       },
+       "image": {
+        "src": {
+         "id": "5e2b25_b3ca1bf1b2174c1dbb4fcfda4f2383a1~mv2.png"
+        },
+        "width": 2816,
+        "height": 1536
+       },
+       "caption": "Jeux avec les sons complexes"
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "id": "cvdwr685",
+      "nodes": [],
+      "paragraphData": {}
+     }
+    ],
+    "documentStyle": {}
+   }
+  }
+ ]
+}
