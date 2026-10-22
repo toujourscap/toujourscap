@@ -107,11 +107,13 @@ main > section, main > article { padding-top: 40px; padding-bottom: 24px; }
 /* Fonds nature */
 html { background: var(--bg); }
 body.fond { background: transparent; }
-body.fond::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--bg) center bottom / cover no-repeat; }
-.fond-prairie::before { background-image: url("/images/fonds/prairie.svg") !important; }
-.fond-foret::before { background-image: url("/images/fonds/foret.svg") !important; }
-.fond-montagne::before { background-image: url("/images/fonds/montagne.svg") !important; }
-.fond-fleurs::before { background-image: url("/images/fonds/fleurs.svg") !important; }
+body.fond::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--bg) center / cover no-repeat; }
+.fond-lac-foret::before { background-image: url("/images/fonds/lac-foret.jpg") !important; }
+.fond-canopee::before { background-image: url("/images/fonds/canopee.jpg") !important; }
+.fond-lac-montagne::before { background-image: url("/images/fonds/lac-montagne.jpg") !important; }
+.fond-cascade::before { background-image: url("/images/fonds/cascade.jpg") !important; }
+.fond-lac-brume::before { background-image: url("/images/fonds/lac-brume.jpg") !important; }
+.fond-vagues::before { background-image: url("/images/fonds/vagues.jpg") !important; }
 body.fond main > section.wrap, body.fond main > article.wrap, body.fond .hero-inner {
   background: rgba(255, 253, 248, .86);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);

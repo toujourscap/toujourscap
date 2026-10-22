@@ -141,12 +141,12 @@ NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/f
        ("/maths/", "Maths"), ("/divers/", "Divers"), ("/blog/", "Blog")]
 
 
-FONDS = {"/": "prairie", "/francais/": "foret", "/maths/": "montagne", "/blog/": "fleurs",
-         "/outils-pedagogiques/": "prairie", "/divers/": "fleurs"}
+FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
+         "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
 
 
 def page(title, body, active="", desc="", og_image=""):
-    fond = FONDS.get(active, "foret")
+    fond = FONDS.get(active, "canopee")
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
     full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Outils pédagogiques cycle 2 : GS, CP, CE1"
     desc = desc or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
