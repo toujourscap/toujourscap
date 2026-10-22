@@ -276,15 +276,26 @@ def main():
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
     cc = [p for p in fr if p["cat"] == "cercle-conteur"]
     lec = [p for p in fr if p["cat"] == "lecture"]
+    def cover_of(lst):
+        return next((q["cover"] for q in lst if q["cover"]), "")
+    subs = [("cercle-conteur", "Cercle conteur", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
+            ("lecture", "Lecture", "Des jeux et outils pour lire plus vite et avec plaisir.", lec)]
+    vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
+  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
+  <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
+</a>""" for k, t, d, lst in subs) + "</div>"
     write("/francais/", page("Français", f"""<section class="wrap">
   <h1>Français</h1>
   <p class="lead">Des activités ludiques testées et validées par nos petits écoliers.</p>
-  <h2 class="section-title">Cercle conteur</h2>
-  <p>Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.</p>
-  {grid(cc)}
-  <h2 class="section-title">Lecture</h2>
-  {grid(lec)}
+  {vignettes}
 </section>""", "/francais/"))
+    for k, t, d, lst in subs:
+        write(f"/francais/{k}/", page(t, f"""<section class="wrap">
+  <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
+  <h1>{t}</h1>
+  <p class="lead">{d}</p>
+  {grid(lst)}
+</section>""", "/francais/", d))
     maths = [p for p in posts if CATS[p["cat"]]["domain"] == "maths"]
     write("/maths/", page("Maths", f"""<section class="wrap">
   <h1>Maths</h1>
