@@ -323,11 +323,6 @@ def main():
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
   </div>
-</section>
-<section class="wrap">
-  <h2 class="section-title">Derniers articles</h2>
-  {grid(posts[:6])}
-  <p class="center"><a class="link" href="/blog/">Voir tous les articles →</a></p>
 </section>""", "/"))
 
     # 404 + redirections Cloudflare
