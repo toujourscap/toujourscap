@@ -15,6 +15,27 @@ CATS = {
 }
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
 
+# Images rapatriées localement (identifiant Wix -> chemin sur le site)
+LOCAL_IMAGES = {
+    "5e2b25_8e1e3a5e38e34c2e87be88227464213b~mv2.jpg": "/images/radis/01-graine.jpg",
+    "5e2b25_2a7ef24cb4b04b92bc0f97af5a4647fc~mv2.jpg": "/images/radis/02-radis-geant.jpg",
+    "5e2b25_eef56e7531914e43a4d6815921dc9cad~mv2.jpg": "/images/radis/03-papi.jpg",
+    "5e2b25_60baf114cf9e47c7abc67d1132765c74~mv2.jpg": "/images/radis/04-mamie.jpg",
+    "5e2b25_cf0a9f31e4024e3598c38d177a035852~mv2.jpg": "/images/radis/05-petite-fille.jpg",
+    "5e2b25_da49de5ef5ea4abea3d3d75926444dd2~mv2.jpg": "/images/radis/06-chien.jpg",
+    "5e2b25_a46eda32a3894ae3a428f84cdf200631~mv2.jpg": "/images/radis/07-chat.jpg",
+    "5e2b25_a8791a9d613648e6918ec94bdb9c01f5~mv2.jpg": "/images/radis/08-souris.jpg",
+    "5e2b25_5f68ac9bbc6a4c68a532937c9eab83cb~mv2.jpg": "/images/radis/09-tout-le-monde-tombe.jpg",
+    "5e2b25_651e0f1b36634860b8a30def4faf8eef~mv2.jpg": "/images/radis/10-soupe.jpg",
+}
+
+
+def img_url(ref):
+    """Renvoie l'image locale si elle a été rapatriée, sinon l'URL Wix."""
+    key = ref.replace(WIX, "")
+    return LOCAL_IMAGES.get(key) or (ref if ref.startswith("http") else WIX + ref)
+
+
 MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 
 
@@ -80,8 +101,8 @@ def render(n, ctx):
     if t == "IMAGE":
         img = n.get("imageData", {})
         src = img.get("image", {}).get("src", {}).get("id") or img.get("image", {}).get("src", {}).get("url", "")
-        if src and not src.startswith("http"):
-            src = WIX + src
+        if src:
+            src = img_url(src)
         alt = img.get("altText") or ""
         cap = ""
         for c in n.get("nodes", []):
@@ -195,6 +216,7 @@ def main():
     os.makedirs(os.path.join(OUT, "outils"))
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
+    shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copy(os.path.join(ROOT, "assets", "le-jackpot-des-contes.html"), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -207,7 +229,8 @@ def main():
         if not cover:
             first = next((n for n in nodes if n.get("type") == "IMAGE"), None)
             if first:
-                cover = WIX + first["imageData"]["image"]["src"]["id"]
+                cover = first["imageData"]["image"]["src"]["id"]
+        cover = img_url(cover) if cover else ""
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
                       "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover})
     posts.sort(key=lambda x: x["date"], reverse=True)
