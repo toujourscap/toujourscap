@@ -142,7 +142,7 @@ def render(n, ctx):
 
 # ---------- Gabarit ----------
 NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/francais/", "Français"),
-       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/blog/", "Blog")]
+       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/blog/", "Blog"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
@@ -341,6 +341,15 @@ def main():
   <p class="lead">Des pistes variées pour stimuler la motivation et la métacognition.</p>
   <div class="empty">Les premières ressources arrivent bientôt.</div>
 </section>""", "/divers/"))
+
+    write("/qui-suis-je/", page("Qui suis-je ?", """<section class="wrap narrow prose">
+  <h1>Qui suis-je&nbsp;?</h1>
+  <p class="lead">Bienvenue sur ce site&nbsp;!</p>
+  <p>Je suis enseignant spécialisé et j'occupe la fonction d'ESADP depuis quelques années.</p>
+  <p>Je vous propose sur ce site minimaliste les outils que j'utilise au quotidien.</p>
+  <p>N'hésitez pas à m'envoyer vos commentaires.</p>
+  <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
+</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
 
     domains = [
         ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", WIX + "5e2b25_d4d4317cc1f7403d80f67c123bce418d~mv2.jpg"),
