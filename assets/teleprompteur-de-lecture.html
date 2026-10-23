@@ -1,0 +1,196 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Téléprompteur de lecture</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Lexend:wght@400;600&display=swap">
+<style>
+/* Mise en page : un tableau noir qui fait défiler le texte sous une bande de lecture fixe ; réglages en dessous, éditeur de texte repliable. */
+:root{
+  --paper:#f3f1ea; --ink:#1f2a26; --muted:#5d6b65; --line:#d9d6cb;
+  --board:#22352f; --chalk:#f4f2e8; --chalk-dim:rgba(244,242,232,.28);
+  --band:#f2c94c; --accent:#1f6f5c; --accent-ink:#ffffff; --field:#ffffff;
+  --text:"Andika","Comic Sans MS",system-ui,sans-serif;
+  --ui:"Lexend","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#151b19; --ink:#e7ece9; --muted:#9fb0a8; --line:#2c3833;
+  --board:#0f1a17; --chalk:#f1efe4; --chalk-dim:rgba(241,239,228,.25);
+  --band:#e8bd3f; --accent:#4bb394; --accent-ink:#0d1714; --field:#1d2522; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#151b19; --ink:#e7ece9; --muted:#9fb0a8; --line:#2c3833;
+  --board:#0f1a17; --chalk:#f1efe4; --chalk-dim:rgba(241,239,228,.25);
+  --band:#e8bd3f; --accent:#4bb394; --accent-ink:#0d1714; --field:#1d2522; color-scheme:dark}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px;
+  padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--ui);font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+
+/* Le tableau */
+.stage{position:relative;height:min(58vh,440px);min-height:260px;background:var(--board);border-radius:14px;overflow:hidden}
+.stage:fullscreen{height:100%;border-radius:0}
+.scroller{position:absolute;left:0;right:0;top:0;padding:0 6%;will-change:transform}
+.scroller p{margin:0 0 .6em;font-family:var(--text);color:var(--chalk);line-height:1.5;text-align:left}
+.band{position:absolute;left:0;right:0;pointer-events:none;border-block:3px solid var(--band);background:rgba(242,201,76,.10)}
+.fade{position:absolute;left:0;right:0;pointer-events:none}
+.fade.top{top:0;background:linear-gradient(var(--board),transparent)}
+.fade.bottom{bottom:0;background:linear-gradient(transparent,var(--board))}
+.count{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--ui);font-weight:600;font-size:min(30vh,180px);color:var(--band);background:rgba(0,0,0,.35)}
+.done{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-family:var(--ui);font-size:15px;color:var(--board);background:var(--band);padding:6px 14px;border-radius:999px}
+
+/* Commandes */
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font-family:var(--ui);font-size:16px;font-weight:600;border-radius:10px;border:1px solid var(--line);background:var(--field);color:var(--ink);padding:10px 16px;cursor:pointer;min-height:46px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);min-width:130px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--band);outline-offset:2px}
+.sliders{display:flex;flex-wrap:wrap;gap:10px 22px;flex:1;min-width:0}
+.ctl{display:flex;flex-direction:column;gap:2px;min-width:170px;flex:1}
+.ctl label{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctl output{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+
+details{border:1px solid var(--line);border-radius:12px;background:var(--field)}
+summary{cursor:pointer;padding:12px 14px;font-weight:600}
+.edit{display:flex;flex-direction:column;gap:10px;padding:0 14px 14px}
+textarea{width:100%;box-sizing:border-box;min-height:150px;font-family:var(--text);font-size:17px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.meta{font-size:13px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){.count{transition:none}}
+</style>
+
+<div class="wrap">
+  <h1>Téléprompteur de lecture</h1>
+
+  <div class="stage" id="stage" aria-label="Texte à lire">
+    <div class="scroller" id="scroller"></div>
+    <div class="fade top" id="fadeTop"></div>
+    <div class="fade bottom" id="fadeBottom"></div>
+    <div class="band" id="band"></div>
+    <div class="count" id="count" hidden></div>
+    <div class="done" id="done" hidden>Bravo, texte terminé !</div>
+  </div>
+
+  <div class="controls">
+    <div class="btns">
+      <button class="primary" id="play" type="button">▶ Lire</button>
+      <button id="restart" type="button">↺ Recommencer</button>
+      <button id="full" type="button">⛶ Plein écran</button>
+    </div>
+    <div class="sliders">
+      <div class="ctl">
+        <label for="speed">Vitesse <output id="speedOut">50 mots/min</output></label>
+        <input id="speed" type="range" min="15" max="160" step="5" value="50">
+      </div>
+      <div class="ctl">
+        <label for="size">Taille du texte <output id="sizeOut">40 px</output></label>
+        <input id="size" type="range" min="24" max="80" step="2" value="40">
+      </div>
+    </div>
+  </div>
+  <p class="hint">Barre d'espace : lire / pause. Flèches haut et bas : avancer ou reculer d'une ligne.</p>
+
+  <details id="editor">
+    <summary>Changer le texte</summary>
+    <div class="edit">
+      <textarea id="txt" aria-label="Texte à faire défiler"></textarea>
+      <div class="btns">
+        <button class="primary" id="apply" type="button">Utiliser ce texte</button>
+        <button id="clear" type="button">Effacer</button>
+      </div>
+      <span class="meta" id="meta"></span>
+    </div>
+  </details>
+</div>
+
+<script>
+(function(){
+  const SAMPLE = "Le petit hérisson se réveille au fond du jardin.\nIl a faim. Il cherche des vers sous les feuilles mortes.\nUn merle passe et lui dit bonjour.\n« Où vas-tu si tôt ? » demande le merle.\n« Je vais au potager, répond le hérisson. Les fraises sont mûres ! »\nMais le potager est fermé par une grande barrière.\nLe hérisson se fait tout petit et passe dessous.\nIl trouve une fraise rouge et sucrée.\nIl la mange lentement, puis il rentre dormir sous le tas de bois.";
+
+  const $ = id => document.getElementById(id);
+  const stage=$("stage"), scroller=$("scroller"), band=$("band"), count=$("count"), done=$("done");
+  const play=$("play"), speed=$("speed"), size=$("size"), txt=$("txt");
+
+  let text = SAMPLE, y = 0, running = false, last = 0, raf = 0, maxY = 0, pxPerWord = 1, words = 1, countTimer = 0;
+  try { const saved = localStorage.getItem("tp-text"); if (saved) text = saved; } catch(e){}
+  txt.value = text;
+
+  function render(){
+    scroller.innerHTML = "";
+    text.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(line=>{
+      const p=document.createElement("p"); p.textContent=line; scroller.appendChild(p);
+    });
+    words = Math.max(1, (text.match(/\S+/g)||[]).length);
+    $("meta").textContent = words + " mots";
+    layout();
+  }
+  function layout(){
+    const fs = +size.value;
+    scroller.style.fontSize = fs + "px";
+    const h = stage.clientHeight, lh = fs*1.5;
+    const bandTop = Math.round(h*0.33);
+    band.style.top = (bandTop - 6) + "px";
+    band.style.height = (lh + 12) + "px";
+    $("fadeTop").style.height = Math.max(0,bandTop - lh*0.6) + "px";
+    $("fadeBottom").style.height = Math.round(h*0.22) + "px";
+    scroller.style.paddingTop = bandTop + "px";
+    scroller.style.paddingBottom = h + "px";
+    const contentH = scroller.scrollHeight - bandTop - h;
+    maxY = Math.max(0, contentH - lh*0.5);
+    pxPerWord = Math.max(1, contentH) / words;
+    y = Math.min(y, maxY); apply();
+    $("sizeOut").textContent = fs + " px";
+  }
+  function apply(){ scroller.style.transform = "translateY(" + (-y) + "px)"; }
+  function tick(t){
+    if(!running) return;
+    const dt = last ? (t-last)/1000 : 0; last = t;
+    y += (+speed.value/60) * pxPerWord * dt;
+    if (y >= maxY){ y = maxY; apply(); stop(); done.hidden=false; return; }
+    apply(); raf = requestAnimationFrame(tick);
+  }
+  function start(){
+    done.hidden = true;
+    if (y >= maxY) y = 0;
+    play.textContent = "⏸ Pause";
+    if (y === 0){
+      let n = 3; count.hidden=false; count.textContent=n;
+      countTimer = setInterval(()=>{ n--; if(n>0){count.textContent=n;} else { clearInterval(countTimer); countTimer=0; count.hidden=true; go(); } }, 700);
+      running = "count";
+    } else go();
+  }
+  function go(){ running = true; last = 0; raf = requestAnimationFrame(tick); }
+  function stop(){
+    running = false; cancelAnimationFrame(raf);
+    if (countTimer){ clearInterval(countTimer); countTimer=0; count.hidden=true; }
+    play.textContent = "▶ Lire";
+  }
+  function toggle(){ running ? stop() : start(); }
+
+  play.addEventListener("click", toggle);
+  $("restart").addEventListener("click", ()=>{ stop(); y=0; apply(); done.hidden=true; });
+  speed.addEventListener("input", ()=>{ $("speedOut").textContent = speed.value + " mots/min"; });
+  size.addEventListener("input", layout);
+  $("apply").addEventListener("click", ()=>{
+    const v = txt.value.trim(); if(!v) return;
+    text = v; try{ localStorage.setItem("tp-text", v); }catch(e){}
+    stop(); y=0; render(); $("editor").open=false; stage.scrollIntoView({block:"nearest"});
+  });
+  $("clear").addEventListener("click", ()=>{ txt.value=""; txt.focus(); });
+  $("full").addEventListener("click", ()=>{
+    try{ document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen().catch(()=>{}); }catch(e){}
+  });
+  document.addEventListener("fullscreenchange", ()=>setTimeout(layout,50));
+  window.addEventListener("resize", layout);
+  document.addEventListener("keydown", e=>{
+    if (e.target === txt) return;
+    const step = +size.value*1.5;
+    if (e.code === "Space"){ e.preventDefault(); toggle(); }
+    else if (e.key === "ArrowDown"){ e.preventDefault(); y=Math.min(maxY,y+step); apply(); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); y=Math.max(0,y-step); apply(); }
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  render();
+})();
+</script>
+
+</body></html>
