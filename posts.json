@@ -3240,6 +3240,26 @@
     "nodes": [
      {
       "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Trois outils pour entraîner la lecture rapide, des mots isolés jusqu'au texte lu à voix haute. Cliquez sur une vignette pour ouvrir l'outil.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "TOOL_CARDS",
+      "tools": [
+       "tachistoscope",
+       "teleprompteur-de-lecture",
+       "teleprompteur-a-l-ecoute"
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
       "id": "ncic6308",
       "nodes": [
        {
@@ -3247,7 +3267,7 @@
         "id": "",
         "nodes": [],
         "textData": {
-         "text": "Vous pouvez utiliser ce site pour améliorer la rapidité de lecture : ",
+         "text": "Pour aller plus loin, un autre tachistoscope en ligne : ",
          "decorations": []
         }
        },
@@ -3282,123 +3302,6 @@
         "textAlignment": "AUTO"
        }
       }
-     },
-     {
-      "type": "HEADING",
-      "headingData": {
-       "level": 2
-      },
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "Le tachistoscope : lire des mots en un clin d'œil",
-         "decorations": []
-        }
-       }
-      ]
-     },
-     {
-      "type": "HTML",
-      "id": "giqjp1681",
-      "nodes": [],
-      "htmlData": {
-       "containerData": {
-        "width": {
-         "custom": "350"
-        },
-        "alignment": "CENTER",
-        "spoiler": {},
-        "height": {
-         "custom": "1210"
-        },
-        "textWrap": true
-       },
-       "html": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Tachistoscope - Lecture sans stress</title>\n    <style>\n        #tachi-container {\n            font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;\n            background-color: #f8f9fa;\n            border: 2px solid #dee2e6;\n            border-radius: 12px;\n            padding: 20px;\n            max-width: 800px;\n            margin: 0 auto;\n            text-align: center;\n            box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n        }\n        #word-display {\n            font-size: clamp(4rem, 12vw, 10rem); \n            font-weight: bold;\n            color: #212529;\n            min-height: 40vh;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            text-align: center;\n            background: white;\n            border-radius: 8px;\n            border: 1px dashed #adb5bd;\n            margin-bottom: 20px;\n            overflow: hidden;\n            word-break: break-word;\n            padding: 20px;\n        }\n        .controls {\n            display: flex;\n            flex-wrap: wrap;\n            gap: 15px;\n            justify-content: center;\n            align-items: center;\n            margin-bottom: 20px;\n        }\n        button {\n            padding: 12px 24px;\n            font-size: 1.1rem;\n            cursor: pointer;\n            border: none;\n            border-radius: 6px;\n            color: white;\n            font-weight: bold;\n            transition: opacity 0.2s, transform 0.1s;\n        }\n        button:hover { opacity: 0.9; }\n        button:active { transform: scale(0.98); }\n        \n        #btn-play { background-color: #198754; }\n        #btn-next { background-color: #0d6efd; }\n        #btn-reset { background-color: #6c757d; }\n        \n        #btn-stop { \n            background-color: #dc3545; \n            font-size: 1.4rem; \n            padding: 15px 30px;\n            width: 100%;\n            max-width: 400px;\n            margin: 0 auto 20px auto;\n            display: block;\n            box-shadow: 0 4px 0 #a71d2a;\n        }\n        #btn-stop:active {\n            box-shadow: 0 0 0 #a71d2a;\n            transform: translateY(4px);\n        }\n        \n        .settings-panel {\n            background: #e9ecef;\n            padding: 15px;\n            border-radius: 8px;\n            margin-bottom: 20px;\n        }\n        .slider-container {\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            gap: 15px;\n            margin-bottom: 15px;\n            font-size: 1.1rem;\n            max-width: 600px;\n            margin-left: auto;\n            margin-right: auto;\n        }\n        input[type=\"range\"] { width: 250px; }\n        textarea {\n            width: 90%;\n            height: 80px;\n            padding: 10px;\n            font-size: 1rem;\n            border: 1px solid #ced4da;\n            border-radius: 6px;\n            resize: vertical;\n        }\n        .checkbox-container {\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            gap: 10px;\n            margin-bottom: 10px;\n            font-size: 1.05rem;\n            color: #495057;\n            cursor: pointer;\n        }\n        input[type=\"checkbox\"] {\n            width: 20px;\n            height: 20px;\n            cursor: pointer;\n        }\n    </style>\n</head>\n<body>\n\n<div id=\"tachi-container\">\n    <div id=\"word-display\">Prêt ?</div>\n    \n    <button id=\"btn-stop\">🛑 STOP (Je me suis trompé)</button>\n    \n    <div class=\"controls\">\n        <button id=\"btn-play\">▶️ Démarrer</button>\n        <button id=\"btn-next\">⏭️ Mot Suivant</button>\n        <button id=\"btn-reset\">🔄 Recommencer</button>\n    </div>\n\n    <div class=\"settings-panel\">\n        <div class=\"slider-container\">\n            <label for=\"audio-slider\">Temps de lecture avant l'aide audio : <strong id=\"audio-val\">5.0</strong> s</label>\n            <input type=\"range\" id=\"audio-slider\" min=\"1.0\" max=\"15.0\" step=\"0.5\" value=\"5.0\">\n        </div>\n        \n        <label class=\"checkbox-container\">\n            <input type=\"checkbox\" id=\"random-mode\"> \n            <strong>Lecture aléatoire</strong> (mélanger l'ordre des mots)\n        </label>\n\n        <p style=\"margin: 10px 0 5px 0; font-size: 0.9rem; color: #495057;\">Liste des mots :</p>\n        <textarea id=\"word-list\">maison poisson château garçon lapin bouton oiseau peinture cloche dragon</textarea>\n    </div>\n</div>\n\n<script>\n    const wordDisplay = document.getElementById('word-display');\n    const btnPlay = document.getElementById('btn-play');\n    const btnNext = document.getElementById('btn-next');\n    const btnReset = document.getElementById('btn-reset');\n    const btnStop = document.getElementById('btn-stop');\n    \n    const audioSlider = document.getElementById('audio-slider');\n    const audioVal = document.getElementById('audio-val');\n    const randomMode = document.getElementById('random-mode');\n    \n    const wordListInput = document.getElementById('word-list');\n\n    let words = [];\n    let currentIndex = 0;\n    let isPlaying = false;\n    let audioTimeout = null;\n    let actionTimeout = null;\n\n    // Charge les mots, les nettoie, et les mélange si l'option est cochée\n    function loadWords() {\n        const rawText = wordListInput.value.replace(/,/g, ' ');\n        words = rawText.split(/\\s+/).filter(word => word.trim().length > 0);\n        \n        if (randomMode.checked) {\n            // Algorithme de mélange (Fisher-Yates)\n            for (let i = words.length - 1; i > 0; i--) {\n                const j = Math.floor(Math.random() * (i + 1));\n                [words[i], words[j]] = [words[j], words[i]];\n            }\n        }\n        currentIndex = 0;\n    }\n\n    function stopAllActions() {\n        isPlaying = false;\n        clearTimeout(audioTimeout);\n        clearTimeout(actionTimeout);\n        window.speechSynthesis.cancel();\n        btnPlay.innerHTML = \"▶️ Reprendre\";\n    }\n    \n    // Fonction dédiée pour afficher l'écran de victoire détaillé\n    function afficherVictoire() {\n        const totalWords = words.length;\n        wordDisplay.innerHTML = `\n            <div style=\"font-size: 0.5em; line-height: 1.4; color: #198754;\">\n                🎉 <strong style=\"font-size: 1.3em;\">SUPER BRAVO !</strong> 🎉<br><br>\n                Tu as réussi à lire les <strong style=\"color: #0d6efd;\">${totalWords}</strong> mots de la liste !<br>\n                Champion(ne) de la lecture ! 🏆\n            </div>\n        `;\n        stopAllActions();\n        btnPlay.innerHTML = \"▶️ Recommencer\";\n        currentIndex = words.length; // Pour forcer la recharge au prochain clic sur démarrer\n    }\n\n    function speakWordAndContinue(word) {\n        const utterance = new SpeechSynthesisUtterance(word);\n        utterance.lang = 'fr-FR';\n        utterance.rate = 0.85; \n        \n        utterance.onend = () => {\n            if (isPlaying) {\n                // Laisse 1.5s après l'audio avant de passer au mot suivant\n                actionTimeout = setTimeout(() => {\n                    if (isPlaying) {\n                        currentIndex++;\n                        processCurrentWord();\n                    }\n                }, 1500); \n            }\n        };\n\n        utterance.onerror = () => {\n            if (isPlaying) {\n                currentIndex++;\n                processCurrentWord();\n            }\n        };\n\n        window.speechSynthesis.speak(utterance);\n    }\n\n    function processCurrentWord() {\n        if (!isPlaying) return;\n\n        if (currentIndex < words.length) {\n            wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;\n            \n            const audioMs = parseFloat(audioSlider.value) * 1000;\n            \n            // Lance la voix après le délai choisi\n            audioTimeout = setTimeout(() => {\n                if (isPlaying) {\n                    speakWordAndContinue(words[currentIndex]);\n                }\n            }, audioMs);\n\n        } else {\n            afficherVictoire();\n        }\n    }\n\n    function startReading() {\n        if (words.length === 0 || currentIndex >= words.length) {\n            loadWords();\n        }\n        \n        isPlaying = true;\n        btnPlay.innerHTML = \"⏸️ Pause\";\n        \n        window.speechSynthesis.cancel();\n        processCurrentWord();\n    }\n\n    // --- Écouteurs d'événements ---\n\n    btnPlay.addEventListener('click', () => {\n        if (isPlaying) {\n            stopAllActions();\n        } else {\n            startReading();\n        }\n    });\n\n    btnStop.addEventListener('click', () => {\n        stopAllActions();\n        \n        const score = currentIndex; \n        const currentWord = words[currentIndex] || \"\";\n        \n        wordDisplay.innerHTML = `\n            <div style=\"font-size: 0.3em; color: #dc3545; margin-bottom: 15px;\">\n                Erreur sur : <span style=\"text-decoration: underline;\">${currentWord}</span>\n            </div>\n            <div style=\"font-size: 0.4em; color: #198754;\">\n                Tu as lu <strong>${score}</strong> mot(s) juste(s) !\n            </div>\n        `;\n    });\n\n    btnNext.addEventListener('click', () => {\n        stopAllActions();\n        if (currentIndex < words.length) {\n            currentIndex++;\n            if (currentIndex < words.length) {\n                wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;\n            } else {\n                afficherVictoire();\n            }\n        }\n    });\n\n    btnReset.addEventListener('click', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n\n    audioSlider.addEventListener('input', () => {\n        audioVal.textContent = parseFloat(audioSlider.value).toFixed(1);\n    });\n\n    // Si on change la liste de mots ou qu'on active/désactive le mode aléatoire, on réinitialise\n    wordListInput.addEventListener('change', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n\n    randomMode.addEventListener('change', () => {\n        stopAllActions();\n        loadWords();\n        wordDisplay.textContent = \"Prêt ?\";\n        btnPlay.innerHTML = \"▶️ Démarrer\";\n    });\n</script>\n\n</body>\n</html>",
-       "source": "HTML"
-      }
-     },
-     {
-      "type": "HEADING",
-      "headingData": {
-       "level": 2
-      },
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "Le téléprompteur de lecture",
-         "decorations": []
-        }
-       }
-      ]
-     },
-     {
-      "type": "PARAGRAPH",
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "Le texte défile sous une bande de lecture, à la vitesse choisie (en mots par minute). On peut coller son propre texte.",
-         "decorations": []
-        }
-       }
-      ]
-     },
-     {
-      "type": "HTML",
-      "htmlData": {
-       "url": "/outils/teleprompteur-de-lecture.html",
-       "containerData": {
-        "height": {
-         "custom": "800"
-        }
-       }
-      }
-     },
-     {
-      "type": "HEADING",
-      "headingData": {
-       "level": 2
-      },
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "Le téléprompteur à l'écoute",
-         "decorations": []
-        }
-       }
-      ]
-     },
-     {
-      "type": "PARAGRAPH",
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "L'élève lit à voix haute : le texte avance au rythme de sa lecture et affiche sa vitesse. Le micro fonctionne avec Chrome ou Edge ; sans micro, on avance avec la barre d'espace.",
-         "decorations": []
-        }
-       }
-      ]
-     },
-     {
-      "type": "HTML",
-      "htmlData": {
-       "url": "/outils/teleprompteur-a-l-ecoute.html",
-       "containerData": {
-        "height": {
-         "custom": "860"
-        }
-       }
-      }
-     },
-     {
-      "type": "PARAGRAPH",
-      "id": "cd1ef1684",
-      "nodes": [],
-      "paragraphData": {}
      }
     ],
     "documentStyle": {}
