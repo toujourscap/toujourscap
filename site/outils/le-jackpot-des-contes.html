@@ -1,8 +1,419 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Le Jackpot des contes</title>
-<style>html,body{margin:0;height:100%;background:#fbf7f0}iframe{border:0;width:100%;height:100%;display:block}</style>
-</head><body>
-<!-- Version provisoire : l'outil est encore servi par Wix. À remplacer par le code source de l'outil. -->
-<iframe src="https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html" title="Le Jackpot des contes"></iframe>
-</body></html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Jackpot des Contes - Machine à Histoires</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background: linear-gradient(135deg, #110924 0%, #2c1654 100%);
+        font-family: 'Georgia', serif;
+        color: #f5f0ff;
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header { text-align: center; margin-bottom: 30px; }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #ffd700;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 4px 0 #9a7b00;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+    }
+
+    p.subtitle {
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #d1c4e9;
+        font-size: 1.1rem;
+    }
+
+    /* La machine */
+    .casino-container {
+        background: linear-gradient(180deg, #421c70 0%, #1a0633 100%);
+        border: 8px solid #ffd700;
+        border-radius: 24px;
+        padding: 30px;
+        width: 100%;
+        max-width: 850px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.2);
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .casino-header {
+        background-color: #110421;
+        border: 2px solid #b388ff;
+        border-radius: 12px;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: inset 0 0 10px rgba(179, 136, 255, 0.3);
+    }
+
+    .casino-title {
+        color: #ff3d00;
+        font-family: monospace;
+        font-weight: bold;
+        font-size: 1.3rem;
+        letter-spacing: 4px;
+        animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; text-shadow: 0 0 10px #ff3d00; }
+        50% { opacity: 0.4; text-shadow: none; }
+    }
+
+    /* Les rouleaux */
+    .reels-wrapper {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .reel-box {
+        flex: 1;
+        background: #fff;
+        border: 4px solid #311b92;
+        border-radius: 16px;
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 10px 20px rgba(0,0,0,0.4), inset 0 -10px 20px rgba(0,0,0,0.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reel-title {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        background-color: #311b92;
+        color: #ffd700;
+        text-align: center;
+        font-family: system-ui, sans-serif;
+        font-size: 0.85rem;
+        font-weight: bold;
+        padding: 4px 0;
+        z-index: 10;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .reel-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px 10px 10px 10px;
+        color: #1a0633;
+        transition: transform 0.1s ease;
+        width: 100%;
+    }
+
+    .reel-emoji {
+        font-size: 4rem;
+        margin-bottom: 10px;
+        display: block;
+        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15));
+    }
+
+    .reel-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #2a1b4e;
+        min-height: 2.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .blur { filter: blur(4px); transform: scaleY(1.1); }
+
+    /* Bouton */
+    .controls { text-align: center; }
+
+    .spin-button {
+        background: linear-gradient(180deg, #ff5722 0%, #d84315 100%);
+        border: 3px solid #ffd700;
+        border-radius: 50px;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 15px 50px;
+        cursor: pointer;
+        box-shadow: 0 8px 0 #9e2b06, 0 10px 20px rgba(0,0,0,0.4);
+        transition: all 0.1s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        outline: none;
+    }
+    .spin-button:hover { background: linear-gradient(180deg, #ff7043 0%, #e64a19 100%); }
+    .spin-button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .spin-button:active { transform: translateY(6px); box-shadow: 0 2px 0 #9e2b06, 0 4px 10px rgba(0,0,0,0.4); }
+    .spin-button:disabled {
+        background: #78909c !important;
+        border-color: #b0bec5 !important;
+        box-shadow: 0 4px 0 #455a64 !important;
+        color: #cfd8dc;
+        cursor: not-allowed;
+        transform: translateY(4px);
+    }
+
+    /* Le défi */
+    .result-panel {
+        width: 100%;
+        max-width: 850px;
+        background: #fdfbf7;
+        border-left: 8px solid #ffd700;
+        border-radius: 12px;
+        padding: 25px;
+        color: #2c1d11;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+        display: none;
+        animation: fade-in 0.5s ease-out forwards;
+    }
+
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-panel h2 {
+        color: #5d4037;
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        border-bottom: 2px dashed #d7ccc8;
+        padding-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .prompt-text {
+        font-size: 1.25rem;
+        line-height: 1.6;
+        font-style: italic;
+        color: #3e2723;
+        background-color: #f5f2eb;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #efebe9;
+    }
+
+    .prompt-highlight { color: #b71c1c; font-weight: bold; font-style: normal; }
+
+    /* Journal */
+    .history-panel {
+        width: 100%;
+        max-width: 850px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .history-panel h3 {
+        font-family: system-ui, sans-serif;
+        font-size: 1.1rem;
+        color: #b388ff;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .history-list { list-style: none; max-height: 200px; overflow-y: auto; }
+
+    .history-item {
+        font-family: system-ui, sans-serif;
+        font-size: 0.95rem;
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: #e0d8f0;
+    }
+    .history-item:first-child { background-color: rgba(255, 255, 255, 0.03); font-weight: bold; }
+    .history-empty { color: #8b7fa4; font-style: italic; justify-content: center; }
+
+    @media (max-width: 650px) {
+        .reels-wrapper { flex-direction: column; gap: 20px; }
+        .reel-box { height: 180px; }
+        h1 { font-size: 1.8rem; }
+        .spin-button { width: 100%; font-size: 1.25rem; }
+    }
+</style>
+</head>
+<body>
+
+    <header>
+        <h1>Le Jackpot des Contes</h1>
+        <p class="subtitle">Actionnez le levier pour combiner un Personnage, un Lieu et un Objet de conte !</p>
+    </header>
+
+    <main class="casino-container">
+        <div class="casino-header">
+            <div class="casino-title">★ MACHINE À HISTOIRES ★</div>
+        </div>
+
+        <div class="reels-wrapper">
+            <div class="reel-box">
+                <div class="reel-title">Personnage</div>
+                <div class="reel-content" id="reel-perso">
+                    <span class="reel-emoji">❓</span>
+                    <span class="reel-name">Prêt ?</span>
+                </div>
+            </div>
+
+            <div class="reel-box">
+                <div class="reel-title">Lieu de Conte</div>
+                <div class="reel-content" id="reel-lieu">
+                    <span class="reel-emoji">❓</span>
+                    <span class="reel-name">Prêt ?</span>
+                </div>
+            </div>
+
+            <div class="reel-box">
+                <div class="reel-title">Objet de Conte</div>
+                <div class="reel-content" id="reel-objet">
+                    <span class="reel-emoji">❓</span>
+                    <span class="reel-name">Prêt ?</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="spin-btn" class="spin-button" type="button" onclick="spinMachine()">Tirer le Levier !</button>
+        </div>
+    </main>
+
+    <section id="result-panel" class="result-panel" aria-live="polite">
+        <h2>✍️ Votre Défi Littéraire</h2>
+        <div id="prompt-output" class="prompt-text"></div>
+    </section>
+
+    <section class="history-panel">
+        <h3>📜 Journal des tirages</h3>
+        <ul id="history-list" class="history-list">
+            <li class="history-item history-empty" id="history-empty">Aucun tirage pour le moment.</li>
+        </ul>
+    </section>
+
+<script>
+    const personnages = [
+        { name: "Le Loup", emoji: "🐺" },
+        { name: "La Sorcière", emoji: "🧙‍♀️" },
+        { name: "Le Prince Charmant", emoji: "🤴" },
+        { name: "La Fée Marraine", emoji: "🧚‍♀️" },
+        { name: "L'Ogre", emoji: "👹" },
+        { name: "L'Enfant Héros", emoji: "👧" },
+        { name: "La Marâtre", emoji: "👑" },
+        { name: "Le Vieillard Sage", emoji: "🧓" },
+        { name: "L'Animal Malin", emoji: "🐱" },
+        { name: "Le Roi ou la Reine", emoji: "🏰" }
+    ];
+
+    const lieux = [
+        { name: "la Forêt Sombre", emoji: "🌲" },
+        { name: "le Château Enchanté", emoji: "🏰" },
+        { name: "la Chaumière en Pain d'Épice", emoji: "🍭" },
+        { name: "la Tour Isolée", emoji: "🗼" },
+        { name: "le Palais de Glace", emoji: "❄️" },
+        { name: "la Grotte Mystérieuse", emoji: "🕳️" },
+        { name: "le Village Lointain", emoji: "🏡" },
+        { name: "le Lac Magique", emoji: "🌊" },
+        { name: "le Donjon Sombre", emoji: "⛓️" },
+        { name: "le Royaume des Nuages", emoji: "☁️" }
+    ];
+
+    // Objets tirés des contes classiques et des contes du site
+    const objets = [
+        { name: "une Pantoufle de verre", emoji: "👠" },
+        { name: "une Baguette magique", emoji: "🪄" },
+        { name: "une Pomme empoisonnée", emoji: "🍎" },
+        { name: "des Bottes de sept lieues", emoji: "🥾" },
+        { name: "un Miroir magique", emoji: "🪞" },
+        { name: "une Clé d'or", emoji: "🗝️" },
+        { name: "un Haricot magique", emoji: "🌱" },
+        { name: "une Lampe merveilleuse", emoji: "🪔" },
+        { name: "des Petits cailloux blancs", emoji: "🪨" },
+        { name: "un Œuf d'or", emoji: "🥚" },
+        { name: "une Galette et un petit pot de beurre", emoji: "🧺" },
+        { name: "une Citrouille carrosse", emoji: "🎃" },
+        { name: "une Calebasse magique", emoji: "🏺" },
+        { name: "le Coffre des histoires", emoji: "📦" },
+        { name: "un Grain de mil", emoji: "🌾" }
+    ];
+
+    function getRandomItem(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function updateReelDOM(elementId, item, blur = false) {
+        const container = document.getElementById(elementId);
+        container.classList.toggle('blur', blur);
+        container.innerHTML = `
+            <span class="reel-emoji">${item.emoji}</span>
+            <span class="reel-name">${item.name}</span>
+        `;
+    }
+
+    function generatePrompt(p, l, o) {
+        return `Racontez comment <span class="prompt-highlight">${p}</span>, alors qu'il ou elle se trouvait dans <span class="prompt-highlight">${l}</span>, a utilisé <span class="prompt-highlight">${o}</span> pour accomplir sa mission ou échapper à un grand danger !`;
+    }
+
+    function spinMachine() {
+        const btn = document.getElementById('spin-btn');
+        btn.disabled = true;
+        document.getElementById('result-panel').style.display = 'none';
+
+        const finalPerso = getRandomItem(personnages);
+        const finalLieu = getRandomItem(lieux);
+        const finalObjet = getRandomItem(objets);
+
+        const interval1 = setInterval(() => updateReelDOM('reel-perso', getRandomItem(personnages), true), 60);
+        const interval2 = setInterval(() => updateReelDOM('reel-lieu', getRandomItem(lieux), true), 60);
+        const interval3 = setInterval(() => updateReelDOM('reel-objet', getRandomItem(objets), true), 60);
+
+        setTimeout(() => { clearInterval(interval1); updateReelDOM('reel-perso', finalPerso); }, 1200);
+        setTimeout(() => { clearInterval(interval2); updateReelDOM('reel-lieu', finalLieu); }, 1900);
+        setTimeout(() => {
+            clearInterval(interval3);
+            updateReelDOM('reel-objet', finalObjet);
+            endSpin(finalPerso, finalLieu, finalObjet);
+        }, 2600);
+    }
+
+    function endSpin(p, l, o) {
+        document.getElementById('spin-btn').disabled = false;
+        document.getElementById('prompt-output').innerHTML = generatePrompt(p.name, l.name, o.name);
+        document.getElementById('result-panel').style.display = 'block';
+
+        const historyList = document.getElementById('history-list');
+        const empty = document.getElementById('history-empty');
+        if (empty) empty.remove();
+
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        li.innerHTML = `
+            <span>${p.emoji} ${p.name} ➔ ${l.emoji} ${l.name} ➔ ${o.emoji} ${o.name}</span>
+            <span style="color: #ffd700; font-size: 0.8rem; white-space: nowrap;">🎰 Combiné</span>
+        `;
+        historyList.insertBefore(li, historyList.firstChild);
+    }
+</script>
+
+</body>
+</html>
