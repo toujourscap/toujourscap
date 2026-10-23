@@ -284,6 +284,8 @@ def main():
             if first:
                 cover = first["imageData"]["image"]["src"]["id"]
         cover = img_url(cover) if cover else ""
+        if os.path.exists(os.path.join(ROOT, "assets", "images", "contes", slug + ".jpg")):
+            cover = f"/images/contes/{slug}.jpg"  # illustration dessinée pour le conte
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
                       "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover})
     posts.sort(key=lambda x: x["date"], reverse=True)
