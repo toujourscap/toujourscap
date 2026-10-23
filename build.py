@@ -135,7 +135,7 @@ def render(n, ctx):
             src = "/outils/le-jackpot-des-contes.html" if h.get("url") == JACKPOT_URL else h.get("url", "")
         ctx.setdefault("tools", []).append(src)
         return (f'<div class="embed"><iframe src="{esc(src)}" style="height:{int(height)}px" '
-                f'title="Outil interactif" loading="lazy"></iframe>'
+                f'title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe>'
                 f'<a class="embed-full" href="{esc(src)}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>')
     return children(n, ctx)
 
@@ -239,7 +239,8 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
-    shutil.copy(os.path.join(ROOT, "assets", "le-jackpot-des-contes.html"), os.path.join(OUT, "outils"))
+    for outil in ("le-jackpot-des-contes.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html"):
+        shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
     posts = []
