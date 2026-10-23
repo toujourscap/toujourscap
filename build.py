@@ -269,7 +269,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -286,6 +286,8 @@ def main():
         cover = img_url(cover) if cover else ""
         if os.path.exists(os.path.join(ROOT, "assets", "images", "contes", slug + ".jpg")):
             cover = f"/images/contes/{slug}.jpg"  # illustration dessinée pour le conte
+        elif os.path.exists(os.path.join(ROOT, "assets", "images", "jeux", slug + ".jpg")):
+            cover = f"/images/jeux/{slug}.jpg"  # plateau du jeu
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
                       "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover})
     posts.sort(key=lambda x: x["date"], reverse=True)

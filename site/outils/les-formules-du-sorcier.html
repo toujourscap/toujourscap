@@ -1,0 +1,321 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Les Formules du Sorcier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Henny+Penny&family=Playwrite+FR+Moderne&display=swap">
+<style>
+/* Layout : plateau (chemin de 20 cases vers le château) à gauche, panneau de jeu à droite ; empilés sur téléphone. Thème nuit unique, assumé. */
+:root{
+  --night:#141a3a; --night2:#1e2550; --card:#262f63; --line:#3a4580;
+  --ink:#f4f0ff; --muted:#aeb4dc; --gold:#f5c451; --spell:#7ee0c9;
+  --ok:#6fd38a; --no:#f29b8a; --potion:#c58cf5; --monster:#8fbf4a;
+  --p1:#f2716b; --p2:#6fa8f5; --p3:#f5c451; --p4:#6fd38a;
+  --f-title:"Henny Penny","Andika",cursive;
+  --f-script:"Andika","Comic Sans MS",system-ui,sans-serif;
+  --f-cursive:"Playwrite FR Moderne","Andika",cursive;
+  color-scheme:dark;
+}
+html,body{min-height:100%}
+body{background:radial-gradient(120% 80% at 50% 0%,var(--night2),var(--night) 70%);background-color:var(--night);color:var(--ink);font-family:var(--f-script);font-size:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;box-sizing:border-box}
+*{box-sizing:border-box}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--f-title);font-weight:400;color:var(--gold);font-size:clamp(28px,5vw,44px);text-align:center;margin:4px 0 0;text-wrap:balance}
+h2{font-family:var(--f-title);font-weight:400;color:var(--gold);font-size:24px;margin:0}
+.lead{text-align:center;color:var(--muted);margin:0 auto;max-width:52ch;line-height:1.45}
+button,input,select{font-family:var(--f-script);font-size:18px;color:var(--ink)}
+button{cursor:pointer;border:0;border-radius:14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--spell);outline-offset:2px}
+.btn{background:var(--card);border:2px solid var(--line);padding:12px 18px;display:inline-flex;align-items:center;gap:10px;justify-content:center}
+.btn:hover{border-color:var(--spell)}
+.btn.main{background:var(--gold);color:var(--night);border-color:var(--gold);font-weight:700}
+.btn.ok{background:var(--ok);color:#10301c;border-color:var(--ok);font-weight:700}
+.btn.no{background:transparent;border-color:var(--no);color:var(--no);font-weight:700}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:16px}
+
+/* Accueil */
+.setup{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media (max-width:760px){.setup{grid-template-columns:1fr}}
+.rules{color:var(--muted);line-height:1.5;margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.rules b{color:var(--ink)}
+.prow{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center}
+.prow input{background:var(--night2);border:2px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0;width:100%}
+.prow select{background:var(--night2);border:2px solid var(--line);border-radius:10px;padding:8px}
+.dot{width:22px;height:22px;border-radius:50%}
+.opts{display:flex;flex-direction:column;gap:12px;color:var(--muted);font-size:16px}
+.opt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{background:transparent;padding:6px 11px;font-size:16px;border-radius:0;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--line);color:var(--ink)}
+.col{display:flex;flex-direction:column;gap:12px}
+
+/* Jeu */
+.game{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.game{grid-template-columns:1fr}}
+.board{border:2px solid var(--line);border-radius:20px;overflow:hidden;background:var(--night2)}
+.board svg{width:100%;height:auto;display:block}
+.side{display:flex;flex-direction:column;gap:12px}
+.players{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pl{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;border:2px solid transparent;font-size:16px;min-width:0}
+.pl.cur{border-color:var(--spell);background:var(--night2)}
+.pl span.n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.pl small{color:var(--muted);font-variant-numeric:tabular-nums}
+.monster{display:flex;align-items:center;gap:12px}
+.monster svg.m{width:64px;height:64px;flex:none}
+.fioles{display:flex;flex-wrap:wrap;gap:4px}
+.fioles svg{width:22px;height:30px}
+.mtxt{font-size:15px;color:var(--muted)}
+.act{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;min-height:300px;justify-content:center;position:relative;overflow:hidden}
+.turn{font-size:22px}
+.turn b{font-weight:700}
+.badge{font-size:14px;color:var(--muted)}
+.die{width:84px;height:84px;background:#fbf7ec;border-radius:16px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:12px;box-shadow:0 6px 0 #cfc7b0}
+.die i{width:14px;height:14px;border-radius:50%;background:var(--night);place-self:center;visibility:hidden}
+.die i.on{visibility:visible}
+.die.small{width:52px;height:52px;padding:7px;border-radius:11px;box-shadow:0 4px 0 #cfc7b0}
+.die.small i{width:9px;height:9px}
+.die.roll{animation:shake .12s linear infinite}
+@keyframes shake{0%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
+.word{font-size:clamp(40px,7vw,68px);line-height:1.2;letter-spacing:2px;word-break:break-word;max-width:100%;transition:color .3s,text-shadow .3s}
+.word.cursive{font-family:var(--f-cursive);letter-spacing:0;font-size:clamp(32px,6vw,56px);line-height:1.6}
+.word.glow{color:var(--spell);text-shadow:0 0 18px rgba(126,224,201,.6)}
+.ring{--p:0;width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--p)*1turn),var(--line) 0);display:grid;place-items:center}
+.ring::before{content:"";width:44px;height:44px;border-radius:50%;background:var(--card);grid-area:1/1}
+.ring span{grid-area:1/1;font-weight:700;font-variant-numeric:tabular-nums;position:relative}
+.btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.hint{color:var(--muted);font-size:16px}
+.spark{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;animation:fly .9s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top h1{font-size:clamp(22px,4vw,32px);margin:0;text-align:left}
+
+/* Fin */
+.end{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.end svg{width:220px;height:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== FORMULES MAGIQUES (modifiables) ===== */
+const NIVEAUX = [
+  { nom:"Niveau 1", sous:"sons simples", mots:["lifa","moru","tapilo","rumifa","nobali","fumilé","sapuro","vilomu","pazo","lirodé","mipa","sutalo","daluri","ripo","fanulé","bulima","tomiru","nalipé","vosa","ludiko"] },
+  { nom:"Niveau 2", sous:"voyelles complexes", mots:["loupin","chonmi","fanrou","boizan","meupon","tauchin","rainfou","jandoi","moinlu","pouchan","ronvai","gaufin","choumeu","lanpoi","bintau","fouchon","nairou","voinchi","tandeu","mouvoin"] },
+  { nom:"Niveau 3", sous:"formules difficiles", mots:["plartouche","grenvillon","strampogne","brindafric","glopincheur","phrantoisel","crapouillon","trimbalaugne","flourpaigne","scrabilette","brontaflique","gripouchard","splinfaloure","trouvignol","blancrofeuil","chaprignole","frastombil","glaviontre","prouchenaille","struflandin"] }
+];
+const NB_CASES = 20;
+const COULEURS = ["var(--p1)","var(--p2)","var(--p3)","var(--p4)"];
+const COUL_HEX = ["#f2716b","#6fa8f5","#f5c451","#6fd38a"];
+
+const store = {
+  get(k,d){try{const v=localStorage.getItem("fm2_"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("fm2_"+k,JSON.stringify(v))}catch(e){}}
+};
+const S = {
+  delai: store.get("delai",5), police: store.get("police","script"), maxFioles: 10,
+  nbJ: store.get("nbJ",4),
+  joueurs: store.get("joueurs",[0,1,2,3].map(k=>({nom:"Joueur "+(k+1),niv:0}))),
+  cur:0, fioles:0, de:0, mot:"", pools:[[],[],[]], timer:null, phase:"roll"
+};
+const app = document.getElementById("app");
+
+/* ===== Voix ===== */
+let voix=null;
+function choisirVoix(){ if(!("speechSynthesis" in window))return;
+  const v=speechSynthesis.getVoices().filter(x=>/^fr/i.test(x.lang));
+  voix=v.find(x=>/fr-FR/i.test(x.lang))||v[0]||null; }
+if("speechSynthesis" in window){ choisirVoix(); speechSynthesis.onvoiceschanged=choisirVoix; }
+function dire(mot,fin){
+  let fait=false; const done=()=>{if(!fait){fait=true;fin&&fin();}};
+  if(!("speechSynthesis" in window)){setTimeout(done,300);return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(mot); u.lang="fr-FR"; u.rate=0.7; if(voix)u.voice=voix;
+  u.onend=done; u.onerror=done; speechSynthesis.speak(u); setTimeout(done,4000);
+}
+
+function melanger(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function tirerMot(niv){ if(!S.pools[niv].length) S.pools[niv]=melanger(NIVEAUX[niv].mots); return S.pools[niv].pop(); }
+
+/* ===== Dessins ===== */
+const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+function de(n,cls=""){return `<div class="die ${cls}" aria-label="Dé : ${n}">${[...Array(9)].map((_,k)=>`<i class="${PIPS[n]&&PIPS[n].includes(k)?"on":""}"></i>`).join("")}</div>`}
+function fiole(plein){return `<svg viewBox="0 0 22 30"><path d="M8 2h6v8l6 12a4 4 0 0 1-3.6 6H5.6A4 4 0 0 1 2 22l6-12z" fill="${plein?"#c58cf5":"none"}" stroke="${plein?"#c58cf5":"#3a4580"}" stroke-width="2"/></svg>`}
+const MONSTRE=`<svg class="m" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 58c-4-20 4-46 24-46s28 26 24 46l-6-5-6 5-6-5-6 5-6-5-6 5z" fill="#8fbf4a"/><path d="M18 14l-4-10 10 7zM46 14l4-10-10 7z" fill="#6d9634"/><circle cx="24" cy="28" r="7" fill="#fff"/><circle cx="40" cy="28" r="7" fill="#fff"/><circle cx="25" cy="29" r="3.5" fill="#141a3a"/><circle cx="39" cy="29" r="3.5" fill="#141a3a"/><path d="M22 42q10 8 20 0" stroke="#141a3a" stroke-width="3" fill="none"/><path d="M26 44l2 4 2-3 2 3 2-4" fill="#fff"/></svg>`;
+const GRENOUILLE=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="6" rx="16" ry="11" fill="#5fae4a"/><circle cx="-8" cy="-4" r="6" fill="#5fae4a"/><circle cx="8" cy="-4" r="6" fill="#5fae4a"/><circle cx="-8" cy="-5" r="3" fill="#fff"/><circle cx="8" cy="-5" r="3" fill="#fff"/><circle cx="-8" cy="-5" r="1.5" fill="#141a3a"/><circle cx="8" cy="-5" r="1.5" fill="#141a3a"/><path d="M-6 9q6 4 12 0" stroke="#2d5a22" stroke-width="2" fill="none"/><path d="M-7 -12l3 -7 4 5 4 -5 3 7z" fill="#f5c451"/></g>`;
+const PRINCESSE=`<svg viewBox="0 0 120 160" aria-hidden="true"><path d="M60 60L20 150h80z" fill="#c58cf5"/><circle cx="60" cy="42" r="20" fill="#f6d2b8"/><path d="M40 40q20-30 40 0q-4-18-20-20q-16 2-20 20z" fill="#8a5a2b"/><path d="M45 26l5-14 10 9 10-9 5 14z" fill="#f5c451"/><circle cx="53" cy="44" r="2.5" fill="#141a3a"/><circle cx="67" cy="44" r="2.5" fill="#141a3a"/><path d="M54 52q6 5 12 0" stroke="#b5554a" stroke-width="2.5" fill="none"/></svg>`;
+
+/* Image du plateau */
+const PLATEAU_SRC="/images/jeux/les-formules-du-sorcier.jpg";
+const CASES=[[190,855],[333,812],[493,812],[650,812],[810,812],[968,812],[972,660],[806,660],[638,660],[474,660],[305,660],[273,513],[443,513],[610,513],[775,513],[933,513],[933,362],[773,362],[610,362],[444,362],[278,362]];
+const CHATEAU=[760,250];
+const FIOLES_XY=[[1160,215],[1290,215],[1160,358],[1290,358],[1160,500],[1290,500],[1160,643],[1290,643],[1160,786],[1290,786]];
+function caseXY(n){ return n>NB_CASES ? CHATEAU : CASES[Math.max(0,n)]; }
+function plateau(){
+  let s=`<svg viewBox="0 0 1400 990" role="img" aria-label="Chemin de ${NB_CASES} cases vers le château"><image href="${PLATEAU_SRC}" x="0" y="0" width="1400" height="990"/>`;
+  // potion dans les fioles gagnées par le monstre
+  FIOLES_XY.slice(0,S.fioles).forEach(([x,y])=>{
+    s+=`<g><circle cx="${x}" cy="${y+12}" r="36" fill="#a35bf0" opacity=".85"/><circle cx="${x-12}" cy="${y}" r="9" fill="#e9d4ff" opacity=".8"/></g>`;
+  });
+  const OFF=[[-26,-26],[26,-26],[-26,26],[26,26]];
+  S.joueurs.slice(0,S.nbJ).forEach((j,k)=>{
+    const [x,y]=caseXY(Math.min(j.pos,NB_CASES+1)); const [dx,dy]=OFF[k];
+    const cur=k===S.cur&&S.phase!=="fin";
+    s+=`<g>${cur?`<circle cx="${x+dx}" cy="${y+dy}" r="29" fill="none" stroke="#7ee0c9" stroke-width="6"/>`:""}<circle cx="${x+dx}" cy="${y+dy}" r="22" fill="${COUL_HEX[k]}" stroke="#141a3a" stroke-width="4"/><text x="${x+dx}" y="${y+dy+9}" text-anchor="middle" font-size="26" font-weight="700" fill="#141a3a" font-family="Andika,sans-serif">${(j.nom.trim()[0]||k+1).toString().toUpperCase()}</text></g>`;
+  });
+  return s+`</svg>`;
+}
+
+/* ===== Accueil ===== */
+function seg(label,opts,val,k){return `<div class="opt"><span>${label}</span><span class="seg" role="group" aria-label="${label}">${opts.map(([v,l])=>`<button type="button" data-k="${k}" data-v="${v}" aria-pressed="${v==val}">${l}</button>`).join("")}</span></div>`}
+function accueil(){
+  clearInterval(S.timer); if("speechSynthesis" in window) speechSynthesis.cancel();
+  app.innerHTML=`
+    <h1>Les Formules du Sorcier</h1>
+    <p class="lead">Une méchante sorcière a transformé la princesse en grenouille. Lisez les formules magiques pour arriver au château avant que le monstre ne remplisse ses fioles !</p>
+    <div class="setup">
+      <div class="panel col">
+        <h2>Les joueurs</h2>
+        ${seg("Nombre de joueurs",[[1,"1"],[2,"2"],[3,"3"],[4,"4"]],S.nbJ,"nbJ")}
+        ${S.joueurs.slice(0,S.nbJ).map((j,k)=>`
+          <div class="prow"><span class="dot" style="background:${COULEURS[k]}"></span>
+            <input id="nom${k}" value="${j.nom.replace(/"/g,"&quot;")}" maxlength="14" aria-label="Prénom du joueur ${k+1}">
+            <select id="niv${k}" aria-label="Niveau du joueur ${k+1}">${NIVEAUX.map((n,i)=>`<option value="${i}" ${i==j.niv?"selected":""}>${n.nom}</option>`).join("")}</select>
+          </div>`).join("")}
+        <p class="hint" style="margin:0">Chaque joueur a son niveau : 1 sons simples, 2 voyelles complexes, 3 formules difficiles.</p>
+      </div>
+      <div class="col">
+        <div class="panel opts">
+          ${seg("Temps pour lire",[[3,"3 s"],[5,"5 s"],[8,"8 s"],[12,"12 s"]],S.delai,"delai")}
+          ${seg("Écriture",[["script","script"],["cursive","cursive"]],S.police,"police")}
+        </div>
+        <div class="panel">
+          <ol class="rules">
+            <li>Lance le dé.</li>
+            <li>Sur <b>2</b> ou <b>5</b>, le monstre gagne une fiole de potion.</li>
+            <li>Sinon, lis la formule magique, puis écoute-la.</li>
+            <li>Bien lue ? Avance du nombre de cases du dé.</li>
+            <li>Le premier arrivé au château sauve la princesse. Si le monstre remplit toutes ses fioles, il gagne.</li>
+          </ol>
+        </div>
+        <button type="button" class="btn main" id="go">Commencer l'aventure</button>
+      </div>
+    </div>
+    ${"speechSynthesis" in window?"":`<p class="hint" style="text-align:center">Ce navigateur ne sait pas lire à voix haute : les formules s'afficheront sans le son.</p>`}`;
+  const lire=()=>S.joueurs.slice(0,S.nbJ).forEach((j,k)=>{j.nom=document.getElementById("nom"+k).value.replace(/[<>"]/g,"").trim()||("Joueur "+(k+1)); j.niv=+document.getElementById("niv"+k).value;});
+  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{lire(); const k=b.dataset.k; S[k]=k==="police"?b.dataset.v:+b.dataset.v; store.set(k,S[k]); accueil();});
+  document.getElementById("go").onclick=()=>{lire(); store.set("joueurs",S.joueurs); nouvellePartie();};
+}
+
+/* ===== Partie ===== */
+function nouvellePartie(){
+  S.joueurs.forEach(j=>j.pos=0); S.cur=0; S.fioles=0; S.phase="roll";
+  if("speechSynthesis" in window){const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u);}
+  rendu();
+}
+function rendu(){
+  const J=S.joueurs.slice(0,S.nbJ);
+  app.innerHTML=`
+    <div class="top"><h1>Les Formules du Sorcier</h1><button type="button" class="btn" id="home">Quitter</button></div>
+    <div class="game">
+      <div class="board" id="board">${plateau()}</div>
+      <div class="side">
+        <div class="panel players">${J.map((j,k)=>`<div class="pl ${k===S.cur?"cur":""}"><span class="dot" style="background:${COULEURS[k]};width:16px;height:16px;flex:none"></span><span class="n">${j.nom}</span><small>${j.pos}/${NB_CASES}</small></div>`).join("")}</div>
+        <div class="panel monster">${MONSTRE}<div class="col" style="gap:6px"><span class="mtxt">Le monstre : ${S.fioles} / ${S.maxFioles} fioles</span><div class="fioles">${[...Array(S.maxFioles)].map((_,i)=>fiole(i<S.fioles)).join("")}</div></div></div>
+        <div class="panel act" id="act"></div>
+      </div>
+    </div>`;
+  document.getElementById("home").onclick=accueil;
+  phase();
+}
+function majPlateau(){ document.getElementById("board").innerHTML=plateau();
+  document.querySelectorAll(".pl small").forEach((s,k)=>s.textContent=S.joueurs[k].pos+"/"+NB_CASES); }
+const J=()=>S.joueurs[S.cur];
+const act=()=>document.getElementById("act");
+const entete=()=>`<div class="turn">Au tour de <b style="color:${COULEURS[S.cur]}">${J().nom}</b></div><div class="badge">${NIVEAUX[J().niv].nom} · ${NIVEAUX[J().niv].sous}</div>`;
+
+function phase(){
+  const a=act();
+  if(S.phase==="roll"){
+    a.innerHTML=`${entete()}${de(0)}<button type="button" class="btn main" id="roll">Lancer le dé</button>`;
+    document.getElementById("roll").onclick=lancer; document.getElementById("roll").focus();
+  }
+}
+function lancer(){
+  const a=act(); const fin=1+Math.random()*6|0; let t=0;
+  a.innerHTML=`${entete()}<div id="dd">${de(1,"roll")}</div><div class="hint">Le dé roule…</div>`;
+  const iv=setInterval(()=>{ document.getElementById("dd").innerHTML=de(1+Math.random()*6|0,"roll"); if(++t>8){clearInterval(iv); resultat(fin);} },90);
+}
+function resultat(n){
+  S.de=n; const a=act();
+  if(n===2||n===5){
+    S.fioles++;
+    rendu(); // met à jour les fioles
+    const b=act(); const perdu=S.fioles>=S.maxFioles;
+    b.innerHTML=`${entete()}${de(n)}<div class="turn">Oh non ! Le monstre gagne une fiole.</div><button type="button" class="btn main" id="nx">${perdu?"Voir la fin":"Joueur suivant"}</button>`;
+    document.getElementById("nx").onclick=perdu?()=>finPartie(false):suivant; document.getElementById("nx").focus();
+    return;
+  }
+  S.mot=tirerMot(J().niv);
+  a.innerHTML=`${entete()}<div style="display:flex;align-items:center;gap:12px">${de(n,"small")}<span class="hint">Lis bien la formule pour avancer de ${n} case${n>1?"s":""} !</span></div>
+    <div class="word ${S.police==="cursive"?"cursive":""}" id="word">${S.mot}</div>
+    <div class="ring" id="ring"><span id="sec">${S.delai}</span></div>
+    <div class="btns" id="btns"><button type="button" class="btn" id="skip">J'ai lu, écoute-moi !</button></div>`;
+  document.getElementById("skip").onclick=reveler;
+  const t0=performance.now(), ring=document.getElementById("ring"), sec=document.getElementById("sec");
+  S.timer=setInterval(()=>{const e=(performance.now()-t0)/1000,p=Math.min(e/S.delai,1); ring.style.setProperty("--p",p); sec.textContent=Math.max(0,Math.ceil(S.delai-e)); if(p>=1)reveler();},50);
+}
+function reveler(){
+  clearInterval(S.timer);
+  document.getElementById("ring").hidden=true;
+  document.getElementById("word").classList.add("glow");
+  const btns=document.getElementById("btns"); btns.innerHTML=`<span class="hint">Écoute la formule…</span>`;
+  dire(S.mot,()=>{
+    btns.innerHTML=`<button type="button" class="btn ok" id="oui">Oui, bien lu !</button><button type="button" class="btn no" id="non">Pas encore</button><button type="button" class="btn" id="re">Réécouter</button>`;
+    document.getElementById("oui").onclick=()=>reussi();
+    document.getElementById("non").onclick=()=>rate();
+    document.getElementById("re").onclick=()=>dire(S.mot);
+  });
+}
+function etincelles(){
+  const b=act(); for(let k=0;k<18;k++){const s=document.createElement("span");s.className="spark";s.style.left="50%";s.style.top="45%";
+    const a=Math.random()*Math.PI*2,r=70+Math.random()*110; s.style.setProperty("--dx",Math.cos(a)*r+"px");s.style.setProperty("--dy",Math.sin(a)*r+"px");
+    s.style.background=k%2?"var(--gold)":"var(--spell)"; b.appendChild(s); setTimeout(()=>s.remove(),1000);}
+}
+function reussi(){
+  etincelles();
+  const btns=document.getElementById("btns"); btns.innerHTML=`<span class="turn">La formule fonctionne ! ${J().nom} avance de ${S.de}.</span>`;
+  let pas=S.de;
+  const iv=setInterval(()=>{
+    J().pos++; pas--; majPlateau();
+    if(J().pos>NB_CASES){clearInterval(iv); setTimeout(()=>finPartie(true),600); return;}
+    if(pas<=0){clearInterval(iv);
+      btns.innerHTML=`<span class="turn">${J().nom} est sur la case ${J().pos}.</span><button type="button" class="btn main" id="nx">Joueur suivant</button>`;
+      document.getElementById("nx").onclick=suivant; document.getElementById("nx").focus();}
+  },380);
+}
+function rate(){
+  const btns=document.getElementById("btns");
+  btns.innerHTML=`<span class="turn">La formule n'a pas marché : ${J().nom} reste sur place.</span><button type="button" class="btn main" id="nx">Joueur suivant</button>`;
+  document.getElementById("nx").onclick=suivant; document.getElementById("nx").focus();
+}
+function suivant(){ S.cur=(S.cur+1)%S.nbJ; S.phase="roll"; rendu(); }
+
+function finPartie(gagne){
+  S.phase="fin"; clearInterval(S.timer);
+  app.innerHTML= gagne ? `
+    <h1>${J().nom} a sauvé la princesse !</h1>
+    <div class="end">${PRINCESSE}
+      <p class="lead">La dernière formule a brisé le sort : la grenouille redevient princesse. Bravo à toute l'équipe de sorciers !</p>
+      <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>` : `
+    <h1>Le monstre a rempli ses fioles…</h1>
+    <div class="end">${MONSTRE.replace('class="m"','class="m" style="width:140px;height:140px"')}
+      <p class="lead">La princesse reste une grenouille pour l'instant. Retentez votre chance : les formules magiques vous attendent !</p>
+      <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>`;
+  document.getElementById("again").onclick=nouvellePartie;
+  document.getElementById("home").onclick=accueil;
+}
+
+accueil();
+</script>
+
+</body></html>
