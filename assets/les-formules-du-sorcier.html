@@ -61,12 +61,21 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .side .turn{font-size:18px}
 @media (min-width:821px){
   .side .players{grid-template-columns:1fr;gap:4px}
-  .side .word{font-size:clamp(30px,3.2vw,44px)}
-  .side .word.cursive{font-size:clamp(26px,2.8vw,38px)}
 }
 .side .btn{padding:9px 13px;font-size:16px}
 .side .die{width:64px;height:64px;padding:9px}
 @media (max-width:820px){.game{grid-template-columns:1fr}}
+.boardwrap{position:relative}
+.formule{position:absolute;inset:0;display:grid;place-items:center;background:rgba(10,14,40,.55);border-radius:20px;padding:12px;animation:apparait .35s ease-out}
+.formule[hidden]{display:none!important}
+.cadre{background:linear-gradient(180deg,#2b3470,#1c2352);border:4px solid var(--gold);border-radius:24px;box-shadow:0 0 0 6px rgba(245,196,81,.25),0 18px 40px rgba(0,0,0,.5);
+  padding:clamp(14px,3vw,28px) clamp(20px,5vw,56px);text-align:center;max-width:92%}
+.cadre-t{display:block;font-family:var(--f-title);color:var(--gold);font-size:clamp(16px,2.2vw,24px);margin-bottom:4px}
+.formule .word{font-size:clamp(48px,9vw,120px);line-height:1.15;color:var(--ink)}
+.formule .word.cursive{font-size:clamp(40px,7.5vw,96px);line-height:1.5}
+.formule .word.long{font-size:clamp(34px,6vw,78px)}
+.formule .word.cursive.long{font-size:clamp(28px,5vw,64px)}
+@keyframes apparait{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 .board{border:2px solid var(--line);border-radius:20px;overflow:hidden;background:var(--night2)}
 .board svg{width:100%;height:auto;display:block}
 .side{display:flex;flex-direction:column;gap:12px}
@@ -233,7 +242,7 @@ function rendu(){
   app.innerHTML=`
     <div class="top"><h1>Les Formules du Sorcier</h1><button type="button" class="btn" id="home">Quitter</button></div>
     <div class="game">
-      <div class="board" id="board">${plateau()}</div>
+      <div class="boardwrap"><div class="board" id="board">${plateau()}</div><div class="formule" id="formule" hidden></div></div>
       <div class="side">
         <div class="panel players">${J.map((j,k)=>`<div class="pl ${k===S.cur?"cur":""}"><span class="dot" style="background:${COULEURS[k]};width:16px;height:16px;flex:none"></span><span class="n">${j.nom}</span><small>${j.pos}/${NB_CASES}</small></div>`).join("")}</div>
         <div class="panel monster">${MONSTRE}<div class="col" style="gap:6px"><span class="mtxt">Le monstre : ${S.fioles} / ${S.maxFioles} fioles</span><div class="fioles">${[...Array(S.maxFioles)].map((_,i)=>fiole(i<S.fioles)).join("")}</div></div></div>
@@ -273,9 +282,11 @@ function resultat(n){
   }
   S.mot=tirerMot(J().niv);
   a.innerHTML=`${entete()}<div style="display:flex;align-items:center;gap:12px">${de(n,"small")}<span class="hint">Lis bien la formule pour avancer de ${n} case${n>1?"s":""} !</span></div>
-    <div class="word ${S.police==="cursive"?"cursive":""}" id="word">${S.mot}</div>
     <div class="ring" id="ring"><span id="sec">${S.delai}</span></div>
     <div class="btns" id="btns"><button type="button" class="btn" id="skip">J'ai lu, écoute-moi !</button></div>`;
+  const fo=document.getElementById("formule");
+  fo.innerHTML=`<div class="cadre"><span class="cadre-t">Formule magique</span><div class="word ${S.police==="cursive"?"cursive":""} ${S.mot.length>9?"long":""}" id="word">${S.mot}</div></div>`;
+  fo.hidden=false;
   document.getElementById("skip").onclick=reveler;
   const t0=performance.now(), ring=document.getElementById("ring"), sec=document.getElementById("sec");
   S.timer=setInterval(()=>{const e=(performance.now()-t0)/1000,p=Math.min(e/S.delai,1); ring.style.setProperty("--p",p); sec.textContent=Math.max(0,Math.ceil(S.delai-e)); if(p>=1)reveler();},50);
@@ -298,6 +309,7 @@ function etincelles(){
     s.style.background=k%2?"var(--gold)":"var(--spell)"; b.appendChild(s); setTimeout(()=>s.remove(),1000);}
 }
 function reussi(){
+  cacherFormule(1200);
   etincelles();
   const btns=document.getElementById("btns"); btns.innerHTML=`<span class="turn">La formule fonctionne ! ${J().nom} avance de ${S.de}.</span>`;
   let pas=S.de;
@@ -310,10 +322,12 @@ function reussi(){
   },380);
 }
 function rate(){
+  cacherFormule(0);
   const btns=document.getElementById("btns");
   btns.innerHTML=`<span class="turn">La formule n'a pas marché : ${J().nom} reste sur place.</span><button type="button" class="btn main" id="nx">Joueur suivant</button>`;
   document.getElementById("nx").onclick=suivant; document.getElementById("nx").focus();
 }
+function cacherFormule(ms){ setTimeout(()=>{const fo=document.getElementById("formule"); if(fo){fo.hidden=true; fo.innerHTML="";}},ms); }
 function suivant(){ S.cur=(S.cur+1)%S.nbJ; S.phase="roll"; rendu(); }
 
 function finPartie(gagne){
