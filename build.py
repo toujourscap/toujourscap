@@ -40,6 +40,34 @@ def img_url(ref):
     return LOCAL_IMAGES.get(key) or (ref if ref.startswith("http") else WIX + ref)
 
 
+# Outils de lecture rapide : chacun a sa page /francais/lecture/<clé>/ et une vignette dans l'article.
+TOOLS = {
+    "tachistoscope": {
+        "title": "Le tachistoscope",
+        "desc": "Les mots apparaissent un par un : l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.",
+        "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
+        "img": "/images/outils/tachistoscope.jpg"},
+    "teleprompteur-de-lecture": {
+        "title": "Le téléprompteur de lecture",
+        "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. On peut coller son propre texte.",
+        "src": "/outils/teleprompteur-de-lecture.html", "height": 800,
+        "img": "/images/outils/teleprompteur-de-lecture.jpg"},
+    "teleprompteur-a-l-ecoute": {
+        "title": "Le téléprompteur à l'écoute",
+        "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Micro : Chrome ou Edge.",
+        "src": "/outils/teleprompteur-a-l-ecoute.html", "height": 860,
+        "img": "/images/outils/teleprompteur-a-l-ecoute.jpg"},
+}
+
+
+def tool_card(k):
+    t = TOOLS[k]
+    return f"""<a class="card" href="/francais/lecture/{k}/">
+  <div class="card-img"><img src="{t['img']}" alt="" loading="lazy"></div>
+  <div class="card-body"><h3>{esc(t['title'])}</h3><p>{esc(t['desc'])}</p><span class="link">Ouvrir l'outil →</span></div>
+</a>"""
+
+
 MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 
 
@@ -117,6 +145,8 @@ def render(n, ctx):
         return f"<figure>{fig}{f'<figcaption>{cap}</figcaption>' if cap else ''}</figure>"
     if t == "CAPTION":
         return ""
+    if t == "TOOL_CARDS":
+        return '<div class="grid tool-grid">' + "".join(tool_card(k) for k in n["tools"]) + "</div>"
     if t == "BUTTON":
         b = n.get("buttonData", {})
         url = b.get("link", {}).get("url", "#")
@@ -239,7 +269,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
-    for outil in ("le-jackpot-des-contes.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -331,6 +361,16 @@ def main():
   <p class="lead">{d}</p>
   {grid(lst)}
 </section>""", "/francais/", d))
+    article = next(p for p in posts if "tachitoscope" in p["slug"])
+    for k, t in TOOLS.items():
+        write(f"/francais/lecture/{k}/", page(t["title"], f"""<section class="wrap narrow">
+  <nav class="crumbs"><a href="/francais/">Français</a> › <a href="/francais/lecture/">Lecture</a> › <a href="/post/{article['slug']}/">Lecture rapide</a></nav>
+  <h1>{esc(t['title'])}</h1>
+  <p class="lead">{esc(t['desc'])}</p>
+  <div class="embed"><iframe src="{t['src']}" style="height:{t['height']}px" title="{esc(t['title'])}" allow="microphone; fullscreen" allowfullscreen></iframe>
+  <a class="embed-full" href="{t['src']}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
+  <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
+</section>""", "/francais/", t["desc"], t["img"]))
     maths = [p for p in posts if CATS[p["cat"]]["domain"] == "maths"]
     write("/maths/", page("Maths", f"""<section class="wrap">
   <h1>Maths</h1>

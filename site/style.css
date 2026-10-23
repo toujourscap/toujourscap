@@ -125,3 +125,7 @@ body.fond main > section.wrap, body.fond main > article.wrap { width: calc(100% 
 body.fond .hero { background: transparent; }
 body.fond .hero-inner { padding-top: 32px; padding-bottom: 32px; width: calc(100% - 32px); }
 @media (max-width: 760px) { body.fond main > section.wrap, body.fond main > article.wrap, body.fond .hero-inner { width: calc(100% - 20px); margin-top: 16px; } }
+
+/* Vignettes d'outils dans un article */
+.tool-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); margin: 24px 0; }
+.tool-grid .card-body p { font-size: .9rem; }
