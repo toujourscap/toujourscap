@@ -14,8 +14,8 @@ JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e
 
 CATS = {
     "cercle-conteur": {"name": "Cercle conteur", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
-    "lecture": {"name": "Lecture", "desc": "Jeux et outils pour lire plus vite et avec plaisir.", "domain": "francais"},
-    "numeration": {"name": "Numération", "desc": "Activités pour lire et manipuler les nombres.", "domain": "maths"},
+    "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
+    "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
 }
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
 
@@ -80,6 +80,17 @@ def ascii_slug(s):
 def fr_date(iso):
     d = datetime.fromisoformat(iso.replace("Z", "+00:00"))
     return f"{d.day} {MONTHS[d.month - 1]} {d.year}"
+
+
+def meta_desc(s, n=158):
+    """Coupe une description trop longue au dernier mot entier."""
+    s = " ".join((s or "").split())
+    if len(s) <= n:
+        return s
+    return s[:n].rsplit(" ", 1)[0].rstrip(" ,;:.") + "…"
+
+
+TOOL_CANON = {}  # page d'outil autonome -> page de référence
 
 
 def esc(s):
@@ -164,6 +175,7 @@ def render(n, ctx):
         else:
             src = "/outils/le-jackpot-des-contes.html" if h.get("url") == JACKPOT_URL else h.get("url", "")
         ctx.setdefault("tools", []).append(src)
+        TOOL_CANON.setdefault(src, (f"/post/{ctx['slug']}/", ctx.get("excerpt", "")))
         return (f'<div class="embed"><iframe src="{esc(src)}" style="height:{int(height)}px" '
                 f'title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe>'
                 f'<a class="embed-full" href="{esc(src)}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>')
@@ -183,7 +195,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
     fond = FONDS.get(active, "canopee")
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
     full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Outils pédagogiques cycle 2 : GS, CP, CE1"
-    desc = desc or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
+    desc = meta_desc(desc) or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
     og_image = og_image or DEFAULT_IMAGE
     if og_image.startswith("/"):
         og_image = SITE + og_image
@@ -294,7 +306,7 @@ def main():
 
     # Articles
     for i, p in enumerate(posts):
-        ctx = {"slug": p["slug"]}
+        ctx = {"slug": p["slug"], "excerpt": p["excerpt"]}
         content = "".join(render(n, ctx) for n in p["nodes"])
         recent = [q for q in posts if q["slug"] != p["slug"] and q["cat"] == p["cat"]][:3] or [q for q in posts if q["slug"] != p["slug"]][:3]
         cat = CATS[p["cat"]]
@@ -329,7 +341,7 @@ def main():
   <p class="lead">Contes, jeux et outils testés en classe, à utiliser librement.</p>
   {chips}
   {grid(posts)}
-</section>""", "/blog/"))
+</section>""", "/blog/", "Tous les articles de Toujours cap ! : contes pour le cercle conteur, jeux de lecture et outils de numération pour la GS, le CP et le CE1."))
     for k, v in CATS.items():
         sub = [p for p in posts if p["cat"] == k]
         chips_k = chips.replace(' active', '').replace(f'href="/blog/{k}/"', f'href="/blog/{k}/" aria-current="page"').replace(f'class="chip" href="/blog/{k}/"', f'class="chip active" href="/blog/{k}/"')
@@ -348,7 +360,7 @@ def main():
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
     subs = [("cercle-conteur", "Cercle conteur", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
-            ("lecture", "Lecture", "Des jeux et outils pour lire plus vite et avec plaisir.", lec)]
+            ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -357,7 +369,7 @@ def main():
   <h1>Français</h1>
   <p class="lead">Des activités ludiques testées et validées par nos petits écoliers.</p>
   {vignettes}
-</section>""", "/francais/"))
+</section>""", "/francais/", "Français au cycle 2 : contes à raconter en cercle conteur et outils de lecture (tachistoscope, téléprompteurs, jeux de déchiffrage) pour la GS, le CP et le CE1."))
     for k, t, d, lst in subs:
         write(f"/francais/{k}/", page(t, f"""<section class="wrap">
   <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
@@ -380,12 +392,12 @@ def main():
   <h1>Maths</h1>
   <p class="lead">Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.</p>
   {grid(maths)}
-</section>""", "/maths/"))
+</section>""", "/maths/", "Maths au cycle 2 : activités et outils de numération pour lire, dire et manipuler les nombres en GS, CP et CE1."))
     write("/divers/", page("Divers", """<section class="wrap narrow">
   <h1>Divers</h1>
   <p class="lead">Des pistes variées pour stimuler la motivation et la métacognition.</p>
   <div class="empty">Les premières ressources arrivent bientôt.</div>
-</section>""", "/divers/"))
+</section>""", "/divers/", "Pistes pour stimuler la motivation et la métacognition des élèves du cycle 2.", noindex=True), sitemap=False)
 
     write("/qui-suis-je/", page("Qui suis-je ?", """<section class="wrap narrow prose">
   <h1>Qui suis-je&nbsp;?</h1>
@@ -409,7 +421,7 @@ def main():
   <h1>Notre catalogue d'outils</h1>
   <p class="lead">Des ressources prêtes à l'emploi pour votre classe, à destination de tous mais particulièrement des élèves à besoin éducatif particulier.</p>
   {dcards}
-</section>""", "/outils-pedagogiques/"))
+</section>""", "/outils-pedagogiques/", "Catalogue d'outils pédagogiques gratuits pour le cycle 2 et l'enseignement spécialisé : lecture, contes, numération, prêts à utiliser en classe."))
 
     # Accueil
     write("/", page("Toujours cap !", f"""<section class="hero">
@@ -422,11 +434,31 @@ def main():
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
   </div>
+</section>
+<section class="wrap" style="padding-top:32px">
+  <h2 style="margin-top:0">Dernières ressources</h2>
+  {grid(posts[:6])}
+  <p><a class="btn" href="/blog/">Toutes les ressources</a></p>
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
          "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1, CE2) : lecture, contes du cercle conteur, numération."},
         {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/favicon.svg"}]),
         lastmod=max(p["date"] for p in posts)[:10])
+
+    # Outils autonomes (affichés en iframe) : description et page de référence pour Google
+    for k, t in TOOLS.items():
+        TOOL_CANON[t["src"]] = (f"/francais/lecture/{k}/", t["desc"])
+    for src, (canon, d) in TOOL_CANON.items():
+        path = os.path.join(OUT, src.strip("/"))
+        if not src.startswith("/outils/") or not os.path.exists(path):
+            continue
+        with open(path) as f:
+            h = f.read()
+        if 'rel="canonical"' not in h:
+            tags = f'<link rel="canonical" href="{SITE}{canon}">' + (f'<meta name="description" content="{esc(meta_desc(d))}">' if d else "")
+            h = h.replace("</title>", "</title>" + tags, 1) if "</title>" in h else h.replace("<head>", "<head>" + tags, 1)
+            with open(path, "w") as f:
+                f.write(h)
 
     # 404 + redirections Cloudflare
     write("/404.html", page("Page introuvable", """<section class="wrap narrow"><h1>Page introuvable</h1>
