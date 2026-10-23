@@ -372,7 +372,7 @@ def main():
     <div>
       <p class="eyebrow">GS · CP · CE1 · CE2</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
-      <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2.</p>
+      <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et de l'enseignement spécialisé.</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
