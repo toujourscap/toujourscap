@@ -97,6 +97,24 @@ main > section, main > article { padding-top: 40px; padding-bottom: 24px; }
 .embed { margin: 24px 0; }
 .embed iframe { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; display: block; }
 .embed-full { display: inline-block; margin-top: 8px; font-weight: 700; font-size: .9rem; }
+.comments { margin-top: 32px; padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.comments h2 { margin-top: 0; }
+.com { border-bottom: 1px solid var(--line); padding: 12px 0; }
+.com:last-child { border-bottom: 0; }
+.com-tete { margin: 0; color: var(--muted); font-size: .9rem; }
+.com-tete strong { color: var(--ink); }
+.com-texte { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.com-form { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+.com-form p { margin: 0; }
+.com-form label { display: grid; gap: 4px; font-weight: 600; font-size: .95rem; }
+.com-form input, .com-form textarea { font: inherit; font-weight: 400; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.com-form input:focus, .com-form textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.com-form .btn { justify-self: start; border: 0; cursor: pointer; font: inherit; font-weight: 700; }
+.com-form .btn:disabled { opacity: .6; cursor: wait; }
+.com-piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.com-etat { font-weight: 600; min-height: 1em; }
+.com-etat.ok { color: var(--accent); }
+.com-etat.err { color: #b03a14; }
 .related { border-top: 1px solid var(--line); margin-top: 24px; }
 .empty { padding: 32px; text-align: center; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); }
 
