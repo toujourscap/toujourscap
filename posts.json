@@ -3853,11 +3853,22 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Imprimez le plateau, prenez des jetons de deux couleurs et glissez-les comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent.",
+         "text": "Imprimez le plateau, prenez des jetons de deux couleurs et glissez-les comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent. Le PDF contient la règle, trois grilles (sons simples, sons complexes, groupes de consonnes), une grille vierge à compléter et des jetons à découper. Les cases mesurent 2,5 cm : imprimez à taille réelle (100 %).",
          "decorations": []
         }
        }
       ]
+     },
+     {
+      "type": "BUTTON",
+      "nodes": [],
+      "buttonData": {
+       "text": "Télécharger la version papier (PDF)",
+       "link": {
+        "url": "/fichiers/puissance-4-syllabique-version-papier.pdf",
+        "target": "BLANK"
+       }
+      }
      },
      {
       "type": "IMAGE",
