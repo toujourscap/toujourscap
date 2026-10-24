@@ -525,7 +525,10 @@ def main():
       <p class="note-accueil">Vous trouverez ici des <strong>activités variées</strong> et des <strong>jeux à pratiquer à plusieurs</strong>, le plus souvent de 2 à 4 joueurs. Tous ont été <strong>testés avec des élèves par un enseignant spécialisé</strong>, et la plupart s'impriment pour jouer sur table. Certains jeux peuvent aussi <strong>être projetés en classe pour jouer avec tous les élèves</strong>.</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
-    <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
+    <figure class="hero-cadre">
+      <img class="hero-img" src="/images/accueil/saut-toujours-cap.jpg" alt="Un enfant saute d'un ponton dans la mer, bras et jambes écartés" width="1170" height="780">
+      <figcaption>Toujours cap&nbsp;!</figcaption>
+    </figure>
   </div>
 </section>
 <section class="wrap" style="padding-top:32px">
