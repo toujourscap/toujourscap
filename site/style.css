@@ -158,3 +158,15 @@ body.fond .hero-inner { padding-top: 32px; padding-bottom: 32px; width: calc(100
 .reperes { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .82rem; color: var(--muted); margin-top: 4px; }
 .reperes .niv { font-weight: 700; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 7px; }
 .post .reperes { margin: -4px 0 20px; font-size: .9rem; }
+
+/* Section posée directement sur la photo de fond (catalogue) */
+body.fond main > section.wrap.sur-fond {
+  background: transparent; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.sur-fond > h1, .sur-fond > .lead {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .55), 0 2px 18px rgba(0, 0, 0, .45);
+}
+.sur-fond > .lead { font-weight: 500; max-width: 46ch; }
+body.fond.fond-lac-brume::before { filter: brightness(.78); }

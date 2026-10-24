@@ -499,7 +499,7 @@ def main():
   <div class="card-img"><img src="{img}" alt="" loading="lazy"></div>
   <div class="card-body"><span class="chip">{tag}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for h, tag, t, d, img in domains) + "</div>"
-    write("/outils-pedagogiques/", page("Outils pédagogiques", f"""<section class="wrap">
+    write("/outils-pedagogiques/", page("Outils pédagogiques", f"""<section class="wrap sur-fond">
   <h1>Notre catalogue d'outils</h1>
   <p class="lead">Des ressources prêtes à l'emploi pour votre classe, à destination de tous mais particulièrement des élèves à besoin éducatif particulier.</p>
   {dcards}
