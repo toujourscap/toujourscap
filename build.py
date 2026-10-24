@@ -494,6 +494,7 @@ def main():
   <p class="lead">Bienvenue sur ce site&nbsp;!</p>
   <p>Je suis enseignant spécialisé et j'occupe la fonction d'ESADP depuis quelques années.</p>
   <p>Je vous propose sur ce site minimaliste les outils que j'utilise au quotidien.</p>
+  <p>Si j'ai choisi «&nbsp;Toujours cap&nbsp;!&nbsp;», c'est que je suis profondément convaincu que la première attitude à avoir en tant qu'enseignant, c'est de <strong>croire en nos élèves</strong>&nbsp;! Une attitude très partagée chez les enseignants d'ailleurs… même si parfois ce n'est pas simple&nbsp;!</p>
   <p>N'hésitez pas à m'envoyer vos commentaires.</p>
   <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
 """ + (f"""  <aside class="don">
