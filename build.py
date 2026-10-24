@@ -460,20 +460,18 @@ def main():
       <p class="eyebrow">GS · CP · CE1 · CE2</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
       <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et de l'enseignement spécialisé.</p>
+      <ul class="atouts">
+        <li>Testés avec des élèves par un maître E</li>
+        <li>Adaptés à la pratique des maîtres E</li>
+        <li>Jeux de 2 à 4 joueurs</li>
+        <li>À imprimer pour jouer sur table</li>
+      </ul>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
   </div>
 </section>
-<section class="wrap">
-  <ul class="atouts">
-    <li><strong>Testés en classe</strong><span>Chaque activité a été expérimentée avec des élèves par un maître E.</span></li>
-    <li><strong>Pensés pour les maîtres E</strong><span>Adaptés à la prise en charge de petits groupes d'élèves en difficulté.</span></li>
-    <li><strong>De 2 à 4 joueurs</strong><span>Les jeux se pratiquent en petit groupe, à deux, trois ou quatre.</span></li>
-    <li><strong>À imprimer</strong><span>La plupart des jeux s'impriment pour jouer sur table.</span></li>
-  </ul>
-</section>
-<section class="wrap" style="padding-top:8px">
+<section class="wrap" style="padding-top:32px">
   <h2 style="margin-top:0">Dernières ressources</h2>
   {grid(posts[:6])}
   <p><a class="btn" href="/blog/">Toutes les ressources</a></p>

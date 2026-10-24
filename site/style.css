@@ -148,8 +148,7 @@ body.fond .hero-inner { padding-top: 32px; padding-bottom: 32px; width: calc(100
 .tool-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); margin: 24px 0; }
 .tool-grid .card-body p { font-size: .9rem; }
 
-/* Atouts (page d'accueil) */
-.atouts { list-style: none; padding: 0; margin: 24px 0 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-.atouts li { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 14px 18px; display: flex; flex-direction: column; gap: 4px; }
-.atouts strong { color: var(--accent); }
-.atouts span { color: var(--muted); font-size: .95rem; }
+/* Atouts (page d'accueil, dans le bandeau) */
+.atouts { list-style: none; padding: 0; margin: 0 0 1.4em; display: grid; gap: 6px; }
+.atouts li { position: relative; padding-left: 30px; font-weight: 600; }
+.atouts li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .8rem; display: grid; place-items: center; }
