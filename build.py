@@ -360,6 +360,29 @@ def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
 
+# Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
+SEO_TITRES = {
+    "/post/les-formules-du-sorcier/": "Les Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
+    "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour le cercle conteur GS-CP",
+    "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires pour la GS et le CP",
+    "/post/pourquoi-le-moustique-bourdonne-a-nos-oreilles/": "Pourquoi le moustique bourdonne à nos oreilles : conte africain GS-CP",
+    "/post/qui-de-l-oeuf-qui-du-poussin/": "Qui de l'œuf, qui du poussin ? Mythe bambara pour le cercle conteur",
+    "/post/comment-anansi-devint-le-maitre-des-histoires/": "Anansi, le maître des histoires : conte ashanti pour la GS et le CP",
+    "/post/les-calebasses-de-kouss/": "Les calebasses de Kouss : conte sénégalais de Leuk et Bouki, GS-CP",
+    "/post/rafara/": "Rafara : conte malgache pour le cercle conteur en GS et CP",
+    "/post/la-petite-poule-et-le-grain-de-mil/": "La petite poule et le grain de mil : conte en randonnée GS-CP",
+    "/post/lecture-rapide-de-nombres/": "Lecture rapide de nombres : flash nombres en ligne, cycle 2",
+    "/post/lecture-rapide-de-mots-avec-le-tachitoscope/": "Lecture rapide et fluence : tachistoscope et téléprompteurs en ligne",
+    "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes GS-CP",
+    "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
+    "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
+    "/francais/cercle-conteur/": "Cercle conteur : contes à raconter en GS et en CP",
+    "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
+    "/maths/": "Maths cycle 2 : outils de numération gratuits",
+    "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
+}
+
+
 def write(path, content, canonical=None, lastmod=None, sitemap=True):
     """Écrit une page ; `canonical` désigne la page de référence si le contenu est dupliqué ailleurs."""
     content = content.replace("__CANONICAL__", SITE + (canonical or path))
@@ -368,6 +391,10 @@ def write(path, content, canonical=None, lastmod=None, sitemap=True):
     m = re.search(r"<title>(.*?)</title>", content)
     if m and not path.endswith(".html"):
         TITRES[path] = html.unescape(m.group(1)).replace(" | Toujours cap !", "")
+    if path in SEO_TITRES:
+        t = esc(SEO_TITRES[path] + " | Toujours cap !")
+        content = re.sub(r"<title>.*?</title>", f"<title>{t}</title>", content, count=1)
+        content = re.sub(r'(<meta property="og:title" content=")[^"]*', lambda m: m.group(1) + t, content, count=1)
     full = os.path.join(OUT, path.strip("/"), "index.html") if not path.endswith(".html") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w") as f:
