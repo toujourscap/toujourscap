@@ -259,6 +259,23 @@ def card(p):
 </a>"""
 
 
+def comments(p):
+    """Section commentaires (modérés, voir functions/). Masquée par le script si le service ne répond pas."""
+    return f"""<section class="wrap narrow comments" id="commentaires" data-page="{esc(p['slug'])}" hidden>
+  <h2>Vos commentaires</h2>
+  <div class="com-liste"></div>
+  <form class="com-form">
+    <p class="muted small">Une question, une idée, un retour d'expérience en classe ? Votre message sera publié après relecture.</p>
+    <label>Prénom ou pseudo<input name="nom" maxlength="60" required autocomplete="nickname"></label>
+    <label>Message<textarea name="message" rows="5" maxlength="3000" required></textarea></label>
+    <label class="com-piege" aria-hidden="true">Site web<input name="site" tabindex="-1" autocomplete="off"></label>
+    <button class="btn" type="submit">Envoyer</button>
+    <p class="com-etat" role="status"></p>
+  </form>
+</section>
+<script src="/commentaires.js" defer></script>"""
+
+
 def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
@@ -280,6 +297,7 @@ def main():
     os.makedirs(os.path.join(OUT, "outils"))
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
+    shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html"):
@@ -317,6 +335,7 @@ def main():
   <p class="meta">{p['date_fr']} · <span class="chip">{cat['name']}</span></p>
   <div class="prose">{content}</div>
 </article>
+{comments(p)}
 <section class="wrap related">
   <h2>À lire aussi</h2>
   {grid(recent)}
@@ -477,7 +496,7 @@ def main():
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
-        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+        f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n")
     urls = "".join(f"  <url><loc>{SITE}{path}</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}</url>\n"
                    for path, lm in sorted(SITEMAP, key=lambda x: (x[0] != "/", x[0])))
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
