@@ -249,7 +249,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 <body class="fond fond-{fond}">
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="/"><span class="logo-mark">⛵</span> Toujours cap&nbsp;!</a>
+    <a class="logo" href="/"><img class="logo-mark" src="/logo.svg" alt="" width="40" height="40"> Toujours cap&nbsp;!</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="nav" onclick="this.setAttribute('aria-expanded', document.getElementById('nav').classList.toggle('open'))">Menu</button>
     <nav id="nav" class="nav">{nav}</nav>
   </div>
@@ -355,6 +355,7 @@ def main():
     os.makedirs(os.path.join(OUT, "outils"))
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
+    shutil.copy(os.path.join(ROOT, "assets", "logo.svg"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
