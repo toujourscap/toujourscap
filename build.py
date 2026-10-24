@@ -27,6 +27,16 @@ CATS = {
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
 }
+# Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
+# Dans posts.json, chaque jeu porte un champ "jeu" :
+#   {"competence": "sons-syllabes", "niveaux": ["CP"], "joueurs": "2 joueurs", "supports": ["ecran", "imprimable", "projetable"]}
+COMPETENCES = {
+    "sons-syllabes": "Sons et syllabes",
+    "mots": "Mots",
+    "phrases-textes": "Phrases et textes",
+    "fluence": "Fluence",
+}
+SUPPORTS = {"ecran": ("🖥️", "À l'écran"), "imprimable": ("🖨️", "À imprimer"), "projetable": ("📽️", "Projetable")}
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
 
 # Images rapatriées localement (identifiant Wix -> chemin sur le site)
@@ -255,15 +265,31 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 """
 
 
+def reperes(p):
+    """Niveaux, nombre de joueurs et supports d'un jeu de lecture."""
+    j = p.get("jeu")
+    if not j:
+        return ""
+    items = [f'<span class="niv">{esc(n)}</span>' for n in j.get("niveaux", [])]
+    if j.get("joueurs"):
+        items.append(f'<span>👥 {esc(j["joueurs"])}</span>')
+    items += [f'<span title="{t}">{ic} {t}</span>' for k in j.get("supports", []) for ic, t in [SUPPORTS[k]]]
+    return '<div class="reperes">' + "".join(items) + "</div>"
+
+
 def card(p):
     img = f'<img src="{esc(p["cover"])}" alt="" loading="lazy">' if p["cover"] else f'<div class="card-ph">{esc(p["title"][:1])}</div>'
     cat = CATS[p["cat"]]["name"] if p["cat"] else ""
-    return f"""<a class="card" href="/post/{p['slug']}/">
+    comp = (p.get("jeu") or {}).get("competence")
+    if comp:
+        cat = COMPETENCES[comp]
+    return f"""<a class="card" href="/post/{p['slug']}/"{f' data-comp="{comp}"' if comp else ''}>
   <div class="card-img">{img}</div>
   <div class="card-body">
     {f'<span class="chip">{cat}</span>' if cat else ''}
     <h3>{esc(p['title'])}</h3>
     <p>{esc(p['excerpt'])}</p>
+    {reperes(p)}
     <span class="muted small">{p['date_fr']}</span>
   </div>
 </a>"""
@@ -284,6 +310,21 @@ def comments(p):
   </form>
 </section>
 <script src="/commentaires.js?v={JS_V}" defer></script>"""
+
+
+FILTRES_JS = """<script>
+document.querySelectorAll('.filtres button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var f = b.dataset.f;
+    document.querySelectorAll('.filtres button').forEach(function (x) {
+      x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
+    });
+    document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
+      c.hidden = !!f && c.dataset.comp !== f;
+    });
+  });
+});
+</script>"""
 
 
 def grid(posts):
@@ -330,7 +371,7 @@ def main():
         elif os.path.exists(os.path.join(ROOT, "assets", "images", "jeux", slug + ".jpg")):
             cover = f"/images/jeux/{slug}.jpg"  # plateau du jeu
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
-                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover})
+                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": p.get("jeu")})
     posts.sort(key=lambda x: x["date"], reverse=True)
 
     # Articles
@@ -343,6 +384,7 @@ def main():
   <nav class="crumbs"><a href="/blog/">Blog</a> › <a href="/blog/{p['cat']}/">{cat['name']}</a></nav>
   <h1>{esc(p['title'])}</h1>
   <p class="meta">{p['date_fr']} · <span class="chip">{cat['name']}</span></p>
+  {reperes(p)}
   <div class="prose">{content}</div>
 </article>
 {comments(p)}
@@ -401,10 +443,20 @@ def main():
   {vignettes}
 </section>""", "/francais/", "Français au cycle 2 : contes à raconter en cercle conteur et outils de lecture (tachistoscope, téléprompteurs, jeux de déchiffrage) pour la GS, le CP et le CE1."))
     for k, t, d, lst in subs:
+        filtres = ""
+        if k == "lecture":
+            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence", "fluence")), q["title"]))
+            presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
+            if len(presentes) > 1:
+                filtres = ('<div class="chips filtres" role="group" aria-label="Filtrer par compétence">'
+                           '<button class="chip active" data-f="" aria-pressed="true">Tout</button>'
+                           + "".join(f'<button class="chip" data-f="{c}" aria-pressed="false">{COMPETENCES[c]}</button>' for c in presentes)
+                           + '</div>' + FILTRES_JS)
         write(f"/francais/{k}/", page(t, f"""<section class="wrap">
   <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
   <h1>{t}</h1>
   <p class="lead">{d}</p>
+  {filtres}
   {grid(lst)}
 </section>""", "/francais/", d))
     article = next(p for p in posts if "tachitoscope" in p["slug"])

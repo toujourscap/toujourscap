@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=12236f7a">
+<link rel="stylesheet" href="/style.css?v=2e50c007">
 </head>
 <body class="fond fond-canopee">
 <header class="site-header">
@@ -33,29 +33,45 @@
   <nav class="crumbs"><a href="/francais/">Français</a> › Lecture</nav>
   <h1>Lecture</h1>
   <p class="lead">Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.</p>
-  <div class="grid"><a class="card" href="/post/les-formules-du-sorcier/">
-  <div class="card-img"><img src="/images/jeux/les-formules-du-sorcier.jpg" alt="" loading="lazy"></div>
-  <div class="card-body">
-    <span class="chip">Lecture</span>
-    <h3>Les Formules du Sorcier</h3>
-    <p>Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le troll ne remplisse ses fioles.</p>
-    <span class="muted small">23 octobre 2026</span>
-  </div>
-</a><a class="card" href="/post/lecture-rapide-de-mots-avec-le-tachitoscope/">
-  <div class="card-img"><div class="card-ph">L</div></div>
-  <div class="card-body">
-    <span class="chip">Lecture</span>
-    <h3>Lecture rapide : tachistoscope et téléprompteurs</h3>
-    <p>Trois outils pour lire plus vite : le tachistoscope pour les mots, un téléprompteur qui fait défiler un texte, et un téléprompteur qui suit la voix de l&#x27;élève.</p>
-    <span class="muted small">21 mai 2026</span>
-  </div>
-</a><a class="card" href="/post/puissance-4-syllabiques/">
+  <div class="chips filtres" role="group" aria-label="Filtrer par compétence"><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="sons-syllabes" aria-pressed="false">Sons et syllabes</button><button class="chip" data-f="mots" aria-pressed="false">Mots</button><button class="chip" data-f="fluence" aria-pressed="false">Fluence</button></div><script>
+document.querySelectorAll('.filtres button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var f = b.dataset.f;
+    document.querySelectorAll('.filtres button').forEach(function (x) {
+      x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
+    });
+    document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
+      c.hidden = !!f && c.dataset.comp !== f;
+    });
+  });
+});
+</script>
+  <div class="grid"><a class="card" href="/post/puissance-4-syllabiques/" data-comp="sons-syllabes">
   <div class="card-img"><img src="https://static.wixstatic.com/media/5e2b25_3bc9778b15314e008890c72950529f64~mv2.png" alt="" loading="lazy"></div>
   <div class="card-body">
-    <span class="chip">Lecture</span>
+    <span class="chip">Sons et syllabes</span>
     <h3>Puissance 4 syllabique</h3>
     <p>Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l&#x27;écran, à deux ou contre l&#x27;ordinateur, ou sur papier avec des jetons de deux couleurs.</p>
+    <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 2 joueurs</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>
     <span class="muted small">27 avril 2026</span>
+  </div>
+</a><a class="card" href="/post/les-formules-du-sorcier/" data-comp="mots">
+  <div class="card-img"><img src="/images/jeux/les-formules-du-sorcier.jpg" alt="" loading="lazy"></div>
+  <div class="card-body">
+    <span class="chip">Mots</span>
+    <h3>Les Formules du Sorcier</h3>
+    <p>Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le troll ne remplisse ses fioles.</p>
+    <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 à 4 joueurs</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>
+    <span class="muted small">23 octobre 2026</span>
+  </div>
+</a><a class="card" href="/post/lecture-rapide-de-mots-avec-le-tachitoscope/" data-comp="fluence">
+  <div class="card-img"><div class="card-ph">L</div></div>
+  <div class="card-body">
+    <span class="chip">Fluence</span>
+    <h3>Lecture rapide : tachistoscope et téléprompteurs</h3>
+    <p>Trois outils pour lire plus vite : le tachistoscope pour les mots, un téléprompteur qui fait défiler un texte, et un téléprompteur qui suit la voix de l&#x27;élève.</p>
+    <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
+    <span class="muted small">21 mai 2026</span>
   </div>
 </a></div>
 </section>
