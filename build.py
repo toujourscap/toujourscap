@@ -10,6 +10,7 @@ SITE = "https://toujourscap.com"
 SITE_NAME = "Toujours cap !"
 DEFAULT_IMAGE = WIX + "5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg"
 SITEMAP = []  # (chemin, date de modification)
+TITRES = {}  # chemin → titre de la page
 
 
 def _version(nom):
@@ -262,6 +263,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
     <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! Tous droits réservés.</p>
   </div>
 </footer>
+<script>try{{navigator.sendBeacon("/api/vue",JSON.stringify({{p:location.pathname,r:document.referrer}}))}}catch(e){{}}</script>
 </body>
 </html>
 """
@@ -338,6 +340,9 @@ def write(path, content, canonical=None, lastmod=None, sitemap=True):
     content = content.replace("__CANONICAL__", SITE + (canonical or path))
     if sitemap and not canonical and not path.endswith(".html"):
         SITEMAP.append((path, lastmod))
+    m = re.search(r"<title>(.*?)</title>", content)
+    if m and not path.endswith(".html"):
+        TITRES[path] = html.unescape(m.group(1)).replace(" | Toujours cap !", "")
     full = os.path.join(OUT, path.strip("/"), "index.html") if not path.endswith(".html") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w") as f:
@@ -572,6 +577,8 @@ def main():
             redirects.append(f"/post/{quote(p['slug'])} /post/{ascii_slug(p['slug'])}/ 301")
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
+    with open(os.path.join(OUT, "titres.json"), "w") as f:  # titres des pages, pour /admin/stats
+        json.dump(TITRES, f, ensure_ascii=False)
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n")
     urls = "".join(f"  <url><loc>{SITE}{path}</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}</url>\n"
