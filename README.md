@@ -12,4 +12,6 @@ Ressources pédagogiques pour le cycle 2 (GS, CP, CE1, CE2) — https://toujours
 Les messages sont enregistrés dans une base Cloudflare D1 et n'apparaissent qu'après validation sur
 https://toujourscap.com/admin/commentaires (identifiant `admin`, mot de passe = variable `ADMIN_PASSWORD`).
 Réglages du projet Pages : liaison D1 nommée `DB` + variable secrète `ADMIN_PASSWORD`.
+Alerte e-mail à chaque nouveau commentaire (facultatif) : secret `RESEND_API_KEY` (compte resend.com)
++ variable `NOTIF_EMAIL` (adresse du compte Resend).
 La table est créée automatiquement. Tant que la base n'est pas reliée, la section reste masquée.
