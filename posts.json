@@ -3572,9 +3572,9 @@
    }
   },
   {
-   "title": "Puissance 4 syllabique ",
+   "title": "Puissance 4 syllabique",
    "slug": "puissance-4-syllabiques",
-   "excerpt": "Le jeu est facile. Il vous suffit d'imprimer ce document, d'utiliser des jetons de deux couleurs et de les glisser comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent. Le vainqueur est celui qui place 4 jetons alignés à la verticale, à l'horizontale ou en diagonale. Syllabes avec sons simples Jeux avec les sons complexes",
+   "excerpt": "Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l'écran, à deux ou contre l'ordinateur, ou sur papier avec des jetons de deux couleurs.",
    "date": "2026-04-27T11:47:49.161Z",
    "categoryIds": [],
    "media": {
@@ -3594,59 +3594,229 @@
     "nodes": [
      {
       "type": "PARAGRAPH",
-      "id": "qe926593",
       "nodes": [
        {
         "type": "TEXT",
-        "id": "",
-        "nodes": [],
         "textData": {
-         "text": "Le jeu est facile. Il vous suffit d'imprimer ce document, d'utiliser des jetons de deux couleurs et de les glisser comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent.",
+         "text": "Un Puissance 4 qui fait lire : chaque jeton lâché atterrit sur une syllabe que l'élève doit lire. Le jeu se pratique à l'écran, à deux ou contre l'ordinateur, et peut être projeté pour toute la classe. Une version papier est proposée plus bas.",
          "decorations": []
         }
        }
-      ],
-      "paragraphData": {
-       "textStyle": {
-        "textAlignment": "AUTO"
-       }
-      }
+      ]
      },
      {
-      "type": "PARAGRAPH",
-      "id": "o26p5363",
-      "nodes": [],
-      "paragraphData": {}
-     },
-     {
-      "type": "PARAGRAPH",
-      "id": "u0fyk509",
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
       "nodes": [
        {
         "type": "TEXT",
-        "id": "",
-        "nodes": [],
         "textData": {
-         "text": "Le vainqueur est celui qui place 4 jetons alignés à la verticale, à l'horizontale ou en diagonale.",
+         "text": "Comment jouer",
          "decorations": []
         }
        }
-      ],
-      "paragraphData": {
-       "textStyle": {
-        "textAlignment": "AUTO"
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir une colonne et lâcher son jeton.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lire la syllabe sur laquelle il tombe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lecture juste : le jeton reste. Lecture à revoir : le jeton est retiré, on écoute la syllabe et c'est au tour de l'autre joueur.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le premier qui aligne 4 jetons (horizontalement, verticalement ou en diagonale) gagne.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Réglages",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Trois niveaux de syllabes : sons simples, sons complexes, groupes de consonnes (bra, pli…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le jaune est joué par un deuxième enfant ou par l'ordinateur.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'ordinateur peut lire la syllabe à voix haute après 3, 5 ou 8 secondes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Chaque nouvelle partie tire un nouveau plateau.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/puissance-4-syllabique.html",
+       "containerData": {
+        "height": {
+         "custom": "1400"
+        }
        }
       }
      },
      {
-      "type": "PARAGRAPH",
-      "id": "eg93w639",
-      "nodes": [],
-      "paragraphData": {
-       "textStyle": {
-        "textAlignment": "AUTO"
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version papier",
+         "decorations": []
+        }
        }
-      }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Imprimez le plateau, prenez des jetons de deux couleurs et glissez-les comme dans le jeu Puissance 4 en lisant les syllabes sur lesquelles ils atterrissent.",
+         "decorations": []
+        }
+       }
+      ]
      },
      {
       "type": "IMAGE",
@@ -3723,12 +3893,6 @@
        },
        "caption": "Jeux avec les sons complexes"
       }
-     },
-     {
-      "type": "PARAGRAPH",
-      "id": "cvdwr685",
-      "nodes": [],
-      "paragraphData": {}
      }
     ],
     "documentStyle": {}
