@@ -11,6 +11,9 @@ SITE_NAME = "Toujours cap !"
 DEFAULT_IMAGE = WIX + "5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg"
 SITEMAP = []  # (chemin, date de modification)
 TITRES = {}  # chemin → titre de la page
+# Logo en bandeau, intégré directement dans la page pour profiter de la police Fraunces.
+LOGO_BANDEAU = re.sub(r"\s*<!--.*?-->", "", open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "logo-bandeau.svg")).read().strip()).replace(
+    '<svg ', '<svg class="logo-bandeau" aria-hidden="true" focusable="false" ', 1).replace(' role="img" aria-label="Toujours cap !"', "")
 
 
 def _version(nom):
@@ -249,7 +252,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 <body class="fond fond-{fond}">
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="/"><img class="logo-mark" src="/logo.svg" alt="" width="40" height="40"> Toujours cap&nbsp;!</a>
+    <a class="logo" href="/" aria-label="Toujours cap ! Accueil">{LOGO_BANDEAU}</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="nav" onclick="this.setAttribute('aria-expanded', document.getElementById('nav').classList.toggle('open'))">Menu</button>
     <nav id="nav" class="nav">{nav}</nav>
   </div>
