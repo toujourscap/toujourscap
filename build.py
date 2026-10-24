@@ -465,7 +465,15 @@ def main():
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
   </div>
 </section>
-<section class="wrap" style="padding-top:32px">
+<section class="wrap">
+  <ul class="atouts">
+    <li><strong>Testés en classe</strong><span>Chaque activité a été expérimentée avec des élèves par un maître E.</span></li>
+    <li><strong>Pensés pour les maîtres E</strong><span>Adaptés à la prise en charge de petits groupes d'élèves en difficulté.</span></li>
+    <li><strong>De 2 à 4 joueurs</strong><span>Les jeux se pratiquent en petit groupe, à deux, trois ou quatre.</span></li>
+    <li><strong>À imprimer</strong><span>La plupart des jeux s'impriment pour jouer sur table.</span></li>
+  </ul>
+</section>
+<section class="wrap" style="padding-top:8px">
   <h2 style="margin-top:0">Dernières ressources</h2>
   {grid(posts[:6])}
   <p><a class="btn" href="/blog/">Toutes les ressources</a></p>
