@@ -69,8 +69,8 @@ TOOLS = {
         "img": "/images/outils/tachistoscope.jpg"},
     "teleprompteur-de-lecture": {
         "title": "Lecture de petits textes",
-        "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. On peut coller son propre texte.",
-        "src": "/outils/teleprompteur-de-lecture.html", "height": 800,
+        "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
+        "src": "/outils/teleprompteur-de-lecture.html", "height": 860,
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
     "teleprompteur-a-l-ecoute": {
         "title": "Le téléprompteur à l'écoute",

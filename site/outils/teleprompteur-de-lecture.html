@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Téléprompteur de lecture</title><link rel="canonical" href="https://toujourscap.com/francais/lecture/teleprompteur-de-lecture/"><meta name="description" content="Le texte s&#x27;affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. On peut coller son propre texte.">
+<title>Téléprompteur de lecture</title><link rel="canonical" href="https://toujourscap.com/francais/lecture/teleprompteur-de-lecture/"><meta name="description" content="Le texte s&#x27;affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques…">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Lexend:wght@400;600&display=swap">
@@ -63,6 +63,10 @@ details{border:1px solid var(--line);border-radius:12px;background:var(--field)}
 summary{cursor:pointer;padding:12px 14px;font-weight:600}
 .edit{display:flex;flex-direction:column;gap:10px;padding:0 14px 14px}
 textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
+.levels{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.levels .lbl{font-size:13px;color:var(--muted);margin-right:2px}
+.levels button{font-size:15px;min-height:40px;padding:8px 14px}
+.levels button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .meta{font-size:13px;color:var(--muted)}
 .hint{font-size:13px;color:var(--muted);margin:0}
 @media (prefers-reduced-motion:reduce){.scroller{transition:none}}
@@ -71,6 +75,13 @@ textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line
 <body>
 <div class="wrap">
   <h1>Téléprompteur de lecture</h1>
+
+  <div class="levels" role="group" aria-label="Choisir un texte">
+    <span class="lbl">Texte :</span>
+    <button type="button" data-lv="1" aria-pressed="false">Niveau 1 · sons simples</button>
+    <button type="button" data-lv="2" aria-pressed="false">Niveau 2 · quelques sons complexes</button>
+    <button type="button" data-lv="3" aria-pressed="false">Niveau 3 · CE1</button>
+  </div>
 
   <div class="stage" id="stage" aria-label="Texte à lire">
     <div class="scroller" id="scroller"></div>
@@ -115,15 +126,30 @@ textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line
 
 <script>
 (function(){
-  const SAMPLE = "Le petit hérisson se réveille au fond du jardin.\nIl a faim. Il cherche des vers sous les feuilles mortes.\nUn merle passe et lui dit bonjour.\n« Où vas-tu si tôt ? » demande le merle.\n« Je vais au potager, répond le hérisson. Les fraises sont mûres ! »\nMais le potager est fermé par une grande barrière.\nLe hérisson se fait tout petit et passe dessous.\nIl trouve une fraise rouge et sucrée.\nIl la mange lentement, puis il rentre dormir sous le tas de bois.";
+  // Niveau 1 : aucun son complexe (ni ou, on, an, in, oi, ai, au, eu, et, er…).
+  // Niveau 2 : quelques sons complexes fréquents (ou, on, an, oi, ai, eau, et).
+  // Niveau 3 : texte de CE1 (graphies variées, dialogue, imparfait et passé composé).
+  const TEXTS = {
+    1: "Le vélo de Rémi\nRémi a le vélo de Papi.\nIl pédale vite sur la piste.\nLili file à côté de lui.\nTito, le petit chat, va sur le mur.\nIl a vu la pie.\nTito a raté la pie !\nIl a mal à la patte.\nLili le cajole sur le sofa.\nRémi a fini la piste : il a gagné !",
+    2: "À la rivière\nLou et son papa vont à la rivière.\nIls ont un panier avec du pain et une tomate.\nLou court sur le sable.\nElle trouve une jolie pierre plate.\nSon papa lance la pierre sur l'eau : elle fait trois ricochets !\nPuis ils mangent au bord de l'eau.\nUn poisson saute hors de l'eau. Plouf !\nLou rit : « Quelle belle journée, papa ! »",
+    3: "Le secret de la cabane\nCe matin-là, un épais brouillard recouvrait la forêt.\nNoé et sa sœur Inès avaient décidé de rejoindre leur cabane, cachée près du vieux chêne.\nEn chemin, ils ont entendu un drôle de bruit derrière les buissons.\n« Tu crois que c'est un loup ? » a chuchoté Inès, un peu inquiète.\nNoé s'est approché doucement et il a écarté les branches.\nUn jeune écureuil les regardait, une noisette entre les pattes !\nLes enfants ont éclaté de rire.\nArrivés à la cabane, ils ont découvert une surprise : quelqu'un avait déposé un panier rempli de champignons.\nQui pouvait bien connaître leur cachette ?\nIls ont promis de revenir le lendemain pour résoudre ce mystère."
+  };
+  const SAMPLE = TEXTS[1];
 
   const $ = id => document.getElementById(id);
   const stage=$("stage"), scroller=$("scroller"), band=$("band"), prog=$("prog"), count=$("count"), done=$("done");
   const play=$("play"), speed=$("speed"), size=$("size"), txt=$("txt");
 
-  let text = SAMPLE;
-  try { const saved = localStorage.getItem("tp-text"); if (saved) text = saved; } catch(e){}
+  let text = SAMPLE, level = "1";
+  try {
+    const lv = localStorage.getItem("tp-level");
+    if (lv === "perso") { const saved = localStorage.getItem("tp-text"); if (saved) { text = saved; level = "perso"; } }
+    else if (TEXTS[lv]) { text = TEXTS[lv]; level = lv; }
+  } catch(e){}
   txt.value = text;
+  const lvBtns = document.querySelectorAll(".levels button");
+  const markLevel = () => lvBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lv === level)));
+  markLevel();
 
   // spans : un par mot ; weight : durée relative du mot (les mots longs prennent un peu plus de temps)
   let spans = [], weight = [], lines = [], lineOf = [];
@@ -242,9 +268,15 @@ textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line
   size.addEventListener("input", layout);
   $("apply").addEventListener("click", ()=>{
     const v = txt.value.trim(); if (!v) return;
-    text = v; try{ localStorage.setItem("tp-text", v); }catch(e){}
+    text = v; level = "perso"; markLevel();
+    try{ localStorage.setItem("tp-text", v); localStorage.setItem("tp-level", "perso"); }catch(e){}
     stop(); done.hidden = true; render(); $("editor").open = false; stage.scrollIntoView({block:"nearest"});
   });
+  lvBtns.forEach(b => b.addEventListener("click", ()=>{
+    level = b.dataset.lv; text = TEXTS[level]; txt.value = text; markLevel();
+    try{ localStorage.setItem("tp-level", level); }catch(e){}
+    stop(); pos = 0; done.hidden = true; render();
+  }));
   $("clear").addEventListener("click", ()=>{ txt.value = ""; txt.focus(); });
   $("full").addEventListener("click", ()=>{
     try{ document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen().catch(()=>{}); }catch(e){}
