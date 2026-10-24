@@ -41,6 +41,8 @@ h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
 .w.read{color:var(--read)}
 .w.skip{color:var(--read);text-decoration:underline dotted}
 .w.cur{background:var(--band);color:var(--band-ink)}
+.w.cur.partial{box-shadow:0 .12em 0 0 var(--accent);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{filter:brightness(1.12)}}
 .fade{position:absolute;left:0;right:0;pointer-events:none}
 .fade.top{top:0;height:22%;background:linear-gradient(var(--board),transparent)}
 .fade.bottom{bottom:0;height:22%;background:linear-gradient(transparent,var(--board))}
@@ -64,7 +66,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .editbox{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:12px;background:var(--field);padding:14px}
 textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--text);font-size:18px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
 .hint{font-size:13px;color:var(--muted);margin:0}
-@media (prefers-reduced-motion:reduce){.scroller{transition:none}}
+@media (prefers-reduced-motion:reduce){.scroller{transition:none}.w.cur.partial{animation:none}}
 </style>
 
 <div class="wrap">
@@ -111,7 +113,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
   </div>
 
-  <p class="hint" id="help">L'enfant lit à voix haute : le texte avance au rythme de sa lecture. Cliquez sur un mot pour repartir de là. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
+  <p class="hint" id="help">L'enfant lit à voix haute : le texte avance au rythme de sa lecture. Il peut lire syllabe par syllabe : le mot avance dès qu'il est reconnu. Cliquez sur un mot pour repartir de là. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
 </div>
 
 <script>
@@ -125,7 +127,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   try { const s = localStorage.getItem("tpe-text"); if (s) text = s; } catch(e){}
 
   let words = [], spans = [], pos = 0, stamps = [], startT = 0, timer = 0;
-  let rec = null, listening = false, lastIdx = -1, consumed = 0;
+  let rec = null, listening = false, lastIdx = -1, consumed = 0, frags = [];
 
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
                      .replace(/[’`]/g,"'").replace(/[^a-z0-9']/g,"");
@@ -170,7 +172,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
 
   function paint(){
     spans.forEach((s,i)=>{
-      s.classList.toggle("cur", i===pos);
+      s.classList.toggle("cur", i===pos); s.classList.remove("partial");
       if (i<pos){ if(!s.classList.contains("skip")) s.classList.add("read"); }
       else s.classList.remove("read","skip");
     });
@@ -192,7 +194,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   }
 
   function setPos(i, skipped){
-    const old = pos;
+    const old = pos; frags = [];
     pos = Math.max(0, Math.min(words.length, i));
     if (skipped) for (let k=old;k<pos-1;k++) spans[k].classList.add("skip");
     if (pos>old){ const now=performance.now(); for(let k=old;k<pos;k++) stamps.push(now); if(!startT) startTimer(); }
@@ -211,11 +213,32 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   function stopTimer(){ clearInterval(timer); timer=0; }
 
   // Fait avancer le curseur avec un mot entendu : on cherche dans les 4 mots suivants.
+  // Lecture syllabée (« pe… tit… hé… ris… son ») : la reconnaissance renvoie des morceaux ;
+  // on les garde et on essaie leurs assemblages successifs sur le mot attendu.
   function hear(token){
     if (pos>=words.length) return;
     for (let k=0;k<4 && pos+k<words.length;k++){
-      if (same(token, words[pos+k])){ setPos(pos+k+1, k>0); return; }
+      // Un petit morceau (« le », « pe ») ne doit pas faire sauter des mots.
+      // Sauter des mots (mot non reconnu) : seulement sur un mot long, ou si le mot entendu
+      // juste avant correspond aussi (« au… fond » rattrape le texte, pas « daim » → « faim »).
+      if (k>0 && !(bare(token).length>=5 || same(frags[frags.length-1], words[pos+k-1]))) continue;
+      if (same(token, words[pos+k])){ frags=[]; setPos(pos+k+1, k>0); return; }
     }
+    frags.push(token); if (frags.length>8) frags.shift();
+    for (let n=Math.min(frags.length,8); n>=2; n--){
+      const joined = frags.slice(-n).join("");
+      for (let k=0;k<2 && pos+k<words.length;k++){
+        const t = bare(words[pos+k]);
+        if (same(joined, words[pos+k]) || (k===0 && t.length>=5 && lev(bare(joined), t)<=2)){ frags=[]; setPos(pos+k+1, k>0); return; }
+      }
+    }
+    // Indice visuel : les syllabes entendues commencent bien le mot attendu.
+    const t = bare(words[pos]||""), tail = bare(frags.slice(-3).join(""));
+    if (spans[pos]) spans[pos].classList.toggle("partial", t.length>tail.length && heardStart(tail, t));
+  }
+  function heardStart(h, t){
+    for (let n=Math.max(1,h.length-1); n<=Math.min(t.length,h.length+1); n++) if (lev(h, t.slice(0,n))<=1) return true;
+    return false;
   }
 
   function status(txt, cls){ $("statusTxt").textContent=txt; $("status").className="status"+(cls?" "+cls:""); }
