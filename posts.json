@@ -223,6 +223,44 @@
         }
        }
       ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version papier",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le même jeu à imprimer : plateau, règle, pions et fioles à découper, troll et princesse à faire tenir debout, et 60 cartes formules sur trois niveaux (à imprimer en recto-verso). De 2 à 4 joueurs.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BUTTON",
+      "nodes": [],
+      "buttonData": {
+       "text": "Télécharger la version papier (PDF)",
+       "link": {
+        "url": "/fichiers/les-formules-du-sorcier-version-papier.pdf",
+        "target": "BLANK"
+       }
+      }
      }
     ]
    }

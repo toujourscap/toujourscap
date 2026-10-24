@@ -281,6 +281,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
+    shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
