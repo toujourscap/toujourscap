@@ -491,7 +491,7 @@ def main():
 </section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
 
     domains = [
-        ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", WIX + "5e2b25_d4d4317cc1f7403d80f67c123bce418d~mv2.jpg"),
+        ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/langue-francaise.jpg"),
         ("/maths/", "Classe", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", WIX + "5e2b25_fb57df6fb15941d2bdae85a04ccb7d0a~mv2.jpg"),
         ("/divers/", "Pratique", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", WIX + "5e2b25_5026498380d44543a6406f09d073e840~mv2.jpg"),
     ]
