@@ -170,3 +170,11 @@ body.fond main > section.wrap.sur-fond {
 }
 .sur-fond > .lead { font-weight: 500; max-width: 46ch; }
 body.fond.fond-lac-brume::before { filter: brightness(.78); }
+
+/* Encart « Offrir un café » (page Qui suis-je ?) */
+.don { display: flex; gap: 16px; align-items: flex-start; margin: 36px 0 20px; padding: 20px 22px; background: #fdf1ea; border: 1px solid #f3d3c2; border-radius: var(--radius); }
+.don-tasse { font-size: 2.2rem; line-height: 1; }
+.prose .don h2 { margin: 0 0 .3em; font-size: 1.25rem; }
+.don p { margin: 0 0 14px; color: var(--muted); }
+.btn-don { background: var(--warm); color: #fff; }
+@media (max-width: 480px) { .don { flex-direction: column; gap: 8px; } }

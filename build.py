@@ -20,6 +20,8 @@ def _version(nom):
 
 CSS_V = _version("style.css")
 JS_V = _version("commentaires.js")
+# Lien de paiement pour l'encart « Offrir un café » (page Qui suis-je ?). Vide = encart masqué.
+DON_URL = ""
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
 
 CATS = {
@@ -488,7 +490,15 @@ def main():
   <p>Je vous propose sur ce site minimaliste les outils que j'utilise au quotidien.</p>
   <p>N'hésitez pas à m'envoyer vos commentaires.</p>
   <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
-</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
+""" + (f"""  <aside class="don">
+    <span class="don-tasse" aria-hidden="true">☕</span>
+    <div>
+      <h2>Un café pour soutenir le site&nbsp;?</h2>
+      <p>Tout est gratuit ici. Si ces outils vous rendent service, vous pouvez participer aux frais (hébergement, nom de domaine) en m'offrant un café à 1&nbsp;€.</p>
+      <a class="btn btn-don" href="{DON_URL}" target="_blank" rel="noopener">Offrir un café — 1&nbsp;€</a>
+    </div>
+  </aside>
+""" if DON_URL else "") + """</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
 
     domains = [
         ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
