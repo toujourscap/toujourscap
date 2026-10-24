@@ -188,3 +188,4 @@ body.fond.fond-lac-brume::before { filter: brightness(.78); }
 .don p { margin: 0 0 14px; color: var(--muted); }
 .btn-don { background: var(--warm); color: #fff; }
 @media (max-width: 480px) { .don { flex-direction: column; gap: 8px; } }
+.filtres-label { align-self: center; font-weight: 600; margin-right: .25rem; }
