@@ -10,6 +10,16 @@ SITE = "https://toujourscap.com"
 SITE_NAME = "Toujours cap !"
 DEFAULT_IMAGE = WIX + "5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg"
 SITEMAP = []  # (chemin, date de modification)
+
+
+def _version(nom):
+    """Empreinte du fichier, ajoutée à l'URL pour que les navigateurs prennent toujours la dernière version."""
+    import hashlib
+    return hashlib.md5(open(os.path.join(ROOT, "assets", nom), "rb").read()).hexdigest()[:8]
+
+
+CSS_V = _version("style.css")
+JS_V = _version("commentaires.js")
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
 
 CATS = {
@@ -221,7 +231,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css?v={CSS_V}">
 </head>
 <body class="fond fond-{fond}">
 <header class="site-header">
@@ -268,12 +278,12 @@ def comments(p):
     <p class="muted small">Une question, une idée, un retour d'expérience en classe ? Votre message sera publié après relecture.</p>
     <label>Prénom ou pseudo<input name="nom" maxlength="60" required autocomplete="nickname"></label>
     <label>Message<textarea name="message" rows="5" maxlength="3000" required></textarea></label>
-    <label class="com-piege" aria-hidden="true">Site web<input name="site" tabindex="-1" autocomplete="off"></label>
+    <label class="com-piege" aria-hidden="true" style="position:absolute;left:-9999px">Site web<input name="site" tabindex="-1" autocomplete="off"></label>
     <button class="btn" type="submit">Envoyer</button>
     <p class="com-etat" role="status"></p>
   </form>
 </section>
-<script src="/commentaires.js" defer></script>"""
+<script src="/commentaires.js?v={JS_V}" defer></script>"""
 
 
 def grid(posts):
