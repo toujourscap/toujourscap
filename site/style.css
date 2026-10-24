@@ -148,7 +148,6 @@ body.fond .hero-inner { padding-top: 32px; padding-bottom: 32px; width: calc(100
 .tool-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); margin: 24px 0; }
 .tool-grid .card-body p { font-size: .9rem; }
 
-/* Atouts (page d'accueil, dans le bandeau) */
-.atouts { list-style: none; padding: 0; margin: 0 0 1.4em; display: grid; gap: 6px; }
-.atouts li { position: relative; padding-left: 30px; font-weight: 600; }
-.atouts li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .8rem; display: grid; place-items: center; }
+/* Note de présentation (page d'accueil) */
+.note-accueil { max-width: 62ch; margin: 0 0 1.4em; padding: 12px 18px; border-left: 4px solid var(--warm); background: rgba(255,255,255,.55); border-radius: 0 10px 10px 0; }
+.note-accueil strong { color: var(--accent); }

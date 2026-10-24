@@ -460,12 +460,7 @@ def main():
       <p class="eyebrow">GS · CP · CE1 · CE2</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
       <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et de l'enseignement spécialisé.</p>
-      <ul class="atouts">
-        <li>Testés avec des élèves par un maître E</li>
-        <li>Adaptés à la pratique des maîtres E</li>
-        <li>Jeux de 2 à 4 joueurs</li>
-        <li>À imprimer pour jouer sur table</li>
-      </ul>
+      <p class="note-accueil">Vous trouverez ici des <strong>activités variées</strong> et des <strong>jeux à pratiquer à plusieurs</strong>, le plus souvent de 2 à 4 joueurs. Tous ont été <strong>testés avec des élèves par un enseignant spécialisé</strong>, et la plupart s'impriment pour jouer sur table.</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <img class="hero-img" src="{WIX}5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg" alt="">
