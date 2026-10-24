@@ -80,7 +80,8 @@ TOOLS = {
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
     "teleprompteur-a-l-ecoute": {
         "title": "Fluence qui s'adapte automatiquement au rythme de l'enfant",
-        "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Micro : Chrome ou Edge.",
+        "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne uniquement avec Chrome ou Edge.",
+        "note": "<strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace.",
         "src": "/outils/teleprompteur-a-l-ecoute.html", "height": 860,
         "img": "/images/outils/teleprompteur-a-l-ecoute.jpg"},
 }
@@ -477,6 +478,7 @@ def main():
   <nav class="crumbs"><a href="/francais/">Français</a> › <a href="/francais/lecture/">Lecture</a> › <a href="/post/{article['slug']}/">Lecture rapide</a></nav>
   <h1>{esc(t['title'])}</h1>
   <p class="lead">{esc(t['desc'])}</p>
+  {'<p class="note-nav" role="note">⚠️ ' + t['note'] + '</p>' if t.get('note') else ''}
   <div class="embed"><iframe src="{t['src']}" style="height:{t['height']}px" title="{esc(t['title'])}" allow="microphone; fullscreen" allowfullscreen></iframe>
   <a class="embed-full" href="{t['src']}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
