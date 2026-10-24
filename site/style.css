@@ -149,6 +149,8 @@ body.fond main > section.wrap, body.fond main > article.wrap, body.fond .hero-in
 }
 body.fond main > section.wrap, body.fond main > article.wrap { width: calc(100% - 32px); }
 body.fond .hero { background: transparent; }
+body.fond .site-footer { background: transparent; border-top: 0; color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .7), 0 0 12px rgba(0, 0, 0, .45); }
+body.fond .site-footer .muted { color: rgba(255, 255, 255, .88); }
 body.fond .hero-inner { padding-top: 32px; padding-bottom: 32px; width: calc(100% - 32px); }
 @media (max-width: 760px) { body.fond main > section.wrap, body.fond main > article.wrap, body.fond .hero-inner { width: calc(100% - 20px); margin-top: 16px; } }
 
