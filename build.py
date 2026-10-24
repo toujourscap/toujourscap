@@ -63,7 +63,7 @@ def img_url(ref):
 # Outils de lecture rapide : chacun a sa page /francais/lecture/<clé>/ et une vignette dans l'article.
 TOOLS = {
     "tachistoscope": {
-        "title": "Le tachistoscope",
+        "title": "Lecture rapide de mots",
         "desc": "Les mots apparaissent un par un : l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.",
         "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
         "img": "/images/outils/tachistoscope.jpg"},
