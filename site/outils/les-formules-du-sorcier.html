@@ -116,6 +116,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 /* Fin */
 .end{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
 .end svg{width:220px;height:auto}
+/* Scène de victoire : château féerique derrière la princesse */
+.end svg.scene{width:min(640px,100%);height:auto;border-radius:24px;border:2px solid var(--line);box-shadow:0 0 40px rgba(197,140,245,.25)}
+.scene .tw{animation:tw 2.4s ease-in-out infinite}
+.scene .tw:nth-of-type(2n){animation-delay:.8s}.scene .tw:nth-of-type(3n){animation-delay:1.6s}
+@keyframes tw{50%{opacity:.25}}
+.scene .flag{transform-box:fill-box;transform-origin:left center;animation:flag 1.6s ease-in-out infinite}
+@keyframes flag{50%{transform:skewY(8deg) scaleX(.85)}}
+.scene .drag{animation:drag 4s ease-in-out infinite}
+@keyframes drag{50%{transform:translate(-12px,-8px)}}
+.scene .prin{transform-box:fill-box;transform-origin:center bottom;animation:hop 1.8s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -330,11 +341,73 @@ function rate(){
 function cacherFormule(ms){ setTimeout(()=>{const fo=document.getElementById("formule"); if(fo){fo.hidden=true; fo.innerHTML="";}},ms); }
 function suivant(){ S.cur=(S.cur+1)%S.nbJ; S.phase="roll"; rendu(); }
 
+const SCENE_VICTOIRE=`<svg class="scene" viewBox="0 0 640 400" role="img" aria-label="La princesse devant son château, sous un arc-en-ciel">
+<defs>
+  <linearGradient id="sv-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e2550"/><stop offset=".6" stop-color="#5b3f8f"/><stop offset="1" stop-color="#e98bb0"/></linearGradient>
+  <linearGradient id="sv-mur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e8ff"/><stop offset="1" stop-color="#cbb6ee"/></linearGradient>
+  <linearGradient id="sv-toit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4f7fe0"/><stop offset="1" stop-color="#2f56b8"/></linearGradient>
+  <linearGradient id="sv-toit2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b06be0"/><stop offset="1" stop-color="#8146b8"/></linearGradient>
+  <radialGradient id="sv-halo"><stop offset="0" stop-color="#fff6c8" stop-opacity=".9"/><stop offset="1" stop-color="#fff6c8" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="640" height="400" fill="url(#sv-ciel)"/>
+<circle cx="560" cy="62" r="60" fill="url(#sv-halo)"/><circle cx="560" cy="62" r="26" fill="#fff3c4"/><circle cx="571" cy="55" r="22" fill="#5b3f8f" opacity=".35"/>
+<g fill="#fff">
+  <circle class="tw" cx="40" cy="40" r="2"/><circle class="tw" cx="120" cy="80" r="1.6"/><circle class="tw" cx="200" cy="30" r="2.2"/><circle class="tw" cx="290" cy="60" r="1.5"/>
+  <circle class="tw" cx="380" cy="24" r="2"/><circle class="tw" cx="470" cy="110" r="1.6"/><circle class="tw" cx="610" cy="140" r="1.8"/><circle class="tw" cx="80" cy="140" r="1.5"/>
+  <path class="tw" d="M160 120l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#f5c451"/><path class="tw" d="M500 170l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#7ee0c9"/><path class="tw" d="M60 220l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#fff"/>
+</g>
+<g fill="none" stroke-width="10" opacity=".75">
+  <path d="M40 330A280 230 0 0 1 600 330" stroke="#f2716b"/><path d="M50 330A270 220 0 0 1 590 330" stroke="#f5a65b"/>
+  <path d="M60 330A260 210 0 0 1 580 330" stroke="#f5c451"/><path d="M70 330A250 200 0 0 1 570 330" stroke="#6fd38a"/>
+  <path d="M80 330A240 190 0 0 1 560 330" stroke="#6fa8f5"/><path d="M90 330A230 180 0 0 1 550 330" stroke="#c58cf5"/>
+</g>
+<path d="M0 300q80-50 170-20t170-10 170 0 130 15V400H0z" fill="#3d6b52"/>
+<path d="M0 330q120-35 230-5t210 0 200-10V400H0z" fill="#4f8a5e"/>
+<g>
+  <rect x="200" y="190" width="240" height="140" fill="url(#sv-mur)"/>
+  <path d="M200 190h240v-12h-20v-10h-20v10h-20v-10h-20v10h-20v-10h-20v10h-20v-10h-20v10h-20v-10h-20v10h-20v-10h-20v10h-20z" fill="#e7dafb"/>
+  <rect x="290" y="120" width="60" height="110" fill="url(#sv-mur)"/>
+  <path d="M282 122L320 40l38 82z" fill="url(#sv-toit2)"/>
+  <rect x="160" y="150" width="54" height="180" fill="url(#sv-mur)"/><path d="M152 152l35-72 35 72z" fill="url(#sv-toit)"/>
+  <rect x="426" y="150" width="54" height="180" fill="url(#sv-mur)"/><path d="M418 152l35-72 35 72z" fill="url(#sv-toit)"/>
+  <rect x="240" y="165" width="40" height="70" fill="url(#sv-mur)"/><path d="M234 167l26-50 26 50z" fill="#f2716b"/>
+  <rect x="360" y="165" width="40" height="70" fill="url(#sv-mur)"/><path d="M354 167l26-50 26 50z" fill="#6fd38a"/>
+  <g stroke="#8a6a2b" stroke-width="2"><path d="M320 40V16M187 80V58M453 80V58M260 117V100M380 117V100"/></g>
+  <path class="flag" d="M321 16h22l-6 6 6 6h-22z" fill="#f5c451"/>
+  <path class="flag" d="M188 58h18l-5 5 5 5h-18z" fill="#f2716b"/>
+  <path class="flag" d="M454 58h18l-5 5 5 5h-18z" fill="#6fa8f5"/>
+  <path class="flag" d="M261 100h14l-4 4 4 4h-14z" fill="#c58cf5"/>
+  <path class="flag" d="M381 100h14l-4 4 4 4h-14z" fill="#7ee0c9"/>
+  <g fill="#f5c451" stroke="#8a5a2b" stroke-width="2">
+    <path d="M308 150a12 12 0 0 1 24 0v22h-24z"/><path d="M175 190a12 12 0 0 1 24 0v22h-24z"/><path d="M441 190a12 12 0 0 1 24 0v22h-24z"/>
+    <path d="M250 190a10 10 0 0 1 20 0v18h-20z"/><path d="M370 190a10 10 0 0 1 20 0v18h-20z"/>
+  </g>
+  <path d="M290 330v-50a30 30 0 0 1 60 0v50z" fill="#8a5a2b"/><path d="M320 252v78" stroke="#6b431f" stroke-width="2"/>
+  <circle cx="312" cy="300" r="2.5" fill="#f5c451"/><circle cx="328" cy="300" r="2.5" fill="#f5c451"/>
+  <g transform="translate(320 204)"><path d="M-14-12h28v14c0 10-8 16-14 19-6-3-14-9-14-19z" fill="#2f56b8" stroke="#f5c451" stroke-width="2.5"/><path d="M0-7l2.4 5 5.4.6-4 3.7 1.1 5.3L0 5l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z" fill="#f5c451"/></g>
+</g>
+<path d="M292 330q-40 40-100 70h256q-60-30-104-70z" fill="#e3c99a" opacity=".9"/>
+<g class="drag">
+  <path d="M500 120q-30-30-10-50 4 22 24 30z" fill="#6fd38a" opacity=".85"/>
+  <path d="M500 128q-24 4-36-8 18 0 30-8z" fill="#8fbf4a"/>
+  <ellipse cx="518" cy="132" rx="26" ry="14" fill="#8fbf4a"/>
+  <path d="M540 126q18-10 22-2t-8 14z" fill="#8fbf4a"/><circle cx="555" cy="125" r="2.5" fill="#141a3a"/>
+  <path d="M548 116l4-8 3 9z" fill="#f5c451"/>
+  <path d="M492 136q-26 8-34 0 12 0 20-8z" fill="#8fbf4a"/>
+  <path d="M520 120q-6-26 22-36-6 18 2 30z" fill="#7ee0c9" opacity=".9"/>
+  <path d="M565 132q8 0 14-4" stroke="#f5c451" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M565 136q10 2 16 0" stroke="#f2716b" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+<g fill="#2d5a40"><path d="M40 330l26-80 26 80z"/><path d="M90 340l20-60 20 60z"/><path d="M560 335l24-74 24 74z"/><path d="M520 345l18-54 18 54z"/></g>
+<g><circle cx="120" cy="360" r="5" fill="#f2716b"/><circle cx="140" cy="372" r="4" fill="#f5c451"/><circle cx="500" cy="365" r="5" fill="#6fa8f5"/><circle cx="525" cy="378" r="4" fill="#c58cf5"/><circle cx="470" cy="382" r="4" fill="#f5c451"/><circle cx="160" cy="385" r="4" fill="#6fa8f5"/></g>
+<ellipse cx="320" cy="300" rx="72" ry="80" fill="url(#sv-halo)"/><g transform="translate(254 225) scale(1.1)"><g class="prin">${PRINCESSE.replace(/^<svg[^>]*>|<\/svg>$/g,"")}</g></g>
+</svg>`;
+
 function finPartie(gagne){
   S.phase="fin"; clearInterval(S.timer);
   app.innerHTML= gagne ? `
     <h1>${J().nom} a sauvé la princesse !</h1>
-    <div class="end">${PRINCESSE}
+    <div class="end">${SCENE_VICTOIRE}
       <p class="lead">La dernière formule a brisé le sort : la grenouille redevient princesse. Bravo à toute l'équipe de sorciers !</p>
       <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>` : `
     <h1>Le troll a rempli ses fioles…</h1>
