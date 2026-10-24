@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Téléprompteur à l'écoute</title><link rel="canonical" href="https://toujourscap.com/francais/lecture/teleprompteur-a-l-ecoute/"><meta name="description" content="L&#x27;élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Micro : Chrome ou Edge."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Téléprompteur à l'écoute</title><link rel="canonical" href="https://toujourscap.com/francais/lecture/teleprompteur-a-l-ecoute/"><meta name="description" content="L&#x27;élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne uniquement avec Chrome ou Edge."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Lexend:wght@400;600&display=swap">
@@ -66,6 +66,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .editbox{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:12px;background:var(--field);padding:14px}
 textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--text);font-size:18px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
 .hint{font-size:13px;color:var(--muted);margin:0}
+.navwarn{margin:0;padding:10px 14px;border:2px solid var(--warn);border-radius:10px;font-weight:600;color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.scroller{transition:none}.w.cur.partial{animation:none}}
 </style>
 
@@ -74,6 +75,8 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     <h1>Téléprompteur à l'écoute</h1>
     <div class="status" id="status"><span class="dot"></span><span id="statusTxt">Micro arrêté</span></div>
   </div>
+
+  <p class="navwarn" id="navwarn" hidden>⚠️ Ce navigateur ne permet pas la reconnaissance vocale. Ouvrez cette page avec Google Chrome ou Microsoft Edge. En attendant, faites avancer le texte avec la barre d'espace ou « Mot ▶ ».</p>
 
   <div class="stage" id="stage" aria-label="Texte à lire">
     <div class="scroller" id="scroller"></div>
@@ -244,7 +247,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   function status(txt, cls){ $("statusTxt").textContent=txt; $("status").className="status"+(cls?" "+cls:""); }
 
   function start(){
-    if (!SR){ status("Reconnaissance vocale indisponible : utilisez Chrome ou Edge, ou la barre d'espace.","err"); return; }
+    if (!SR){ status("Navigateur non compatible : ouvrez la page avec Chrome ou Edge.","err"); return; }
     if (pos>=words.length) restart();
     rec = new SR(); rec.lang="fr-FR"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=1;
     lastIdx=-1; consumed=0;
@@ -296,7 +299,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     else if (e.key==="ArrowLeft"){ e.preventDefault(); $("prev").click(); }
     else if (e.key==="ArrowRight"){ e.preventDefault(); setPos(pos+1); }
   });
-  if (!SR) $("help").textContent = "Ce navigateur ne reconnaît pas la voix (Chrome ou Edge sont nécessaires). Faites avancer le texte avec la barre d'espace ou « Mot ▶ ».";
+  if (!SR){ $("navwarn").hidden = false; status("Navigateur non compatible : Chrome ou Edge requis.","err"); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   render();
 })();
