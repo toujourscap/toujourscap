@@ -75,7 +75,7 @@ TOOLS = {
         "src": "/outils/teleprompteur-de-lecture.html", "height": 860,
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
     "teleprompteur-a-l-ecoute": {
-        "title": "Le téléprompteur à l'écoute",
+        "title": "Fluence qui s'adapte automatiquement au rythme de l'enfant",
         "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Micro : Chrome ou Edge.",
         "src": "/outils/teleprompteur-a-l-ecoute.html", "height": 860,
         "img": "/images/outils/teleprompteur-a-l-ecoute.jpg"},
