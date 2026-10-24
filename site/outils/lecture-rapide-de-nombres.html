@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tachistoscope : Paramétrable avec Audio</title><link rel="canonical" href="https://toujourscap.com/post/lecture-rapide-de-nombres/"><meta name="description" content="Sélectionnez la durée d&#x27;affichage par nombre et l&#x27;intervalle, puis arrêtez lorsque l&#x27;enfant fait une erreur.">
     <style>
         body {
@@ -9,15 +10,17 @@
             background-color: #f0f8ff;
             color: #333;
             text-align: center;
-            margin-top: 50px;
+            margin: 0;
+            padding: 30px 12px;
         }
+        *, *::before, *::after { box-sizing: border-box; }
         h1 { color: #0056b3; }
         #app-container {
             background-color: white;
-            width: 80%;
+            width: 100%;
             max-width: 600px;
             margin: 0 auto;
-            padding: 30px;
+            padding: clamp(14px, 5vw, 30px);
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
@@ -38,7 +41,8 @@
         .input-number {
             font-size: 24px;
             text-align: center;
-            width: 90px;
+            width: 5.5em;
+            max-width: 40%;
             padding: 8px;
             margin: 0 10px;
             border: 2px solid #0056b3;
@@ -53,7 +57,7 @@
 
         /* Styles de la zone de jeu */
         #display-number {
-            font-size: 120px;
+            font-size: clamp(56px, 22vw, 120px);
             font-weight: bold;
             color: #0056b3;
             height: 150px;
@@ -90,6 +94,13 @@
         .hidden { display: none !important; }
         #feedback { font-size: 22px; margin-top: 20px; font-weight: bold; }
         .correct { color: #5cb85c; }
+        @media (max-width: 480px) {
+            h1 { font-size: 26px; margin: 0 0 16px; }
+            #settings-area { font-size: 17px; }
+            .setting-group { padding: 10px; }
+            .input-number { font-size: 22px; margin: 4px; }
+            button { font-size: 18px; padding: 12px 18px; margin: 10px 4px; }
+        }
         .error { color: #d9534f; }
     </style>
 </head>
@@ -118,7 +129,7 @@
 
             <button id="btn-start" onclick="demarrerJeu()">Commencer</button>
             <p style="font-size: 14px; color: #666; margin-top: 15px;">
-                <em>Assurez-vous que le son de votre ordinateur est activé.</em>
+                <em>Assurez-vous que le son de votre appareil est activé (téléphone : désactivez le mode silencieux).</em>
             </p>
         </div>
 
@@ -145,6 +156,7 @@
         let nombresPossibles = [];
         let indexCourant = 0;
         let timeoutBoucle = null;
+        let enCours = false;
 
         function genererNombres(min, max) {
             nombresPossibles = [];
@@ -162,6 +174,11 @@
             // Coupe toute voix en cours
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
+                // Sur téléphone, la voix doit être lancée une 1re fois pendant le clic
+                const amorce = new SpeechSynthesisUtterance(' ');
+                amorce.lang = 'fr-FR';
+                amorce.volume = 0;
+                window.speechSynthesis.speak(amorce);
             }
 
             const minInput = parseInt(document.getElementById('min-val').value);
@@ -188,12 +205,23 @@
             document.getElementById('btn-restart').classList.add('hidden');
             document.getElementById('btn-stop').classList.remove('hidden');
             
+            enCours = true;
             genererNombres(minInput, maxInput);
             afficherProchainNombre();
         }
 
-        function lireNombre(nombre, callback) {
+        function lireNombre(nombre, callbackOriginal) {
+            // Garantit que la suite n'est déclenchée qu'une fois, même si la voix ne répond pas
+            let fait = false;
+            const callback = () => {
+                if (fait) return;
+                fait = true;
+                clearTimeout(secours);
+                callbackOriginal();
+            };
+            const secours = setTimeout(callback, 3000);
             if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
                 const utterance = new SpeechSynthesisUtterance(nombre.toString());
                 utterance.lang = 'fr-FR'; // Voix française
                 utterance.rate = 0.9;     // Vitesse un peu ralentie pour plus de clarté
@@ -207,11 +235,13 @@
                 window.speechSynthesis.speak(utterance);
             } else {
                 // Si le navigateur ne gère pas la voix, on attend juste 1 seconde
+                clearTimeout(secours);
                 setTimeout(callback, 1000);
             }
         }
 
         function afficherProchainNombre() {
+            if (!enCours) return;
             if (indexCourant >= nombresPossibles.length) {
                 finDePartie(true);
                 return;
@@ -236,6 +266,7 @@
         }
 
         function arreterJeu() {
+            enCours = false;
             clearTimeout(timeoutBoucle);
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel(); // Coupe le son immédiatement
@@ -244,6 +275,7 @@
         }
 
         function finDePartie(reussiteTotale) {
+            enCours = false;
             document.getElementById('display-number').textContent = "";
             document.getElementById('btn-stop').classList.add('hidden');
             
