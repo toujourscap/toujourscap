@@ -177,7 +177,7 @@ const FIOLES_XY=[[1160,215],[1290,215],[1160,358],[1290,358],[1160,500],[1290,50
 function caseXY(n){ return n>NB_CASES ? CHATEAU : CASES[Math.max(0,n)]; }
 function plateau(){
   let s=`<svg viewBox="0 0 1400 990" role="img" aria-label="Chemin de ${NB_CASES} cases vers le château"><image href="${PLATEAU_SRC}" x="0" y="0" width="1400" height="990"/>`;
-  // potion dans les fioles gagnées par le monstre
+  // potion dans les fioles gagnées par le troll
   FIOLES_XY.slice(0,S.fioles).forEach(([x,y])=>{
     s+=`<g><circle cx="${x}" cy="${y+12}" r="36" fill="#a35bf0" opacity=".85"/><circle cx="${x-12}" cy="${y}" r="9" fill="#e9d4ff" opacity=".8"/></g>`;
   });
@@ -196,7 +196,7 @@ function accueil(){
   clearInterval(S.timer); if("speechSynthesis" in window) speechSynthesis.cancel();
   app.innerHTML=`
     <h1>Les Formules du Sorcier</h1>
-    <p class="lead">Une méchante sorcière a transformé la princesse en grenouille. Lisez les formules magiques pour arriver au château avant que le monstre ne remplisse ses fioles !</p>
+    <p class="lead">Une méchante sorcière a transformé la princesse en grenouille. Lisez les formules magiques pour arriver au château avant que le troll ne remplisse ses fioles !</p>
     <div class="setup">
       <div class="panel col">
         <h2>Les joueurs</h2>
@@ -216,10 +216,10 @@ function accueil(){
         <div class="panel">
           <ol class="rules">
             <li>Lance le dé.</li>
-            <li>Sur <b>2</b> ou <b>5</b>, le monstre gagne une fiole de potion.</li>
+            <li>Sur <b>2</b> ou <b>5</b>, le troll gagne une fiole de potion.</li>
             <li>Sinon, lis la formule magique, puis écoute-la.</li>
             <li>Bien lue ? Avance du nombre de cases du dé.</li>
-            <li>Le premier arrivé au château sauve la princesse. Si le monstre remplit toutes ses fioles, il gagne.</li>
+            <li>Le premier arrivé au château sauve la princesse. Si le troll remplit toutes ses fioles, il gagne.</li>
           </ol>
         </div>
         <button type="button" class="btn main" id="go">Commencer l'aventure</button>
@@ -245,7 +245,7 @@ function rendu(){
       <div class="boardwrap"><div class="board" id="board">${plateau()}</div><div class="formule" id="formule" hidden></div></div>
       <div class="side">
         <div class="panel players">${J.map((j,k)=>`<div class="pl ${k===S.cur?"cur":""}"><span class="dot" style="background:${COULEURS[k]};width:16px;height:16px;flex:none"></span><span class="n">${j.nom}</span><small>${j.pos}/${NB_CASES}</small></div>`).join("")}</div>
-        <div class="panel monster">${MONSTRE}<div class="col" style="gap:6px"><span class="mtxt">Le monstre : ${S.fioles} / ${S.maxFioles} fioles</span><div class="fioles">${[...Array(S.maxFioles)].map((_,i)=>fiole(i<S.fioles)).join("")}</div></div></div>
+        <div class="panel monster">${MONSTRE}<div class="col" style="gap:6px"><span class="mtxt">Le troll : ${S.fioles} / ${S.maxFioles} fioles</span><div class="fioles">${[...Array(S.maxFioles)].map((_,i)=>fiole(i<S.fioles)).join("")}</div></div></div>
         <div class="panel act" id="act"></div>
       </div>
     </div>`;
@@ -276,7 +276,7 @@ function resultat(n){
     S.fioles++;
     rendu(); // met à jour les fioles
     const b=act(); const perdu=S.fioles>=S.maxFioles;
-    b.innerHTML=`${entete()}${de(n)}<div class="turn">Oh non ! Le monstre gagne une fiole.</div><button type="button" class="btn main" id="nx">${perdu?"Voir la fin":"Joueur suivant"}</button>`;
+    b.innerHTML=`${entete()}${de(n)}<div class="turn">Oh non ! Le troll gagne une fiole.</div><button type="button" class="btn main" id="nx">${perdu?"Voir la fin":"Joueur suivant"}</button>`;
     document.getElementById("nx").onclick=perdu?()=>finPartie(false):suivant; document.getElementById("nx").focus();
     return;
   }
@@ -337,7 +337,7 @@ function finPartie(gagne){
     <div class="end">${PRINCESSE}
       <p class="lead">La dernière formule a brisé le sort : la grenouille redevient princesse. Bravo à toute l'équipe de sorciers !</p>
       <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>` : `
-    <h1>Le monstre a rempli ses fioles…</h1>
+    <h1>Le troll a rempli ses fioles…</h1>
     <div class="end">${MONSTRE.replace('class="m"','class="m" style="width:140px;height:140px"')}
       <p class="lead">La princesse reste une grenouille pour l'instant. Retentez votre chance : les formules magiques vous attendent !</p>
       <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>`;

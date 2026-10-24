@@ -4,7 +4,7 @@
   {
    "title": "Les Formules du Sorcier",
    "slug": "les-formules-du-sorcier",
-   "excerpt": "Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le monstre ne remplisse ses fioles.",
+   "excerpt": "Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le troll ne remplisse ses fioles.",
    "date": "2026-10-23T20:15:00.000Z",
    "categoryIds": [],
    "media": {
@@ -69,7 +69,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur 2 ou 5, le monstre gagne une fiole de potion.",
+             "text": "Sur 2 ou 5, le troll gagne une fiole de potion.",
              "decorations": []
             }
            }
@@ -120,7 +120,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le premier arrivé au château sauve la princesse. Si le monstre remplit ses 10 fioles, il gagne.",
+             "text": "Le premier arrivé au château sauve la princesse. Si le troll remplit ses 10 fioles, il gagne.",
              "decorations": []
             }
            }
