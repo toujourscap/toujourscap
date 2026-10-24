@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puissance 4 syllabique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout : un plateau bleu de Puissance 4 au centre, réglages au-dessus, zone de lecture en dessous. */
+:root{
+  --bg:#eef3fb; --ink:#1b2440; --muted:#5a6685; --panel:#ffffff; --line:#d3dcee;
+  --board:#1f54c7; --board-dk:#163f99; --hole:#f7f9ff; --hole-ink:#22305a;
+  --red:#e2342d; --red-ink:#ffffff; --yel:#f6c51c; --yel-ink:#3a2a00;
+  --ok:#1f9d55; --ko:#c2410c;
+  --f-display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --f-read:"Andika", "Comic Sans MS", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1526; --ink:#e8edf9; --muted:#9aa6c4; --panel:#18213a; --line:#2a3658;
+  --board:#2457c4; --board-dk:#1a428f; --hole:#0f1526; --hole-ink:#dce4f7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1526; --ink:#e8edf9; --muted:#9aa6c4; --panel:#18213a; --line:#2a3658;
+  --board:#2457c4; --board-dk:#1a428f; --hole:#0f1526; --hole-ink:#dce4f7; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-read);font-size:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.game{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:12px}
+@media (max-width:760px){.game{grid-template-columns:minmax(0,1fr)}.side{position:static}
+  .reader.live{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 -6px 24px rgba(0,0,0,.25)}}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,5vw,2rem);line-height:1;margin:0;text-wrap:balance;display:flex;align-items:center;gap:10px}
+h1 .dots{display:inline-flex;gap:4px}
+h1 .dots i{width:.55em;height:.55em;border-radius:50%;display:block}
+.sub{margin:4px 0 0;color:var(--muted)}
+
+.settings{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.group{display:flex;flex-direction:column;gap:6px}
+.lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{font:inherit;font-size:.9rem;border:0;background:transparent;color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--board);color:#fff;font-weight:700}
+.btn{font-family:var(--f-display);font-weight:600;font-size:1rem;border:0;border-radius:12px;padding:9px 16px;cursor:pointer;background:var(--ink);color:var(--bg)}
+button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--f-display);font-weight:600;font-size:1.25rem;min-height:2rem}
+.status .tok{width:26px;height:26px;border-radius:50%;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.score{margin-left:auto;font-size:.95rem;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;gap:12px}
+
+.boardbox{width:min(100%,calc((100vh - 150px) * 1.08));margin:0 auto;background:var(--board);border-radius:18px;padding:8px 8px 14px;box-shadow:0 10px 0 var(--board-dk)}
+.arrows,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.arrows{margin-bottom:6px}
+.arrows button{font:inherit;border:0;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;height:30px;cursor:pointer;font-size:1rem}
+.arrows button:hover:not(:disabled){background:rgba(255,255,255,.3)}
+.arrows button:disabled{opacity:.3;cursor:default}
+.cell{aspect-ratio:1;max-width:100%;border-radius:50%;background:var(--hole);display:grid;place-items:center;position:relative;cursor:pointer;
+  box-shadow:inset 0 4px 0 rgba(0,0,0,.18)}
+.cell .syl{font-size:clamp(.8rem,3.6vw,1.35rem);font-weight:700;color:var(--hole-ink);position:relative;z-index:1;letter-spacing:.01em}
+.cell.col-hover{outline:3px solid rgba(255,255,255,.5);outline-offset:1px}
+.disc{position:absolute;inset:3px;border-radius:50%;box-shadow:inset 0 -4px 0 rgba(0,0,0,.2);z-index:2;display:grid;place-items:center;
+  font-size:clamp(.8rem,3.6vw,1.35rem);font-weight:700}
+.disc.r{background:var(--red);color:var(--red-ink)}
+.disc.y{background:var(--yel);color:var(--yel-ink)}
+.disc.pending{animation:pulse 1s ease-in-out infinite}
+.disc.drop{animation:drop .45s cubic-bezier(.5,0,.75,1)}
+.disc.win{outline:4px solid #fff;outline-offset:-2px;animation:pulse .7s ease-in-out infinite}
+.disc.gone{opacity:0;transition:opacity .4s}
+@keyframes drop{from{transform:translateY(calc(var(--r) * -112%))}to{transform:translateY(0)}}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes pulse{50%{transform:scale(.9)}}
+@media (prefers-reduced-motion:reduce){.disc.drop,.disc.pending,.disc.win{animation:none}}
+
+.reader{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-height:200px;justify-content:center;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.reader .hint{color:var(--muted);margin:0}
+.reader.live{border:3px solid var(--board)}
+.big{font-size:clamp(2.8rem,12vw,4.5rem);font-weight:700;line-height:1;min-height:1em;letter-spacing:.02em}
+.bar{width:min(240px,100%);height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--board)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.actions .btn.ok{background:var(--ok);color:#fff}
+.actions .btn.ko{background:var(--ko);color:#fff}
+.actions .btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.opts{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.9rem;flex-wrap:wrap}
+.rules{color:var(--muted);font-size:.92rem;line-height:1.5;max-width:65ch}
+.rules b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="dots"><i style="background:var(--red)"></i><i style="background:var(--yel)"></i></span>Puissance 4 syllabique</h1>
+    <p class="sub">Glisse ton jeton, lis la syllabe où il tombe. 4 jetons alignés pour gagner.</p>
+  </header>
+
+  <div class="game">
+  <div class="boardcol">
+  <div class="status" aria-live="polite">
+    <span class="tok" id="stTok"></span><span id="stTxt"></span>
+    <span class="score"><span>Rouge <b id="scR">0</b></span><span>Jaune <b id="scY">0</b></span></span>
+  </div>
+
+  <div class="boardbox">
+    <div class="arrows" id="arrows"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+  </div>
+  <aside class="side">
+  <section class="reader" id="reader">
+    <p class="hint" id="rHint">Choisis une colonne pour lâcher ton jeton.</p>
+    <div class="big" id="rSyl"></div>
+    <div class="bar" id="rBar" hidden><i id="rBarI"></i></div>
+    <div class="actions" id="rAct" hidden>
+      <button class="btn ghost" id="bListen">🔊 Écouter</button>
+      <button class="btn ok" id="bOk">Bien lu ✓</button>
+      <button class="btn ko" id="bKo">À revoir ✗</button>
+    </div>
+  </section>
+  <div class="settings">
+    <div class="group">
+      <span class="lbl" id="lvl-l">Syllabes</span>
+      <div class="seg" role="group" aria-labelledby="lvl-l" id="levels">
+        <button id="lv1" data-lv="1" aria-pressed="true">Sons simples</button>
+        <button id="lv2" data-lv="2" aria-pressed="false">Sons complexes</button>
+        <button id="lv3" data-lv="3" aria-pressed="false">Groupes (bra, pli…)</button>
+      </div>
+    </div>
+    <div class="group">
+      <span class="lbl" id="mode-l">Jaune joué par</span>
+      <div class="seg" role="group" aria-labelledby="mode-l" id="modes">
+        <button id="m2" data-m="2" aria-pressed="true">Un 2ᵉ enfant</button>
+        <button id="m1" data-m="1" aria-pressed="false">L'ordinateur</button>
+      </div>
+    </div>
+    <button class="btn" id="newgame">Nouvelle partie</button>
+    <label class="opts"><input type="checkbox" id="autoRead" checked> L'ordinateur lit la syllabe après
+      <select id="delay"><option value="3">3 s</option><option value="5" selected>5 s</option><option value="8">8 s</option></select></label>
+
+  </div>
+
+  </aside>
+  </div>
+
+  <p class="rules"><b>Règle.</b> Chaque joueur lâche un jeton dans une colonne et lit la syllabe sur laquelle il atterrit. Lecture juste : le jeton reste. Lecture à revoir : le jeton est retiré et c'est au tour de l'autre. Le premier qui aligne 4 jetons (horizontal, vertical ou diagonale) gagne. Chaque nouvelle partie tire un nouveau plateau.</p>
+</div>
+
+<script>
+const ROWS=6, COLS=7;
+const V1=["a","i","o","u","é","e"], C1=["m","l","r","s","f","v","p","t","d","b","n","j"];
+const L1=[]; C1.forEach(c=>V1.forEach(v=>L1.push(c+v)));
+const L2=["cou","mou","sou","lou","pou","tou","fou","rou","chou","mon","ton","son","bon","ron","pon","man","pan","ran","tan","lan","van","dan","pin","vin","lin","fin","sin","moi","toi","roi","loi","poi","soi","cha","che","chi","cho","chu","feu","peu","deu","jeu","lai","mai","rai","tai","vai","sau","pau","mau","beau","peau","veau","gna","gno","oin","pain","main","bain"];
+const L3=["bra","bri","bro","tra","tri","tro","pla","pli","plu","cla","cli","clo","gra","gri","gro","fra","fri","fro","dra","dri","bla","blo","cra","cri","cru","pra","pri","pro","gla","glo","flu","fla","vra","vri","al","ar","il","ir","or","ol","ur","ul","es","ab","ac","ip"];
+const LISTS={1:L1,2:L2,3:L3};
+
+let level=1, mode=2, board, syl, turn, pending=null, over=false, score={r:0,y:0}, timers=[];
+const $=id=>document.getElementById(id);
+const grid=$("grid"), arrows=$("arrows");
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function pickSyls(){const src=LISTS[level];let out=[];while(out.length<ROWS*COLS)out=out.concat(shuffle(src));return out.slice(0,ROWS*COLS)}
+
+function clearTimers(){timers.forEach(clearTimeout);timers.forEach(clearInterval);timers=[];}
+
+function newGame(){
+  clearTimers(); try{speechSynthesis.cancel()}catch(e){}
+  const s=pickSyls(); syl=[];board=[];
+  for(let r=0;r<ROWS;r++){syl.push(s.slice(r*COLS,r*COLS+COLS));board.push(Array(COLS).fill(null))}
+  turn="r"; pending=null; over=false;
+  render(); setStatus(); resetReader();
+}
+
+function render(){
+  arrows.innerHTML="";
+  for(let c=0;c<COLS;c++){
+    const b=document.createElement("button");b.textContent="▼";b.id="col"+c;
+    b.setAttribute("aria-label","Lâcher dans la colonne "+(c+1));
+    b.disabled=over||pending||lowest(c)<0||(mode===1&&turn==="y");
+    b.onclick=()=>play(c);
+    b.onmouseenter=()=>hl(c,true);b.onmouseleave=()=>hl(c,false);
+    arrows.appendChild(b);
+  }
+  grid.innerHTML="";
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const d=document.createElement("div");d.className="cell";d.dataset.c=c;d.dataset.r=r;
+    d.innerHTML='<span class="syl">'+syl[r][c]+'</span>';
+    const o=board[r][c];
+    if(o){const k=document.createElement("div");k.className="disc "+o;k.textContent=syl[r][c];d.appendChild(k)}
+    if(pending&&pending.r===r&&pending.c===c){
+      const k=document.createElement("div");k.className="disc "+pending.p+" drop";k.style.setProperty("--r",r+1);k.textContent=syl[r][c];
+      k.addEventListener("animationend",()=>{k.classList.remove("drop");k.classList.add("pending")},{once:true});
+      d.appendChild(k);
+    }
+    d.onclick=()=>{if(!arrows.children[c].disabled)play(c)};
+    d.onmouseenter=()=>hl(c,true);d.onmouseleave=()=>hl(c,false);
+    grid.appendChild(d);
+  }
+}
+function hl(c,on){if(over||pending)on=false;grid.querySelectorAll('.cell[data-c="'+c+'"]').forEach(e=>e.classList.toggle("col-hover",on))}
+function lowest(c){for(let r=ROWS-1;r>=0;r--)if(!board[r][c]&&!(pending&&pending.r===r&&pending.c===c))return r;return -1}
+
+function setStatus(txt){
+  $("stTok").style.background=turn==="r"?"var(--red)":"var(--yel)";
+  $("stTxt").textContent=txt||(turn==="r"?"Rouge : choisis une colonne":(mode===1?"L'ordinateur joue…":"Jaune : choisis une colonne"));
+  $("scR").textContent=score.r;$("scY").textContent=score.y;
+}
+function resetReader(){
+  $("reader").classList.remove("live");
+  $("rHint").textContent=over?"Partie terminée.":"Clique sur une colonne pour lâcher ton jeton.";
+  $("rSyl").textContent="";$("rAct").hidden=true;$("rBar").hidden=true;
+}
+
+function speak(t){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=.75;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("fr"));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}
+}
+
+function play(c){
+  if(over||pending)return;
+  const r=lowest(c);if(r<0)return;
+  pending={r,c,p:turn};
+  render();
+  const s=syl[r][c];
+  $("reader").classList.add("live");
+  $("rSyl").textContent=s;$("rSyl").style.color=turn==="r"?"var(--red)":"var(--ink)";
+  if(mode===1&&turn==="y"){
+    $("rHint").textContent="L'ordinateur lit :";$("rAct").hidden=true;$("rBar").hidden=true;
+    timers.push(setTimeout(()=>speak(s),600));
+    timers.push(setTimeout(()=>validate(true),2200));
+    return;
+  }
+  $("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", lis cette syllabe :";
+  $("rAct").hidden=false;
+  if($("autoRead").checked){
+    const secs=+$("delay").value, t0=Date.now();$("rBar").hidden=false;$("rBarI").style.width="0";
+    const iv=setInterval(()=>{const p=Math.min(1,(Date.now()-t0)/(secs*1000));$("rBarI").style.width=(p*100)+"%";if(p>=1){clearInterval(iv);speak(s)}},100);
+    timers.push(iv);
+  }
+}
+
+function validate(ok){
+  if(!pending)return;
+  clearTimers();
+  const {r,c,p}=pending;
+  if(ok){
+    board[r][c]=p;pending=null;
+    const line=winLine(r,c,p);
+    if(line){over=true;score[p]++;render();line.forEach(([rr,cc])=>{const d=grid.children[rr*COLS+cc].querySelector(".disc");if(d)d.classList.add("win")});
+      setStatus(p==="r"?"Rouge gagne !":(mode===1?"L'ordinateur gagne !":"Jaune gagne !"));resetReader();
+      return}
+    if(board[0].every(x=>x)){over=true;render();setStatus("Plateau plein : match nul");resetReader();return}
+    turn=p==="r"?"y":"r";render();setStatus();resetReader();
+  }else{
+    const d=grid.children[r*COLS+c].querySelector(".disc.pending,.disc.drop");if(d)d.classList.add("gone");
+    $("rHint").textContent="Le jeton est retiré. On écoute ensemble :";$("rAct").hidden=true;$("rBar").hidden=true;
+    speak(syl[r][c]);
+    timers.push(setTimeout(()=>{pending=null;turn=p==="r"?"y":"r";render();setStatus();resetReader();aiMaybe()},1600));
+    return;
+  }
+  aiMaybe();
+}
+
+function winLine(r,c,p){
+  for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]]){
+    let cells=[[r,c]];
+    for(const s of [1,-1]){let rr=r+dr*s,cc=c+dc*s;while(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&board[rr][cc]===p){cells.push([rr,cc]);rr+=dr*s;cc+=dc*s}}
+    if(cells.length>=4)return cells;
+  }return null;
+}
+
+function aiMaybe(){
+  if(over||mode!==1||turn!=="y")return;
+  timers.push(setTimeout(()=>play(aiChoose()),700));
+}
+function aiChoose(){
+  const free=[...Array(COLS).keys()].filter(c=>lowest(c)>=0);
+  for(const p of ["y","r"])for(const c of free){const r=lowest(c);board[r][c]=p;const w=winLine(r,c,p);board[r][c]=null;if(w)return c}
+  const safe=free.filter(c=>{const r=lowest(c);if(r<1)return true;board[r][c]="y";board[r-1][c]="r";const w=winLine(r-1,c,"r");board[r-1][c]=null;board[r][c]=null;return !w});
+  const pool=safe.length?safe:free;
+  const w=pool.map(c=>({c,s:4-Math.abs(3-c)+Math.random()*2.5}));w.sort((a,b)=>b.s-a.s);return w[0].c;
+}
+
+function bindSeg(id,attr,set){$(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
+  $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));set(+b.dataset[attr]);newGame()})}
+bindSeg("levels","lv",v=>level=v);
+bindSeg("modes","m",v=>mode=v);
+$("newgame").onclick=newGame;
+$("bOk").onclick=()=>validate(true);
+$("bKo").onclick=()=>validate(false);
+$("bListen").onclick=()=>pending&&speak(syl[pending.r][pending.c]);
+try{speechSynthesis.getVoices()}catch(e){}
+newGame();
+</script>
+</body>
+</html>
