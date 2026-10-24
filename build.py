@@ -493,7 +493,7 @@ def main():
     domains = [
         ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/langue-francaise.jpg"),
         ("/maths/", "Classe", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
-        ("/divers/", "Pratique", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", WIX + "5e2b25_5026498380d44543a6406f09d073e840~mv2.jpg"),
+        ("/divers/", "Pratique", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
     dcards = '<div class="grid">' + "".join(f"""<a class="card" href="{h}">
   <div class="card-img"><img src="{img}" alt="" loading="lazy"></div>
