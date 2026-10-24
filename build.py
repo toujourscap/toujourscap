@@ -71,26 +71,46 @@ TOOLS = {
     "tachistoscope": {
         "title": "Lecture rapide de mots",
         "desc": "Les mots apparaissent un par un : l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.",
+        "seo": "Tachistoscope en ligne gratuit : lecture rapide de mots CP-CE1",
+        "niveaux": ["CP", "CE1"], "maj": "2026-10-23",
         "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
         "img": "/images/outils/tachistoscope.jpg"},
     "teleprompteur-de-lecture": {
         "title": "Fluence sur 3 niveaux de texte du CP au CE1",
         "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
+        "seo": "Téléprompteur de lecture en ligne : fluence CP-CE1",
+        "niveaux": ["CP", "CE1"], "maj": "2026-10-24",
         "src": "/outils/teleprompteur-de-lecture.html", "height": 860,
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
     "teleprompteur-a-l-ecoute": {
         "title": "Fluence qui s'adapte automatiquement au rythme de l'enfant",
         "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne uniquement avec Chrome ou Edge.",
         "note": "<strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace.",
+        "seo": "Fluence CP-CE1 avec reconnaissance vocale : lecture à voix haute",
+        "niveaux": ["CP", "CE1"], "maj": "2026-10-24",
         "src": "/outils/teleprompteur-a-l-ecoute.html", "height": 860,
         "img": "/images/outils/teleprompteur-a-l-ecoute.jpg"},
 }
 
 
+def tool_ld(k, t):
+    """Données structurées d'une page d'outil : ressource pédagogique + fil d'Ariane."""
+    url = f"{SITE}/francais/lecture/{k}/"
+    crumbs = [("Français", "/francais/"), ("Lecture", "/francais/lecture/"), (t["title"], f"/francais/lecture/{k}/")]
+    return [{"@context": "https://schema.org", "@type": "LearningResource", "name": t["title"],
+             "description": t["desc"], "url": url, "inLanguage": "fr-FR", "image": SITE + t["img"],
+             "learningResourceType": "Outil interactif", "educationalLevel": t.get("niveaux", []),
+             "audience": {"@type": "EducationalAudience", "educationalRole": "teacher"},
+             "teaches": "Lecture", "isAccessibleForFree": True, **({"dateModified": t["maj"]} if t.get("maj") else {}),
+             "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"}},
+            {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
+
+
 def tool_card(k):
     t = TOOLS[k]
     return f"""<a class="card" href="/francais/lecture/{k}/">
-  <div class="card-img"><img src="{t['img']}" alt="" loading="lazy"></div>
+  <div class="card-img"><img src="{t['img']}" alt="{esc(t['title'])}" loading="lazy"></div>
   <div class="card-body"><h3>{esc(t['title'])}</h3><p>{esc(t['desc'])}</p><span class="link">Ouvrir l'outil →</span></div>
 </a>"""
 
@@ -179,6 +199,7 @@ def render(n, ctx):
             if c.get("type") == "CAPTION":
                 cap = children(c, ctx)
         cap = cap or esc(alt)
+        alt = alt or html.unescape(re.sub(r"<[^>]+>", "", cap))  # à défaut, la légende sert de texte alternatif
         fig = f'<img src="{esc(src)}" alt="{esc(alt)}" loading="lazy">'
         return f"<figure>{fig}{f'<figcaption>{cap}</figcaption>' if cap else ''}</figure>"
     if t == "CAPTION":
@@ -286,7 +307,7 @@ def reperes(p):
 
 
 def card(p):
-    img = f'<img src="{esc(p["cover"])}" alt="" loading="lazy">' if p["cover"] else f'<div class="card-ph">{esc(p["title"][:1])}</div>'
+    img = f'<img src="{esc(p["cover"])}" alt="{esc(p["title"])}" loading="lazy">' if p["cover"] else f'<div class="card-ph">{esc(p["title"][:1])}</div>'
     cat = CATS[p["cat"]]["name"] if p["cat"] else ""
     comp = (p.get("jeu") or {}).get("competence")
     if comp:
@@ -446,7 +467,7 @@ def main():
     subs = [("cercle-conteur", "Cercle conteur", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
             ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
-  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
+  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for k, t, d, lst in subs) + "</div>"
     write("/francais/", page("Français", f"""<section class="wrap">
@@ -474,7 +495,7 @@ def main():
 </section>""", "/francais/", d))
     article = next(p for p in posts if "tachitoscope" in p["slug"])
     for k, t in TOOLS.items():
-        write(f"/francais/lecture/{k}/", page(t["title"], f"""<section class="wrap narrow">
+        write(f"/francais/lecture/{k}/", page(t.get("seo", t["title"]), f"""<section class="wrap narrow">
   <nav class="crumbs"><a href="/francais/">Français</a> › <a href="/francais/lecture/">Lecture</a> › <a href="/post/{article['slug']}/">Lecture rapide</a></nav>
   <h1>{esc(t['title'])}</h1>
   <p class="lead">{esc(t['desc'])}</p>
@@ -482,7 +503,7 @@ def main():
   <div class="embed"><iframe src="{t['src']}" style="height:{t['height']}px" title="{esc(t['title'])}" allow="microphone; fullscreen" allowfullscreen></iframe>
   <a class="embed-full" href="{t['src']}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
-</section>""", "/francais/", t["desc"], t["img"]))
+</section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
     maths = [p for p in posts if CATS[p["cat"]]["domain"] == "maths"]
     write("/maths/", page("Maths", f"""<section class="wrap">
   <h1>Maths</h1>
@@ -519,7 +540,7 @@ def main():
         ("/divers/", "Pratique", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
     dcards = '<div class="grid">' + "".join(f"""<a class="card" href="{h}">
-  <div class="card-img"><img src="{img}" alt="" loading="lazy"></div>
+  <div class="card-img"><img src="{img}" alt="{esc(t)}" loading="lazy"></div>
   <div class="card-body"><span class="chip">{tag}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for h, tag, t, d, img in domains) + "</div>"
     write("/outils-pedagogiques/", page("Outils pédagogiques", f"""<section class="wrap sur-fond">
@@ -587,7 +608,8 @@ def main():
         json.dump(TITRES, f, ensure_ascii=False)
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n")
-    urls = "".join(f"  <url><loc>{SITE}{path}</loc>{f'<lastmod>{lm}</lastmod>' if lm else ''}</url>\n"
+    defaut = max(p["date"] for p in posts)[:10]
+    urls = "".join(f"  <url><loc>{SITE}{path}</loc><lastmod>{lm or defaut}</lastmod></url>\n"
                    for path, lm in sorted(SITEMAP, key=lambda x: (x[0] != "/", x[0])))
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
