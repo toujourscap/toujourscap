@@ -68,7 +68,7 @@ TOOLS = {
         "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
         "img": "/images/outils/tachistoscope.jpg"},
     "teleprompteur-de-lecture": {
-        "title": "Le téléprompteur de lecture",
+        "title": "Lecture de petits textes",
         "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. On peut coller son propre texte.",
         "src": "/outils/teleprompteur-de-lecture.html", "height": 800,
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
