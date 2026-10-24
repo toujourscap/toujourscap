@@ -263,6 +263,19 @@
       }
      }
     ]
+   },
+   "jeu": {
+    "competence": "mots",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 à 4 joueurs",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
+    ]
    }
   },
   {
@@ -3569,6 +3582,17 @@
      }
     ],
     "documentStyle": {}
+   },
+   "jeu": {
+    "competence": "fluence",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
    }
   },
   {
@@ -3896,6 +3920,19 @@
      }
     ],
     "documentStyle": {}
+   },
+   "jeu": {
+    "competence": "sons-syllabes",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "2 joueurs",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
+    ]
    }
   }
  ]
