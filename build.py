@@ -70,7 +70,7 @@ TOOLS = {
         "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
         "img": "/images/outils/tachistoscope.jpg"},
     "teleprompteur-de-lecture": {
-        "title": "Lecture de petits textes",
+        "title": "Fluence sur 3 niveaux de texte du CP au CE1",
         "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
         "src": "/outils/teleprompteur-de-lecture.html", "height": 860,
         "img": "/images/outils/teleprompteur-de-lecture.jpg"},
