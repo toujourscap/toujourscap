@@ -24,6 +24,7 @@
   --board:#2457c4; --board-dk:#1a428f; --hole:#0f1526; --hole-ink:#dce4f7; color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-read);font-size:16px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
 .wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
@@ -85,13 +86,20 @@ button:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 .opts{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.9rem;flex-wrap:wrap}
 .rules{color:var(--muted);font-size:.92rem;line-height:1.5;max-width:65ch}
 .rules b{color:var(--ink)}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fs{font-family:var(--f-display);font-weight:600;font-size:.95rem;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:7px 14px;cursor:pointer;white-space:nowrap}
+.fs:hover{border-color:var(--board)}
+:fullscreen body{overflow:auto}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
+    <div>
     <h1><span class="dots"><i style="background:var(--red)"></i><i style="background:var(--yel)"></i></span>Puissance 4 syllabique</h1>
     <p class="sub">Glisse ton jeton, lis la syllabe où il tombe. 4 jetons alignés pour gagner.</p>
+    </div>
+    <button class="fs" id="bFs" hidden>⛶ Plein écran</button>
   </header>
 
   <div class="game">
@@ -290,6 +298,18 @@ $("bKo").onclick=()=>validate(false);
 $("bListen").onclick=()=>pending&&speak(syl[pending.r][pending.c]);
 try{speechSynthesis.getVoices()}catch(e){}
 newGame();
+
+// Plein écran (pour projeter en classe)
+(function(){
+  const d=document, el=d.documentElement, b=$("bFs");
+  const req=el.requestFullscreen||el.webkitRequestFullscreen;
+  if(!req||!(d.fullscreenEnabled||d.webkitFullscreenEnabled))return;
+  const cur=()=>d.fullscreenElement||d.webkitFullscreenElement;
+  const upd=()=>{b.textContent=cur()?"✕ Quitter le plein écran":"⛶ Plein écran"};
+  b.hidden=false;
+  b.onclick=()=>{try{cur()?(d.exitFullscreen||d.webkitExitFullscreen).call(d):req.call(el)}catch(e){}};
+  d.addEventListener("fullscreenchange",upd);d.addEventListener("webkitfullscreenchange",upd);
+})();
 </script>
 </body>
 </html>
