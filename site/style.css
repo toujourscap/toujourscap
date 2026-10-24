@@ -60,11 +60,10 @@ main > section, main > article { padding-top: 40px; padding-bottom: 24px; }
 .hero-cadre { position: relative; margin: 0; }
 .hero-cadre .hero-img { width: 100%; height: auto; object-position: 55% center; }
 .hero-cadre figcaption {
-  position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 20px 18px;
-  border-radius: 0 0 24px 24px; text-align: center; color: #fff;
+  position: absolute; left: 0; right: 0; top: 0; padding: 16px 20px 0;
+  text-align: center; color: var(--warm);
   font: 700 clamp(1.8rem, 4.5vw, 2.6rem)/1.1 "Fraunces", Georgia, serif;
-  background: linear-gradient(180deg, rgba(10, 30, 45, 0), rgba(10, 30, 45, .6));
-  text-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+  text-shadow: 0 0 2px #fff, 0 0 6px #fff, 0 0 14px rgba(255, 255, 255, .9);
 }
 .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-weight: 700; font-size: .8rem; color: var(--warm); margin: 0 0 .5em; }
 @media (max-width: 760px) { .hero-inner { grid-template-columns: 1fr; } .hero-img { max-height: 320px; width: 100%; } }
