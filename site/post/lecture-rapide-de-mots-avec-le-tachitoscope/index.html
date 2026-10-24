@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css?v=16b5f9eb">
 </head>
 <body class="fond fond-cascade">
 <header class="site-header">
@@ -53,12 +53,12 @@
     <p class="muted small">Une question, une idée, un retour d'expérience en classe ? Votre message sera publié après relecture.</p>
     <label>Prénom ou pseudo<input name="nom" maxlength="60" required autocomplete="nickname"></label>
     <label>Message<textarea name="message" rows="5" maxlength="3000" required></textarea></label>
-    <label class="com-piege" aria-hidden="true">Site web<input name="site" tabindex="-1" autocomplete="off"></label>
+    <label class="com-piege" aria-hidden="true" style="position:absolute;left:-9999px">Site web<input name="site" tabindex="-1" autocomplete="off"></label>
     <button class="btn" type="submit">Envoyer</button>
     <p class="com-etat" role="status"></p>
   </form>
 </section>
-<script src="/commentaires.js" defer></script>
+<script src="/commentaires.js?v=b88c640e" defer></script>
 <section class="wrap related">
   <h2>À lire aussi</h2>
   <div class="grid"><a class="card" href="/post/les-formules-du-sorcier/">
