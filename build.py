@@ -450,7 +450,8 @@ def main():
             lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence", "fluence")), q["title"]))
             presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
             if len(presentes) > 1:
-                filtres = ('<div class="chips filtres" role="group" aria-label="Filtrer par compétence">'
+                filtres = ('<div class="chips filtres" role="group" aria-label="Trier par compétence">'
+                           '<span class="filtres-label">Trier par :</span>'
                            '<button class="chip active" data-f="" aria-pressed="true">Tout</button>'
                            + "".join(f'<button class="chip" data-f="{c}" aria-pressed="false">{COMPETENCES[c]}</button>' for c in presentes)
                            + '</div>' + FILTRES_JS)
