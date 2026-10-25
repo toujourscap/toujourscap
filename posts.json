@@ -1,6 +1,417 @@
 {
- "count": 17,
+ "count": 19,
  "posts": [
+  {
+   "title": "Le puzzle du château des nombres",
+   "slug": "le-puzzle-du-chateau-des-nombres",
+   "excerpt": "Le tableau des nombres est découpé en morceaux de puzzle au hasard : il faut les remettre à leur place pour reconstruire le château. À l'écran ou imprimé.",
+   "date": "2026-10-25T17:45:00.000Z",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur, en binôme ou la classe",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le tableau des nombres du château est découpé en blocs de nombres, comme des pièces de puzzle. Pour reconstruire le château, il faut comprendre comment le tableau est organisé : les dizaines changent d'une ligne à l'autre, les unités d'une colonne à l'autre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir les nombres (0 à 29, 0 à 49 ou 0 à 99), la taille des pièces et l'aide affichée dans le château vide.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Faire glisser chaque pièce à sa place dans le château, à la souris ou au doigt sur une tablette ou un TBI.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bonne place : la pièce se fixe. Mauvaise place : elle tremble et retourne dans le bac.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Quand tout est posé, les drapeaux se lèvent : le château est reconstruit !",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le découpage est différent à chaque partie. Avec l'aide « Colonne des dizaines », les nombres 0, 10, 20… restent visibles comme repères ; « Aucune » est le niveau le plus difficile.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le bouton « Imprimer » donne deux pages : les pièces à découper en suivant les traits épais, et le château vide pour les coller. Le découpage imprimé est celui affiché à l'écran.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-puzzle-du-chateau.html",
+       "containerData": {
+        "height": {
+         "custom": "1080"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "title": "Le château des nombres",
+   "slug": "le-chateau-des-nombres",
+   "excerpt": "Un nombre sort du tableau des nombres de 0 à 99 : l'élève le lit à voix haute puis vérifie en l'écoutant. Ou l'inverse : l'ordinateur dit un nombre, l'élève le retrouve dans le château.",
+   "date": "2026-10-25T17:40:00.000Z",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le tableau des nombres de 0 à 99 devient un château. Un nombre en sort : il faut le lire. Un jeu pour reconnaître rapidement les nombres et se repérer dans le tableau.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le jeu, l'intervalle des nombres (par exemple de 0 à 39 en début de CP) et le nombre de tours.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un nombre sort du château, grossi et en couleur : l'élève le lit à voix haute.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le bouton « Écouter » fait dire le nombre par l'ordinateur : l'élève vérifie sa lecture.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il valide lui-même : « Bien lu » ou « À revoir ». La case se colore en vert ou en orange dans le château.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "À la fin, les nombres à revoir sont listés et peuvent être rejoués tout de suite.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'autre jeu : trouver le nombre",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'ordinateur dit un nombre à l'oral, l'élève le retrouve et clique dessus dans le château. Après deux erreurs, le bon nombre est montré.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour aller plus loin",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Cocher « Cacher les autres nombres » : le château est vide, seul le nombre qui sort apparaît. Pour trouver un nombre, il faut alors se repérer avec les lignes (dizaines) et les colonnes (unités).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Au clavier : flèche droite ou Entrée = Bien lu, flèche gauche = À revoir, Espace = Écouter.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-chateau-des-nombres.html",
+       "containerData": {
+        "height": {
+         "custom": "860"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "La Course des Multiplications",
    "slug": "la-course-des-multiplications",

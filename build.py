@@ -262,7 +262,9 @@ NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/f
 
 
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
-         "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
+         "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99 en jouant, CP-CE1",
+    "/post/le-puzzle-du-chateau-des-nombres/": "Puzzle du tableau des nombres 0-99 en ligne et à imprimer, CP-CE1",
+    "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
 
 
 def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
@@ -452,7 +454,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))

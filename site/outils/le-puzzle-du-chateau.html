@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le puzzle du château des nombres</title><link rel="canonical" href="https://toujourscap.com/post/le-puzzle-du-chateau-des-nombres/"><meta name="description" content="Le tableau des nombres est découpé en morceaux de puzzle au hasard : il faut les remettre à leur place pour reconstruire le château. À l&#x27;écran ou imprimé.">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ciel1:#bfe6ff; --ciel2:#eaf7ff; --encre:#1f2a44; --carte:#fff;
+    --ok:#2fb35a; --ko:#e2483d; --accent:#ff9f1c;
+    --pierre:#efe6d2; --pierre2:#e2d5b9; --trait:#3d3428;
+    --c:44px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{font-family:"Andika",system-ui,sans-serif;color:var(--encre);
+    background:linear-gradient(var(--ciel1),var(--ciel2));min-height:100vh;overflow-x:hidden}
+  h1{margin:.4em 0 .2em;text-align:center;font-size:clamp(1.6rem,4vw,2.4rem)}
+  .ecran{display:none;padding:10px 12px}
+  .ecran.actif{display:block}
+
+  /* ---------- Réglages ---------- */
+  .reglages{background:var(--carte);border-radius:20px;padding:18px 24px;max-width:640px;margin:10px auto;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  .ligne{margin:14px 0}
+  .ligne .titre{display:block;font-weight:700;margin-bottom:6px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px}
+  .choix label{display:flex;align-items:center;gap:6px;background:#f1f5f9;border:2px solid #dbe3ec;border-radius:12px;padding:8px 14px;cursor:pointer;font-size:1.05rem}
+  .choix input{width:20px;height:20px;margin:0}
+  .choix label:has(input:checked){background:#fff4e0;border-color:var(--accent)}
+  .coche{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:1.05rem}
+  .coche input{width:22px;height:22px}
+  .note{font-size:.95rem;opacity:.75;margin:4px 2px 0}
+  .btn{font:inherit;font-weight:700;font-size:1.25rem;border:none;border-radius:14px;padding:12px 24px;cursor:pointer;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+  .btn-go{background:var(--accent);color:#fff}
+  .btn-bleu{background:#3a86ff;color:#fff}
+  .btn-gris{background:#e7ecf2;color:var(--encre);font-size:1rem;padding:8px 16px}
+  .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+
+  /* ---------- Barre du jeu ---------- */
+  .barre{display:flex;justify-content:center;align-items:center;gap:10px 18px;flex-wrap:wrap;min-height:44px}
+  .compte{font-size:1.3rem;font-weight:700}
+
+  /* ---------- Château ---------- */
+  .aire{position:relative;margin:6px auto 0;display:flex;gap:20px;align-items:flex-start;justify-content:center}
+  .aire.empile{flex-direction:column;align-items:center;gap:14px}
+  .chateau{display:flex;align-items:stretch;justify-content:center;width:max-content;margin-top:calc(var(--c)*.85);position:relative;flex:none}
+  .tour{width:calc(var(--c)*1.7);background:var(--pierre);border:3px solid var(--trait);position:relative;z-index:1}
+  .merlons{position:absolute;left:-3px;right:-3px;bottom:100%;height:calc(var(--c)*.7);display:flex;justify-content:space-between;pointer-events:none}
+  .merlons i{display:block;width:calc(var(--c)*.42);height:100%;background:var(--pierre);border:3px solid var(--trait);border-bottom:none;margin-bottom:-3px}
+  .fenetre{position:absolute;left:50%;top:calc(var(--c)*1.1);width:calc(var(--c)*.48);height:calc(var(--c)*.75);transform:translateX(-50%);
+    background:#2b2a3a;border:3px solid var(--trait);border-radius:999px 999px 4px 4px}
+  .meurtriere{position:absolute;left:50%;top:58%;width:calc(var(--c)*.16);height:calc(var(--c)*1.05);transform:translateX(-50%);background:#2b2a3a;border-radius:3px}
+  .caillou{position:absolute;background:var(--pierre2);border:2px solid var(--trait);border-radius:40%}
+  .drapeau{position:absolute;left:50%;bottom:calc(100% + var(--c)*.7);width:3px;height:0;background:var(--trait);transition:height .9s cubic-bezier(.3,1.4,.6,1)}
+  .drapeau::after{content:"";position:absolute;left:3px;top:0;width:calc(var(--c)*.8);height:calc(var(--c)*.5);background:var(--ko);
+    clip-path:polygon(0 0,100% 50%,0 100%);transform-origin:left;animation:flotte 1s ease-in-out infinite alternate;opacity:0;transition:opacity .3s .5s}
+  .chateau.victoire .drapeau{height:calc(var(--c)*1.1)}
+  .chateau.victoire .drapeau::after{opacity:1}
+  @keyframes flotte{to{transform:scaleX(.82) skewY(4deg)}}
+  .milieu{display:flex;flex-direction:column;align-items:center;margin:0 -3px}
+  .banniere{margin:calc(var(--c)*.05) 0 calc(var(--c)*.9);padding:calc(var(--c)*.12) calc(var(--c)*.5);background:#fff8e3;border:3px solid var(--trait);
+    border-radius:10px;font-weight:700;font-size:calc(var(--c)*.5);line-height:1.15;white-space:nowrap;box-shadow:3px 3px 0 var(--trait);transform:rotate(-1deg)}
+  .corps{flex:1;background:var(--pierre);border:3px solid var(--trait);position:relative;padding:calc(var(--c)*.3);display:flex;align-items:flex-end;justify-content:center}
+  .grille{display:grid;grid-template-columns:repeat(10,var(--c));grid-auto-rows:var(--c);background:#fff;border:3px solid var(--trait)}
+  .case{display:flex;align-items:center;justify-content:center;border:1px solid #b9b2a8;font-size:calc(var(--c)*.42);color:transparent;user-select:none}
+  .grille.aide-dizaines .case.diz{color:#9a9086;font-weight:700}
+  .grille.aide-filigrane .case{color:#cfc8bd}
+  .grille.aide-filigrane .case.diz{font-weight:700}
+
+  /* ---------- Bac et pièces ---------- */
+  .bac{position:relative;flex:none;margin-top:26px;border:3px dashed rgba(61,52,40,.35);border-radius:16px;background:rgba(255,255,255,.35)}
+  .bac-titre{position:absolute;top:-1.4em;left:12px;font-weight:700;font-size:1rem;opacity:.7}
+  .piece{position:absolute;left:0;top:0;pointer-events:none;z-index:10;filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));transition:filter .15s}
+  .piece.anim{transition:left .35s ease,top .35s ease,filter .15s}
+  .piece.tenue{filter:drop-shadow(0 10px 12px rgba(0,0,0,.35))}
+  .piece.posee{z-index:5;filter:none}
+  .piece.faux{animation:secoue .4s}
+  @keyframes secoue{20%,60%{translate:-6px 0}40%,80%{translate:6px 0}}
+  .pc{position:absolute;width:var(--c);height:var(--c);display:flex;align-items:center;justify-content:center;
+    font-size:calc(var(--c)*.42);color:var(--encre);pointer-events:auto;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  .piece.tenue .pc{cursor:grabbing}
+  .piece.posee .pc{pointer-events:none;cursor:default}
+  .pc.diz{font-weight:700}
+
+  /* ---------- Fin ---------- */
+  .fin{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(31,42,68,.35);z-index:200;padding:16px}
+  .fin.actif{display:flex}
+  .fin-boite{background:#fff;border-radius:22px;padding:22px 28px;max-width:480px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .fin-boite h2{margin:.1em 0;font-size:2rem}
+  .fin-boite p{font-size:1.2rem;margin:8px 0}
+  .stars{font-size:2.4rem;letter-spacing:6px}
+  .confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:300;pointer-events:none;animation:tombe linear forwards}
+  @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+
+  /* ---------- Impression ---------- */
+  #impression{display:none}
+  @media print{
+    @page{size:A4 landscape;margin:10mm}
+    body{background:#fff}
+    body > *:not(#impression){display:none!important}
+    #impression{display:block;--c:12.5mm}
+    #impression .page{break-after:page;display:flex;flex-direction:column;align-items:center}
+    #impression .page:last-child{break-after:auto}
+    #impression h2{font-size:13pt;margin:0 0 2mm}
+    #impression .chateau{margin-top:9mm;break-inside:avoid}
+    #impression .banniere{box-shadow:none}
+    #impression *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .decoupe{border-collapse:collapse}
+    .decoupe td{width:12.5mm;height:12.5mm;padding:0;text-align:center;font-size:15pt;font-family:"Andika",sans-serif}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Réglages ===== -->
+<section class="ecran actif" id="ecranReglages">
+  <h1>🧩 Le puzzle du château</h1>
+  <div class="reglages">
+    <div class="ligne">
+      <span class="titre">Nombres</span>
+      <div class="choix">
+        <label><input type="radio" name="lignes" value="3"> 0 à 29</label>
+        <label><input type="radio" name="lignes" value="5"> 0 à 49</label>
+        <label><input type="radio" name="lignes" value="10" checked> 0 à 99</label>
+      </div>
+    </div>
+    <div class="ligne">
+      <span class="titre">Taille des pièces</span>
+      <div class="choix">
+        <label><input type="radio" name="taille" value="grandes"> Grandes (peu de pièces)</label>
+        <label><input type="radio" name="taille" value="moyennes" checked> Moyennes</label>
+        <label><input type="radio" name="taille" value="petites"> Petites (beaucoup de pièces)</label>
+      </div>
+    </div>
+    <div class="ligne">
+      <span class="titre">Aide dans le château vide</span>
+      <div class="choix">
+        <label><input type="radio" name="aide" value="aucune"> Aucune</label>
+        <label><input type="radio" name="aide" value="dizaines" checked> Colonne des dizaines</label>
+        <label><input type="radio" name="aide" value="filigrane"> Tous les nombres en clair</label>
+      </div>
+    </div>
+    <div class="ligne">
+      <label class="coche"><input type="checkbox" id="sons" checked> Sons</label>
+      <p class="note">Le découpage change à chaque partie. La version imprimée donne une feuille de pièces à découper et le château vide pour les coller.</p>
+    </div>
+    <div class="actions">
+      <button class="btn btn-go" id="go">Commencer le puzzle ▶</button>
+      <button class="btn btn-gris" id="imprimer1">🖨️ Imprimer un puzzle</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Jeu ===== -->
+<section class="ecran" id="ecranJeu">
+  <div class="barre">
+    <span class="compte" id="compte">0 / 0 pièces</span>
+    <button class="btn btn-gris" id="btnReglages">⚙️ Réglages</button>
+    <button class="btn btn-gris" id="btnNouveau">🔀 Nouveau découpage</button>
+    <button class="btn btn-gris" id="imprimer2">🖨️ Imprimer</button>
+  </div>
+  <div class="aire" id="aire">
+    <div class="chateau" id="chateau">
+      <div class="tour g"><div class="merlons"><i></i><i></i><i></i></div><div class="drapeau"></div><div class="fenetre"></div><div class="meurtriere"></div></div>
+      <div class="milieu">
+        <div class="banniere">Le château des nombres</div>
+        <div class="corps"><div class="merlons"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="grille" id="grille"></div></div>
+      </div>
+      <div class="tour d"><div class="merlons"><i></i><i></i><i></i></div><div class="drapeau"></div><div class="fenetre"></div><div class="meurtriere"></div></div>
+    </div>
+    <div class="bac" id="bac"><span class="bac-titre">Les pièces</span></div>
+  </div>
+</section>
+
+<div class="fin" id="fin">
+  <div class="fin-boite">
+    <div class="stars" id="finEtoiles"></div>
+    <h2>Le château est reconstruit&nbsp;!</h2>
+    <p id="finTexte"></p>
+    <div class="actions">
+      <button class="btn btn-bleu" id="finNouveau">🔀 Nouveau puzzle</button>
+      <button class="btn btn-gris" id="finReglages">⚙️ Réglages</button>
+    </div>
+  </div>
+</div>
+
+<div id="impression"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const TAILLES = { grandes:[8,12], moyennes:[5,8], petites:[3,5] };
+  const COULEURS = ["#ffadad","#ffd6a5","#fdffb6","#caffbf","#9bf6ff","#a0c4ff","#bdb2ff","#ffc6ff",
+                    "#ffcfd2","#b9fbc0","#f1c0e8","#cfbaf0","#a3c4f3","#90dbf4","#f6e58d","#c7f0bd"];
+  const etat = { R:10, taille:"moyennes", aide:"dizaines", sons:true, pieces:[], c:44, posees:0, erreurs:0, debut:0, fini:false };
+  let zMax = 20;
+
+  /* ---------- Sons ---------- */
+  let actx = null;
+  const audio = () => (actx ||= new (window.AudioContext || window.webkitAudioContext)());
+  function bip(f, d=.15, type="sine", del=0, vol=.22){
+    if(!etat.sons) return;
+    try{
+      const a = audio(), o = a.createOscillator(), g = a.createGain(), t = a.currentTime + del;
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + .02);
+    }catch(e){}
+  }
+  const sonPose = () => { bip(392,.1,"triangle"); bip(587,.16,"triangle",.08); };
+  const sonKo = () => { bip(300,.18,"sawtooth",0,.1); bip(210,.25,"sawtooth",.14,.1); };
+  const sonVictoire = () => [523,659,784,1047,784,1047].forEach((f,i)=>bip(f,.22,"square",i*.13,.1));
+
+  /* ---------- Outils ---------- */
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const melanger = t => { for(let i = t.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+  function voisins(k, R){
+    const r = Math.floor(k / 10), c = k % 10, v = [];
+    if(r > 0) v.push(k - 10); if(r < R - 1) v.push(k + 10);
+    if(c > 0) v.push(k - 1); if(c < 9) v.push(k + 1);
+    return v;
+  }
+
+  /* ---------- Découpage aléatoire en pièces d'un seul tenant ---------- */
+  function decouper(R, [tmin, tmax]){
+    const N = R * 10, id = new Array(N).fill(-1), groupes = [];
+    for(const depart of melanger([...Array(N).keys()])){
+      if(id[depart] !== -1) continue;
+      const g = groupes.length, cible = rnd(tmin, tmax), region = [depart];
+      id[depart] = g;
+      while(region.length < cible){
+        const poids = new Map();
+        for(const k of region) for(const v of voisins(k, R)) if(id[v] === -1){
+          // On préfère les cases qui touchent déjà la pièce : formes compactes, pas de longs serpents
+          const n = voisins(v, R).filter(w => id[w] === g).length;
+          poids.set(v, n * n);
+        }
+        if(!poids.size) break;
+        let total = 0; poids.forEach(p => total += p);
+        let x = Math.random() * total, choisi = null;
+        for(const [v, p] of poids){ x -= p; if(x <= 0){ choisi = v; break; } }
+        if(choisi === null) choisi = [...poids.keys()].pop();
+        id[choisi] = g; region.push(choisi);
+      }
+      groupes.push(region);
+    }
+    // Les toutes petites pièces (restes) rejoignent une pièce voisine
+    const seuil = Math.max(2, tmin - 1);
+    let change = true;
+    while(change){
+      change = false;
+      for(let g = 0; g < groupes.length; g++){
+        const reg = groupes[g];
+        if(!reg || reg.length >= seuil) continue;
+        const autour = new Set();
+        for(const k of reg) for(const v of voisins(k, R)) if(id[v] !== g) autour.add(id[v]);
+        if(!autour.size) continue;
+        const cible = [...autour].sort((a, b) => groupes[a].length - groupes[b].length)[0];
+        for(const k of reg){ id[k] = cible; groupes[cible].push(k); }
+        groupes[g] = null; change = true;
+      }
+    }
+    const liste = groupes.filter(Boolean);
+    // Couleurs : deux pièces voisines n'ont jamais la même
+    const idFinal = new Array(N);
+    liste.forEach((reg, i) => reg.forEach(k => idFinal[k] = i));
+    const couleur = [];
+    liste.forEach((reg, i) => {
+      const prises = new Set();
+      for(const k of reg) for(const v of voisins(k, R)) if(idFinal[v] < i) prises.add(couleur[idFinal[v]]);
+      const libres = COULEURS.filter(c => !prises.has(c));
+      couleur[i] = libres[rnd(0, libres.length - 1)];
+    });
+    return liste.map((cases, i) => {
+      const rows = cases.map(k => Math.floor(k / 10)), cols = cases.map(k => k % 10);
+      const x0 = Math.min(...cols), y0 = Math.min(...rows);
+      return { cases: new Set(cases), x0, y0, w: Math.max(...cols) - x0 + 1, h: Math.max(...rows) - y0 + 1,
+               couleur: couleur[i], pose: false, x: 0, y: 0, el: null };
+    });
+  }
+
+  /* ---------- Château ---------- */
+  function cailloux(racine){
+    racine.querySelectorAll(".tour").forEach((t, j) => {
+      [[.12,.3,.5,.28],[.5,.36,.4,.24],[.2,.78,.45,.26],[.55,.84,.36,.22]].forEach(([x,y,w,h]) => {
+        const s = document.createElement("span"); s.className = "caillou";
+        s.style.left = `calc(var(--c) * ${j ? 1.7 - x - w : x})`; s.style.top = (y*100) + "%";
+        s.style.width = `calc(var(--c) * ${w})`; s.style.height = `calc(var(--c) * ${h})`;
+        t.appendChild(s);
+      });
+    });
+  }
+  cailloux($("chateau"));
+  function remplirGrille(grille){
+    grille.innerHTML = "";
+    grille.className = "grille aide-" + etat.aide;
+    for(let k = 0; k < etat.R * 10; k++){
+      const d = document.createElement("div");
+      d.className = "case" + (k % 10 === 0 ? " diz" : ""); d.textContent = k;
+      grille.appendChild(d);
+    }
+  }
+
+  /* ---------- Pièces ---------- */
+  function creerPiece(p){
+    const el = document.createElement("div"); el.className = "piece";
+    el.style.width = `calc(var(--c) * ${p.w})`; el.style.height = `calc(var(--c) * ${p.h})`;
+    const fin = "3px solid var(--trait)", fine = "1px solid rgba(61,52,40,.28)";
+    for(const k of p.cases){
+      const r = Math.floor(k / 10), c = k % 10;
+      const s = document.createElement("span");
+      s.className = "pc" + (c === 0 ? " diz" : ""); s.textContent = k;
+      s.style.left = `calc(var(--c) * ${c - p.x0})`; s.style.top = `calc(var(--c) * ${r - p.y0})`;
+      s.style.background = p.couleur;
+      s.style.borderTop = p.cases.has(k - 10) && r > 0 ? "none" : fin;
+      s.style.borderLeft = p.cases.has(k - 1) && c > 0 ? "none" : fin;
+      s.style.borderBottom = p.cases.has(k + 10) ? fine : fin;
+      s.style.borderRight = p.cases.has(k + 1) && c < 9 ? fine : fin;
+      el.appendChild(s);
+    }
+    el.addEventListener("pointerdown", e => prendre(e, p));
+    p.el = el; $("aire").appendChild(el);
+  }
+  function placer(p, anim){
+    p.el.classList.toggle("anim", !!anim);
+    p.el.style.left = p.x + "px"; p.el.style.top = p.y + "px";
+  }
+
+  /* ---------- Taille et disposition ---------- */
+  function ranger(pieces, largeur){
+    // Rangement en étagères (unités de cases), retourne positions et hauteur totale
+    const g = .35, pos = new Map();
+    const tri = pieces.slice().sort((a, b) => b.h - a.h || b.w - a.w);
+    let x = g, y = g, hRang = 0, lMax = 0;
+    for(const p of tri){
+      if(p.w + 2*g > largeur) return null;
+      if(x + p.w + g > largeur){ x = g; y += hRang + g; hRang = 0; }
+      pos.set(p, [x, y]); x += p.w + g; hRang = Math.max(hRang, p.h); lMax = Math.max(lMax, x);
+    }
+    return { pos, h: y + hRang + g, l: lMax };
+  }
+  const largeurChateau = c => 13.4 * c + 16;
+  const hauteurChateau = c => (etat.R + 3.3) * c + 28;
+
+  function disposer(){
+    const libres = etat.pieces.filter(p => !p.pose);
+    const W = Math.min(window.innerWidth - 28, 1700);
+    const H = window.innerHeight - $("ecranJeu").querySelector(".barre").offsetHeight - 70;
+    let cote = null, pile = null;
+    for(let c = 72; c >= 18; c--){
+      if(!cote && hauteurChateau(c) <= H){
+        const bw = W - largeurChateau(c) - 20;
+        if(bw >= 3 * c){ const r = ranger(libres, bw / c); if(r && r.h * c <= H) cote = { c, bw, r }; }
+      }
+      if(!pile && largeurChateau(c) <= W){
+        const r = ranger(libres, W / c);
+        if(r && hauteurChateau(c) + 30 + r.h * c <= H) pile = { c, bw: W, r };
+      }
+      if(cote && pile) break;
+    }
+    let choix = cote && (!pile || cote.c >= pile.c) ? Object.assign(cote, { empile: false }) : pile ? Object.assign(pile, { empile: true }) : null;
+    if(!choix){ const c = 18; choix = { c, bw: W, r: ranger(libres, W / c) || { pos: new Map(), h: 4, l: 4 }, empile: true }; }
+    const c = etat.c = choix.c;
+    document.documentElement.style.setProperty("--c", c + "px");
+    const aire = $("aire"), bac = $("bac");
+    aire.classList.toggle("empile", choix.empile);
+    const lBac = choix.empile ? Math.max(choix.r.l * c, largeurChateau(c)) : choix.r.l * c;
+    bac.style.width = Math.min(choix.bw, lBac + 6) + "px";
+    bac.style.height = Math.max(choix.r.h * c, 2 * c) + 6 + "px";
+    bac.style.display = libres.length ? "" : "none";
+    const ra = aire.getBoundingClientRect(), rb = bac.getBoundingClientRect();
+    const ox = rb.left - ra.left + 3 + (rb.width - 6 - choix.r.l * c) / 2, oy = rb.top - ra.top + 3;
+    libres.forEach(p => { const [u, v] = choix.r.pos.get(p) || [0, 0]; p.x = ox + u * c; p.y = oy + v * c; p.maison = [p.x, p.y]; placer(p); });
+    const o = origine();
+    etat.pieces.filter(p => p.pose).forEach(p => { p.x = o.x + p.x0 * c; p.y = o.y + p.y0 * c; placer(p); });
+  }
+  function origine(){
+    const g = $("grille"), ra = $("aire").getBoundingClientRect(), rg = g.getBoundingClientRect();
+    return { x: rg.left - ra.left + g.clientLeft, y: rg.top - ra.top + g.clientTop, w: g.clientWidth, h: g.clientHeight };
+  }
+  let tAjuste = null;
+  window.addEventListener("resize", () => {
+    if(!$("ecranJeu").classList.contains("actif")) return;
+    clearTimeout(tAjuste); tAjuste = setTimeout(disposer, 120);
+  });
+
+  /* ---------- Glisser-déposer ---------- */
+  let tenue = null;
+  function prendre(e, p){
+    if(p.pose || etat.fini || !e.target.classList.contains("pc")) return;
+    e.preventDefault();
+    tenue = { p, dx: e.clientX - p.x, dy: e.clientY - p.y, id: e.pointerId };
+    p.el.setPointerCapture(e.pointerId);
+    p.el.classList.remove("anim", "faux"); p.el.classList.add("tenue");
+    p.el.style.zIndex = ++zMax;
+    bip(500, .05, "triangle", 0, .12);
+  }
+  document.addEventListener("pointermove", e => {
+    if(!tenue || e.pointerId !== tenue.id) return;
+    const p = tenue.p, aire = $("aire");
+    p.x = Math.max(-p.w * etat.c / 2, Math.min(e.clientX - tenue.dx, aire.offsetWidth - p.w * etat.c / 2));
+    p.y = Math.max(-etat.c, e.clientY - tenue.dy);
+    placer(p);
+  });
+  const finTenue = e => {
+    if(!tenue || e.pointerId !== tenue.id) return;
+    const p = tenue.p; tenue = null;
+    p.el.classList.remove("tenue");
+    lacher(p);
+  };
+  document.addEventListener("pointerup", finTenue);
+  document.addEventListener("pointercancel", finTenue);
+
+  function lacher(p){
+    const c = etat.c, o = origine();
+    const tx = o.x + p.x0 * c, ty = o.y + p.y0 * c;
+    if(Math.abs(p.x - tx) < c * .45 && Math.abs(p.y - ty) < c * .45){
+      p.x = tx; p.y = ty; p.pose = true; placer(p, true);
+      p.el.classList.add("posee"); p.el.style.zIndex = 5;
+      etat.posees++; sonPose(); majCompte();
+      if(etat.posees === etat.pieces.length) setTimeout(victoire, 450);
+      return;
+    }
+    const cx = p.x + p.w * c / 2, cy = p.y + p.h * c / 2;
+    if(cx > o.x && cx < o.x + o.w && cy > o.y && cy < o.y + o.h){
+      // Sur le château mais pas au bon endroit : la pièce retourne dans le bac
+      etat.erreurs++; sonKo();
+      p.el.classList.remove("faux"); void p.el.offsetWidth; p.el.classList.add("faux");
+      setTimeout(() => { p.x = p.maison[0]; p.y = p.maison[1]; placer(p, true); }, 380);
+    } else {
+      p.maison = [p.x, p.y];
+    }
+  }
+
+  function majCompte(){ $("compte").textContent = `${etat.posees} / ${etat.pieces.length} pièces`; }
+
+  /* ---------- Partie ---------- */
+  function lireReglages(){
+    etat.R = +document.querySelector("input[name=lignes]:checked").value;
+    etat.taille = document.querySelector("input[name=taille]:checked").value;
+    etat.aide = document.querySelector("input[name=aide]:checked").value;
+    etat.sons = $("sons").checked;
+  }
+  function montrer(id){ document.querySelectorAll(".ecran").forEach(e => e.classList.toggle("actif", e.id === id)); }
+
+  function nouvellePartie(){
+    $("fin").classList.remove("actif"); $("chateau").classList.remove("victoire");
+    etat.pieces.forEach(p => p.el && p.el.remove());
+    etat.pieces = decouper(etat.R, TAILLES[etat.taille]);
+    etat.posees = 0; etat.erreurs = 0; etat.fini = false; etat.debut = Date.now();
+    remplirGrille($("grille"));
+    montrer("ecranJeu");
+    etat.pieces.forEach(creerPiece);
+    majCompte(); disposer();
+  }
+
+  function victoire(){
+    etat.fini = true;
+    $("chateau").classList.add("victoire");
+    $("bac").style.display = "none";
+    const s = Math.round((Date.now() - etat.debut) / 1000), m = Math.floor(s / 60);
+    const duree = m ? `${m} min ${String(s % 60).padStart(2, "0")} s` : `${s} s`;
+    const e = etat.erreurs;
+    $("finEtoiles").textContent = e <= 2 ? "⭐⭐⭐" : e <= 6 ? "⭐⭐" : "⭐";
+    $("finTexte").textContent = `${etat.pieces.length} pièces en ${duree}` + (e ? ` · ${e} pièce${e > 1 ? "s" : ""} mal placée${e > 1 ? "s" : ""}` : " · aucune erreur !");
+    sonVictoire(); confettis();
+    setTimeout(() => $("fin").classList.add("actif"), 1100);
+  }
+  function confettis(){
+    const coul = ["#ff595e","#ffca3a","#8ac926","#1982c4","#6a4c93","#ff9f1c"];
+    for(let k = 0; k < 70; k++){
+      const d = document.createElement("div"); d.className = "confetti";
+      d.style.left = Math.random()*100 + "vw"; d.style.background = coul[k % coul.length];
+      d.style.animationDuration = (1.8 + Math.random()*1.8) + "s"; d.style.animationDelay = Math.random()*.6 + "s";
+      document.body.appendChild(d); setTimeout(() => d.remove(), 4500);
+    }
+  }
+
+  /* ---------- Version à imprimer ---------- */
+  function imprimer(){
+    if(!etat.pieces.length || !$("ecranJeu").classList.contains("actif")){
+      lireReglages();
+      etat.pieces.forEach(p => p.el && p.el.remove());
+      etat.pieces = decouper(etat.R, TAILLES[etat.taille]);
+    }
+    const proprio = new Array(etat.R * 10);
+    etat.pieces.forEach((p, i) => p.cases.forEach(k => proprio[k] = i));
+    const fort = "3px solid #000", leger = "0.5px dotted #aaa";
+    let t = "<table class='decoupe'>";
+    for(let r = 0; r < etat.R; r++){
+      t += "<tr>";
+      for(let c = 0; c < 10; c++){
+        const k = r * 10 + c, i = proprio[k];
+        const b = (v, ok) => ok && proprio[v] === i ? leger : fort;
+        t += `<td style="background:${etat.pieces[i].couleur}55;border-top:${b(k-10, r>0)};border-bottom:${b(k+10, r<etat.R-1)};border-left:${b(k-1, c>0)};border-right:${b(k+1, c<9)};${c === 0 ? "font-weight:700" : ""}">${k}</td>`;
+      }
+      t += "</tr>";
+    }
+    t += "</table>";
+    const ch = $("chateau").cloneNode(true);
+    ch.removeAttribute("id"); ch.classList.remove("victoire");
+    const g = ch.querySelector(".grille"); g.removeAttribute("id"); remplirGrille(g);
+    $("impression").innerHTML = `<div class="page"><h2>Le puzzle du château — découpe les pièces en suivant les traits épais ✂️</h2>${t}</div>
+      <div class="page"><h2>Reconstitue le château des nombres</h2></div>`;
+    $("impression").lastElementChild.appendChild(ch);
+    setTimeout(() => window.print(), 100);
+  }
+
+  /* ---------- Boutons ---------- */
+  $("go").addEventListener("click", () => { lireReglages(); nouvellePartie(); });
+  $("btnNouveau").addEventListener("click", nouvellePartie);
+  $("finNouveau").addEventListener("click", nouvellePartie);
+  $("btnReglages").addEventListener("click", () => montrer("ecranReglages"));
+  $("finReglages").addEventListener("click", () => { $("fin").classList.remove("actif"); montrer("ecranReglages"); });
+  $("imprimer1").addEventListener("click", imprimer);
+  $("imprimer2").addEventListener("click", imprimer);
+})();
+</script>
+</body>
+</html>
