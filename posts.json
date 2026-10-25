@@ -1,6 +1,212 @@
 {
- "count": 14,
+ "count": 15,
  "posts": [
+  {
+   "title": "La tour des nombres",
+   "slug": "la-tour-des-nombres",
+   "excerpt": "Un jeu de lecture rapide de nombres : chaque nombre bien lu ajoute un étage à la tour. Au 10ᵉ étage, c'est gagné !",
+   "date": "2026-10-25T09:10:00.000Z",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "GS",
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une version ludique de la lecture rapide de nombres : chaque nombre bien lu fait tomber un bloc sur la tour. Au 10ᵉ étage, le drapeau est hissé et c'est gagné !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "NOTE",
+      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Le mode « l'ordinateur dit le nombre » fonctionne partout."
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir l'intervalle des nombres, le temps d'affichage et la hauteur de la tour (5, 10 ou 15 étages).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le nombre s'affiche pendant le temps choisi : l'élève le lit à voix haute.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Puis l'ordinateur le dit à l'oral : l'élève vérifie sa lecture et l'adulte valide (✓ ou ✗).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bien lu : un bloc s'empile. Erreur : la tour tremble et le bloc du haut tombe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Mode « l'ordinateur écoute l'enfant »",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avec le micro, l'élève joue en autonomie : l'ordinateur écoute sa lecture et empile le bloc tout seul quand le nombre est juste. Si le micro a mal compris, le bouton « Oups, c'était juste » rend le bloc.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/tour-des-nombres.html",
+       "containerData": {
+        "height": {
+         "custom": "860"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version plus simple, sans tour : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Lecture rapide de nombres",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/lecture-rapide-de-nombres/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Le cercle conteur : de quoi s'agit-il ?",
    "slug": "le-cercle-conteur",

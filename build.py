@@ -205,6 +205,8 @@ def render(n, ctx):
         return f"<figure>{fig}{f'<figcaption>{cap}</figcaption>' if cap else ''}</figure>"
     if t == "CAPTION":
         return ""
+    if t == "NOTE":  # encadré d'avertissement (ex. navigateur requis)
+        return f'<p class="note-nav" role="note">⚠️ {n["html"]}</p>'
     if t == "TOOL_CARDS":
         return '<div class="grid tool-grid">' + "".join(tool_card(k) for k in n["tools"]) + "</div>"
     if t == "BUTTON":
@@ -419,7 +421,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))

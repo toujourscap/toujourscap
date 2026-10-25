@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La tour des nombres</title>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ciel1:#bfe6ff; --ciel2:#eaf7ff; --sol:#7cc36a; --sol2:#5aa64a;
+    --encre:#1f2a44; --carte:#ffffff; --ok:#2fb35a; --ko:#e2483d; --accent:#ff9f1c;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"Andika",system-ui,sans-serif;color:var(--encre);
+    background:linear-gradient(var(--ciel1),var(--ciel2));
+    min-height:100vh;overflow-x:hidden;
+  }
+  h1{margin:.4em 0 .2em;text-align:center;font-size:clamp(1.6rem,4vw,2.4rem)}
+  .ecran{display:none;padding:16px;max-width:1100px;margin:0 auto}
+  .ecran.actif{display:block}
+
+  /* Réglages */
+  .reglages{background:var(--carte);border-radius:20px;padding:20px 24px;max-width:520px;margin:10px auto;
+    box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  .ligne{margin:14px 0}
+  .ligne label.titre{display:block;font-weight:700;margin-bottom:6px}
+  input[type=number],select{font:inherit;font-size:1.2rem;padding:6px 10px;border:2px solid #cfd8e3;border-radius:10px;width:110px}
+  .coche{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:1.05rem}
+  .coche input{width:22px;height:22px}
+  .btn{font:inherit;font-weight:700;font-size:1.3rem;border:none;border-radius:14px;padding:12px 26px;cursor:pointer;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+  .btn-go{background:var(--accent);color:#fff;display:block;margin:18px auto 0}
+  .btn-ok{background:var(--ok);color:#fff}
+  .btn-ko{background:var(--ko);color:#fff}
+  .btn-bleu{background:#3a86ff;color:#fff}
+  .btn-gris{background:#e7ecf2;color:var(--encre);font-size:1rem;padding:8px 16px}
+  .note{font-size:.95rem;opacity:.75;text-align:center;margin-top:12px}
+  .erreur-reglage{color:var(--ko);text-align:center;min-height:1.2em}
+
+  /* Jeu */
+  .jeu{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:end}
+  .panneau{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .carte-nombre{
+    width:100%;max-width:520px;aspect-ratio:16/10;background:var(--carte);border-radius:26px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.1);
+    border:6px solid #fff;position:relative;overflow:hidden
+  }
+  .nombre{font-size:clamp(4rem,14vw,10rem);font-weight:700;line-height:1;letter-spacing:.02em}
+  .nombre.cache{color:#c9d3df}
+  .nombre.correction{color:var(--ko)}
+  .barre{position:absolute;left:0;bottom:0;height:8px;background:var(--accent);width:0}
+  .boutons{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;min-height:62px}
+  .compteur{font-size:1.4rem;font-weight:700}
+  .ecoute{min-height:1.6em;font-size:1.25rem;font-weight:700;text-align:center}
+  .ecoute.actif{color:#3a86ff;animation:pulse 1s infinite}
+  .ecoute.ok{color:var(--ok)} .ecoute.ko{color:var(--ko)}
+  @keyframes pulse{50%{opacity:.4}}
+  .petit{font-size:.9rem;opacity:.7;margin:2px 0 0 30px}
+  .coche input:disabled+span{opacity:.4}
+  .outils{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+  /* Tour */
+  .scene{position:relative;height:min(68vh,560px);display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+  .tour{display:flex;flex-direction:column-reverse;align-items:center;width:100%;
+    --h:calc((min(68vh,560px) - 110px) / var(--max))}
+  .sol{width:100%;height:34px;background:linear-gradient(var(--sol),var(--sol2));border-radius:14px 14px 0 0}
+  .bloc{
+    width:min(70%,220px);height:var(--h);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
+    font-size:calc(var(--h) * .5);text-shadow:0 2px 0 rgba(0,0,0,.2);
+    box-shadow:inset 0 -6px 0 rgba(0,0,0,.15), inset 0 4px 0 rgba(255,255,255,.3);
+    border:2px solid rgba(0,0,0,.12);position:relative
+  }
+  .bloc.tombe-dedans{animation:tombeDedans .55s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes tombeDedans{0%{transform:translateY(-70vh) rotate(-8deg)}70%{transform:translateY(4px)}100%{transform:none}}
+  .bloc.chute{animation:chute .8s ease-in forwards}
+  @keyframes chute{to{transform:translate(160px,60vh) rotate(70deg);opacity:0}}
+  .tour.tremble{animation:tremble .5s}
+  @keyframes tremble{20%{transform:rotate(-3deg)}40%{transform:rotate(3deg)}60%{transform:rotate(-2deg)}80%{transform:rotate(1deg)}}
+  .drapeau{font-size:calc(var(--h) * 1.6);line-height:1;animation:hisse .8s ease-out}
+  @keyframes hisse{from{transform:translateY(30px) scale(.3);opacity:0}}
+  .fantome{width:min(70%,220px);height:var(--h);border:3px dashed rgba(31,42,68,.18);border-radius:8px;margin-bottom:-3px}
+
+  /* Victoire */
+  .victoire{position:fixed;inset:0;background:rgba(255,255,255,.75);display:none;align-items:center;justify-content:center;z-index:5}
+  .victoire.actif{display:flex}
+  .bulle{background:#fff;border-radius:26px;padding:28px 36px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.2);animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes pop{from{transform:scale(.3)}}
+  .bulle h2{font-size:2.4rem;margin:.2em 0}
+  .confetti{position:fixed;top:-20px;width:12px;height:18px;z-index:6;pointer-events:none;animation:pluie linear forwards}
+  @keyframes pluie{to{transform:translateY(110vh) rotate(720deg)}}
+
+  @media (max-width:760px){
+    .jeu{grid-template-columns:1fr}
+    .scene{height:46vh}
+    .tour{--h:calc((46vh - 100px) / var(--max))}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Réglages ===== -->
+<section id="ecranReglages" class="ecran actif">
+  <h1>🏰 La tour des nombres</h1>
+  <div class="reglages">
+    <div class="ligne">
+      <label class="titre">1. Intervalle des nombres</label>
+      De <input type="number" id="min" value="0" min="0"> à <input type="number" id="max" value="100" min="0">
+    </div>
+    <div class="ligne">
+      <label class="titre">2. Temps d'affichage</label>
+      <select id="duree">
+        <option value="0.5">0,5 s</option>
+        <option value="1">1 s</option>
+        <option value="1.5">1,5 s</option>
+        <option value="2" selected>2 s</option>
+        <option value="3">3 s</option>
+        <option value="5">5 s</option>
+      </select>
+    </div>
+    <div class="ligne">
+      <label class="titre">3. Hauteur de la tour</label>
+      <select id="hauteur">
+        <option value="5">5 étages</option>
+        <option value="10" selected>10 étages</option>
+        <option value="15">15 étages</option>
+      </select>
+    </div>
+    <div class="ligne">
+      <label class="titre">4. En cas d'erreur</label>
+      <label class="coche"><input type="radio" name="penalite" value="un" checked> le bloc du haut tombe</label>
+      <label class="coche"><input type="radio" name="penalite" value="rien"> rien ne tombe (on montre juste la réponse)</label>
+    </div>
+    <div class="ligne">
+      <label class="titre">5. Vérification</label>
+      <label class="coche"><input type="radio" name="mode" value="voix" checked> l'ordinateur dit le nombre (l'adulte valide)</label>
+      <label class="coche"><input type="radio" name="mode" value="ecoute" id="modeEcoute"> <span>l'ordinateur écoute l'enfant 🎤</span></label>
+      <div class="petit" id="infoEcoute"></div>
+    </div>
+    <div class="ligne">
+      <label class="titre">6. Sons</label>
+      <label class="coche"><input type="checkbox" id="sons" checked> bruitages</label>
+    </div>
+    <div class="erreur-reglage" id="msgReglage"></div>
+    <button class="btn btn-go" id="btnCommencer">Construire ma tour !</button>
+    <p class="note">Mode « l'ordinateur dit » : l'adulte valide : <b>✓ / Entrée</b> = bien lu, <b>✗ / X</b> = erreur.<br>Espace = nombre suivant. Pensez à activer le son.</p>
+  </div>
+</section>
+
+<!-- ===== Jeu ===== -->
+<section id="ecranJeu" class="ecran">
+  <div class="jeu">
+    <div class="panneau">
+      <div class="compteur" id="compteur">0 / 10</div>
+      <div class="carte-nombre">
+        <div class="nombre cache" id="nombre">?</div>
+        <div class="barre" id="barre"></div>
+      </div>
+      <div class="ecoute" id="ecoute"></div>
+      <div class="boutons" id="boutons"></div>
+      <div class="outils">
+        <button class="btn btn-gris" id="btnReglages">⚙️ Réglages</button>
+        <button class="btn btn-gris" id="btnRecommencer">↺ Recommencer</button>
+      </div>
+    </div>
+    <div class="scene">
+      <div class="tour" id="tour"></div>
+      <div class="sol"></div>
+    </div>
+  </div>
+</section>
+
+<div class="victoire" id="victoire">
+  <div class="bulle">
+    <div style="font-size:4rem">🏆</div>
+    <h2>Bravo !</h2>
+    <p style="font-size:1.3rem">La tour est construite !</p>
+    <button class="btn btn-go" id="btnRejouer">Rejouer</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const couleurs = ["#ff595e","#ff924c","#ffca3a","#8ac926","#52a675","#1982c4","#4267ac","#6a4c93","#d65db1","#f15bb5","#00bbf9","#00c2a8","#f9844a","#90be6d","#577590"];
+
+  const etat = { min:0, max:100, duree:2, hauteur:10, penalite:"un", sons:true,
+                 mode:"voix", jeton:0, reco:null, limite:null, perdu:null,
+                 blocs:[], nombre:null, dernier:null, phase:"pret", minuteur:null };
+
+  /* ---------- Sons (Web Audio, sans fichier) ---------- */
+  let ctx = null;
+  const audio = () => (ctx ||= new (window.AudioContext || window.webkitAudioContext)());
+  function bip(freq, duree=.15, type="sine", delai=0, vol=.25){
+    if(!etat.sons) return;
+    const a = audio(), o = a.createOscillator(), g = a.createGain(), t = a.currentTime + delai;
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + duree);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + duree + .02);
+  }
+  const sonBloc = n => { bip(260 + n*40, .12, "triangle"); bip(390 + n*60, .18, "triangle", .08); };
+  const sonErreur = () => { bip(330,.2,"sawtooth",0,.15); bip(220,.35,"sawtooth",.18,.15); };
+  const sonVictoire = () => [523,659,784,1047,784,1047].forEach((f,i)=>bip(f,.22,"square",i*.13,.12));
+  function dire(texte){
+    if(!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texte); u.lang = "fr-FR"; u.rate = .9;
+    speechSynthesis.speak(u);
+  }
+
+  /* ---------- Reconnaissance vocale ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    $("modeEcoute").disabled = true;
+    $("infoEcoute").textContent = "Non disponible sur ce navigateur : utilisez Google Chrome ou Microsoft Edge.";
+  } else {
+    $("infoEcoute").textContent = "Chrome ou Edge uniquement. Le micro est demandé au premier nombre ; connexion internet nécessaire.";
+  }
+
+  const MOTS = {zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,
+    treize:13,quatorze:14,quinze:15,seize:16,vingt:20,vingts:20,trente:30,quarante:40,cinquante:50,soixante:60,
+    septante:70,huitante:80,octante:80,nonante:90};
+  function motsVersNombre(t){
+    const mots = t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[\s\-]+/);
+    let total = 0, cour = 0, vu = false;
+    for(const m of mots){
+      if(m in MOTS){ const v = MOTS[m]; cour += (v === 20 && cour % 100 === 4) ? 76 : v; vu = true; }
+      else if(m === "cent" || m === "cents"){ cour = (cour || 1) * 100; vu = true; }
+      else if(m === "mille"){ total += (cour || 1) * 1000; cour = 0; vu = true; }
+      else if(m === "million" || m === "millions"){ total += (cour || 1) * 1e6; cour = 0; vu = true; }
+    }
+    return vu ? total + cour : null;
+  }
+  function nombresDans(t){
+    t = t.toLowerCase();
+    const res = (t.replace(/(\d)[\s\u00a0.](?=\d{3}\b)/g,"$1").match(/\d+/g) || []).map(Number);
+    const v = motsVersNombre(t); if(v !== null) res.push(v);
+    return res;
+  }
+  function indicateur(txt, classe=""){ const el = $("ecoute"); el.textContent = txt; el.className = "ecoute " + classe; }
+
+  function ecouter(){
+    const jeton = ++etat.jeton;
+    let fini = false, entendu = "";
+    const r = new SR();
+    r.lang = "fr-FR"; r.interimResults = true; r.maxAlternatives = 5; r.continuous = false;
+    etat.reco = r;
+    indicateur("🎤 J'écoute…", "actif");
+    const conclure = (ok, message) => {
+      if(fini || jeton !== etat.jeton) return;
+      fini = true;
+      clearTimeout(etat.limite); clearTimeout(etat.minuteur);
+      try{ r.abort(); }catch(e){}
+      etat.reco = null;
+      const barre = $("barre"); barre.style.transition = "none"; barre.style.width = "0";
+      afficherNombre("?", "cache");
+      etat.phase = "reponse";
+      if(ok === null){
+        indicateur(message);
+        boutons([["✓ Bien lu", "btn-ok", reussi], ["✗ Erreur", "btn-ko", rate]]);
+        return;
+      }
+      indicateur(`J'ai entendu : « ${entendu} »`, ok ? "ok" : "ko");
+      ok ? reussi() : rate(true);
+    };
+    r.onresult = e => {
+      let final = false;
+      for(let i = e.resultIndex; i < e.results.length; i++){
+        const res = e.results[i];
+        for(let j = 0; j < res.length; j++){
+          const t = res[j].transcript;
+          if(j === 0) entendu = t.trim();
+          if(nombresDans(t).includes(etat.nombre)){ entendu = t.trim(); conclure(true); return; }
+        }
+        if(res.isFinal) final = true;
+      }
+      if(final) conclure(false);
+    };
+    r.onerror = e => {
+      if(e.error === "aborted") return;
+      if(e.error === "not-allowed" || e.error === "service-not-allowed")
+        conclure(null, "🎤 Micro refusé : autorisez-le dans le navigateur. L'adulte valide.");
+      else if(e.error === "no-speech") conclure(null, "Je n'ai rien entendu… L'adulte valide.");
+      else conclure(null, "Micro indisponible. L'adulte valide.");
+    };
+    r.onend = () => conclure(null, "Je n'ai rien entendu… L'adulte valide.");
+    etat.limite = setTimeout(() => conclure(null, "Je n'ai rien entendu… L'adulte valide."), etat.duree * 1000 + 6000);
+    try{ r.start(); }catch(e){ conclure(null, "Micro indisponible. L'adulte valide."); }
+  }
+
+  /* ---------- Réglages ---------- */
+  $("btnCommencer").onclick = () => {
+    const mn = parseInt($("min").value,10), mx = parseInt($("max").value,10);
+    if(isNaN(mn) || isNaN(mx) || mn > mx){ $("msgReglage").textContent = "Vérifiez l'intervalle (le premier nombre doit être le plus petit)."; return; }
+    $("msgReglage").textContent = "";
+    Object.assign(etat, { min:mn, max:mx, duree:parseFloat($("duree").value), hauteur:parseInt($("hauteur").value,10),
+      penalite:document.querySelector("input[name=penalite]:checked").value, sons:$("sons").checked,
+      mode:document.querySelector("input[name=mode]:checked").value });
+    audio().resume?.();
+    nouvellePartie();
+    montrer("ecranJeu");
+  };
+  $("btnReglages").onclick = () => { stopMinuteur(); montrer("ecranReglages"); };
+  $("btnRecommencer").onclick = nouvellePartie;
+  $("btnRejouer").onclick = () => { $("victoire").classList.remove("actif"); nouvellePartie(); };
+
+  function montrer(id){
+    document.querySelectorAll(".ecran").forEach(e => e.classList.toggle("actif", e.id === id));
+  }
+
+  /* ---------- Partie ---------- */
+  function nouvellePartie(){
+    stopMinuteur();
+    etat.blocs = []; etat.dernier = null;
+    $("tour").style.setProperty("--max", etat.hauteur);
+    dessinerTour();
+    afficherNombre("?", "cache");
+    pret();
+  }
+
+  function pret(){
+    etat.phase = "pret";
+    boutons([["Nombre suivant ▶", "btn-bleu", lancer]]);
+  }
+
+  function tirer(){
+    const n = etat.max - etat.min + 1;
+    let x;
+    do { x = etat.min + Math.floor(Math.random()*n); } while(n > 1 && x === etat.dernier);
+    etat.dernier = x;
+    return x;
+  }
+
+  function lancer(){
+    etat.phase = "affiche";
+    etat.nombre = tirer();
+    afficherNombre(etat.nombre, "");
+    boutons([]);
+    indicateur("");
+    if(etat.mode === "ecoute"){
+      etat.phase = "ecoute";
+      ecouter();
+    }
+    const barre = $("barre");
+    barre.style.transition = "none"; barre.style.width = "100%";
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      barre.style.transition = `width ${etat.duree}s linear`; barre.style.width = "0";
+    }));
+    etat.minuteur = setTimeout(() => {
+      afficherNombre("?", "cache");
+      if(etat.mode === "ecoute") return;   // on continue d'écouter
+      dire(String(etat.nombre));
+      etat.phase = "reponse";
+      boutons([["✓ Bien lu", "btn-ok", reussi], ["✗ Erreur", "btn-ko", rate]]);
+    }, etat.duree * 1000);
+  }
+
+  function reussi(){
+    if(etat.phase !== "reponse") return;
+    etat.phase = "anim";
+    etat.blocs.push(etat.nombre);
+    dessinerTour(true);
+    sonBloc(etat.blocs.length);
+    if(etat.blocs.length >= etat.hauteur){
+      setTimeout(victoire, 700);
+    } else {
+      setTimeout(pret, 450);
+    }
+  }
+
+  function rate(auto=false){
+    if(etat.phase !== "reponse") return;
+    auto = auto === true;
+    etat.perdu = null;
+    etat.phase = "anim";
+    afficherNombre(etat.nombre, "correction");
+    sonErreur();
+    const tour = $("tour");
+    tour.classList.remove("tremble"); void tour.offsetWidth; tour.classList.add("tremble");
+    if(etat.penalite === "un" && etat.blocs.length > 0){
+      const tous = tour.querySelectorAll(".bloc"), haut = tous[tous.length - 1];
+      if(haut){ haut.classList.add("chute"); }
+      setTimeout(() => { etat.perdu = etat.blocs.pop(); dessinerTour(); }, 800);
+    }
+    setTimeout(() => {
+      afficherNombre("?", "cache");
+      if(auto){
+        etat.phase = "pret";
+        boutons([["Nombre suivant ▶", "btn-bleu", lancer], ["Oups, c'était juste ✓", "btn-gris", corriger]]);
+      } else pret();
+    }, 1800);
+  }
+
+  function corriger(){
+    if(etat.perdu !== null){ etat.blocs.push(etat.perdu); etat.perdu = null; }
+    indicateur("");
+    etat.phase = "reponse";
+    reussi();
+  }
+
+  function victoire(){
+    etat.phase = "fin";
+    boutons([]);
+    dessinerTour(false, true);
+    sonVictoire();
+    dire("Bravo ! La tour est construite !");
+    confettis();
+    setTimeout(() => $("victoire").classList.add("actif"), 900);
+  }
+
+  /* ---------- Affichage ---------- */
+  function afficherNombre(txt, classe){
+    const el = $("nombre");
+    el.textContent = txt;
+    el.className = "nombre" + (classe ? " " + classe : "");
+  }
+
+  function boutons(liste){
+    const zone = $("boutons"); zone.innerHTML = "";
+    liste.forEach(([txt, cls, fn]) => {
+      const b = document.createElement("button");
+      b.className = "btn " + cls; b.textContent = txt; b.onclick = fn;
+      zone.appendChild(b);
+    });
+  }
+
+  function dessinerTour(animerDernier=false, drapeau=false){
+    const tour = $("tour"); tour.innerHTML = "";
+    etat.blocs.forEach((n, i) => {
+      const b = document.createElement("div");
+      b.className = "bloc";
+      b.style.background = couleurs[i % couleurs.length];
+      b.style.marginLeft = (i % 2 ? 14 : -14) + "px";
+      b.textContent = n;
+      if(animerDernier && i === etat.blocs.length - 1) b.classList.add("tombe-dedans");
+      tour.appendChild(b);
+    });
+    if(drapeau){
+      const d = document.createElement("div"); d.className = "drapeau"; d.textContent = "🚩";
+      tour.appendChild(d);
+    } else if(etat.blocs.length < etat.hauteur){
+      const f = document.createElement("div"); f.className = "fantome";
+      tour.appendChild(f);
+    }
+    $("compteur").textContent = `${etat.blocs.length} / ${etat.hauteur}`;
+  }
+
+  function confettis(){
+    for(let i = 0; i < 90; i++){
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random()*100 + "vw";
+      c.style.background = couleurs[i % couleurs.length];
+      c.style.animationDuration = (2 + Math.random()*2.5) + "s";
+      c.style.animationDelay = (Math.random()*.8) + "s";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 5500);
+    }
+  }
+
+  function stopMinuteur(){
+    clearTimeout(etat.minuteur); clearTimeout(etat.limite);
+    etat.jeton++;
+    if(etat.reco){ try{ etat.reco.abort(); }catch(e){} etat.reco = null; }
+    indicateur("");
+  }
+
+  /* ---------- Clavier ---------- */
+  document.addEventListener("keydown", e => {
+    if(!$("ecranJeu").classList.contains("actif")) return;
+    if(e.key === " " && etat.phase === "pret"){ e.preventDefault(); lancer(); }
+    else if((e.key === "Enter" || e.key === "v") && etat.phase === "reponse"){ e.preventDefault(); reussi(); }
+    else if((e.key === "x" || e.key === "X") && etat.phase === "reponse"){ e.preventDefault(); rate(); }
+  });
+})();
+</script>
+</body>
+</html>
