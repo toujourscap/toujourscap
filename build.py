@@ -29,7 +29,7 @@ DON_URL = ""
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
 
 CATS = {
-    "cercle-conteur": {"name": "Cercle conteur", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
+    "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
 }
@@ -376,7 +376,7 @@ SEO_TITRES = {
     "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes GS-CP",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
-    "/francais/cercle-conteur/": "Cercle conteur : contes à raconter en GS et en CP",
+    "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
     "/maths/": "Maths cycle 2 : outils de numération gratuits",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
@@ -491,7 +491,7 @@ def main():
     lec = [p for p in fr if p["cat"] == "lecture"]
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
-    subs = [("cercle-conteur", "Cercle conteur", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
+    subs = [("cercle-conteur", "Langage oral", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
             ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
