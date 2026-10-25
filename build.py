@@ -164,6 +164,11 @@ function pleinEcran(b){
 
 
 def embed(src, height, title, lazy=False):
+    # Empreinte du fichier dans l'adresse : le navigateur recharge le jeu dès qu'il change.
+    local = os.path.join(ROOT, "assets", os.path.basename(src)) if src.startswith("/outils/") else ""
+    if local and os.path.exists(local) and "?" not in src:
+        import hashlib
+        src += "?v=" + hashlib.md5(open(local, "rb").read()).hexdigest()[:8]
     return (f'<div class="embed"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div>'
             f'<iframe src="{esc(src)}" style="height:{int(height)}px" title="{esc(title)}"{" loading=\"lazy\"" if lazy else ""} '
             f'allow="microphone; fullscreen" allowfullscreen></iframe></div>{PLEIN_ECRAN_JS}')
