@@ -370,6 +370,56 @@
      },
      {
       "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version PowerPoint pour la classe",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 10 images du conte en plein écran, une par diapositive, à projeter au tableau pendant la narration. Le texte de chaque étape est dans les notes du présentateur.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BUTTON",
+      "nodes": [],
+      "buttonData": {
+       "text": "Télécharger le diaporama (PowerPoint)",
+       "link": {
+        "url": "/fichiers/le-radis-geant-diaporama.pptx",
+        "target": "BLANK"
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
       "id": "",
       "nodes": [
        {
@@ -1788,6 +1838,189 @@
       "type": "PARAGRAPH",
       "id": "",
       "nodes": []
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le texte traditionnel",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Dans le conte russe d’origine, c’est un navet (« Repka »). Voici le texte classique, tel qu’il est publié en Russie au XIXe siècle, traduit pour Toujours cap ! au plus près de l’original. Le texte russe est dans le domaine public et cette traduction est libre de droits : vous pouvez la copier, l’imprimer et la distribuer à vos élèves.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le navet",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le grand-père a planté un navet et il lui a dit :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "« Pousse, pousse, petit navet, pousse bien sucré ! Pousse, pousse, petit navet, pousse bien solide ! »",
+         "decorations": [
+          {
+           "type": "BOLD",
+           "fontWeightValue": 700
+          }
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Et le navet a poussé, sucré et solide, grand, très très grand.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le grand-père va arracher le navet : il tire, il tire, il ne peut pas l’arracher.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le grand-père appelle la grand-mère. La grand-mère tire le grand-père, le grand-père tire le navet : ils tirent, ils tirent, ils ne peuvent pas l’arracher.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La grand-mère appelle la petite-fille. La petite-fille tire la grand-mère, la grand-mère tire le grand-père, le grand-père tire le navet : ils tirent, ils tirent, ils ne peuvent pas l’arracher.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La petite-fille appelle Joutchka, la chienne. Joutchka tire la petite-fille, la petite-fille tire la grand-mère, la grand-mère tire le grand-père, le grand-père tire le navet : ils tirent, ils tirent, ils ne peuvent pas l’arracher.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Joutchka appelle le chat. Le chat tire Joutchka, Joutchka tire la petite-fille, la petite-fille tire la grand-mère, la grand-mère tire le grand-père, le grand-père tire le navet : ils tirent, ils tirent, ils ne peuvent pas l’arracher.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le chat appelle la souris. La souris tire le chat, le chat tire Joutchka, Joutchka tire la petite-fille, la petite-fille tire la grand-mère, la grand-mère tire le grand-père, le grand-père tire le navet : ils tirent, ils tirent… et ils arrachent le navet !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Conte populaire russe (« Репка »), version recueillie au XIXe siècle et reprise par Léon Tolstoï dans son Abécédaire (1872). Traduction : Toujours cap !, libre de droits.",
+         "decorations": [
+          {
+           "type": "ITALIC"
+          }
+         ]
+        }
+       }
+      ]
      }
     ]
    }
