@@ -40,10 +40,6 @@
       ]
      },
      {
-      "type": "NOTE",
-      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Le mode « l'ordinateur dit le nombre » fonctionne partout."
-     },
-     {
       "type": "HEADING",
       "headingData": {
        "level": 2
@@ -157,6 +153,10 @@
         }
        }
       ]
+     },
+     {
+      "type": "NOTE",
+      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement.</strong>"
      },
      {
       "type": "HTML",
