@@ -1,6 +1,546 @@
 {
- "count": 12,
+ "count": 13,
  "posts": [
+  {
+   "title": "Le cercle conteur : de quoi s'agit-il ?",
+   "slug": "le-cercle-conteur",
+   "excerpt": "Écouter des contes, puis les raconter à son tour, sans livre : le dispositif de Suzy Platiel pour développer le langage oral en GS et en CP. Déroulé d'une séance, règles du cercle et choix des contes.",
+   "date": "2026-10-25T07:30:00.000Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "epingle": true,
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le cercle conteur est un temps régulier où les enfants écoutent des contes, puis les racontent à leur tour, sans livre ni support écrit. Il s'inspire des travaux de l'ethnolinguiste Suzy Platiel, qui a étudié en Afrique de l'Ouest le rôle éducatif du conte dans les sociétés de tradition orale, et qui a transposé ce modèle à l'école.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pourquoi le conte ?",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Raconter une histoire, c'est apprendre à écouter, mémoriser, organiser sa pensée et prendre la parole devant les autres. Le conte traditionnel offre une structure solide sur laquelle l'enfant peut s'appuyer pour oser parler. C'est une étape essentielle de la maîtrise de la langue orale, avant et en parallèle de la lecture et de l'écriture.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment se déroule une séance ?",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "En cercle",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", tous à la même hauteur.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un rituel d'ouverture",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : un objet qui circule, une formule toujours identique.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un échauffement",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : comptines, virelangues, devinettes, jeux de voix.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le conte",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : l'adulte raconte d'abord, et reprend les mêmes contes plusieurs fois.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les enfants conteurs",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : dès qu'un enfant se sent prêt, il prend la place de l'adulte et raconte à son tour. Personne n'est obligé.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un rituel de clôture",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", qui referme le cercle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les séances durent de 10 à 20 minutes et reviennent chaque semaine.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les règles du cercle",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "On n'interrompt pas celui qui raconte, enfant ou adulte.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'adulte ne corrige pas : l'enfant a le droit de transformer l'histoire. Si besoin, l'adulte l'aide simplement à repartir.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Chacun parle quand il se sent prêt.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Quels contes ?",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avec les plus jeunes (GS-CP), on privilégie les contes de randonnée (La moufle, Roule galette, Le gros navet…) : leurs formules répétées se retiennent comme des comptines et donnent à tous, même aux plus timides, une première porte d'entrée pour conter.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Vous trouverez sur ce site des ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "contes prêts à raconter en GS et en CP",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/francais/cercle-conteur/",
+             "target": "BLANK"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ", avec leurs formules à dire en chœur.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour en savoir plus",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Fiche « Cercles de contes » – Mission maternelle du Rhône (Académie de Lyon)",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "https://maternelle-rhone.enseigne.ac-lyon.fr/spip/IMG/pdf/cercles_de_contes_vd.pdf",
+                 "target": "BLANK"
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : présentation du dispositif de Suzy Platiel, objectifs, déroulé, appui aux petits parleurs.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Interview de Suzy Platiel et cercle de contes en classe – Vidéothèque du CNRS",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "https://videotheque.cnrs.fr/doc=4095",
+                 "target": "BLANK"
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "« Le conte comme moyen d'éducation, valorisation dans les écoles »",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "https://www.manioc.org/fichiers/V15114",
+                 "target": "BLANK"
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " – conférence de Suzy Platiel (Université des Antilles, 2014).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "« Vitalité du conte : à l'école du conte oral, en Guyane »",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "https://www.gerflint.fr/Base/France7/nicole.pdf",
+                 "target": "BLANK"
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " – article de Nicole Launey et Suzy Platiel (revue Synergies, GERFLINT).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Les Formules du Sorcier",
    "slug": "les-formules-du-sorcier",

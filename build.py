@@ -158,7 +158,8 @@ def text_node(n):
             out = f"<u>{out}</u>"
         elif t == "LINK":
             url = dec.get("linkData", {}).get("link", {}).get("url", "#")
-            out = f'<a href="{esc(url)}" target="_blank" rel="noopener">{out}</a>'
+            ext = '' if url.startswith("/") else ' target="_blank" rel="noopener"'  # liens internes : même onglet
+            out = f'<a href="{esc(url)}"{ext}>{out}</a>'
     return out
 
 
@@ -362,6 +363,7 @@ def grid(posts):
 
 # Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
 SEO_TITRES = {
+    "/post/le-cercle-conteur/": "Le cercle conteur (Suzy Platiel) : déroulé et règles en GS-CP",
     "/post/les-formules-du-sorcier/": "Les Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
     "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour le cercle conteur GS-CP",
     "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires pour la GS et le CP",
@@ -431,8 +433,11 @@ def main():
         elif os.path.exists(os.path.join(ROOT, "assets", "images", "jeux", slug + ".jpg")):
             cover = f"/images/jeux/{slug}.jpg"  # plateau du jeu
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
-                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": p.get("jeu")})
+                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": p.get("jeu"),
+                      "epingle": p.get("epingle", False)})
     posts.sort(key=lambda x: x["date"], reverse=True)
+    # Articles épinglés ("epingle": true dans posts.json) : toujours en tête de leur rubrique
+    epingles_d_abord = lambda lst: sorted(lst, key=lambda q: not q["epingle"])
 
     # Articles
     for i, p in enumerate(posts):
@@ -475,7 +480,7 @@ def main():
   {grid(posts)}
 </section>""", "/blog/", "Tous les articles de Toujours cap ! : contes pour le cercle conteur, jeux de lecture et outils de numération pour la GS, le CP et le CE1."))
     for k, v in CATS.items():
-        sub = [p for p in posts if p["cat"] == k]
+        sub = epingles_d_abord([p for p in posts if p["cat"] == k])
         chips_k = chips.replace(' active', '').replace(f'href="/blog/{k}/"', f'href="/blog/{k}/" aria-current="page"').replace(f'class="chip" href="/blog/{k}/"', f'class="chip active" href="/blog/{k}/"')
         write(f"/blog/{k}/", page(v["name"], f"""<section class="wrap">
   <h1>{v['name']}</h1>
@@ -487,7 +492,7 @@ def main():
 
     # Domaines
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
-    cc = [p for p in fr if p["cat"] == "cercle-conteur"]
+    cc = epingles_d_abord([p for p in fr if p["cat"] == "cercle-conteur"])
     lec = [p for p in fr if p["cat"] == "lecture"]
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
