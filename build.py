@@ -368,6 +368,7 @@ def grid(posts):
 # Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
 SEO_TITRES = {
     "/post/le-cercle-conteur/": "Le cercle conteur (Suzy Platiel) : déroulé et règles en GS-CP",
+    "/post/le-nourrissage-culturel/": "Le nourrissage culturel de Serge Boimare : nourrir avant d'apprendre, GS-CP",
     "/post/les-formules-du-sorcier/": "Les Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
     "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour le cercle conteur GS-CP",
     "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires pour la GS et le CP",

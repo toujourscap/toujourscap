@@ -1,5 +1,5 @@
 {
- "count": 13,
+ "count": 14,
  "posts": [
   {
    "title": "Le cercle conteur : de quoi s'agit-il ?",
@@ -529,6 +529,1165 @@
             "type": "TEXT",
             "textData": {
              "text": " – article de Nicole Launey et Suzy Platiel (revue Synergies, GERFLINT).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "title": "Le nourrissage culturel de Serge Boimare",
+   "slug": "le-nourrissage-culturel",
+   "excerpt": "Nourrir avant d'apprendre : lire chaque jour de grands récits à voix haute, puis faire parler les élèves. La démarche de Serge Boimare pour les élèves qui ont peur d'apprendre, et comment l'adapter en GS-CP.",
+   "date": "2026-10-25T08:10:00.000Z",
+   "categoryIds": [
+    "99949fe7-71e5-42b1-bfde-2cc31c2dac61"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Certains élèves ne progressent pas malgré les aides répétées : plus on insiste sur l'exercice, plus ils se ferment. Serge Boimare propose de prendre le problème à l'envers. Avant de faire répéter, il faut ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "nourrir",
+         "decorations": [
+          {
+           "type": "BOLD"
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " : lire chaque jour à voix haute de grands textes, puis faire parler les élèves de ce qu'ils ont entendu.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ancien instituteur, psychopédagogue et psychologue, Serge Boimare a longtemps dirigé le Centre médico-psychopédagogique Claude Bernard à Paris. Sa démarche, appelée « nourrissage culturel » ou « médiation culturelle », s'est construite au contact d'enfants intelligents mais en échec massif, souvent agités ou en grande résistance face aux apprentissages.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le constat : la peur d'apprendre",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour Boimare, beaucoup d'élèves en échec ne manquent ni d'intelligence ni d'entraînement : ils ont ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "peur d'apprendre",
+         "decorations": [
+          {
+           "type": "BOLD"
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ". Apprendre oblige à attendre, à douter, à se tromper, à accepter de ne pas savoir pendant un moment. Un enfant dont le « monde interne » est trop fragile ne supporte pas cette frustration.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Il met alors en place un ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "empêchement de penser",
+         "decorations": [
+          {
+           "type": "BOLD"
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " : un mécanisme d'évitement qui se déclenche dès qu'une tâche demande de réfléchir. Quatre leviers de l'apprentissage s'en trouvent affaiblis :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La curiosité",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : elle reste centrée sur soi et sur des préoccupations très archaïques (la peur, la violence, la séparation, la mort), sans accès à la généralisation.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les stratégies d'apprentissage",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : l'élève évite le doute, ne fait que ce qu'il sait déjà faire, refuse la recherche.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le comportement",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : agitation ou endormissement, sentiment de dévalorisation, parfois de persécution. Le corps prend le relais de la pensée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le langage",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : pauvre, peu argumenté, il ne permet plus à la pensée de se structurer.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "D'où la conclusion de Boimare : refaire la même chose « en plus petit et plus lentement » ne marche pas avec ces élèves. Le soutien par la répétition renforce même l'évitement.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le nourrissage culturel : principe et choix des textes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le principe est simple : alimenter la « machine à penser » de l'élève avec des récits forts, lus par l'adulte, pour qu'il apprenne à se faire des images avec des mots. La culture n'est pas un supplément d'âme : c'est elle qui relie les savoirs entre eux et redonne du sens à l'école.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les textes choisis sont les grands récits fondateurs :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "les mythologies (grecque en particulier : Hermès, Ulysse, Thésée, Héraclès) ;",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "la Bible et les récits des origines ;",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "les contes traditionnels et les fables ;",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "les romans d'aventure et initiatiques (Jules Verne, Hector Malot) ;",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "des récits historiques.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pourquoi ces textes ? Parce qu'ils parlent, de façon mise à distance, des questions qui obsèdent ces enfants : l'origine, la loi, la rivalité, la peur, la mort. Boimare observe que plus les élèves sont en difficulté, plus ils sont attirés par des textes hauts en couleur, voire violents. Le récit offre une forme socialisée à ces angoisses : l'enfant peut y penser sans être submergé.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le dispositif en classe",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le nourrissage se pratique tous les jours, idéalement à heure fixe. Les mises en œuvre varient : une fiche académique de Bordeaux retient environ 15 minutes de lecture quotidienne ; une classe pilote au Luxembourg y consacre une séance complète de 45 minutes chaque jour. La séance suit trois temps :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La lecture à voix haute",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " par l'adulte, d'un texte long lu en feuilleton, épisode après épisode. L'élève n'a rien à produire : il écoute et se fait des images.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le débat et l'entraînement à parler",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : on reformule l'épisode, on discute des choix des personnages, on donne son avis et on le justifie. L'adulte aide à passer du ressenti brut à une parole argumentée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La trace",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : dessiner une scène, écrire une phrase ou un court texte, relier l'épisode à une notion travaillée en classe. C'est le pont vers les apprentissages formels.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La régularité compte plus que la durée. Le feuilleton crée une attente d'un jour sur l'autre : l'élève revient à l'école en voulant connaître la suite.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pourquoi ça marche, et comment l'adapter en GS-CP",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le nourrissage agit sur les quatre leviers à la fois. Le récit relance la curiosité en lui donnant un objet plus large que soi. L'écoute sans exigence de production baisse la peur de l'échec. Le débat construit le langage argumenté. Et le groupe qui partage la même histoire crée du collectif, là où ces élèves vivent souvent la classe comme un lieu de menace.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En GS et en CP, la démarche rejoint naturellement le ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "cercle conteur",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/le-cercle-conteur/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " et le travail de maître E :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Contes plutôt que mythes longs",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : contes de randonnée et contes du monde (La moufle, Roule galette, ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Anansi",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "/post/comment-anansi-devint-le-maitre-des-histoires/"
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Rafara",
+             "decorations": [
+              {
+               "type": "LINK",
+               "linkData": {
+                "link": {
+                 "url": "/post/rafara/"
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ") offrent la même puissance symbolique, à une échelle adaptée à 5-7 ans.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Feuilleton court",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : un conte en deux ou trois épisodes suffit à créer l'attente du lendemain.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Débat simple",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : « Qu'aurais-tu fait à la place de… ? », « Pourquoi le renard a-t-il gagné ? ». On accueille la parole, on aide à dire « parce que ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Trace par le dessin",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " avant l'écrit, puis dictée à l'adulte d'une phrase sur le dessin.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "En petit groupe de maître E",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le nourrissage peut ouvrir chaque séance, avant le travail ciblé, pour installer l'écoute et la disponibilité.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "BLOCKQUOTE",
+      "nodes": [
+       {
+        "type": "PARAGRAPH",
+        "nodes": [
+         {
+          "type": "TEXT",
+          "textData": {
+           "text": "Une vigilance : le nourrissage ne remplace pas l'enseignement explicite de la lecture. Il prépare le terrain psychique pour que l'élève puisse s'y engager.",
+           "decorations": []
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour aller plus loin",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ouvrages de Serge Boimare",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'enfant et la peur d'apprendre",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", Dunod, 1999.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Ces enfants empêchés de penser",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", avec Samuel Socquet-Juglard, Dunod, 2008.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La peur d'enseigner",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", Dunod.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Retrouver l'envie d'apprendre",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : présentation de la méthode avec déroulés de séances et outils.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Textes souvent utilisés en nourrissage",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Murielle Szac, ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le Feuilleton d'Hermès",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", Bayard Jeunesse (100 épisodes de mythologie grecque).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Réécritures de Jules Verne et d'Hector Malot accompagnées de fiches d'animation (Bayard Jeunesse).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sources consultées",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Fiche de lecture « Ces enfants empêchés de penser », académie de Nancy-Metz",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Fiche outil F24 « Le nourrissage culturel », académie de Bordeaux",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La culture au service de la réussite",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", ministère luxembourgeois de l'Éducation, 2015",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Retrouver l'envie d'apprendre",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", librairie Mollat",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'enfant et la peur d'apprendre",
+             "decorations": [
+              {
+               "type": "ITALIC"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", recension, CNLJ-BnF",
              "decorations": []
             }
            }
