@@ -167,6 +167,41 @@
       ]
      },
      {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Source : inspiré du ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "jeu du château (tableau des nombres CP-CE1) de Fée des écoles",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "https://www.fee-des-ecoles.fr/2016/07/le-jeu-du-chateau-tableau-des-nombres-cp-ce1.html#:~:text=%22Il%20%C3%A9tait%20une%20fois%20un%20tr%C3%A8s%20beau,un%20atelier%20autour%20du%20tableau%20des%20nombres."
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
       "type": "HTML",
       "htmlData": {
        "url": "/outils/le-puzzle-du-chateau.html",
@@ -395,6 +430,41 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Source : inspiré du ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "jeu du château (tableau des nombres CP-CE1) de Fée des écoles",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "https://www.fee-des-ecoles.fr/2016/07/le-jeu-du-chateau-tableau-des-nombres-cp-ce1.html#:~:text=%22Il%20%C3%A9tait%20une%20fois%20un%20tr%C3%A8s%20beau,un%20atelier%20autour%20du%20tableau%20des%20nombres."
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
        }
       ]
      },
