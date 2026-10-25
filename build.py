@@ -26,6 +26,10 @@ CSS_V = _version("style.css")
 JS_V = _version("commentaires.js")
 # Lien de paiement pour l'encart « Offrir un café » (page Qui suis-je ?). Vide = encart masqué.
 DON_URL = ""
+# Bouton Ko-fi sur la page Qui suis-je ? (mettre True pour le réafficher)
+KOFI_ACTIF = False
+KOFI_HTML = """  <div class="kofi"><script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Offrir un café ☕', '#72a4f2', 'Z5K629G818');kofiwidget2.draw();</script></div>
+"""
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
 
 CATS = {
@@ -579,8 +583,7 @@ def main():
   <p>Je vous propose sur ce site minimaliste les outils que j'utilise au quotidien.</p>
   <p>Si j'ai choisi «&nbsp;Toujours cap&nbsp;!&nbsp;», c'est que je suis profondément convaincu que la première attitude à avoir en tant qu'enseignant, c'est de <strong>croire en nos élèves</strong>&nbsp;! Une attitude très partagée chez les enseignants d'ailleurs… même si parfois ce n'est pas simple&nbsp;!</p>
   <p>N'hésitez pas à m'envoyer vos commentaires.</p>
-  <div class="kofi"><script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Offrir un café ☕', '#72a4f2', 'Z5K629G818');kofiwidget2.draw();</script></div>
-  <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
+""" + (KOFI_HTML if KOFI_ACTIF else "") + """  <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
 """ + (f"""  <aside class="don">
     <span class="don-tasse" aria-hidden="true">☕</span>
     <div>
