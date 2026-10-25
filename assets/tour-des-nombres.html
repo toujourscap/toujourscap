@@ -186,6 +186,7 @@
     <h2>Bravo !</h2>
     <p style="font-size:1.3rem">La tour est construite !</p>
     <button class="btn btn-go" id="btnRejouer">Rejouer</button>
+    <button class="btn btn-gris" id="btnAutreJeu" style="display:block;margin:12px auto 0">⚙️ Changer de mode ou de réglages</button>
   </div>
 </div>
 
@@ -313,6 +314,7 @@
   $("btnReglages").onclick = () => { stopMinuteur(); montrer("ecranReglages"); };
   $("btnRecommencer").onclick = nouvellePartie;
   $("btnRejouer").onclick = () => { $("victoire").classList.remove("actif"); nouvellePartie(); };
+  $("btnAutreJeu").onclick = () => { $("victoire").classList.remove("actif"); stopMinuteur(); montrer("ecranReglages"); };
 
   function montrer(id){
     document.querySelectorAll(".ecran").forEach(e => e.classList.toggle("actif", e.id === id));
@@ -321,7 +323,7 @@
   /* ---------- Partie ---------- */
   function nouvellePartie(){
     stopMinuteur();
-    etat.blocs = []; etat.dernier = null;
+    etat.blocs = []; etat.dernier = null; etat.commence = false;
     $("tour").style.setProperty("--max", etat.hauteur);
     dessinerTour();
     afficherNombre("?", "cache");
@@ -331,7 +333,7 @@
   function pret(){
     etat.phase = "pret";
     $("boutons").classList.remove("choix");
-    boutons([["Nombre suivant ▶", "btn-bleu", lancer]]);
+    boutons([[etat.commence ? "Nombre suivant ▶" : "Commencer ▶", "btn-bleu", lancer]]);
   }
 
   function tirer(){
@@ -386,6 +388,7 @@
   }
 
   function lancer(){
+    etat.commence = true;
     etat.phase = "affiche";
     etat.nombre = tirer();
     $("boutons").classList.remove("choix");
