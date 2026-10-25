@@ -172,6 +172,23 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .result p{margin:0;font-weight:700;color:var(--muted)}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .cta{background:var(--me);color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:800;font-size:1rem}
+/* Mode de jeu et équipes */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800;font-size:1.05rem}
+.mode small{font-weight:700;color:var(--muted);font-size:.8rem}
+.mode[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
+.nteams{display:flex;gap:8px;flex-wrap:wrap}
+.nteams button{width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--bg);font-family:var(--display);font-size:1.5rem;font-weight:800}
+.nteams button[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
+.teamlist{display:flex;gap:8px;flex-wrap:wrap}
+.teamchip{color:#fff;font-weight:800;padding:6px 14px;border-radius:99px}
+.go{align-self:flex-start}
+.rank{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:8px}
+.rank li{display:grid;grid-template-columns:2.2em 1fr auto;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--bg);font-weight:800;text-align:left}
+.rank .pos{font-family:var(--display);font-size:1.4rem}
+.rank .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.rank .tm{font-variant-numeric:tabular-nums}
+.rank .err{display:block;font-size:.75rem;color:var(--muted);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -180,20 +197,36 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
   <section id="menu" style="display:contents">
     <header>
       <h1>La Course des <span>Additions</span></h1>
-      <p class="sub">Chaque bonne réponse = un coup de pédale. Arrive avant l'ordinateur !</p>
+      <p class="sub" id="sub">Chaque bonne réponse = un coup de pédale. Arrive avant l'ordinateur !</p>
     </header>
+
+    <div class="panel">
+      <div class="label">Mode de jeu</div>
+      <div class="modes">
+        <button class="mode" id="mSolo">🚴 Seul<small>contre l'ordinateur</small></button>
+        <button class="mode" id="mTeam">👥 En classe<small>par équipes, au temps</small></button>
+      </div>
+    </div>
 
     <div class="panel">
       <div class="label">1. Choisis ta table</div>
       <div class="tables" id="tables"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel solo-only">
       <div class="label">2. Choisis ta médaille — table de <span id="selT">2</span></div>
       <div class="levels" id="levels"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel team-only">
+      <div class="label">2. Nombre d'équipes</div>
+      <div class="nteams" id="nteams"></div>
+      <div class="teamlist" id="teamlist"></div>
+      <p class="sub" style="margin:0">Chaque équipe fait la course à son tour, avec les mêmes 10 additions. Le vélo fantôme montre le meilleur temps. Classement au temps à la fin.</p>
+      <button class="cta go" id="goTeams">Lancer la course →</button>
+    </div>
+
+    <div class="panel solo-only">
       <div class="label">Réglage (adulte) : temps de l'ordinateur pour la médaille de bronze</div>
       <div class="setting">
         <input type="range" id="base" min="20" max="180" step="5" value="60" aria-label="Temps bronze en secondes">
@@ -217,8 +250,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="crowd" id="crowd"></div>
       <div class="layer stand"></div>
       <div class="lead" id="lead"></div>
-      <div class="lane" id="laneMe"><span class="tag me">Toi</span><div class="ticks" id="ticks"></div><div class="finish"></div><div class="bike" id="bikeMe"></div></div>
-      <div class="lane" id="laneBot"><span class="tag bot">Ordinateur</span><div class="finish"></div><div class="bike" id="bikeBot"></div></div>
+      <div class="lane" id="laneMe"><span class="tag me" id="tagMe">Toi</span><div class="ticks" id="ticks"></div><div class="finish"></div><div class="bike" id="bikeMe"></div></div>
+      <div class="lane" id="laneBot"><span class="tag bot" id="tagBot">Ordinateur</span><div class="finish"></div><div class="bike" id="bikeBot"></div></div>
     </div>
     <div class="hud"><span id="score">0 / 10</span><span class="streak" id="streak"></span><span id="clock">0,0 s</span></div>
     <div class="panel quiz">
@@ -244,7 +277,10 @@ const LEVELS = [
 const $ = id => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let store = {base:60, table:2, medals:{}};
+let store = {base:60, table:2, medals:{}, mode:"solo", nTeams:4};
+const TEAMS = [{name:"Rouges",c:"#e9462f"},{name:"Bleus",c:"#3a6fb0"},{name:"Verts",c:"#2f9b4f"},
+  {name:"Jaunes",c:"#d9a400"},{name:"Violets",c:"#8e44ad"},{name:"Roses",c:"#e0558f"}];
+let T = null; // partie par équipes en cours
 try { Object.assign(store, JSON.parse(localStorage.getItem("courseAdd")||"{}")); } catch(e){}
 const save = () => { try{ localStorage.setItem("courseAdd", JSON.stringify(store)); }catch(e){} };
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -325,6 +361,23 @@ const fmt = s => (Math.round(s*10)/10).toLocaleString("fr-FR");
 $("base").value = Math.max(20,store.base); $("baseOut").textContent = store.base+" s";
 $("base").oninput = e => { store.base=+e.target.value; $("baseOut").textContent=store.base+" s"; save(); renderLevels(); };
 
+function renderMode(){
+  const team = store.mode==="equipes";
+  $("mSolo").setAttribute("aria-pressed", !team); $("mTeam").setAttribute("aria-pressed", team);
+  document.querySelectorAll(".solo-only").forEach(e=>e.hidden=team);
+  document.querySelectorAll(".team-only").forEach(e=>e.hidden=!team);
+  $("sub").textContent = team ? "Chaque bonne réponse = un coup de pédale. Quelle équipe sera la plus rapide ?"
+                              : "Chaque bonne réponse = un coup de pédale. Arrive avant l'ordinateur !";
+  const nb=$("nteams"); nb.innerHTML="";
+  for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.textContent=n;
+    b.setAttribute("aria-pressed", n===store.nTeams); b.setAttribute("aria-label", n+" équipes");
+    b.onclick=()=>{ store.nTeams=n; save(); renderMode(); }; nb.appendChild(b); }
+  $("teamlist").innerHTML = TEAMS.slice(0,store.nTeams).map(t=>`<span class="teamchip" style="background:${t.c}">${t.name}</span>`).join("");
+}
+$("mSolo").onclick=()=>{ store.mode="solo"; save(); renderMode(); };
+$("mTeam").onclick=()=>{ store.mode="equipes"; save(); renderMode(); };
+$("goTeams").onclick=()=>startTeams();
+
 /* ---------- Pavé ---------- */
 "7 8 9 4 5 6 1 2 3 _ 0 ⌫".split(" ").forEach(k=>{
   if(k==="_"){ $("pad").appendChild(document.createElement("span")); return; }
@@ -397,12 +450,21 @@ function questions(t){
   return ks.map(k=> Math.random()<.5 ? [t,k] : [k,t]);
 }
 function startRace(level){
-  R={level, table:store.table, botTime:lvlTime(level), qs:questions(store.table), i:0, input:"", good:0, streak:0, t0:0, running:false, done:false};
+  const team = T ? T.teams[T.idx] : null;
+  const best = T ? T.teams.filter(x=>x.time!=null).sort((a,b)=>a.time-b.time)[0] : null;
+  R={level, team, ghost:best, table:store.table, botTime: team ? (best ? best.time : Infinity) : lvlTime(level),
+     qs: T ? T.qs : questions(store.table), i:0, input:"", good:0, errors:0, streak:0, t0:0, running:false, done:false};
   $("menu").hidden=true; $("menu").style.display="none";
   $("race").hidden=false; $("race").style.display="contents";
   $("confetti").hidden=true;
-  $("raceTitle").textContent=`Table de ${R.table} · ${level.name}`;
-  me=makeRider($("bikeMe"),css("--me")); bot=makeRider($("bikeBot"),css("--bot"));
+  $("raceTitle").textContent = team ? `Table de ${R.table} · Équipe des ${team.name} (${T.idx+1}/${T.teams.length})` : `Table de ${R.table} · ${level.name}`;
+  me=makeRider($("bikeMe"), team ? team.c : css("--me"));
+  bot=makeRider($("bikeBot"), R.ghost ? R.ghost.c : css("--bot"));
+  $("tagMe").textContent = team ? team.name : "Toi"; $("tagMe").style.background = team ? team.c : "";
+  $("tagBot").textContent = R.ghost ? `Meilleur temps : ${R.ghost.name} (${fmt(R.ghost.time)} s)` : "Ordinateur";
+  $("tagBot").style.background = R.ghost ? R.ghost.c : "";
+  $("laneBot").hidden = !!team && !R.ghost;
+  $("bikeBot").style.opacity = R.ghost ? ".55" : "";
   [...$("ticks").children].forEach(t=>t.classList.remove("done"));
   $("lead").textContent=""; $("streak").textContent=""; $("clock").textContent="0,0 s";
   updateScore(); showQ(); $("hint").textContent="";
@@ -446,11 +508,13 @@ function frame(now){
   // Qui mène ?
   if(R.running){
     const d=me.pos-bot.pos, L=$("lead");
-    if(Math.abs(d)<.04){ L.className="lead tie"; L.textContent="Coude à coude !"; }
-    else if(d>0){ L.className="lead me"; L.textContent= d>.25?"Tu es loin devant !":"Tu mènes !"; }
-    else { L.className="lead bot"; L.textContent= bot.pos>.8?"Vite, la ligne approche !":"Rattrape-le !"; }
+    if(R.team && !R.ghost){ L.className="lead tie"; L.textContent=`Allez les ${R.team.name} !`; }
+    else if(R.team && bot.pos>=1){ L.className="lead bot"; L.textContent="Le record est passé… finissez la course !"; }
+    else if(Math.abs(d)<.04){ L.className="lead tie"; L.textContent="Coude à coude !"; }
+    else if(d>0){ L.className="lead me"; L.textContent= R.team ? "Vous battez le record !" : d>.25?"Tu es loin devant !":"Tu mènes !"; }
+    else { L.className="lead bot"; L.textContent= R.team ? "Plus vite que le record ?" : bot.pos>.8?"Vite, la ligne approche !":"Rattrape-le !"; }
   }
-  if(R.running && botTarget>=1){ finish(false); }
+  if(R.running && botTarget>=1 && !R.team){ finish(false); }
   if(R.running && vM>0.05) cheerNear(trackX(me.pos)+46,70,600);
   calmFans(now);
   if(!reduce && R.running && vM>0.05 && Math.random()<dt*25) puff(me);
@@ -496,10 +560,10 @@ function check(){
     if(!reduce){ const s=$("scene"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
     plusOne(); updateScore();
     cheerNear(trackX(R.good/STEPS)+46, R.streak>=3?200:120, 1100); clap(R.streak>=3?1.1:.7, R.streak>=3?26:16);
-    if(R.good>=STEPS){ R.tEnd=performance.now(); setTimeout(()=>finish(true),450); R.running=false; return; }
+    if(R.good>=STEPS){ R.tEnd=performance.now(); setTimeout(()=> R.team ? teamDone() : finish(true),450); R.running=false; return; }
     R.i++; setTimeout(()=>{ if(R && R.running) showQ(); },250);
   } else {
-    R.streak=0; $("streak").textContent="";
+    R.streak=0; R.errors++; $("streak").textContent="";
     const q=$("q"); q.className="q"; void q.offsetWidth; q.className="q ko";
     me.el.classList.remove("wobble"); void me.el.offsetWidth; me.el.classList.add("wobble");
     $("hint").textContent="Essaie encore !";
@@ -528,6 +592,43 @@ function finish(win){
   $("toMenu").onclick=toMenu;
   $("again").focus();
 }
+/* ---------- Par équipes ---------- */
+function startTeams(){
+  T={qs:questions(store.table), idx:0, teams:TEAMS.slice(0,store.nTeams).map(t=>({...t, time:null, errors:0}))};
+  startRace(LEVELS[0]);
+}
+function teamDone(){
+  const el=(R.tEnd-R.t0)/1000, t=T.teams[T.idx];
+  t.time=el; t.errors=R.errors;
+  R.done=true; R.botFinal=bot.pos; $("lead").textContent="";
+  const record = T.teams.every(x=>x===t || x.time==null || el<x.time) && T.idx>0;
+  cheerNear(0,1e5,2500); clap(1.8,34,.5);
+  const nextT = T.teams[T.idx+1];
+  if(!nextT){ return podium(); }
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <h2 style="color:${t.c}">Les ${t.name} : ${fmt(el)} s</h2>
+    <p>${record?"🏆 Nouveau meilleur temps ! ":""}${t.errors} erreur${t.errors>1?"s":""}.</p>
+    <p>Au tour des <strong style="color:${nextT.c}">${nextT.name}</strong> : préparez-vous !</p>
+    <div class="row"><button class="cta" id="nextTeam" style="background:${nextT.c}">Équipe suivante →</button>
+    <button class="ghost" id="toMenu">Menu</button></div></div>`;
+  $("nextTeam").onclick=()=>{ T.idx++; startRace(LEVELS[0]); };
+  $("toMenu").onclick=toMenu; $("nextTeam").focus();
+}
+function podium(){
+  const ranked=[...T.teams].sort((a,b)=>a.time-b.time), win=ranked[0];
+  const medal=["🥇","🥈","🥉"];
+  if(!reduce){ const c=$("confetti"); c.hidden=false; confetti({id:"or"}); }
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <h2>Bravo les <span style="color:${win.c}">${win.name}</span> !</h2>
+    <p>Classement — table de ${store.table}</p>
+    <ol class="rank">${ranked.map((t,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
+      <span><span class="sw" style="background:${t.c}"></span>${t.name}<span class="err">${t.errors} erreur${t.errors>1?"s":""}</span></span>
+      <span class="tm">${fmt(t.time)} s</span></li>`).join("")}</ol>
+    <div class="row"><button class="cta" id="again">Revanche</button><button class="ghost" id="toMenu">Menu</button></div></div>`;
+  $("again").onclick=startTeams; $("toMenu").onclick=toMenu; $("again").focus();
+}
 function confetti(l){
   if(reduce) return;
   const c=$("confetti"); c.hidden=false;
@@ -544,15 +645,15 @@ function confetti(l){
   })(t0);
 }
 function toMenu(){
-  if(R){R.running=false; R.done=true;} R=null;
+  if(R){R.running=false; R.done=true;} R=null; T=null;
   $("ov").hidden=true; $("confetti").hidden=true;
   $("race").hidden=true; $("race").style.display="none";
   $("menu").hidden=false; $("menu").style.display="contents";
-  renderTables(); renderLevels();
+  renderTables(); renderLevels(); renderMode();
 }
 $("quit").onclick=toMenu;
 $("race").style.display="none";
-renderTables(); renderLevels();
+renderTables(); renderLevels(); renderMode();
 </script>
 
 </body></html>

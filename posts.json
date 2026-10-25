@@ -5,7 +5,7 @@
    "title": "La Course des Additions",
    "slug": "la-course-des-additions",
    "cat": "calcul",
-   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Il faut arriver avant l'ordinateur pour gagner la médaille !",
+   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l'ordinateur, ou en classe par équipes avec un classement au temps.",
    "date": "2026-10-25T13:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -17,7 +17,7 @@
      "CP",
      "CE1"
     ],
-    "joueurs": "1 joueur ou la classe",
+    "joueurs": "1 joueur ou la classe par équipes",
     "supports": [
      "ecran",
      "projetable"
@@ -31,7 +31,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jeu pour automatiser les tables d'addition : chaque bonne réponse est un coup de pédale. L'élève fait la course contre l'ordinateur, sur 10 additions, et doit franchir la ligne d'arrivée le premier.",
+         "text": "Un jeu pour automatiser les tables d'addition : chaque bonne réponse est un coup de pédale. Deux façons de jouer : seul contre l'ordinateur pour gagner des médailles, ou en classe, par équipes, pour la course au meilleur temps.",
          "decorations": []
         }
        }
@@ -46,7 +46,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Comment jouer",
+         "text": "Seul contre l'ordinateur",
          "decorations": []
         }
        }
@@ -165,12 +165,112 @@
       ]
      },
      {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En classe, par équipes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le mode « En classe », la table, puis le nombre d'équipes (de 2 à 6).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Chaque équipe fait la course à son tour, sur les mêmes 10 additions. Un élève de l'équipe tape au clavier ou au tableau, les autres l'aident.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À partir de la deuxième équipe, un vélo fantôme roule au rythme du meilleur temps : on voit en direct si le record tombe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, classement de toutes les équipes au temps, avec leur nombre d'erreurs. Le bouton « Revanche » relance une course avec de nouvelles additions.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les erreurs ne sont pas pénalisées par des secondes en plus : elles coûtent déjà du temps, puisqu'il faut retrouver la bonne réponse avant de repartir.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
       "type": "HTML",
       "htmlData": {
        "url": "/outils/la-course-des-additions.html",
        "containerData": {
         "height": {
-         "custom": "780"
+         "custom": "920"
         }
        }
       }
