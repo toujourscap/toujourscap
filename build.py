@@ -357,6 +357,10 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </script>"""
 
 
+# Précision affichée sous l'introduction de la page Langage oral
+NOTE_CC = """<p class="note-accueil">Normalement, il n'y a pas d'image dans un cercle conteur&nbsp;: se créer une image mentale est essentiel. J'ai pourtant fait le choix des images avec les élèves les plus en difficulté. Je sors donc du cercle conteur traditionnel et me rapproche d'une activité plus classique.</p>"""
+
+
 def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
@@ -522,6 +526,7 @@ def main():
   <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
   <h1>{t}</h1>
   <p class="lead">{d}</p>
+  {NOTE_CC if k == "cercle-conteur" else ""}
   {filtres}
   {grid(lst)}
 </section>""", "/francais/", d))
