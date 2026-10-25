@@ -383,7 +383,7 @@ SEO_TITRES = {
     "/post/la-petite-poule-et-le-grain-de-mil/": "La petite poule et le grain de mil : conte en randonnée GS-CP",
     "/post/lecture-rapide-de-nombres/": "Lecture rapide de nombres : flash nombres en ligne, cycle 2",
     "/post/lecture-rapide-de-mots-avec-le-tachitoscope/": "Lecture rapide et fluence : tachistoscope et téléprompteurs en ligne",
-    "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes GS-CP",
+    "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes CP-CE1",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
@@ -576,9 +576,9 @@ def main():
 """ if DON_URL else "") + """</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
 
     domains = [
-        ("/francais/", "Domaine", "Langue française", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
-        ("/maths/", "Classe", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
-        ("/divers/", "Pratique", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
+        ("/francais/", "Lecture · Langage oral", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
+        ("/maths/", "Numération", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
+        ("/divers/", "Motivation", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
     dcards = '<div class="grid">' + "".join(f"""<a class="card" href="{h}">
   <div class="card-img"><img src="{img}" alt="{esc(t)}" loading="lazy"></div>
@@ -594,10 +594,10 @@ def main():
     write("/", page("Toujours cap !", f"""<section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <p class="eyebrow">GS · CP · CE1 · CE2</p>
+      <p class="eyebrow">GS · CP · CE1</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
       <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et de l'enseignement spécialisé.</p>
-      <p class="note-accueil">Vous trouverez ici des <strong>activités variées</strong> et des <strong>jeux à pratiquer à plusieurs</strong>, le plus souvent de 2 à 4 joueurs. Tous ont été <strong>testés avec des élèves par un enseignant spécialisé</strong>, et la plupart s'impriment pour jouer sur table. Certains jeux peuvent aussi <strong>être projetés en classe pour jouer avec tous les élèves</strong>.</p>
+      <p class="note-accueil">Vous trouverez ici des <strong>contes à raconter</strong>, des <strong>jeux</strong> et des <strong>outils de lecture et de numération</strong>. Tous ont été <strong>testés avec des élèves par un enseignant spécialisé</strong>. Certains s'impriment pour jouer sur table, d'autres peuvent être <strong>projetés en classe pour jouer avec tous les élèves</strong>.</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <figure class="hero-cadre">
@@ -611,7 +611,7 @@ def main():
   <p><a class="btn" href="/blog/">Toutes les ressources</a></p>
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
-         "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1, CE2) : lecture, contes du cercle conteur, numération."},
+         "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1) : lecture, contes du cercle conteur, numération."},
         {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/favicon.svg"}]),
         lastmod=max(p["date"] for p in posts)[:10])
 
