@@ -54,6 +54,11 @@
   .barre{position:absolute;left:0;bottom:0;height:8px;background:var(--accent);width:0}
   .boutons{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;min-height:62px}
   .compteur{font-size:1.4rem;font-weight:700}
+  .btn-choix{background:#fff;color:var(--encre);border:3px solid #cfd8e3;font-size:clamp(1.8rem,5vw,2.8rem);min-width:120px;padding:10px 22px}
+  .btn-choix.bon{background:var(--ok);border-color:var(--ok);color:#fff}
+  .btn-choix.mauvais{background:var(--ko);border-color:var(--ko);color:#fff}
+  .boutons.choix{max-width:560px}
+  .petit select{width:auto;font-size:1rem;padding:2px 6px}
   .ecoute{min-height:1.6em;font-size:1.25rem;font-weight:700;text-align:center}
   .ecoute.actif{color:#3a86ff;animation:pulse 1s infinite}
   .ecoute.ok{color:var(--ok)} .ecoute.ko{color:var(--ko)}
@@ -137,6 +142,8 @@
     <div class="ligne">
       <label class="titre">5. Vérification</label>
       <label class="coche"><input type="radio" name="mode" value="voix" checked> l'ordinateur dit le nombre</label>
+      <label class="coche"><input type="radio" name="mode" value="choix"> l'ordinateur dit un nombre, l'enfant choisit le bon 👆</label>
+      <div class="petit">parmi <select id="nbChoix"><option value="3">3</option><option value="4" selected>4</option><option value="6">6</option></select> nombres (le temps d'affichage ne sert pas dans ce mode)</div>
       <label class="coche"><input type="radio" name="mode" value="ecoute" id="modeEcoute"> <span>l'ordinateur écoute l'enfant 🎤</span></label>
       <div class="petit" id="infoEcoute"></div>
     </div>
@@ -146,7 +153,7 @@
     </div>
     <div class="erreur-reglage" id="msgReglage"></div>
     <button class="btn btn-go" id="btnCommencer">Construire ma tour !</button>
-    <p class="note">Mode « l'ordinateur dit » : l'adulte valide : <b>✓ / Entrée</b> = bien lu, <b>✗ / X</b> = erreur.<br>Espace = nombre suivant. Pensez à activer le son.</p>
+    <p class="note">Clavier : <b>Espace</b> = nombre suivant, <b>Entrée</b> = bien lu, <b>X</b> = erreur.<br>Mode « choisir » : touches <b>1, 2, 3…</b> pour répondre, <b>R</b> pour réécouter. Pensez à activer le son.</p>
   </div>
 </section>
 
@@ -298,7 +305,7 @@
     $("msgReglage").textContent = "";
     Object.assign(etat, { min:mn, max:mx, duree:parseFloat($("duree").value), hauteur:parseInt($("hauteur").value,10),
       penalite:document.querySelector("input[name=penalite]:checked").value, sons:$("sons").checked,
-      mode:document.querySelector("input[name=mode]:checked").value });
+      mode:document.querySelector("input[name=mode]:checked").value, nbChoix:parseInt($("nbChoix").value,10) });
     audio().resume?.();
     nouvellePartie();
     montrer("ecranJeu");
@@ -323,6 +330,7 @@
 
   function pret(){
     etat.phase = "pret";
+    $("boutons").classList.remove("choix");
     boutons([["Nombre suivant ▶", "btn-bleu", lancer]]);
   }
 
@@ -334,9 +342,54 @@
     return x;
   }
 
+  /* ---------- Mode « l'enfant choisit » ---------- */
+  function melanger(t){ for(let i = t.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [t[i], t[j]] = [t[j], t[i]]; } return t; }
+  function leurres(n, k){
+    const pris = new Set([n]), res = [];
+    const ajoute = (x, horsIntervalle=false) => {
+      if(res.length >= k || pris.has(x) || x < 0) return;
+      if(!horsIntervalle && (x < etat.min || x > etat.max)) return;
+      pris.add(x); res.push(x);
+    };
+    const s = String(n);
+    if(s.length >= 2) ajoute(Number(s.split("").reverse().join("")));   // 47 → 74 : inversion
+    melanger([n+1, n-1, n+10, n-10, n+20, n-20, n+2, n-2, n+100, n-100]).forEach(x => ajoute(x));
+    for(let essai = 0; essai < 200 && res.length < k; essai++) ajoute(etat.min + Math.floor(Math.random()*(etat.max - etat.min + 1)));
+    for(let x = n + 1; res.length < k; x++) ajoute(x, true);
+    return res;
+  }
+  function lancerChoix(){
+    afficherNombre("🔊", "cache");
+    etat.phase = "reponse";
+    const options = melanger([etat.nombre, ...leurres(etat.nombre, etat.nbChoix - 1)]);
+    const zone = $("boutons"); zone.innerHTML = ""; zone.classList.add("choix");
+    options.forEach(x => {
+      const b = document.createElement("button");
+      b.className = "btn btn-choix"; b.textContent = x; b.dataset.n = x;
+      b.onclick = () => choisir(b);
+      zone.appendChild(b);
+    });
+    const r = document.createElement("button");
+    r.className = "btn btn-gris"; r.textContent = "🔊 Réécouter"; r.onclick = () => dire(String(etat.nombre));
+    zone.appendChild(r);
+    dire(String(etat.nombre));
+  }
+  function choisir(b){
+    if(etat.phase !== "reponse") return;
+    const bon = Number(b.dataset.n) === etat.nombre;
+    $("boutons").querySelectorAll(".btn-choix").forEach(x => {
+      x.disabled = true;
+      if(Number(x.dataset.n) === etat.nombre) x.classList.add("bon");
+    });
+    if(bon){ afficherNombre(etat.nombre, ""); reussi(); }
+    else { b.classList.add("mauvais"); rate(); }
+  }
+
   function lancer(){
     etat.phase = "affiche";
     etat.nombre = tirer();
+    $("boutons").classList.remove("choix");
+    if(etat.mode === "choix"){ indicateur(""); lancerChoix(); return; }
     afficherNombre(etat.nombre, "");
     boutons([]);
     indicateur("");
@@ -367,7 +420,7 @@
     if(etat.blocs.length >= etat.hauteur){
       setTimeout(victoire, 700);
     } else {
-      setTimeout(pret, 450);
+      setTimeout(pret, etat.mode === "choix" ? 900 : 450);
     }
   }
 
@@ -472,6 +525,12 @@
   document.addEventListener("keydown", e => {
     if(!$("ecranJeu").classList.contains("actif")) return;
     if(e.key === " " && etat.phase === "pret"){ e.preventDefault(); lancer(); }
+    else if(etat.mode === "choix" && etat.phase === "reponse"){
+      if(e.key === "r" || e.key === "R"){ e.preventDefault(); dire(String(etat.nombre)); return; }
+      const b = $("boutons").querySelectorAll(".btn-choix")[parseInt(e.key, 10) - 1];
+      if(b){ e.preventDefault(); choisir(b); }
+    }
+    else if(etat.mode === "choix"){ }
     else if((e.key === "Enter" || e.key === "v") && etat.phase === "reponse"){ e.preventDefault(); reussi(); }
     else if((e.key === "x" || e.key === "X") && etat.phase === "reponse"){ e.preventDefault(); rate(); }
   });

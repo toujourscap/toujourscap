@@ -136,6 +136,33 @@
        {
         "type": "TEXT",
         "textData": {
+         "text": "Mode « l'enfant choisit le bon nombre »",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'ordinateur dit un nombre à l'oral et l'élève clique sur le bon parmi 3, 4 ou 6 propositions. Les pièges sont choisis pour faire réfléchir : chiffres inversés (47 et 74), dizaine voisine, nombre qui suit ou qui précède. Le bouton « Réécouter » permet d'entendre le nombre à nouveau.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
          "text": "Mode « l'ordinateur écoute l'enfant »",
          "decorations": []
         }
