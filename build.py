@@ -372,6 +372,10 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 NOTE_CC = """<p class="note-accueil">Normalement, il n'y a pas d'image dans un cercle conteur&nbsp;: se créer une image mentale est essentiel. J'ai pourtant fait le choix des images avec les élèves les plus en difficulté. Je sors donc du cercle conteur traditionnel et me rapproche d'une activité plus classique.</p>"""
 
 
+# Encadré sous l'introduction de la page Lecture
+NOTE_LECTURE = """<p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante pour un élève.</p>"""
+
+
 def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
@@ -542,7 +546,7 @@ def main():
   <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
   <h1>{t}</h1>
   <p class="lead">{d}</p>
-  {NOTE_CC if k == "cercle-conteur" else ""}
+  {NOTE_CC if k == "cercle-conteur" else NOTE_LECTURE if k == "lecture" else ""}
   {filtres}
   {grid(lst)}
 </section>""", "/francais/", d))
