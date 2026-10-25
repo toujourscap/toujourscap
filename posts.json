@@ -33,7 +33,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Une version ludique de la lecture rapide de nombres : chaque nombre bien lu fait tomber un bloc sur la tour. Au 10ᵉ étage, le drapeau est hissé et c'est gagné !",
+         "text": "Un jeu sur les nombres : chaque bonne réponse fait tomber un bloc sur la tour. Au 10ᵉ étage, le drapeau est hissé et c'est gagné !",
          "decorations": []
         }
        }
@@ -66,7 +66,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir l'intervalle des nombres, le temps d'affichage et la hauteur de la tour (5, 10 ou 15 étages).",
+             "text": "Choisir l'intervalle des nombres, la hauteur de la tour (5, 10 ou 15 étages) et le nombre de propositions (3, 4 ou 6).",
              "decorations": []
             }
            }
@@ -83,7 +83,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le nombre s'affiche pendant le temps choisi : l'élève le lit à voix haute.",
+             "text": "L'ordinateur dit un nombre à l'oral.",
              "decorations": []
             }
            }
@@ -100,7 +100,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Puis l'ordinateur le dit à l'oral : l'élève vérifie sa lecture, puis on valide (✓ ou ✗).",
+             "text": "L'élève clique sur le bon nombre parmi les propositions. Le bouton « Réécouter » permet de l'entendre à nouveau.",
              "decorations": []
             }
            }
@@ -117,28 +117,13 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Bien lu : un bloc s'empile. Erreur : la tour tremble et le bloc du haut tombe.",
+             "text": "Bonne réponse : un bloc s'empile. Erreur : la bonne réponse s'affiche, la tour tremble et le bloc du haut tombe.",
              "decorations": []
             }
            }
           ]
          }
         ]
-       }
-      ]
-     },
-     {
-      "type": "HEADING",
-      "headingData": {
-       "level": 2
-      },
-      "nodes": [
-       {
-        "type": "TEXT",
-        "textData": {
-         "text": "Mode « l'enfant choisit le bon nombre »",
-         "decorations": []
-        }
        }
       ]
      },
@@ -148,7 +133,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "L'ordinateur dit un nombre à l'oral et l'élève clique sur le bon parmi 3, 4 ou 6 propositions. Les pièges sont choisis pour faire réfléchir : chiffres inversés (47 et 74), dizaine voisine, nombre qui suit ou qui précède. Le bouton « Réécouter » permet d'entendre le nombre à nouveau.",
+         "text": "Les pièges sont choisis pour faire réfléchir : chiffres inversés (47 et 74), dizaine voisine, nombre qui suit ou qui précède.",
          "decorations": []
         }
        }
@@ -163,7 +148,22 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Mode « l'ordinateur écoute l'enfant »",
+         "text": "Les autres modes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'ordinateur dit le nombre",
          "decorations": []
         }
        }
@@ -175,7 +175,34 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Avec le micro, l'élève joue en autonomie : l'ordinateur écoute sa lecture et empile le bloc tout seul quand le nombre est juste. Si le micro a mal compris, le bouton « Oups, c'était juste » rend le bloc.",
+         "text": "Pour travailler la lecture rapide : le nombre s'affiche pendant le temps choisi et l'élève le lit à voix haute. Puis l'ordinateur le dit à l'oral : l'élève vérifie sa lecture, puis on valide (✓ ou ✗).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 3
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'ordinateur écoute l'enfant",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avec le micro, l'élève lit le nombre affiché et joue en autonomie : l'ordinateur écoute sa lecture et empile le bloc tout seul quand le nombre est juste. Si le micro a mal compris, le bouton « Oups, c'était juste » rend le bloc.",
          "decorations": []
         }
        }
