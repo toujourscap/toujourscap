@@ -5951,7 +5951,7 @@
   {
    "title": "lecture rapide de nombres",
    "slug": "lecture-rapide-de-nombres",
-   "excerpt": "Sélectionnez la durée d'affichage par nombre et l'intervalle, puis arrêtez lorsque l'enfant fait une erreur.",
+   "excerpt": "Sélectionnez la durée d'affichage par nombre et l'intervalle, l'enfant arrête de lui-même lorsqu'il a fait une erreur (sauf mode automatique).",
    "date": "2026-05-21T11:36:44Z",
    "categoryIds": [
     "4508e272-b88b-42c8-a68d-b55e8afea67b"
@@ -5971,7 +5971,7 @@
         "id": "",
         "nodes": [],
         "textData": {
-         "text": "Sélectionnez la durée d'affichage par nombre et l'intervalle, puis arrêtez lorsque l'enfant fait une erreur.",
+         "text": "Sélectionnez la durée d'affichage par nombre et l'intervalle, l'enfant arrête de lui-même lorsqu'il a fait une erreur (sauf mode automatique).",
          "decorations": []
         }
        }
