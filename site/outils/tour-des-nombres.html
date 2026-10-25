@@ -25,10 +25,25 @@
   .reglages{background:var(--carte);border-radius:20px;padding:20px 24px;max-width:520px;margin:10px auto;
     box-shadow:0 6px 20px rgba(0,0,0,.08)}
   .ligne{margin:14px 0}
+  /* Écran large : réglages sur deux colonnes pour tout voir sans faire défiler */
+  @media (min-width:600px){
+    .reglages{max-width:900px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);column-gap:36px;align-items:start;padding:16px 28px}
+    .reglages > *{grid-column:1/-1}
+    .reglages .ligne{margin:8px 0}
+    .reglages .ligne:nth-child(1){grid-column:1;grid-row:1}
+    .reglages .ligne:nth-child(2){grid-column:1;grid-row:2}
+    .reglages .ligne:nth-child(3){grid-column:1;grid-row:3}
+    .reglages .ligne:nth-child(4){grid-column:1;grid-row:4}
+    .reglages .ligne:nth-child(5){grid-column:2;grid-row:1/4}
+    .reglages .ligne:nth-child(6){grid-column:2;grid-row:4}
+    .reglages input[type=number]{width:84px}
+    .reglages .btn-go{margin-top:10px}
+  }
   .ligne label.titre{display:block;font-weight:700;margin-bottom:6px}
   input[type=number],select{font:inherit;font-size:1.2rem;padding:6px 10px;border:2px solid #cfd8e3;border-radius:10px;width:110px}
+  select{width:auto}
   .coche{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:1.05rem}
-  .coche input{width:22px;height:22px}
+  .coche input{width:22px;height:22px;flex-shrink:0}
   .btn{font:inherit;font-weight:700;font-size:1.3rem;border:none;border-radius:14px;padding:12px 26px;cursor:pointer;
     box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
