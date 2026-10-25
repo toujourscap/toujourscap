@@ -1,6 +1,317 @@
 {
- "count": 19,
+ "count": 20,
  "posts": [
+  {
+   "title": "La minute des syllabes",
+   "slug": "la-minute-des-syllabes",
+   "excerpt": "Lire le plus de syllabes possible en une minute : le micro valide chaque syllabe bien lue, ou un adulte appuie sur « Bien lu ». Cinq niveaux, des syllabes simples aux syllabes complexes.",
+   "date": "2026-10-25T17:50:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": "sons-syllabes",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur, en binôme ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une minute pour lire le plus de syllabes possible ! La syllabe s'affiche en grand au milieu de l'écran : dès qu'elle est bien lue, la suivante arrive. Un défi court, à refaire souvent, pour automatiser le déchiffrage et voir ses progrès.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau, puis qui valide : le micro ou le bouton « Bien lu ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Après le décompte 3, 2, 1, l'élève lit la syllabe à voix haute.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Avec le micro, la syllabe suivante arrive toute seule quand la lecture est juste. Sans micro, un adulte ou un autre enfant appuie sur « Bien lu » (ou la barre d'espace).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une syllabe qui résiste ? Le bouton « Passer » (ou la flèche droite) la met de côté.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin de la minute : le score, le record à battre, la liste des syllabes lues et celles à relire ensemble.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 5 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 : syllabes simples, consonne + voyelle simple (ma, li, ro, tu).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 : plus de consonnes (ca, gu, zo), syllabes inverses (al, or) et fermées (sol, lac).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 : sons complexes (chou, mon, roi, pan, feu).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 4 : groupes de consonnes (bra, pli, cro) et graphies particulières (ce, gi, qui, gui, pha, gna).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 5 : syllabes complexes (trou, plan, grain, rail, coin, bien).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La durée peut aussi être réglée sur 30 secondes, 1 minute 30 ou 2 minutes. Les records sont gardés sur l'ordinateur, niveau par niveau.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "NOTE",
+      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement</strong>, avec une connexion internet. Si le micro ne comprend pas une syllabe pourtant bien lue, l'adulte peut toujours appuyer sur « Bien lu »."
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-minute-des-syllabes.html",
+       "containerData": {
+        "height": {
+         "custom": "760"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour lire des syllabes à deux : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Puissance 4 syllabique",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/puissance-4-syllabiques/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Le puzzle du château des nombres",
    "slug": "le-puzzle-du-chateau-des-nombres",

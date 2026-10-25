@@ -413,6 +413,7 @@ SEO_TITRES = {
     "/post/lecture-rapide-de-nombres/": "Lecture rapide de nombres : flash nombres en ligne, cycle 2",
     "/post/lecture-rapide-de-mots-avec-le-tachitoscope/": "Lecture rapide et fluence : tachistoscope et téléprompteurs en ligne",
     "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes CP-CE1",
+    "/post/la-minute-des-syllabes/": "La minute des syllabes : lire des syllabes en 1 minute, avec micro, CP-CE1",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
@@ -454,7 +455,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))

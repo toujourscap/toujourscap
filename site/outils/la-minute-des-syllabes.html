@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La minute des syllabes</title><link rel="canonical" href="https://toujourscap.com/post/la-minute-des-syllabes/"><meta name="description" content="Lire le plus de syllabes possible en une minute : le micro valide chaque syllabe bien lue, ou un adulte appuie sur « Bien lu ». Cinq niveaux, des syllabes…">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fond1:#fff4d6; --fond2:#ffe3b8; --encre:#23304a; --carte:#fff;
+    --ok:#22a957; --ko:#f08a24; --accent:#ff5d5d; --bleu:#3a86ff; --violet:#8a5cf6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{font-family:"Andika",system-ui,sans-serif;color:var(--encre);
+    background:radial-gradient(circle at 20% 0%,#fffaf0 0,transparent 55%),linear-gradient(var(--fond1),var(--fond2));
+    min-height:100vh;overflow-x:hidden}
+  h1{margin:.35em 0 .1em;text-align:center;font-size:clamp(1.6rem,4vw,2.4rem)}
+  h1 .chrono{display:inline-block;animation:tic 1s steps(2) infinite}
+  @keyframes tic{50%{transform:rotate(12deg)}}
+  .sous-titre{text-align:center;margin:0 0 10px;opacity:.75}
+  .ecran{display:none;padding:12px 16px 24px;max-width:1000px;margin:0 auto}
+  .ecran.actif{display:block}
+
+  /* ---------- Réglages ---------- */
+  .bloc-reglage{background:var(--carte);border-radius:22px;padding:12px 16px;margin:10px auto;max-width:860px;box-shadow:0 6px 20px rgba(0,0,0,.07)}
+  .bloc-reglage h2{font-size:1.15rem;margin:0 0 10px}
+  .niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+  .niveau{font:inherit;text-align:left;background:#f6f8fc;border:3px solid transparent;border-radius:16px;padding:8px 10px;cursor:pointer;color:inherit}
+  .niveau:hover{border-color:#d5def0}
+  .niveau[aria-pressed=true]{border-color:var(--n);background:color-mix(in srgb,var(--n) 12%,#fff)}
+  .niveau b{display:block;font-size:1.05rem;color:var(--n)}
+  .niveau .titre-niv{display:block;font-weight:700;font-size:.88rem;margin:2px 0 4px;line-height:1.2}
+  .niveau .ex{display:block;font-size:.98rem;letter-spacing:.02em}
+  .niveau .rec{display:block;font-size:.8rem;opacity:.7;margin-top:4px;min-height:1em}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mode{font:inherit;text-align:left;display:flex;gap:12px;align-items:center;background:#f6f8fc;border:3px solid transparent;border-radius:16px;padding:12px 14px;cursor:pointer;color:inherit}
+  .mode[aria-pressed=true]{border-color:var(--bleu);background:#eef4ff}
+  .mode .ico{font-size:2rem}
+  .mode b{display:block;font-size:1.08rem}
+  .mode small{display:block;opacity:.75;font-size:.88rem;line-height:1.25}
+  .mode:disabled{opacity:.45;cursor:not-allowed}
+  .options{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;margin-top:12px;font-size:1rem}
+  .options label{display:flex;align-items:center;gap:8px;cursor:pointer}
+  .options input[type=checkbox]{width:20px;height:20px}
+  .options select{font:inherit;padding:3px 8px;border-radius:8px;border:2px solid #d5def0}
+  .info{font-size:.88rem;opacity:.75;margin:8px 0 0}
+  .btn{font:inherit;font-weight:700;font-size:1.25rem;border:none;border-radius:16px;padding:12px 26px;cursor:pointer;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s;color:#fff}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+  .btn-go{background:var(--accent);display:block;margin:16px auto 4px;font-size:1.45rem;padding:14px 40px}
+  .btn-ok{background:var(--ok)}
+  .btn-passer{background:#e8edf5;color:var(--encre)}
+  .btn-gris{background:#e8edf5;color:var(--encre);font-size:1rem;padding:8px 16px}
+  .btn-bleu{background:var(--bleu)}
+
+  /* ---------- Jeu ---------- */
+  .barre-haut{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:860px;margin:6px auto 0}
+  .compteur{display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:6px 18px 6px 8px;box-shadow:0 4px 12px rgba(0,0,0,.07)}
+  .compteur .pastille{width:44px;height:44px;border-radius:50%;background:var(--ok);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+  .compteur b{font-size:2rem;line-height:1;min-width:1.4em;text-align:center}
+  .compteur b.bond{animation:bond .35s}
+  @keyframes bond{40%{transform:scale(1.45)}}
+  .temps{position:relative;width:84px;height:84px}
+  .temps svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .temps circle{fill:none;stroke-width:9}
+  .temps .piste{stroke:#fff}
+  .temps .reste{stroke:var(--bleu);stroke-linecap:round;transition:stroke .3s}
+  .temps.urgent .reste{stroke:var(--accent)}
+  .temps span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700}
+  .temps.urgent span{color:var(--accent);animation:pouls .5s infinite alternate}
+  @keyframes pouls{to{transform:scale(1.15)}}
+  .niv-jeu{font-weight:700;padding:6px 14px;border-radius:999px;color:#fff;background:var(--n)}
+
+  .scene{position:relative;max-width:860px;margin:14px auto 0;height:min(46vh,340px);display:flex;align-items:center;justify-content:center}
+  .carte{position:absolute;width:min(92%,640px);height:100%;background:var(--carte);border-radius:32px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.1);border:6px solid #fff}
+  .carte .syl{font-size:clamp(5rem,19vw,11.5rem);font-weight:700;line-height:1;letter-spacing:.03em}
+  .carte.entre{animation:entre .28s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes entre{from{transform:translateY(30px) scale(.85);opacity:0}}
+  .carte.sort-ok{animation:sortOk .35s ease-in forwards}
+  @keyframes sortOk{to{transform:translate(-60%,-10%) rotate(-12deg) scale(.6);opacity:0}}
+  .carte.sort-passe{animation:sortPasse .3s ease-in forwards}
+  @keyframes sortPasse{to{transform:translateY(60%) scale(.7);opacity:0}}
+  .carte.vrai{border-color:var(--ok)}
+  .ecoute{min-height:1.7em;text-align:center;font-size:1.15rem;font-weight:700;margin:12px 0 4px}
+  .ecoute.actif{color:var(--bleu)}
+  .ecoute .micro{display:inline-block;animation:pouls .7s infinite alternate}
+  .ecoute.ok{color:var(--ok)} .ecoute.ko{color:#a06a2c}
+  .entendu{font-weight:400;opacity:.8}
+  .boutons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .boutons .btn-ok{font-size:1.6rem;padding:14px 44px}
+  .boutons .btn-passer{font-size:1.2rem}
+  .bas{display:flex;justify-content:center;gap:10px;margin-top:16px}
+  .aide-clavier{text-align:center;font-size:.85rem;opacity:.6;margin-top:8px}
+
+  /* Décompte */
+  .decompte{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(255,244,214,.85);z-index:5}
+  .decompte.actif{display:flex}
+  .decompte span{font-size:min(40vw,14rem);font-weight:700;color:var(--accent);animation:zoom .9s ease-out}
+  @keyframes zoom{from{transform:scale(2.2);opacity:0}30%{opacity:1}}
+
+  /* ---------- Fin ---------- */
+  .resultat{background:#fff;border-radius:26px;max-width:760px;margin:14px auto;padding:20px 24px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1);animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes pop{from{transform:scale(.5);opacity:0}}
+  .resultat h2{margin:.1em 0;font-size:1.6rem}
+  .gros-score{font-size:clamp(4rem,14vw,7rem);font-weight:700;line-height:1;color:var(--ok)}
+  .gros-score small{display:block;font-size:1.1rem;color:var(--encre);font-weight:400;margin-top:4px}
+  .record{font-weight:700;font-size:1.15rem;margin:8px 0;color:var(--violet)}
+  .listes{text-align:left;margin-top:12px}
+  .listes h3{font-size:1rem;margin:10px 0 6px}
+  .puces{display:flex;flex-wrap:wrap;gap:6px}
+  .puce{padding:3px 12px;border-radius:999px;font-size:1.2rem;background:#e7f7ee;color:#17773c}
+  .puce.passee{background:#fff0de;color:#9a5410}
+  .puces .vide{opacity:.6;font-size:.95rem}
+  .actions-fin{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  .confetti{position:fixed;top:-20px;width:12px;height:18px;z-index:6;pointer-events:none;animation:pluie linear forwards}
+  @keyframes pluie{to{transform:translateY(110vh) rotate(720deg)}}
+
+  @media (max-width:560px){
+    .modes{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    .temps{width:68px;height:68px}
+    .scene{height:34vh}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ Réglages ============ -->
+<div class="ecran actif" id="ecranReglages">
+  <h1><span class="chrono">⏱️</span> La minute des syllabes</h1>
+  <p class="sous-titre">Lis le plus de syllabes possible en une minute !</p>
+
+  <div class="bloc-reglage">
+    <h2>1. Le niveau</h2>
+    <div class="niveaux" id="niveaux"></div>
+  </div>
+
+  <div class="bloc-reglage">
+    <h2>2. Qui valide ?</h2>
+    <div class="modes">
+      <button class="mode" id="modeMicro" data-mode="micro" aria-pressed="false">
+        <span class="ico">🎤</span><span><b>Le micro</b><small>L'ordinateur écoute : quand la syllabe est bien lue, la suivante arrive toute seule.</small></span>
+      </button>
+      <button class="mode" id="modeBouton" data-mode="bouton" aria-pressed="true">
+        <span class="ico">👆</span><span><b>Le bouton « Bien lu »</b><small>Un adulte ou un autre enfant écoute et appuie sur « Bien lu » (ou la barre d'espace).</small></span>
+      </button>
+    </div>
+    <p class="info" id="infoMicro"></p>
+    <div class="options">
+      <label>Durée
+        <select id="duree"><option value="30">30 secondes</option><option value="60" selected>1 minute</option><option value="90">1 minute 30</option><option value="120">2 minutes</option></select>
+      </label>
+      <label><input type="checkbox" id="sons" checked> Petits sons</label>
+    </div>
+  </div>
+
+  <button class="btn btn-go" id="btnGo">C'est parti !</button>
+</div>
+
+<!-- ============ Jeu ============ -->
+<div class="ecran" id="ecranJeu">
+  <div class="barre-haut">
+    <div class="compteur" title="Syllabes bien lues"><span class="pastille">✓</span><b id="score">0</b></div>
+    <span class="niv-jeu" id="nivJeu"></span>
+    <div class="temps" id="temps">
+      <svg viewBox="0 0 100 100"><circle class="piste" cx="50" cy="50" r="44"/><circle class="reste" id="arc" cx="50" cy="50" r="44"/></svg>
+      <span id="secondes">60</span>
+    </div>
+  </div>
+  <div class="scene"><div class="carte" id="carte"><span class="syl" id="syl"></span></div></div>
+  <div class="ecoute" id="ecoute" aria-live="polite"></div>
+  <div class="boutons">
+    <button class="btn btn-ok" id="btnBienLu">✓ Bien lu</button>
+    <button class="btn btn-passer" id="btnPasser">Passer ⏭</button>
+  </div>
+  <p class="aide-clavier" id="aideClavier">Clavier : barre d'espace = Bien lu · flèche droite = Passer</p>
+  <div class="bas"><button class="btn btn-gris" id="btnStop">■ Arrêter</button></div>
+</div>
+
+<!-- ============ Fin ============ -->
+<div class="ecran" id="ecranFin">
+  <div class="resultat">
+    <h2>⏰ Temps écoulé !</h2>
+    <div class="gros-score"><span id="scoreFin">0</span><small id="phraseFin">syllabes bien lues</small></div>
+    <p class="record" id="record"></p>
+    <div class="listes">
+      <h3>✓ Bien lues</h3><div class="puces" id="listeLues"></div>
+      <h3>⏭ À relire ensemble</h3><div class="puces" id="listePassees"></div>
+    </div>
+    <div class="actions-fin">
+      <button class="btn btn-go" id="btnRejouer" style="margin:0">🔁 Rejouer</button>
+      <button class="btn btn-bleu" id="btnSuivant">Niveau suivant ➜</button>
+      <button class="btn btn-gris" id="btnReglages">⚙️ Réglages</button>
+    </div>
+  </div>
+</div>
+
+<div class="decompte" id="decompte"><span id="decompteNb">3</span></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  /* ================= Syllabes ================= */
+  const croise = (cs, vs) => cs.flatMap(c => vs.map(v => c + v));
+  const NIVEAUX = [
+    { nom:"Niveau 1", titre:"Syllabes simples", ex:"ma · li · ro · tu", couleur:"#22a957",
+      liste: croise(["m","l","r","s","f","v","n","j","p","t","d","b"], ["a","i","o","u","é","e"]) },
+    { nom:"Niveau 2", titre:"Plus de consonnes", ex:"ca · gu · al · sol", couleur:"#14a3b8",
+      liste: [...croise(["c","g","z","k"], ["a","o","u"]), ...croise(["z","k"], ["i","é"]),
+        ...croise(["m","l","r","s","f","v","p","t","d","b","n"], ["a","i","o","u","é"]).filter((_, i) => i % 3 === 0),
+        "al","il","ol","ul","ar","ir","or","ur","ac","ic","oc","af","if","el",
+        "mal","bal","sol","col","bol","fil","tir","mur","dur","sur","par","car","lac","sac","bac","roc","pic","tic","sec","sel","fer","mer","vif","nul","cil"] },
+    { nom:"Niveau 3", titre:"Sons complexes", ex:"chou · mon · roi · pan", couleur:"#3a86ff",
+      liste: [...croise(["m","l","r","s","f","v","p","t","d","b","n","ch"], ["ou","on","an","in","oi","au","eu","ai","è"]),
+        ...croise(["ch"], ["a","i","o","u","é","e"]), "beau","peau","veau","seau","bon","ton","tan","ven","ren","sen"] },
+    { nom:"Niveau 4", titre:"Groupes de consonnes", ex:"bra · pli · ce · gui", couleur:"#8a5cf6",
+      liste: [...croise(["bl","br","cl","cr","dr","fl","fr","gl","gr","pl","pr","tr","vr"], ["a","i","o","u","é"]),
+        "ce","ci","cé","ça","ço","çu","ge","gi","gé","gea","geo","que","qui","quo","qua","gue","gui","gué",
+        "pha","phi","pho","phé","gna","gno","gni","gne"] },
+    { nom:"Niveau 5", titre:"Syllabes complexes", ex:"trou · plan · grain · rail", couleur:"#ff5d5d",
+      liste: ["trou","prou","crou","grou","brou","clou","flou","blou","glou",
+        "bron","pron","tron","cron","gron","fron","plon","blon",
+        "bran","tran","gran","plan","blan","clan","fran","cran",
+        "brin","prin","trin","crin","grin","plin",
+        "croi","troi","froi","proi","droi","gloi",
+        "brai","prai","trai","grai","clai","frai","plai",
+        "grain","train","plein","frein","crain","brain",
+        "bleu","fleu","preu","creu","pleu",
+        "pail","rail","tail","bail","veil","seil","meil","teil","nouil","rouil","fouil","feuil","deuil",
+        "loin","coin","foin","soin","poin","join","moin",
+        "bien","rien","lien","tien","chien","mien",
+        "lui","nui","pui","frui","brui","tion",
+        "trac","troc","bloc","flic","clac","crac","fric","sta","sti","sto","spi","spa","sca","sco"] }
+  ];
+
+  /* ================= Phonétique simplifiée (pour comparer ce que dit l'enfant) =================
+     Symboles : a i o u(=ou) y(=u) e(=é/è/ai) E(=e/eu) A(=an/en) O(=on) I(=in/ain/un) w j N(=gn) S(=ch) J(=j/ge) */
+  const VOY = "aeiouyàâäéèêëîïôöùûüœ";
+  const estV = c => !!c && VOY.includes(c);
+  const DOUX = "eiyéèêë";
+  const LETTRES = {a:"a",b:"be",c:"se",d:"de",e:"E",f:"ef",g:"Je",h:"aS",i:"i",j:"Ji",k:"ka",l:"el",m:"em",n:"en",o:"o",
+    p:"pe",q:"ky",r:"er",s:"es",t:"te",u:"y",v:"ve",w:"dublEve",x:"iks",y:"igrek",z:"zed"};
+  const CHIFFRES = {"0":"zéro","1":"un","2":"deux","3":"trois","4":"quatre","5":"cinq","6":"six","7":"sept","8":"huit","9":"neuf",
+    "10":"dix","11":"onze","12":"douze","13":"treize","14":"quatorze","15":"quinze","16":"seize","20":"vingt","30":"trente","100":"cent","1000":"mille"};
+
+  function phon(mot, syllabe){
+    let w = mot.toLowerCase().replace(/œ/g,"oe").replace(/æ/g,"e").replace(/[^a-zàâäéèêëîïôöùûüç]/g,"");
+    if(!w) return "";
+    if(!syllabe){
+      if(w.length === 1 && LETTRES[w]) return LETTRES[w];
+      if(["les","des","mes","tes","ses","ces","est","et","ai","es"].includes(w)) return w.length === 2 && w !== "es" ? "e" : w[0] === "e" ? "e" : phon(w[0], true) + "e";
+      if(w.length > 3 && w.endsWith("er")) w = w.slice(0,-2) + "é";
+      if(w.length > 2 && w.endsWith("ez")) w = w.slice(0,-2) + "é";
+      for(let k = 0; k < 2 && w.length > 1 && "stdxzpg".includes(w.at(-1)); k++) w = w.slice(0,-1);
+      if(w.length > 2 && w.endsWith("e") && !estV(w.at(-2))) w = w.slice(0,-1);
+      else if(w.length > 1 && w.endsWith("e") && "iuéy".includes(w.at(-2))) w = w.slice(0,-1);   // pie, rue, fée
+      else if(w.length > 2 && w.endsWith("e") && w.at(-2) === "u" && "gq".includes(w.at(-3))) w = w.slice(0,-1);
+    }
+    let o = "", i = 0;
+    const nasalOk = j => !estV(w[j]) && w[j] !== "n" && w[j] !== "m";   // voyelle + n/m nasale ?
+    while(i < w.length){
+      const r = w.slice(i), c = w[i], n1 = w[i+1];
+      const t = (motif, sortie, cond = true) => { if(cond && r.startsWith(motif)){ o += sortie; i += motif.length; return true; } return false; };
+      if(t("tion","sjO", nasalOk(i+4))) continue;
+      if(t("eau","o")) continue;
+      if(t("aon","A", nasalOk(i+3))) continue;
+      if(t("ouill","uj") || t("ouil","uj")) continue;
+      if(t("euill","Ej") || t("euil","Ej") || t("oeil","Ej")) continue;
+      if(t("aill","aj") || t("ail","aj", !estV(w[i+3]))) continue;
+      if(t("eill","ej") || t("eil","ej", !estV(w[i+3]))) continue;
+      if(t("ill","ij", i > 0 && !estV(w[i-1]))) continue;
+      if(t("oin","wI", nasalOk(i+3))) continue;
+      if(t("ien","jI", nasalOk(i+3))) continue;
+      if(t("ain","I", nasalOk(i+3)) || t("aim","I", nasalOk(i+3)) || t("ein","I", nasalOk(i+3))) continue;
+      if(t("oi","wa") || t("oî","wa")) continue;
+      if(t("ou","u") || t("où","u") || t("oû","u")) continue;
+      if(t("au","o")) continue;
+      if(t("oeu","E") || t("eu","E") || t("oe","E")) continue;
+      if(t("ai","e") || t("ei","e") || t("aî","e")) continue;
+      if(t("an","A", nasalOk(i+2)) || t("am","A", nasalOk(i+2)) || t("en","A", nasalOk(i+2)) || t("em","A", nasalOk(i+2))) continue;
+      if(t("on","O", nasalOk(i+2)) || t("om","O", nasalOk(i+2))) continue;
+      if(t("in","I", nasalOk(i+2)) || t("im","I", nasalOk(i+2)) || t("yn","I", nasalOk(i+2)) || t("ym","I", nasalOk(i+2))) continue;
+      if(t("un","I", nasalOk(i+2)) || t("um","I", nasalOk(i+2) && i + 2 < w.length)) continue;
+      if(t("ch","S") || t("ph","f") || t("gn","N") || t("qu","k") || t("ck","k") || t("th","t") || t("sch","S")) continue;
+      if(t("gu","g", DOUX.includes(w[i+2] || "x"))) continue;
+      if(t("ge","J", "aouâô".includes(w[i+2] || "x"))) continue;
+      if(t("sc","s", DOUX.includes(w[i+2] || "x"))) continue;
+      if(c === n1 && !estV(c)){ i++; continue; }              // consonne doublée
+      if(c === "c"){ o += DOUX.includes(n1 || "x") ? "s" : "k"; i++; continue; }
+      if(c === "g"){ o += DOUX.includes(n1 || "x") ? "J" : "g"; i++; continue; }
+      if(c === "s"){ o += (i > 0 && estV(w[i-1]) && estV(n1)) ? "z" : "s"; i++; continue; }
+      if(c === "x"){ o += "ks"; i++; continue; }
+      if(c === "h"){ i++; continue; }
+      if(c === "j"){ o += "J"; i++; continue; }
+      if(c === "ç"){ o += "s"; i++; continue; }
+      if(c === "y"){ o += (estV(w[i-1]) && estV(n1)) ? "j" : "i"; i++; continue; }
+      if(c === "i" || c === "î" || c === "ï"){ o += estV(n1) && i > 0 ? "j" : "i"; i++; continue; }
+      if(c === "u" || c === "û" || c === "ù" || c === "ü"){ o += "y"; i++; continue; }
+      if("aàâä".includes(c)){ o += "a"; i++; continue; }
+      if("oôö".includes(c)){ o += "o"; i++; continue; }
+      if("éèêë".includes(c)){ o += "e"; i++; continue; }
+      if(c === "e"){                                      // e ouvert devant 2 consonnes ou consonne finale
+        const a = w[i+1], b = w[i+2];
+        o += (a && !estV(a) && (!b || !estV(b))) ? "e" : "E"; i++; continue;
+      }
+      o += c; i++;
+    }
+    return o.replace(/nj/g,"N");
+  }
+
+  function entendOk(transcript, cible){
+    const mots = transcript.replace(/\d+/g, d => CHIFFRES[d] || d).replace(/['’-]/g,"").split(/\s+/).filter(Boolean);
+    const ph = mots.map(m => phon(m, false));
+    const cand = new Set(ph);
+    for(let k = 0; k + 1 < ph.length; k++) cand.add(ph[k] + ph[k+1]);
+    cand.add(phon(mots.join(""), false));
+    return cand.has(cible);
+  }
+
+  /* ================= État ================= */
+  const lire = (k, d) => { try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } };
+  const ecrire = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+  const etat = { niveau: lire("mds-niveau", 0), mode: "bouton", duree: 60, sons: true,
+    pile: [], syl: "", cible: "", score: 0, lues: [], passees: [], fin: 0, tic: null, joue: false,
+    reco: null, verrou: { idx: -1, mots: 0 }, accepte: true };
+  const records = lire("mds-records", {});
+
+  /* ================= Sons ================= */
+  let ctx = null;
+  const audio = () => ctx || (ctx = new (window.AudioContext || window.webkitAudioContext)());
+  function bip(f, d, type = "sine", delai = 0, vol = .12){
+    if(!etat.sons) return;
+    try{
+      const a = audio(), t = a.currentTime + delai, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.value = f; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + .02);
+    }catch(e){}
+  }
+  const sonOk = () => { const n = Math.min(etat.score, 30); bip(520 + n*12, .1, "triangle"); bip(780 + n*16, .14, "triangle", .07); };
+  const sonPasse = () => bip(300, .12, "sine", 0, .08);
+  const sonFin = () => [784,659,523,392].forEach((f,i) => bip(f, .25, "square", i*.12, .07));
+  const sonRecord = () => [523,659,784,1047,784,1047].forEach((f,i) => bip(f, .22, "square", i*.13, .1));
+
+  /* ================= Réglages ================= */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    $("modeMicro").disabled = true;
+    $("infoMicro").textContent = "🎤 Micro non disponible sur ce navigateur : utilisez Google Chrome ou Microsoft Edge (connexion internet nécessaire).";
+  } else {
+    $("infoMicro").textContent = "🎤 Mode micro : Chrome ou Edge, connexion internet nécessaire. Parler distinctement, près du micro. Le bouton « Bien lu » reste disponible si le micro n'a pas compris.";
+  }
+
+  function dessinerNiveaux(){
+    $("niveaux").innerHTML = NIVEAUX.map((n, i) => `
+      <button class="niveau" data-n="${i}" aria-pressed="${i === etat.niveau}" style="--n:${n.couleur}">
+        <b>${n.nom}</b><span class="titre-niv">${n.titre}</span><span class="ex">${n.ex}</span>
+        <span class="rec">${records[i] ? "🏆 Record : " + records[i] : ""}</span>
+      </button>`).join("");
+    $("niveaux").querySelectorAll(".niveau").forEach(b => b.onclick = () => { etat.niveau = +b.dataset.n; ecrire("mds-niveau", etat.niveau); dessinerNiveaux(); });
+  }
+  function choisirMode(m){
+    etat.mode = m;
+    document.querySelectorAll(".mode").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === m));
+  }
+  document.querySelectorAll(".mode").forEach(b => b.onclick = () => choisirMode(b.dataset.mode));
+  dessinerNiveaux();
+
+  function montrer(id){ document.querySelectorAll(".ecran").forEach(e => e.classList.toggle("actif", e.id === id)); }
+
+  /* ================= Partie ================= */
+  const melanger = t => { t = t.slice(); for(let i = t.length - 1; i > 0; i--){ const j = Math.random()*(i+1)|0; [t[i], t[j]] = [t[j], t[i]]; } return t; };
+  const CIRC = 2 * Math.PI * 44;
+  $("arc").style.strokeDasharray = CIRC;
+
+  function lancer(){
+    etat.duree = +$("duree").value; etat.sons = $("sons").checked;
+    const n = NIVEAUX[etat.niveau];
+    Object.assign(etat, { pile: [], score: 0, lues: [], passees: [], joue: false, accepte: true });
+    document.documentElement.style.setProperty("--n", n.couleur);
+    $("nivJeu").textContent = n.nom; $("score").textContent = "0";
+    $("secondes").textContent = etat.duree; $("arc").style.strokeDashoffset = 0; $("temps").classList.remove("urgent");
+    $("syl").textContent = ""; indicateur("");
+    $("btnBienLu").textContent = etat.mode === "micro" ? "✓ Bien lu (adulte)" : "✓ Bien lu";
+    montrer("ecranJeu");
+    try{ audio().resume?.(); }catch(e){}
+    if(etat.mode === "micro") demarrerEcoute();
+    decompte(3);
+  }
+
+  function decompte(k){
+    const d = $("decompte"), s = $("decompteNb");
+    d.classList.add("actif");
+    const pas = () => {
+      if(k === 0){ d.classList.remove("actif"); demarrer(); return; }
+      s.textContent = k; s.style.animation = "none"; void s.offsetWidth; s.style.animation = "";
+      bip(440, .12, "sine", 0, .1); k--; etat.tDecompte = setTimeout(pas, 900);
+    };
+    pas();
+  }
+
+  function demarrer(){
+    etat.joue = true;
+    etat.fin = performance.now() + etat.duree * 1000;
+    suivante();
+    const boucle = () => {
+      if(!etat.joue) return;
+      const reste = Math.max(0, etat.fin - performance.now());
+      const s = Math.ceil(reste / 1000);
+      if($("secondes").textContent != s){ $("secondes").textContent = s; if(s <= 10 && s > 0) bip(880, .05, "sine", 0, .05); }
+      $("arc").style.strokeDashoffset = CIRC * (1 - reste / (etat.duree * 1000));
+      $("temps").classList.toggle("urgent", reste <= 10000);
+      if(reste <= 0) return terminer();
+      etat.tic = requestAnimationFrame(boucle);
+    };
+    etat.tic = requestAnimationFrame(boucle);
+  }
+
+  function suivante(){
+    if(!etat.pile.length) etat.pile = melanger(NIVEAUX[etat.niveau].liste);
+    let s = etat.pile.pop();
+    if(s === etat.syl && etat.pile.length) s = etat.pile.pop();
+    etat.syl = s; etat.cible = phon(s, true);
+    const c = $("carte");
+    c.className = "carte"; void c.offsetWidth;
+    $("syl").textContent = s;
+    c.classList.add("entre");
+    etat.accepte = true;
+    if(etat.mode === "micro" && etat.reco) indicateur('<span class="micro">🎤</span> J\'écoute…', "actif");
+  }
+
+  function valider(parMicro, entendu){
+    if(!etat.joue || !etat.accepte) return;
+    etat.accepte = false;
+    etat.score++; etat.lues.push(etat.syl);
+    const b = $("score"); b.textContent = etat.score; b.classList.remove("bond"); void b.offsetWidth; b.classList.add("bond");
+    sonOk();
+    if(parMicro) indicateur(`✓ <span class="entendu">J'ai entendu : « ${echapper(entendu)} »</span>`, "ok");
+    const c = $("carte"); c.classList.add("vrai", "sort-ok");
+    setTimeout(() => etat.joue && suivante(), 260);
+  }
+  function passer(){
+    if(!etat.joue || !etat.accepte) return;
+    etat.accepte = false;
+    etat.passees.push(etat.syl);
+    sonPasse();
+    $("carte").classList.add("sort-passe");
+    setTimeout(() => etat.joue && suivante(), 220);
+  }
+  const echapper = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function indicateur(html, classe = ""){ const e = $("ecoute"); e.innerHTML = html; e.className = "ecoute " + classe; }
+
+  function arreter(){
+    etat.joue = false;
+    cancelAnimationFrame(etat.tic); clearTimeout(etat.tDecompte);
+    $("decompte").classList.remove("actif");
+    arreterEcoute();
+  }
+
+  function terminer(){
+    arreter();
+    $("secondes").textContent = "0"; $("arc").style.strokeDashoffset = CIRC;
+    const n = etat.niveau, s = etat.score;
+    $("scoreFin").textContent = s;
+    const min = etat.duree === 60 ? "en 1 minute" : etat.duree === 30 ? "en 30 secondes" : etat.duree === 90 ? "en 1 minute 30" : "en 2 minutes";
+    $("phraseFin").textContent = (s > 1 ? "syllabes bien lues " : "syllabe bien lue ") + min + " · " + NIVEAUX[n].nom;
+    // Record : calculé sur une minute pour comparer des durées différentes
+    const cle = n + "-" + etat.duree;
+    const ancien = records[cle] || 0;
+    if(s > ancien && s > 0){
+      records[cle] = s; if(etat.duree === 60) records[n] = s; ecrire("mds-records", records);
+      $("record").textContent = ancien ? `🏆 Nouveau record ! (avant : ${ancien})` : "🏆 Premier record sur ce niveau !";
+      sonRecord(); confettis();
+    } else {
+      $("record").textContent = ancien ? `Record à battre : ${ancien}` : "";
+      sonFin();
+    }
+    const puces = (l, cl) => l.length ? l.map(x => `<span class="puce ${cl}">${x}</span>`).join("") : '<span class="vide">aucune</span>';
+    $("listeLues").innerHTML = puces(etat.lues, "");
+    $("listePassees").innerHTML = puces([...new Set(etat.passees)], "passee");
+    $("btnSuivant").hidden = n >= NIVEAUX.length - 1;
+    dessinerNiveaux();
+    montrer("ecranFin");
+  }
+
+  function confettis(){
+    const couleurs = ["#ff5d5d","#ffb703","#22a957","#3a86ff","#8a5cf6"];
+    for(let i = 0; i < 70; i++){
+      const c = document.createElement("div"); c.className = "confetti";
+      c.style.left = Math.random()*100 + "vw"; c.style.background = couleurs[i % couleurs.length];
+      c.style.animationDuration = (1.8 + Math.random()*1.8) + "s"; c.style.animationDelay = Math.random()*.5 + "s";
+      document.body.appendChild(c); setTimeout(() => c.remove(), 4500);
+    }
+  }
+
+  /* ================= Micro ================= */
+  function demarrerEcoute(){
+    if(!SR) return;
+    const r = new SR();
+    r.lang = "fr-FR"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 5;
+    etat.reco = r; etat.verrou = { idx: -1, mots: 0 };
+    r.onstart = () => { if(etat.joue) indicateur('<span class="micro">🎤</span> J\'écoute…', "actif"); };
+    r.onresult = e => {
+      if(!etat.joue || !etat.accepte) return;
+      for(let i = e.resultIndex; i < e.results.length; i++){
+        if(i < etat.verrou.idx) continue;
+        const res = e.results[i];
+        for(let j = 0; j < res.length; j++){
+          let mots = res[j].transcript.trim().split(/\s+/);
+          if(i === etat.verrou.idx) mots = mots.slice(etat.verrou.mots);
+          if(!mots.length || !mots[0]) continue;
+          const t = mots.join(" ");
+          if(entendOk(t, etat.cible)){
+            etat.verrou = { idx: i, mots: res[j].transcript.trim().split(/\s+/).length };
+            valider(true, t); return;
+          }
+        }
+        // Rien de juste : on montre ce que le micro a compris (meilleure hypothèse)
+        let vu = res[0].transcript.trim().split(/\s+/);
+        if(i === etat.verrou.idx) vu = vu.slice(etat.verrou.mots);
+        if(vu.length && vu[0]) indicateur(`<span class="micro">🎤</span> <span class="entendu">J'entends : « ${echapper(vu.slice(-3).join(" "))} »</span>`, "ko");
+      }
+    };
+    r.onerror = e => {
+      if(e.error === "not-allowed" || e.error === "service-not-allowed"){
+        etat.reco = null;
+        indicateur("🎤 Micro refusé : autorisez-le dans le navigateur. En attendant, l'adulte valide avec « Bien lu ».", "ko");
+      } else if(e.error === "network"){
+        etat.reco = null;
+        indicateur("🎤 Pas de connexion pour la reconnaissance vocale. L'adulte valide avec « Bien lu ».", "ko");
+      }
+    };
+    r.onend = () => {                       // Chrome coupe l'écoute après un silence : on relance
+      if(etat.reco === r && (etat.joue || $("decompte").classList.contains("actif"))){
+        etat.verrou = { idx: -1, mots: 0 };
+        try{ r.start(); }catch(e){ setTimeout(() => { try{ r.start(); }catch(_){} }, 250); }
+      }
+    };
+    try{ r.start(); }catch(e){ indicateur("🎤 Micro indisponible. L'adulte valide avec « Bien lu ».", "ko"); }
+  }
+  function arreterEcoute(){
+    const r = etat.reco; etat.reco = null;
+    if(r){ try{ r.abort(); }catch(e){} }
+  }
+
+  /* ================= Boutons et clavier ================= */
+  $("btnGo").onclick = lancer;
+  $("btnBienLu").onclick = () => valider(false);
+  $("btnPasser").onclick = passer;
+  $("btnStop").onclick = () => { arreter(); montrer("ecranReglages"); };
+  $("btnRejouer").onclick = lancer;
+  $("btnSuivant").onclick = () => { etat.niveau = Math.min(etat.niveau + 1, NIVEAUX.length - 1); ecrire("mds-niveau", etat.niveau); dessinerNiveaux(); lancer(); };
+  $("btnReglages").onclick = () => montrer("ecranReglages");
+  document.addEventListener("keydown", e => {
+    if(!$("ecranJeu").classList.contains("actif")) return;
+    if(e.code === "Space" || e.key === "Enter"){ e.preventDefault(); valider(false); }
+    else if(e.key === "ArrowRight"){ e.preventDefault(); passer(); }
+    else if(e.key === "Escape"){ arreter(); montrer("ecranReglages"); }
+  });
+
+  // Pour les tests : window.__mds = { phon, entendOk, NIVEAUX }
+  window.__mds = { phon, entendOk, NIVEAUX };
+})();
+</script>
+</body>
+</html>
