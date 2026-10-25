@@ -373,7 +373,7 @@ NOTE_CC = """<p class="note-accueil">Normalement, il n'y a pas d'image dans un c
 
 
 # Encadré sous l'introduction de la page Lecture
-NOTE_LECTURE = """<p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante pour un élève.</p>"""
+NOTE_LECTURE = """<p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante.</p>"""
 
 
 def grid(posts):
