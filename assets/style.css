@@ -196,3 +196,4 @@ body.fond.fond-lac-brume::before { filter: brightness(.78); }
 
 .note-nav { max-width: 62ch; margin: 0 0 1.2em; padding: 12px 18px; border: 2px solid var(--warm); border-left-width: 6px; background: #fdf0e9; color: var(--ink); border-radius: 10px; }
 .note-nav strong { color: #b4471c; }
+.kofi { margin: 20px 0; }
