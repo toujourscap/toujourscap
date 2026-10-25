@@ -1,6 +1,183 @@
 {
- "count": 15,
+ "count": 16,
  "posts": [
+  {
+   "title": "La Course des Additions",
+   "slug": "la-course-des-additions",
+   "cat": "calcul",
+   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Il faut arriver avant l'ordinateur pour gagner la médaille !",
+   "date": "2026-10-25T13:10:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu pour automatiser les tables d'addition : chaque bonne réponse est un coup de pédale. L'élève fait la course contre l'ordinateur, sur 10 additions, et doit franchir la ligne d'arrivée le premier.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la table, de 0 à 10.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la médaille visée : bronze, argent ou or. Plus la médaille est précieuse, plus l'ordinateur pédale vite.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Taper le résultat de chaque addition avec le pavé numérique (ou le clavier).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bonne réponse : le vélo accélère. Erreur : la bonne réponse s'affiche et le vélo perd un peu de vitesse.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les médailles gagnées restent affichées sous chaque table : l'élève voit d'un coup d'œil les tables qu'il maîtrise et celles qu'il lui reste à travailler.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Régler la difficulté",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un réglage réservé à l'adulte fixe le temps de l'ordinateur pour la médaille de bronze (60 secondes par défaut). L'argent demande 75 % de ce temps et l'or 55 %. On peut ainsi adapter la course à chaque élève : laisser du temps à celui qui compte encore sur ses doigts, ou pousser celui qui connaît déjà ses tables.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-course-des-additions.html",
+       "containerData": {
+        "height": {
+         "custom": "780"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "La tour des nombres",
    "slug": "la-tour-des-nombres",

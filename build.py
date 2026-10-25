@@ -32,6 +32,7 @@ CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
+    "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition, compléments, petites opérations.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
 # Dans posts.json, chaque jeu porte un champ "jeu" :
@@ -388,7 +389,10 @@ SEO_TITRES = {
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
-    "/maths/": "Maths cycle 2 : outils de numération gratuits",
+    "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
+    "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
+    "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
+    "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
 }
 
@@ -421,14 +425,14 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
     posts = []
     for p in data["posts"]:
         slug = ascii_slug(p["slug"])
-        cat = next((CAT_IDS[c] for c in p.get("categoryIds", []) if c in CAT_IDS), None) or "lecture"
+        cat = p.get("cat") or next((CAT_IDS[c] for c in p.get("categoryIds", []) if c in CAT_IDS), None) or "lecture"
         nodes = p["richContent"]["nodes"]
         cover = (p.get("media") or {}).get("wixMedia", {}).get("image", {}).get("url", "")
         if not cover:
@@ -496,7 +500,7 @@ def main():
   {chips_k}
   {grid(sub)}
 </section>""", "/blog/", v["desc"]),
-              canonical=f"/francais/{k}/" if v["domain"] == "francais" else None)
+              canonical=f"/{v['domain']}/{k}/")
 
     # Domaines
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
@@ -545,12 +549,23 @@ def main():
   <a class="embed-full" href="{t['src']}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
 </section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
-    maths = [p for p in posts if CATS[p["cat"]]["domain"] == "maths"]
+    msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul")]
+    mvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/maths/{k}/">
+  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
+  <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
+</a>""" for k, t, d, lst in msubs) + "</div>"
     write("/maths/", page("Maths", f"""<section class="wrap">
   <h1>Maths</h1>
   <p class="lead">Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.</p>
-  {grid(maths)}
-</section>""", "/maths/", "Maths au cycle 2 : activités et outils de numération pour lire, dire et manipuler les nombres en GS, CP et CE1."))
+  {mvignettes}
+</section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération et de calcul mental pour la GS, le CP et le CE1."))
+    for k, t, d, lst in msubs:
+        write(f"/maths/{k}/", page(t, f"""<section class="wrap">
+  <nav class="crumbs"><a href="/maths/">Maths</a> › {t}</nav>
+  <h1>{t}</h1>
+  <p class="lead">{d}</p>
+  {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
+</section>""", "/maths/", d))
     write("/divers/", page("Divers", """<section class="wrap narrow">
   <h1>Divers</h1>
   <p class="lead">Des pistes variées pour stimuler la motivation et la métacognition.</p>
@@ -577,7 +592,7 @@ def main():
 
     domains = [
         ("/francais/", "Lecture · Langage oral", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
-        ("/maths/", "Numération", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
+        ("/maths/", "Numération · Calcul", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
         ("/divers/", "Motivation", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
     dcards = '<div class="grid">' + "".join(f"""<a class="card" href="{h}">

@@ -2,7 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://toujourscap.com/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/blog/</loc><lastmod>2026-10-25</lastmod></url>
-  <url><loc>https://toujourscap.com/blog/numeration/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/francais/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/francais/cercle-conteur/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/francais/lecture/</loc><lastmod>2026-10-25</lastmod></url>
@@ -10,8 +9,11 @@
   <url><loc>https://toujourscap.com/francais/lecture/teleprompteur-a-l-ecoute/</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://toujourscap.com/francais/lecture/teleprompteur-de-lecture/</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://toujourscap.com/maths/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://toujourscap.com/maths/calcul/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://toujourscap.com/maths/numeration/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/outils-pedagogiques/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/post/comment-anansi-devint-le-maitre-des-histoires/</loc><lastmod>2026-10-20</lastmod></url>
+  <url><loc>https://toujourscap.com/post/la-course-des-additions/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/post/la-petite-poule-et-le-grain-de-mil/</loc><lastmod>2026-10-20</lastmod></url>
   <url><loc>https://toujourscap.com/post/la-tour-des-nombres/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://toujourscap.com/post/le-cercle-conteur/</loc><lastmod>2026-10-25</lastmod></url>
