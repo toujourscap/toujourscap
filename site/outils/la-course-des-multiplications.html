@@ -519,7 +519,8 @@ function frame(now){
   if(Math.abs(meTarget-me.pos)<.0005) me.pos=meTarget;
   // Vitesse → cadence de course
   const vM=(me.pos-prevM)/dt, vB=(bot.pos-prevB)/dt;
-  me.vel += ((vM>0.002? 9+vM*90 : 0) - me.vel)*Math.min(1,dt*6);
+  // Le joueur court sur place pendant toute la course, et avance à chaque bonne réponse
+  me.vel += ((vM>0.002? 9+vM*90 : (R.running? 5.5 : 0)) - me.vel)*Math.min(1,dt*6);
   bot.vel += ((vB>0? 6+vB*140 : 0) - bot.vel)*Math.min(1,dt*6);
   me.ang += me.vel*dt; bot.ang += bot.vel*dt;
   me.el.style.transform=`translateX(${trackX(me.pos)}px)`;
