@@ -572,6 +572,7 @@ def main():
     write("/maths/", page("Maths", f"""<section class="wrap">
   <h1>Maths</h1>
   <p class="lead">Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.</p>
+  {NOTE_LECTURE}
   {mvignettes}
 </section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération et de calcul mental pour la GS, le CP et le CE1."))
     for k, t, d, lst in msubs:
