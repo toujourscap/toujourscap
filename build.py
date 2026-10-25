@@ -558,8 +558,11 @@ def main():
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
 </section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
     msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul")]
+    # Image choisie pour une vignette de sous-rubrique (sinon : couverture du premier article)
+    VIGNETTES = {"calcul": "/images/domaines/calcul.jpg"}
+    vimg = lambda k, lst: VIGNETTES.get(k) or cover_of(lst)
     mvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/maths/{k}/">
-  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
+  <div class="card-img">{f'<img src="{esc(vimg(k, lst))}" alt="{esc(t)}" loading="lazy">' if vimg(k, lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for k, t, d, lst in msubs) + "</div>"
     write("/maths/", page("Maths", f"""<section class="wrap">
