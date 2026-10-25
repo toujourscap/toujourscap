@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=2e12f349">
+<link rel="stylesheet" href="/style.css?v=4d09c1c5">
 </head>
 <body class="fond fond-canopee">
 <header class="site-header">
@@ -51,7 +51,8 @@
   </g>
 </svg></a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="nav" onclick="this.setAttribute('aria-expanded', document.getElementById('nav').classList.toggle('open'))">Menu</button>
-    <nav id="nav" class="nav"><a href="/">Accueil</a><a href="/outils-pedagogiques/">Outils pédagogiques</a><a href="/francais/">Français</a><a href="/maths/">Maths</a><a href="/divers/">Divers</a><a href="/blog/">Blog</a><a href="/qui-suis-je/">Qui suis-je ?</a></nav>
+    <nav id="nav" class="nav"><a href="/">Accueil</a><a href="/outils-pedagogiques/">Outils pédagogiques</a><a href="/francais/">Français</a><a href="/maths/">Maths</a><a href="/divers/">Divers</a><a href="/blog/">Blog</a><a href="/qui-suis-je/">Qui suis-je ?</a><a class="nav-admin" href="/admin/commentaires" hidden>🔒 Admin</a></nav>
+    <script>if(document.cookie.indexOf("tc_moi=1")>-1)document.querySelector(".nav-admin").hidden=false</script>
   </div>
 </header>
 <main>

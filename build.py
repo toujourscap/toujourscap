@@ -277,7 +277,8 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
   <div class="wrap header-inner">
     <a class="logo" href="/" aria-label="Toujours cap ! Accueil">{LOGO_BANDEAU}</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="nav" onclick="this.setAttribute('aria-expanded', document.getElementById('nav').classList.toggle('open'))">Menu</button>
-    <nav id="nav" class="nav">{nav}</nav>
+    <nav id="nav" class="nav">{nav}<a class="nav-admin" href="/admin/commentaires" hidden>🔒 Admin</a></nav>
+    <script>if(document.cookie.indexOf("tc_moi=1")>-1)document.querySelector(".nav-admin").hidden=false</script>
   </div>
 </header>
 <main>
