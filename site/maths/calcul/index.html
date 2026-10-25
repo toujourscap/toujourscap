@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1 | Toujours cap !</title>
-<meta name="description" content="Jeux pour automatiser le calcul mental au cycle 2 : tables d&#x27;addition, compléments, petites opérations.">
+<meta name="description" content="Jeux pour automatiser le calcul mental au cycle 2 : tables d&#x27;addition et de multiplication.">
 <link rel="canonical" href="https://toujourscap.com/maths/calcul/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:url" content="https://toujourscap.com/maths/calcul/">
 <meta property="og:title" content="Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1 | Toujours cap !">
-<meta property="og:description" content="Jeux pour automatiser le calcul mental au cycle 2 : tables d&#x27;addition, compléments, petites opérations.">
+<meta property="og:description" content="Jeux pour automatiser le calcul mental au cycle 2 : tables d&#x27;addition et de multiplication.">
 <meta property="og:site_name" content="Toujours cap !">
 <meta property="og:image" content="https://static.wixstatic.com/media/5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -58,14 +58,36 @@
 <section class="wrap">
   <nav class="crumbs"><a href="/maths/">Maths</a> › Calcul</nav>
   <h1>Calcul</h1>
-  <p class="lead">Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition, compléments, petites opérations.</p>
-  <div class="grid"><a class="card" href="/post/la-course-des-additions/">
+  <p class="lead">Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication.</p>
+  <div class="chips filtres" role="group" aria-label="Trier par opération"><span class="filtres-label">Trier par :</span><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="addition" aria-pressed="false">Addition</button><button class="chip" data-f="multiplication" aria-pressed="false">Multiplication</button></div><script>
+document.querySelectorAll('.filtres button').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var f = b.dataset.f;
+    document.querySelectorAll('.filtres button').forEach(function (x) {
+      x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
+    });
+    document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
+      c.hidden = !!f && c.dataset.comp !== f;
+    });
+  });
+});
+</script>
+  <div class="grid"><a class="card" href="/post/la-course-des-additions/" data-comp="addition">
   <div class="card-img"><img src="/images/jeux/la-course-des-additions.jpg" alt="La Course des Additions" loading="lazy"></div>
   <div class="card-body">
-    <span class="chip">Calcul</span>
+    <span class="chip">Addition</span>
     <h3>La Course des Additions</h3>
     <p>Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l&#x27;ordinateur, ou en classe par équipes avec un classement au temps.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur ou la classe par équipes</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
+    <span class="muted small">25 octobre 2026</span>
+  </div>
+</a><a class="card" href="/post/la-course-des-multiplications/" data-comp="multiplication">
+  <div class="card-img"><img src="/images/jeux/la-course-des-multiplications.jpg" alt="La Course des Multiplications" loading="lazy"></div>
+  <div class="card-body">
+    <span class="chip">Multiplication</span>
+    <h3>La Course des Multiplications</h3>
+    <p>Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l&#x27;ordinateur, ou en classe par équipes avec un classement au temps.</p>
+    <div class="reperes"><span class="niv">CE1</span><span class="niv">CE2</span><span>👥 1 joueur ou la classe par équipes</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
     <span class="muted small">25 octobre 2026</span>
   </div>
 </a></div>

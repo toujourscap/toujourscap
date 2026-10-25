@@ -1,6 +1,307 @@
 {
- "count": 16,
+ "count": 17,
  "posts": [
+  {
+   "title": "La Course des Multiplications",
+   "slug": "la-course-des-multiplications",
+   "cat": "calcul",
+   "excerpt": "Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l'ordinateur, ou en classe par équipes avec un classement au temps.",
+   "date": "2026-10-25T14:20:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": "multiplication",
+    "niveaux": [
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur ou la classe par équipes",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu pour automatiser les tables de multiplication : chaque bonne réponse est une foulée. Deux façons de jouer : seul contre l'ordinateur pour gagner des médailles, ou en classe, par équipes, pour la course au meilleur temps.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Seul contre l'ordinateur",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir une table, de 1 à 10, ou « Tables mélangées » (calculs des tables de 2 à 10).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la médaille visée : bronze, argent ou or. Plus la médaille est précieuse, plus l'ordinateur court vite.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Taper le résultat de chaque multiplication avec le pavé numérique (ou le clavier).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bonne réponse : le coureur accélère. Erreur : il trébuche et il faut retrouver la bonne réponse.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les médailles gagnées restent affichées sous chaque table : l'élève voit d'un coup d'œil les tables qu'il maîtrise et celles qu'il lui reste à travailler.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Régler la difficulté",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un réglage réservé à l'adulte fixe le temps de l'ordinateur pour la médaille de bronze (90 secondes par défaut). L'argent demande 75 % de ce temps et l'or 55 %. On adapte ainsi la course à chaque élève.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En classe, par équipes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le mode « En classe », la table, puis le nombre d'équipes (de 2 à 6).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Chaque équipe fait la course à son tour, sur les mêmes 10 multiplications. Un élève de l'équipe tape au clavier ou au tableau, les autres l'aident.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À partir de la deuxième équipe, un coureur fantôme court au rythme du meilleur temps : on voit en direct si le record tombe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, classement de toutes les équipes au temps, avec leur nombre d'erreurs. Le bouton « Revanche » relance une course avec de nouveaux calculs.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-course-des-multiplications.html",
+       "containerData": {
+        "height": {
+         "custom": "920"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour les tables d'addition : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La Course des Additions",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/la-course-des-additions/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "La Course des Additions",
    "slug": "la-course-des-additions",
@@ -21,7 +322,8 @@
     "supports": [
      "ecran",
      "projetable"
-    ]
+    ],
+    "competence": "addition"
    },
    "richContent": {
     "nodes": [

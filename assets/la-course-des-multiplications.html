@@ -1,0 +1,682 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Multiplications</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout : écran unique — en-tête, scène de course en défilement (ciel, collines, 2 couloirs), question + pavé */
+:root{
+  --bg:#eef6ef; --surface:#ffffff; --fg:#1d2b2a; --muted:#5d6f6c; --line:#cfe0d6;
+  --sky1:#8fd3ff; --sky2:#dff3ff; --cloud:#ffffff; --sun:#ffd23f;
+  --hill1:#9ad38a; --hill2:#5fae63; --grass:#4f9e55; --rail:#f4f0e6; --rail-2:#8a6a4a;
+  --track:#d07c48; --track-2:#bb6a3a; --chalk:#fff8ec;
+  --me:#e9462f; --me-soft:#fde3dd; --bot:#3a6fb0; --bot-soft:#dfe9f6;
+  --ok:#2f9b4f; --ko:#d23b2b;
+  --bronze:#c9813f; --argent:#9aa6ad; --or:#e9b31b;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13201d; --surface:#1c2c28; --fg:#eaf3ef; --muted:#9fb3ad; --line:#2d423c;
+  --sky1:#1d3b66; --sky2:#3f6aa0; --cloud:#c9d6ea; --sun:#f5e6a8;
+  --hill1:#2f6a42; --hill2:#22513a; --grass:#1e4a30;
+  --track:#8e5434; --track-2:#7b472b; --chalk:#f3eadb;
+  --me:#ff6a52; --me-soft:#4a2620; --bot:#6d9de0; --bot-soft:#22344d; --ok:#4cc46f; --ko:#ff6b5b;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13201d; --surface:#1c2c28; --fg:#eaf3ef; --muted:#9fb3ad; --line:#2d423c;
+  --sky1:#1d3b66; --sky2:#3f6aa0; --cloud:#c9d6ea; --sun:#f5e6a8;
+  --hill1:#2f6a42; --hill2:#22513a; --grass:#1e4a30;
+  --track:#8e5434; --track-2:#7b472b; --chalk:#f3eadb;
+  --me:#ff6a52; --me-soft:#4a2620; --bot:#6d9de0; --bot-soft:#22344d; --ok:#4cc46f; --ko:#ff6b5b;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--display);margin:0;line-height:1.05;text-wrap:balance}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800}
+h1 span{color:var(--me)}
+h2{font-size:1.4rem;font-weight:800}
+.sub{color:var(--muted);margin:4px 0 0;font-weight:700}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-offset:2px}
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.label{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+
+/* Grille des tables */
+.tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.tbtn{background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tbtn b{font-family:var(--display);font-size:1.7rem;line-height:1}
+.tbtn small{font-weight:700;color:var(--muted);font-size:.75rem}
+.tbtn[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
+.dots{display:flex;gap:4px;height:12px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--line)}
+.dot.bronze.on{background:var(--bronze);border-color:var(--bronze)}
+.dot.argent.on{background:var(--argent);border-color:var(--argent)}
+.dot.or.on{background:var(--or);border-color:var(--or)}
+
+/* Niveaux */
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lvl{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800}
+.lvl .time{font-weight:700;color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.medal{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:#fff;font-size:1.2rem;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.medal.bronze{background:var(--bronze)} .medal.argent{background:var(--argent)} .medal.or{background:var(--or)}
+.lvl.won{border-color:var(--ok)}
+.lvl .state{font-size:.75rem;color:var(--ok);min-height:1em}
+
+.setting{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.setting input[type=range]{flex:1;min-width:160px;accent-color:var(--me)}
+.setting output{font-family:var(--display);font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums;min-width:4ch}
+
+/* Scène de course */
+.race-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ghost{background:transparent;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:800}
+.scene{--sx:0;position:relative;border-radius:20px;overflow:hidden;
+  background:linear-gradient(var(--sky1),var(--sky2) 112px,var(--grass) 112px);padding-top:116px;padding-bottom:10px}
+.scene.shake{animation:shake2 .25s}
+@keyframes shake2{30%{transform:translate(-2px,1px)}60%{transform:translate(2px,-1px)}}
+.sun{position:absolute;right:12%;top:14px;width:46px;height:46px;border-radius:50%;background:var(--sun);
+  box-shadow:0 0 0 10px color-mix(in srgb,var(--sun) 25%,transparent)}
+.layer{position:absolute;left:0;right:0;pointer-events:none}
+.clouds{top:10px;height:60px;background:
+  radial-gradient(ellipse 34px 14px at 60px 30px,var(--cloud) 96%,transparent),
+  radial-gradient(ellipse 22px 16px at 80px 22px,var(--cloud) 96%,transparent),
+  radial-gradient(ellipse 30px 12px at 250px 44px,var(--cloud) 96%,transparent),
+  radial-gradient(ellipse 18px 13px at 268px 36px,var(--cloud) 96%,transparent);
+  background-size:380px 60px;background-repeat:repeat-x;background-position-x:calc(var(--sx) * -0.15px);opacity:.9}
+.hills1{top:40px;height:70px;background:radial-gradient(ellipse 120px 60px at 50% 100%,var(--hill1) 98%,transparent) 0 100%/230px 70px repeat-x;
+  background-position-x:calc(var(--sx) * -0.3px)}
+.hills2{top:66px;height:46px;background:radial-gradient(ellipse 70px 40px at 50% 100%,var(--hill2) 98%,transparent) 0 100%/150px 44px repeat-x;
+  background-position-x:calc(var(--sx) * -0.6px)}
+.posts{top:100px;height:16px;background:linear-gradient(90deg,transparent 0 46px,var(--chalk) 46px 50px,transparent 50px) 0 0/90px 16px repeat-x;
+  background-position-x:calc(var(--sx) * -1px);opacity:.7}
+
+/* Public */
+.crowd{position:absolute;left:0;right:0;top:78px;height:34px;display:flex;justify-content:space-around;align-items:flex-end;z-index:1;padding:0 4px;pointer-events:none}
+.fan{position:relative;width:14px;height:32px;animation:idle 1.8s ease-in-out infinite}
+.fan .h{position:absolute;left:2.5px;top:2px;width:9px;height:9px;border-radius:50%;background:var(--sk)}
+.fan .k{position:absolute;left:1.5px;top:0;width:11px;height:5px;border-radius:6px 6px 0 0;background:var(--hat)}
+.fan .b{position:absolute;left:1px;top:11px;width:12px;height:18px;border-radius:6px 6px 2px 2px;background:var(--c)}
+.fan .a{position:absolute;top:12px;width:3px;height:11px;border-radius:2px;background:var(--c);transform-origin:50% 1px;transition:transform .15s}
+.fan .a.l{left:-1px;transform:rotate(18deg)} .fan .a.r{right:-1px;transform:rotate(-18deg)}
+.fan.cheer{animation:jump .3s ease-in-out infinite alternate}
+.fan.cheer .a.l{transform:rotate(155deg)} .fan.cheer .a.r{transform:rotate(-155deg)}
+.fan.cheer.wave .a.r{animation:wave .3s infinite alternate}
+@keyframes jump{to{transform:translateY(-7px)}}
+@keyframes idle{50%{transform:translateY(-1px)}}
+@keyframes wave{from{transform:rotate(-135deg)}to{transform:rotate(-175deg)}}
+.stand{top:100px;height:14px;z-index:2;border-top:3px solid var(--rail);
+  background:repeating-linear-gradient(90deg,var(--rail) 0 3px,transparent 3px 16px),linear-gradient(var(--rail-2),var(--rail-2))}
+.lane{position:relative;height:86px;margin:8px 0;background:linear-gradient(var(--track),var(--track-2));
+  border-top:3px solid var(--chalk);border-bottom:3px solid var(--chalk)}
+.lane::before{content:"";position:absolute;left:0;right:0;top:calc(50% - 2px);height:4px;
+  background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--chalk) 70%,transparent) 0 24px,transparent 24px 48px);
+  background-position-x:calc(var(--sx) * -1.4px)}
+.finish{position:absolute;top:0;bottom:0;right:24px;width:18px;z-index:1;
+  background:conic-gradient(#fff 25%,#222 0 50%,#fff 0 75%,#222 0) 0 0/9px 9px}
+.flag{position:absolute;right:18px;top:-30px;width:30px;height:30px;z-index:1}
+.ticks{position:absolute;inset:0 42px 0 70px;display:flex;justify-content:space-between;pointer-events:none}
+.ticks i{width:2px;background:color-mix(in srgb,var(--chalk) 30%,transparent)}
+.ticks i.done{background:var(--chalk);box-shadow:0 0 6px var(--chalk)}
+.bike{position:absolute;top:4px;left:0;width:92px;height:76px;z-index:3;will-change:transform}
+.bike svg{width:100%;height:100%;overflow:visible;transition:transform .2s}
+.bike.boost svg{transform:rotate(-5deg) translateY(-2px)}
+.bike.wobble svg{animation:wob .4s}
+@keyframes wob{25%{transform:rotate(6deg)}75%{transform:rotate(-6deg)}}
+.speed{position:absolute;right:86%;top:16px;width:70px;height:46px;opacity:0;transition:opacity .25s;
+  background:repeating-linear-gradient(transparent 0 7px,var(--chalk) 7px 9px,transparent 9px 15px);
+  -webkit-mask:linear-gradient(90deg,transparent,#000);mask:linear-gradient(90deg,transparent,#000)}
+.bike.boost .speed{opacity:.9}
+.puff{position:absolute;width:12px;height:12px;border-radius:50%;background:color-mix(in srgb,var(--chalk) 80%,var(--track));
+  z-index:2;pointer-events:none;animation:puff .6s ease-out forwards}
+@keyframes puff{to{transform:translate(-36px,-14px) scale(2.2);opacity:0}}
+.plus{position:absolute;z-index:4;font-family:var(--display);font-weight:800;font-size:1.6rem;color:#fff;
+  text-shadow:0 2px 0 var(--me),0 0 8px var(--me);pointer-events:none;animation:plus .8s ease-out forwards}
+@keyframes plus{from{transform:translateY(0) scale(.6);opacity:0}25%{opacity:1;transform:translateY(-10px) scale(1.2)}to{transform:translateY(-34px);opacity:0}}
+.tag{position:absolute;left:8px;top:6px;z-index:4;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;padding:2px 8px;border-radius:99px}
+.tag.me{background:var(--me)} .tag.bot{background:var(--bot)}
+.lead{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:5;font-weight:800;font-size:.95rem;
+  padding:6px 14px;border-radius:99px;color:#fff;white-space:nowrap;transition:background .3s}
+.lead.me{background:var(--me)} .lead.bot{background:var(--bot)} .lead.tie{background:#2b2b2b}
+.lead:empty{display:none}
+
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.streak{color:var(--me)}
+
+/* Question */
+.quiz{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center}
+@media (max-width:600px){.quiz{grid-template-columns:1fr}}
+.q{text-align:center;font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,10vw,4rem);line-height:1;
+  font-variant-numeric:tabular-nums}
+.q .ans{display:inline-block;min-width:2.2ch;border-bottom:5px solid var(--fg);color:var(--me)}
+.q.ok .ans{color:var(--ok);border-color:var(--ok)}
+.q.ko{animation:shake .35s} .q.ko .ans{color:var(--ko);border-color:var(--ko)}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.hint{text-align:center;min-height:1.4em;font-weight:800;color:var(--ko)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{font-family:var(--display);font-size:1.6rem;font-weight:800;padding:8px 0;border-radius:14px;border:2px solid var(--line);
+  background:var(--surface);box-shadow:0 3px 0 var(--line)}
+.pad button:active{transform:translateY(2px);box-shadow:none}
+.pad .del{color:var(--muted)}
+
+/* Superpositions */
+.overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 60%,transparent);
+  backdrop-filter:blur(2px);padding:20px}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:21}
+.count{font-family:var(--display);font-weight:800;font-size:8rem;color:var(--me);animation:pop .9s ease-out;text-shadow:0 6px 0 color-mix(in srgb,var(--me) 30%,transparent)}
+@keyframes pop{from{transform:scale(1.8);opacity:0}30%{transform:scale(1);opacity:1}}
+.result{position:relative;z-index:22;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:24px;max-width:380px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:pop .6s ease-out}
+.result .medal{width:96px;height:96px;font-size:2.4rem;animation:swing 1.6s ease-in-out infinite;transform-origin:50% -30px}
+@keyframes swing{50%{transform:rotate(8deg)}}
+.result .medal.none{background:var(--line);color:var(--muted);animation:none}
+.result p{margin:0;font-weight:700;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.cta{background:var(--me);color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:800;font-size:1rem}
+/* Mode de jeu et équipes */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800;font-size:1.05rem}
+.mode small{font-weight:700;color:var(--muted);font-size:.8rem}
+.mode[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
+.nteams{display:flex;gap:8px;flex-wrap:wrap}
+.nteams button{width:52px;height:52px;border-radius:14px;border:2px solid var(--line);background:var(--bg);font-family:var(--display);font-size:1.5rem;font-weight:800}
+.nteams button[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
+.teamlist{display:flex;gap:8px;flex-wrap:wrap}
+.teamchip{color:#fff;font-weight:800;padding:6px 14px;border-radius:99px}
+.go{align-self:flex-start}
+.rank{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:8px}
+.rank li{display:grid;grid-template-columns:2.2em 1fr auto;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--bg);font-weight:800;text-align:left}
+.rank .pos{font-family:var(--display);font-size:1.4rem}
+.rank .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.rank .tm{font-variant-numeric:tabular-nums}
+.rank .err{display:block;font-size:.75rem;color:var(--muted);font-weight:700}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <!-- MENU -->
+  <section id="menu" style="display:contents">
+    <header>
+      <h1>La Course des <span>Multiplications</span></h1>
+      <p class="sub" id="sub">Chaque bonne réponse = une foulée. Arrive avant l'ordinateur !</p>
+    </header>
+
+    <div class="panel">
+      <div class="label">Mode de jeu</div>
+      <div class="modes">
+        <button class="mode" id="mSolo">🚴 Seul<small>contre l'ordinateur</small></button>
+        <button class="mode" id="mTeam">👥 En classe<small>par équipes, au temps</small></button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="label">1. Choisis ta table</div>
+      <div class="tables" id="tables"></div>
+    </div>
+
+    <div class="panel solo-only">
+      <div class="label">2. Choisis ta médaille — <span id="selT">table de 2</span></div>
+      <div class="levels" id="levels"></div>
+    </div>
+
+    <div class="panel team-only">
+      <div class="label">2. Nombre d'équipes</div>
+      <div class="nteams" id="nteams"></div>
+      <div class="teamlist" id="teamlist"></div>
+      <p class="sub" style="margin:0">Chaque équipe fait la course à son tour, avec les mêmes 10 multiplications. Le coureur fantôme montre le meilleur temps. Classement au temps à la fin.</p>
+      <button class="cta go" id="goTeams">Lancer la course →</button>
+    </div>
+
+    <div class="panel solo-only">
+      <div class="label">Réglage (adulte) : temps de l'ordinateur pour la médaille de bronze</div>
+      <div class="setting">
+        <input type="range" id="base" min="20" max="180" step="5" value="90" aria-label="Temps bronze en secondes">
+        <output id="baseOut">90 s</output>
+      </div>
+      <p class="sub" style="margin:0">Argent = 75 % de ce temps, Or = 55 % (jamais moins de 10 s). 10 multiplications par course.</p>
+    </div>
+  </section>
+
+  <!-- COURSE -->
+  <section id="race" hidden style="display:contents">
+    <div class="race-head">
+      <h2 id="raceTitle">Table de 2 · Bronze</h2>
+      <div class="row"><button class="ghost" id="snd">🔊 Son</button><button class="ghost" id="quit">← Menu</button></div>
+    </div>
+    <div class="scene" id="scene">
+      <div class="sun"></div>
+      <div class="layer clouds"></div>
+      <div class="layer hills1"></div>
+      <div class="layer hills2"></div>
+      <div class="crowd" id="crowd"></div>
+      <div class="layer stand"></div>
+      <div class="lead" id="lead"></div>
+      <div class="lane" id="laneMe"><span class="tag me" id="tagMe">Toi</span><div class="ticks" id="ticks"></div><div class="finish"></div><div class="bike" id="bikeMe"></div></div>
+      <div class="lane" id="laneBot"><span class="tag bot" id="tagBot">Ordinateur</span><div class="finish"></div><div class="bike" id="bikeBot"></div></div>
+    </div>
+    <div class="hud"><span id="score">0 / 10</span><span class="streak" id="streak"></span><span id="clock">0,0 s</span></div>
+    <div class="panel quiz">
+      <div>
+        <div class="q" id="q">2 × 3 = <span class="ans" id="ans">&nbsp;</span></div>
+        <div class="hint" id="hint"></div>
+      </div>
+      <div class="pad" id="pad"></div>
+    </div>
+  </section>
+</div>
+
+<div class="overlay" id="ov" hidden></div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+const STEPS = 10;
+const LEVELS = [
+  {id:"bronze", name:"Bronze", k:1,    letter:"B"},
+  {id:"argent", name:"Argent", k:0.75, letter:"A"},
+  {id:"or",     name:"Or",     k:0.55, letter:"O"}
+];
+const $ = id => document.getElementById(id);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let store = {base:90, table:2, medals:{}, mode:"solo", nTeams:4};
+const TEAMS = [{name:"Rouges",c:"#e9462f"},{name:"Bleus",c:"#3a6fb0"},{name:"Verts",c:"#2f9b4f"},
+  {name:"Jaunes",c:"#d9a400"},{name:"Violets",c:"#8e44ad"},{name:"Roses",c:"#e0558f"}];
+let T = null; // partie par équipes en cours
+try { Object.assign(store, JSON.parse(localStorage.getItem("courseMul")||"{}")); } catch(e){}
+const save = () => { try{ localStorage.setItem("courseMul", JSON.stringify(store)); }catch(e){} };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- Coureur animé (bras et jambes calculés à chaque image) ---------- */
+const HIP={x:38,y:35}, SH={x:44,y:17}, L1=13.5, L2=13.5;
+function makeRider(el, color){
+  el.innerHTML = `<div class="speed"></div><svg viewBox="0 0 80 66" aria-hidden="true">
+    <ellipse class="shadow" cx="40" cy="63.5" rx="18" ry="2.6" fill="rgba(0,0,0,.18)"/>
+    <g class="body">
+      <path class="armB" fill="none" stroke="#d9a982" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="legB" fill="none" stroke="#d9a982" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="shoeB" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+      <path d="M${SH.x} ${SH.y}L${HIP.x} ${HIP.y}" stroke="${color}" stroke-width="12.5" stroke-linecap="round"/>
+      <path d="M${HIP.x-3} ${HIP.y-1}h7" stroke="#1d2b4a" stroke-width="10" stroke-linecap="round"/>
+      <text x="${(SH.x+HIP.x)/2}" y="${(SH.y+HIP.y)/2+2.2}" font-size="7" font-weight="800" text-anchor="middle" fill="#fff" font-family="sans-serif">×</text>
+      <path class="legF" fill="none" stroke="#f2c6a0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="shoeF" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+      <path class="armF" fill="none" stroke="#f2c6a0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${SH.x+3}" cy="${SH.y-8}" r="7.5" fill="#f2c6a0"/>
+      <path d="M${SH.x-3.5} ${SH.y-10}a7 6.5 0 0 1 13 0" fill="none" stroke="${color}" stroke-width="3.4" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+  const q=s=>el.querySelector(s);
+  return {el, ang:Math.random()*6, pos:0, vel:0, body:q(".body"), shadow:q(".shadow"),
+    legF:q(".legF"), legB:q(".legB"), shoeF:q(".shoeF"), shoeB:q(".shoeB"), armF:q(".armF"), armB:q(".armB")};
+}
+const P=(o,l,a)=>({x:o.x+l*Math.sin(a), y:o.y+l*Math.cos(a)}); // angle 0 = vers le bas, positif = vers l'avant
+const f1=n=>n.toFixed(1);
+function leg(ph, amp){
+  const th=0.75*amp*Math.sin(ph);                           // cuisse : avant / arrière
+  const flex=amp*(0.25+1.15*Math.max(0,-Math.cos(ph-0.4)));  // genou plié quand la jambe revient
+  const k=P(HIP,L1,th), f=P(k,L2,th-flex);
+  return {k,f,toe:{x:f.x+4.5*Math.cos(th-flex), y:f.y-4.5*Math.sin(th-flex)}};
+}
+function arm(ph, amp){
+  const u=-0.85*amp*Math.sin(ph), e=P(SH,9,u), h=P(e,8.5,u+1.7);
+  return `M${SH.x} ${SH.y}L${f1(e.x)} ${f1(e.y)}L${f1(h.x)} ${f1(h.y)}`;
+}
+function drawRider(r){
+  const amp=Math.min(1,0.18+r.vel/9), ph=r.ang;
+  [[r.legF,r.shoeF,ph],[r.legB,r.shoeB,ph+Math.PI]].forEach(([L,S,p])=>{
+    const g=leg(p,amp);
+    L.setAttribute("d",`M${HIP.x} ${HIP.y}L${f1(g.k.x)} ${f1(g.k.y)}L${f1(g.f.x)} ${f1(g.f.y)}`);
+    S.setAttribute("d",`M${f1(g.f.x-1)} ${f1(g.f.y)}L${f1(g.toe.x)} ${f1(g.toe.y)}`);
+  });
+  r.armF.setAttribute("d",arm(ph+Math.PI,amp)); r.armB.setAttribute("d",arm(ph,amp));
+  const bob=-2.2*amp*Math.abs(Math.cos(ph));
+  r.body.setAttribute("transform",`translate(0 ${f1(bob)})`);
+}
+
+/* ---------- Menu ---------- */
+function renderTables(){
+  const box = $("tables"); box.innerHTML = "";
+  for(const t of [1,2,3,4,5,6,7,8,9,10,"mix"]){
+    const m = store.medals[t]||{};
+    const b = document.createElement("button");
+    b.className="tbtn"; b.id="t"+t; b.setAttribute("aria-pressed", t===store.table);
+    b.innerHTML = `<small>${t==="mix"?"tables":"table de"}</small><b>${t==="mix"?"★":t}</b><span class="dots">${LEVELS.map(l=>`<span class="dot ${l.id} ${m[l.id]?"on":""}"></span>`).join("")}</span>`;
+    b.onclick = () => { store.table=t; save(); renderTables(); renderLevels(); };
+    box.appendChild(b);
+  }
+  $("selT").textContent = tLabel(store.table).toLowerCase();
+}
+function renderLevels(){
+  const box=$("levels"); box.innerHTML="";
+  const m = store.medals[store.table]||{};
+  LEVELS.forEach(l=>{
+    const b=document.createElement("button");
+    b.className="lvl"+(m[l.id]?" won":""); b.id="lvl-"+l.id;
+    b.innerHTML=`<span class="medal ${l.id}">${l.letter}</span>${l.name}<span class="time">${fmt(lvlTime(l))} s</span><span class="state">${m[l.id]?"Gagnée ✓":""}</span>`;
+    b.onclick=()=>startRace(l);
+    box.appendChild(b);
+  });
+}
+const tLabel = t => t==="mix" ? "Tables mélangées" : `Table de ${t}`;
+const lvlTime = l => Math.max(10, store.base*l.k);
+const fmt = s => (Math.round(s*10)/10).toLocaleString("fr-FR");
+$("base").value = Math.max(20,store.base); $("baseOut").textContent = store.base+" s";
+$("base").oninput = e => { store.base=+e.target.value; $("baseOut").textContent=store.base+" s"; save(); renderLevels(); };
+
+function renderMode(){
+  const team = store.mode==="equipes";
+  $("mSolo").setAttribute("aria-pressed", !team); $("mTeam").setAttribute("aria-pressed", team);
+  document.querySelectorAll(".solo-only").forEach(e=>e.hidden=team);
+  document.querySelectorAll(".team-only").forEach(e=>e.hidden=!team);
+  $("sub").textContent = team ? "Chaque bonne réponse = une foulée. Quelle équipe sera la plus rapide ?"
+                              : "Chaque bonne réponse = une foulée. Arrive avant l'ordinateur !";
+  const nb=$("nteams"); nb.innerHTML="";
+  for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.textContent=n;
+    b.setAttribute("aria-pressed", n===store.nTeams); b.setAttribute("aria-label", n+" équipes");
+    b.onclick=()=>{ store.nTeams=n; save(); renderMode(); }; nb.appendChild(b); }
+  $("teamlist").innerHTML = TEAMS.slice(0,store.nTeams).map(t=>`<span class="teamchip" style="background:${t.c}">${t.name}</span>`).join("");
+}
+$("mSolo").onclick=()=>{ store.mode="solo"; save(); renderMode(); };
+$("mTeam").onclick=()=>{ store.mode="equipes"; save(); renderMode(); };
+$("goTeams").onclick=()=>startTeams();
+
+/* ---------- Pavé ---------- */
+"7 8 9 4 5 6 1 2 3 _ 0 ⌫".split(" ").forEach(k=>{
+  if(k==="_"){ $("pad").appendChild(document.createElement("span")); return; }
+  const b=document.createElement("button"); b.textContent=k;
+  if(k==="⌫") b.className="del";
+  b.onclick=()=>press(k); $("pad").appendChild(b);
+});
+for(let i=0;i<STEPS;i++){ $("ticks").appendChild(document.createElement("i")); }
+document.addEventListener("keydown",e=>{
+  if(!R || !R.running) return;
+  if(/^[0-9]$/.test(e.key)) press(e.key);
+  else if(e.key==="Backspace") press("⌫");
+});
+
+/* ---------- Public ---------- */
+const SKIN=["#f2c6a0","#e0a77a","#c68642","#8d5524","#f7d7b5","#a8693e"];
+const SHIRT=["#e9462f","#e9462f","#f2b134","#8e44ad","#2fae8e","#3a6fb0","#ff7aa8","#5b5bd6"];
+const HAT=["transparent","transparent","#e9462f","#222","#f2b134","#ffffff"];
+const pick=a=>a[Math.random()*a.length|0];
+let fans=[];
+function buildCrowd(){
+  const box=$("crowd"); box.innerHTML=""; fans=[];
+  const n=Math.max(10,Math.floor(box.clientWidth/24));
+  for(let i=0;i<n;i++){
+    const f=document.createElement("span"); f.className="fan";
+    f.style.cssText=`--sk:${pick(SKIN)};--c:${pick(SHIRT)};--hat:${pick(HAT)};animation-delay:${-Math.random()*2}s;transform:translateY(${Math.random()*3|0}px)`;
+    f.innerHTML='<i class="a l"></i><i class="a r"></i><i class="b"></i><i class="h"></i><i class="k"></i>';
+    box.appendChild(f); fans.push({el:f,x:0,t:0});
+  }
+  fans.forEach(f=>f.x=f.el.offsetLeft+7);
+}
+function cheerNear(x,radius,ms){
+  const now=performance.now();
+  fans.forEach(f=>{ if(Math.abs(f.x-x)<radius){ f.t=Math.max(f.t,now+ms*(0.7+Math.random()*.6));
+    f.el.classList.add("cheer"); f.el.classList.toggle("wave",Math.random()<.4);
+    f.el.style.animationDelay=(-Math.random()*.3)+"s"; } });
+}
+function calmFans(now){ fans.forEach(f=>{ if(f.t && now>f.t){ f.t=0; f.el.classList.remove("cheer","wave"); } }); }
+addEventListener("resize",()=>{ if(R) buildCrowd(); });
+
+/* Musique de fond (synthétisée, en boucle pendant la course) */
+let AC=null;
+function audio(){
+  if(store.muted) return null;
+  try{ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended") AC.resume(); }catch(e){ return null; }
+  return AC;
+}
+const hz=m=>440*Math.pow(2,(m-69)/12);
+function tone(a,m,t,dur,type,vol){
+  const o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.value=hz(m);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+dur+.02);
+}
+// 4 mesures en croches, do majeur, joyeux et léger (null = silence)
+const MEL=[72,76,79,76, 74,77,81,77, 76,79,84,79, 79,77,76,74,
+           72,76,79,76, 74,77,81,84, 83,79,77,74, 72,null,67,null];
+const BASS=[48,55,50,57, 52,55,43,50, 48,55,50,57, 55,50,48,null];
+const MUS={on:false, step:0, next:0, timer:null, beat:60/138/2,
+  start(){ const a=audio(); if(!a||this.on) return; this.on=true; this.step=0; this.next=a.currentTime+.05;
+    this.timer=setInterval(()=>this.tick(),60); this.tick(); },
+  stop(){ this.on=false; clearInterval(this.timer); this.timer=null; },
+  tick(){ const a=AC; if(!a||!this.on) return;
+    while(this.next<a.currentTime+.2){
+      const i=this.step%32, t=this.next;
+      if(MEL[i]!=null) tone(a,MEL[i],t,this.beat*.9,"triangle",.07);
+      if(i%2===0 && BASS[i/2]!=null) tone(a,BASS[i/2],t,this.beat*1.8,"sine",.09);
+      this.next+=this.beat; this.step++;
+    } }
+};
+function jingle(win){ // petite ritournelle de fin à la place des applaudissements
+  const a=audio(); if(!a) return; const t=a.currentTime+.05, b=.12;
+  (win?[72,76,79,84,null,84]:[72,71,69,67]).forEach((m,i)=>{ if(m!=null) tone(a,m,t+i*b,win&&i>3?.5:.22,"triangle",.09); });
+}
+function sndLabel(){ $("snd").textContent = store.muted ? "🔇 Musique coupée" : "🎵 Musique"; }
+$("snd").onclick=()=>{ store.muted=!store.muted; save(); sndLabel(); if(store.muted) MUS.stop(); else if(R && R.running) MUS.start(); };
+sndLabel();
+
+/* ---------- Course ---------- */
+let R=null, me=null, bot=null, loopOn=false, last=0, sx=0;
+function questions(t){
+  const mix=()=>[...Array(10).keys()].sort(()=>Math.random()-.5);
+  if(t==="mix"){ // 10 calculs des tables de 2 à 10, sans doublon
+    const seen=new Set(), qs=[];
+    while(qs.length<STEPS){ const a=2+(Math.random()*9|0), b=2+(Math.random()*9|0), k=Math.min(a,b)+"x"+Math.max(a,b);
+      if(!seen.has(k)){ seen.add(k); qs.push([a,b]); } }
+    return qs;
+  }
+  return mix().map(i=>i+1).slice(0,STEPS).map(k=> Math.random()<.5 ? [t,k] : [k,t]);
+}
+function startRace(level){
+  const team = T ? T.teams[T.idx] : null;
+  const best = T ? T.teams.filter(x=>x.time!=null).sort((a,b)=>a.time-b.time)[0] : null;
+  R={level, team, ghost:best, table:store.table, botTime: team ? (best ? best.time : Infinity) : lvlTime(level),
+     qs: T ? T.qs : questions(store.table), i:0, input:"", good:0, errors:0, streak:0, t0:0, running:false, done:false};
+  $("menu").hidden=true; $("menu").style.display="none";
+  $("race").hidden=false; $("race").style.display="contents";
+  $("confetti").hidden=true;
+  $("raceTitle").textContent = team ? `${tLabel(R.table)} · Équipe des ${team.name} (${T.idx+1}/${T.teams.length})` : `${tLabel(R.table)} · ${level.name}`;
+  me=makeRider($("bikeMe"), team ? team.c : css("--me"));
+  bot=makeRider($("bikeBot"), R.ghost ? R.ghost.c : css("--bot"));
+  $("tagMe").textContent = team ? team.name : "Toi"; $("tagMe").style.background = team ? team.c : "";
+  $("tagBot").textContent = R.ghost ? `Meilleur temps : ${R.ghost.name} (${fmt(R.ghost.time)} s)` : "Ordinateur";
+  $("tagBot").style.background = R.ghost ? R.ghost.c : "";
+  $("laneBot").hidden = !!team && !R.ghost;
+  $("bikeBot").style.opacity = R.ghost ? ".55" : "";
+  [...$("ticks").children].forEach(t=>t.classList.remove("done"));
+  $("lead").textContent=""; $("streak").textContent=""; $("clock").textContent="0,0 s";
+  updateScore(); showQ(); $("hint").textContent="";
+  buildCrowd(); audio();
+  if(!loopOn){ loopOn=true; last=performance.now(); requestAnimationFrame(frame); }
+  countdown(3);
+}
+function countdown(n){
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="count">${n||"Partez !"}</div>`;
+  if(n===0){ setTimeout(()=>{ if(!R) return; ov.hidden=true; R.running=true; R.t0=performance.now(); MUS.start(); },600); return; }
+  setTimeout(()=>{ if(R && !R.done) countdown(n-1); },900);
+}
+const BW=92;
+function trackX(frac){ const w=$("laneMe").clientWidth; return 6 + frac*(w-6-BW-20); }
+
+function frame(now){
+  if(!R){ loopOn=false; return; }
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+  // Ordinateur : avance régulière
+  let botTarget = 0;
+  if(R.running){
+    const el=(now-R.t0)/1000; botTarget=Math.min(1,el/R.botTime);
+    $("clock").textContent=fmt(el)+" s";
+  } else if(R.done) botTarget = R.botFinal ?? bot.pos;
+  const prevB=bot.pos; bot.pos = R.running ? botTarget : bot.pos;
+  // Joueur : glisse vers sa case avec un élan
+  const meTarget=R.good/STEPS, prevM=me.pos;
+  me.pos += (meTarget-me.pos)*Math.min(1,dt*5);
+  if(Math.abs(meTarget-me.pos)<.0005) me.pos=meTarget;
+  // Vitesse → cadence de course
+  const vM=(me.pos-prevM)/dt, vB=(bot.pos-prevB)/dt;
+  me.vel += ((vM>0.002? 9+vM*90 : 0) - me.vel)*Math.min(1,dt*6);
+  bot.vel += ((vB>0? 6+vB*140 : 0) - bot.vel)*Math.min(1,dt*6);
+  me.ang += me.vel*dt; bot.ang += bot.vel*dt;
+  me.el.style.transform=`translateX(${trackX(me.pos)}px)`;
+  bot.el.style.transform=`translateX(${trackX(bot.pos)}px)`;
+  drawRider(me); drawRider(bot);
+  // Décor qui défile
+  if(R.running){ sx += dt*(70 + (vM+vB)*900); $("scene").style.setProperty("--sx", sx.toFixed(1)); }
+  // Qui mène ?
+  if(R.running){
+    const d=me.pos-bot.pos, L=$("lead");
+    if(R.team && !R.ghost){ L.className="lead tie"; L.textContent=`Allez les ${R.team.name} !`; }
+    else if(R.team && bot.pos>=1){ L.className="lead bot"; L.textContent="Le record est passé… finissez la course !"; }
+    else if(Math.abs(d)<.04){ L.className="lead tie"; L.textContent="Coude à coude !"; }
+    else if(d>0){ L.className="lead me"; L.textContent= R.team ? "Vous battez le record !" : d>.25?"Tu es loin devant !":"Tu mènes !"; }
+    else { L.className="lead bot"; L.textContent= R.team ? "Plus vite que le record ?" : bot.pos>.8?"Vite, la ligne approche !":"Rattrape-le !"; }
+  }
+  if(R.running && botTarget>=1 && !R.team){ finish(false); }
+  if(R.running && vM>0.05) cheerNear(trackX(me.pos)+46,70,600);
+  calmFans(now);
+  if(!reduce && R.running && vM>0.05 && Math.random()<dt*25) puff(me);
+  if(!reduce && R.running && Math.random()<dt*4) puff(bot);
+  requestAnimationFrame(frame);
+}
+function puff(r){
+  const p=document.createElement("span"); p.className="puff";
+  p.style.left=(trackX(r.pos)+8)+"px"; p.style.top=(56+Math.random()*10)+"px";
+  r.el.parentElement.appendChild(p); setTimeout(()=>p.remove(),650);
+}
+function plusOne(){
+  const p=document.createElement("span"); p.className="plus"; p.textContent=R.streak>=3?`+1 🔥`:"+1";
+  p.style.left=(trackX(R.good/STEPS)+40)+"px"; p.style.top="-6px";
+  $("laneMe").appendChild(p); setTimeout(()=>p.remove(),850);
+}
+function updateScore(){
+  $("score").textContent = `${R.good} / ${STEPS}`;
+  [...$("ticks").children].forEach((t,i)=>t.classList.toggle("done",i<R.good));
+}
+function showQ(){
+  const [a,b]=R.qs[R.i]; R.input="";
+  $("q").className="q";
+  $("q").innerHTML=`${a} × ${b} = <span class="ans" id="ans">&nbsp;</span>`;
+}
+function press(k){
+  if(!R || !R.running) return;
+  if(k==="⌫"){ R.input=R.input.slice(0,-1); }
+  else if(R.input.length<3){ R.input+=k; }
+  $("ans").textContent = R.input || " ";
+  if(k!=="⌫" && R.input){
+    const [a,b]=R.qs[R.i], sol=String(a*b);
+    if(R.input===sol || !sol.startsWith(R.input)) check();
+  }
+}
+function check(){
+  const [a,b]=R.qs[R.i];
+  if(+R.input===a*b){
+    R.good++; R.streak++;
+    $("q").className="q ok"; $("hint").textContent="";
+    $("streak").textContent = R.streak>=3 ? `Série de ${R.streak} !` : "";
+    me.el.classList.add("boost"); clearTimeout(me.bt); me.bt=setTimeout(()=>me.el.classList.remove("boost"),600);
+    if(!reduce){ const s=$("scene"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
+    plusOne(); updateScore();
+    cheerNear(trackX(R.good/STEPS)+46, R.streak>=3?200:120, 1100);
+    if(R.good>=STEPS){ R.tEnd=performance.now(); setTimeout(()=> R.team ? teamDone() : finish(true),450); R.running=false; return; }
+    R.i++; setTimeout(()=>{ if(R && R.running) showQ(); },250);
+  } else {
+    R.streak=0; R.errors++; $("streak").textContent="";
+    const q=$("q"); q.className="q"; void q.offsetWidth; q.className="q ko";
+    me.el.classList.remove("wobble"); void me.el.offsetWidth; me.el.classList.add("wobble");
+    $("hint").textContent="Essaie encore !";
+    R.input=""; setTimeout(()=>{ if($("ans")) $("ans").textContent=" "; },400);
+  }
+}
+function finish(win){
+  if(R.done) return;
+  const el=((R.tEnd||performance.now())-R.t0)/1000, l=R.level;
+  R.running=false; R.done=true; R.botFinal=bot.pos;
+  $("lead").textContent="";
+  if(win){ store.medals[R.table]=store.medals[R.table]||{}; store.medals[R.table][l.id]=true; save(); confetti(l); cheerNear(0,1e5,3500); }
+  MUS.stop(); jingle(win);
+  const next = LEVELS[LEVELS.indexOf(l)+1];
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <span class="medal ${win?l.id:"none"}">${win?l.letter:"?"}</span>
+    <h2>${win?`Médaille ${({bronze:"de bronze",argent:"d'argent",or:"d'or"})[l.id]} !`:"L'ordinateur a gagné"}</h2>
+    <p>${win?`Tu as fini en ${fmt(el)} s (l'ordinateur : ${fmt(R.botTime)} s).`:`Tu avais ${R.good} bonne${R.good>1?"s":""} réponse${R.good>1?"s":""} sur ${STEPS}. Recommence !`}</p>
+    <div class="row">
+      <button class="cta" id="again">${win?"Rejouer":"Réessayer"}</button>
+      ${win&&next?`<button class="cta" id="nextLvl" style="background:var(--bot)">Médaille ${({argent:"d'argent",or:"d'or"})[next.id]} →</button>`:""}
+      <button class="ghost" id="toMenu">Menu</button>
+    </div></div>`;
+  $("again").onclick=()=>startRace(l);
+  if($("nextLvl")) $("nextLvl").onclick=()=>startRace(next);
+  $("toMenu").onclick=toMenu;
+  $("again").focus();
+}
+/* ---------- Par équipes ---------- */
+function startTeams(){
+  T={qs:questions(store.table), idx:0, teams:TEAMS.slice(0,store.nTeams).map(t=>({...t, time:null, errors:0}))};
+  startRace(LEVELS[0]);
+}
+function teamDone(){
+  const el=(R.tEnd-R.t0)/1000, t=T.teams[T.idx];
+  t.time=el; t.errors=R.errors;
+  R.done=true; R.botFinal=bot.pos; $("lead").textContent="";
+  const record = T.teams.every(x=>x===t || x.time==null || el<x.time) && T.idx>0;
+  cheerNear(0,1e5,2500); MUS.stop(); jingle(true);
+  const nextT = T.teams[T.idx+1];
+  if(!nextT){ return podium(); }
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <h2 style="color:${t.c}">Les ${t.name} : ${fmt(el)} s</h2>
+    <p>${record?"🏆 Nouveau meilleur temps ! ":""}${t.errors} erreur${t.errors>1?"s":""}.</p>
+    <p>Au tour des <strong style="color:${nextT.c}">${nextT.name}</strong> : préparez-vous !</p>
+    <div class="row"><button class="cta" id="nextTeam" style="background:${nextT.c}">Équipe suivante →</button>
+    <button class="ghost" id="toMenu">Menu</button></div></div>`;
+  $("nextTeam").onclick=()=>{ T.idx++; startRace(LEVELS[0]); };
+  $("toMenu").onclick=toMenu; $("nextTeam").focus();
+}
+function podium(){
+  const ranked=[...T.teams].sort((a,b)=>a.time-b.time), win=ranked[0];
+  const medal=["🥇","🥈","🥉"];
+  if(!reduce){ const c=$("confetti"); c.hidden=false; confetti({id:"or"}); }
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <h2>Bravo les <span style="color:${win.c}">${win.name}</span> !</h2>
+    <p>Classement — ${tLabel(store.table).toLowerCase()}</p>
+    <ol class="rank">${ranked.map((t,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
+      <span><span class="sw" style="background:${t.c}"></span>${t.name}<span class="err">${t.errors} erreur${t.errors>1?"s":""}</span></span>
+      <span class="tm">${fmt(t.time)} s</span></li>`).join("")}</ol>
+    <div class="row"><button class="cta" id="again">Revanche</button><button class="ghost" id="toMenu">Menu</button></div></div>`;
+  $("again").onclick=startTeams; $("toMenu").onclick=toMenu; $("again").focus();
+}
+function confetti(l){
+  if(reduce) return;
+  const c=$("confetti"); c.hidden=false;
+  const x=c.getContext("2d"), W=c.width=innerWidth, H=c.height=innerHeight;
+  const cols=[css("--"+l.id),css("--me"),css("--bot"),css("--ok"),"#fff"];
+  const ps=[...Array(140)].map(()=>({x:W/2+(Math.random()-.5)*80,y:H*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,
+    r:Math.random()*6.28,vr:(Math.random()-.5)*.4,s:6+Math.random()*6,c:cols[Math.random()*cols.length|0]}));
+  const t0=performance.now();
+  (function draw(t){
+    x.clearRect(0,0,W,H);
+    ps.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();});
+    if(t-t0<3000 && !c.hidden) requestAnimationFrame(draw); else { x.clearRect(0,0,W,H); c.hidden=true; }
+  })(t0);
+}
+function toMenu(){
+  if(R){R.running=false; R.done=true;} R=null; T=null; MUS.stop();
+  $("ov").hidden=true; $("confetti").hidden=true;
+  $("race").hidden=true; $("race").style.display="none";
+  $("menu").hidden=false; $("menu").style.display="contents";
+  renderTables(); renderLevels(); renderMode();
+}
+$("quit").onclick=toMenu;
+$("race").style.display="none";
+renderTables(); renderLevels(); renderMode();
+</script>
+
+</body></html>

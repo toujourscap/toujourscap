@@ -36,7 +36,7 @@ CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
-    "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition, compléments, petites opérations.", "domain": "maths"},
+    "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
 # Dans posts.json, chaque jeu porte un champ "jeu" :
@@ -46,6 +46,9 @@ COMPETENCES = {
     "mots": "Mots",
     "phrases-textes": "Phrases et textes",
     "fluence": "Fluence",
+    # Jeux de calcul (onglets de la page Calcul)
+    "addition": "Addition",
+    "multiplication": "Multiplication",
 }
 SUPPORTS = {"ecran": ("🖥️", "À l'écran"), "imprimable": ("🖨️", "À imprimer"), "projetable": ("📽️", "Projetable")}
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
@@ -397,6 +400,7 @@ SEO_TITRES = {
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
+    "/post/la-course-des-multiplications/": "La Course des Multiplications : jeu de tables de multiplication CE1-CE2",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
 }
 
@@ -429,7 +433,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -564,10 +568,20 @@ def main():
   {mvignettes}
 </section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération et de calcul mental pour la GS, le CP et le CE1."))
     for k, t, d, lst in msubs:
+        presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
+        filtres = ""
+        if len(presentes) > 1:  # onglets (ex. Addition / Multiplication sur la page Calcul)
+            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence") or presentes[0]), q["title"]))
+            filtres = ('<div class="chips filtres" role="group" aria-label="Trier par opération">'
+                       '<span class="filtres-label">Trier par :</span>'
+                       '<button class="chip active" data-f="" aria-pressed="true">Tout</button>'
+                       + "".join(f'<button class="chip" data-f="{c}" aria-pressed="false">{COMPETENCES[c]}</button>' for c in presentes)
+                       + '</div>' + FILTRES_JS)
         write(f"/maths/{k}/", page(t, f"""<section class="wrap">
   <nav class="crumbs"><a href="/maths/">Maths</a> › {t}</nav>
   <h1>{t}</h1>
   <p class="lead">{d}</p>
+  {filtres}
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
     write("/divers/", page("Divers", """<section class="wrap narrow">
