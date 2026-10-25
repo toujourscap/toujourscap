@@ -300,7 +300,7 @@ function nouvellePartie(){
 function rendu(){
   const J=S.joueurs.slice(0,S.nbJ);
   app.innerHTML=`
-    <div class="top"><h1>Les Formules du Sorcier</h1><div class="topbtns">${document.fullscreenEnabled?`<button type="button" class="btn" id="fs">${document.fullscreenElement?"Quitter le plein écran":"⛶ Plein écran"}</button>`:""}<button type="button" class="btn" id="home">Quitter</button></div></div>
+    <div class="top"><h1>Les Formules du Sorcier</h1><div class="topbtns">${document.fullscreenEnabled&&window.self===window.top?`<button type="button" class="btn" id="fs">${document.fullscreenElement?"Quitter le plein écran":"⛶ Plein écran"}</button>`:""}<button type="button" class="btn" id="home">Quitter</button></div></div>
     <div class="game">
       <div class="boardwrap"><div class="board" id="board">${plateau()}</div><div class="formule" id="formule" hidden></div></div>
       <div class="side">

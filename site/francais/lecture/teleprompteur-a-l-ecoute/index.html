@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=0fb55648">
+<link rel="stylesheet" href="/style.css?v=7d7499c1">
 </head>
 <body class="fond fond-canopee">
 <header class="site-header">
@@ -62,8 +62,14 @@
   <h1>Fluence qui s&#x27;adapte automatiquement au rythme de l&#x27;enfant</h1>
   <p class="lead">L&#x27;élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne uniquement avec Chrome ou Edge.</p>
   <p class="note-nav" role="note">⚠️ <strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace.</p>
-  <div class="embed"><iframe src="/outils/teleprompteur-a-l-ecoute.html" style="height:860px" title="Fluence qui s&#x27;adapte automatiquement au rythme de l&#x27;enfant" allow="microphone; fullscreen" allowfullscreen></iframe>
-  <a class="embed-full" href="/outils/teleprompteur-a-l-ecoute.html" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
+  <div class="embed"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div><iframe src="/outils/teleprompteur-a-l-ecoute.html" style="height:860px" title="Fluence qui s&#x27;adapte automatiquement au rythme de l&#x27;enfant" allow="microphone; fullscreen" allowfullscreen></iframe></div><script>
+function pleinEcran(b){
+  var f = b.closest('.embed').querySelector('iframe');
+  var req = f.requestFullscreen || f.webkitRequestFullscreen;
+  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
+}
+</script>
   <p><a href="/post/lecture-rapide-de-mots-avec-le-tachitoscope/">← Les autres outils de lecture rapide</a></p>
 </section>
 </main>

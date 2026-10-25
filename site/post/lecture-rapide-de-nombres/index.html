@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=0fb55648">
+<link rel="stylesheet" href="/style.css?v=7d7499c1">
 </head>
 <body class="fond fond-cascade">
 <header class="site-header">
@@ -62,7 +62,14 @@
   <h1>Lecture rapide de nombres</h1>
   <p class="meta">21 mai 2026 · <span class="chip">Numération</span></p>
   
-  <div class="prose"><p>Sélectionnez la durée d&#x27;affichage par nombre et l&#x27;intervalle, puis arrêtez lorsque l&#x27;enfant fait une erreur.</p><div class="embed"><iframe src="/outils/lecture-rapide-de-nombres.html" style="height:776px" title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe><a class="embed-full" href="/outils/lecture-rapide-de-nombres.html" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div></div>
+  <div class="prose"><p>Sélectionnez la durée d&#x27;affichage par nombre et l&#x27;intervalle, puis arrêtez lorsque l&#x27;enfant fait une erreur.</p><div class="embed"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div><iframe src="/outils/lecture-rapide-de-nombres.html" style="height:776px" title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe></div><script>
+function pleinEcran(b){
+  var f = b.closest('.embed').querySelector('iframe');
+  var req = f.requestFullscreen || f.webkitRequestFullscreen;
+  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
+}
+</script></div>
 </article>
 <section class="wrap narrow comments" id="commentaires" data-page="lecture-rapide-de-nombres" hidden>
   <h2>Vos commentaires</h2>

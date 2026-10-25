@@ -152,6 +152,23 @@ def esc(s):
     return html.escape(s or "", quote=True)
 
 
+# ---------- Jeu intégré, avec un seul bouton « Plein écran » bien visible au-dessus ----------
+PLEIN_ECRAN_JS = """<script>
+function pleinEcran(b){
+  var f = b.closest('.embed').querySelector('iframe');
+  var req = f.requestFullscreen || f.webkitRequestFullscreen;
+  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
+}
+</script>"""
+
+
+def embed(src, height, title, lazy=False):
+    return (f'<div class="embed"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div>'
+            f'<iframe src="{esc(src)}" style="height:{int(height)}px" title="{esc(title)}"{" loading=\"lazy\"" if lazy else ""} '
+            f'allow="microphone; fullscreen" allowfullscreen></iframe></div>{PLEIN_ECRAN_JS}')
+
+
 # ---------- Conversion Ricos -> HTML ----------
 def text_node(n):
     td = n.get("textData", {})
@@ -235,9 +252,7 @@ def render(n, ctx):
             src = "/outils/le-jackpot-des-contes.html" if h.get("url") == JACKPOT_URL else h.get("url", "")
         ctx.setdefault("tools", []).append(src)
         TOOL_CANON.setdefault(src, (f"/post/{ctx['slug']}/", ctx.get("excerpt", "")))
-        return (f'<div class="embed"><iframe src="{esc(src)}" style="height:{int(height)}px" '
-                f'title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe>'
-                f'<a class="embed-full" href="{esc(src)}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>')
+        return embed(src, height, "Outil interactif", lazy=True)
     return children(n, ctx)
 
 
@@ -557,8 +572,7 @@ def main():
   <h1>{esc(t['title'])}</h1>
   <p class="lead">{esc(t['desc'])}</p>
   {'<p class="note-nav" role="note">⚠️ ' + t['note'] + '</p>' if t.get('note') else ''}
-  <div class="embed"><iframe src="{t['src']}" style="height:{t['height']}px" title="{esc(t['title'])}" allow="microphone; fullscreen" allowfullscreen></iframe>
-  <a class="embed-full" href="{t['src']}" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div>
+  {embed(t['src'], t['height'], t['title'])}
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
 </section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
     msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul")]

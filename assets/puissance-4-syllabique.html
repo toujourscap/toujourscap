@@ -303,7 +303,7 @@ newGame();
 (function(){
   const d=document, el=d.documentElement, b=$("bFs");
   const req=el.requestFullscreen||el.webkitRequestFullscreen;
-  if(!req||!(d.fullscreenEnabled||d.webkitFullscreenEnabled))return;
+  if(!req||!(d.fullscreenEnabled||d.webkitFullscreenEnabled)||window.self!==window.top)return;
   const cur=()=>d.fullscreenElement||d.webkitFullscreenElement;
   const upd=()=>{b.textContent=cur()?"✕ Quitter le plein écran":"⛶ Plein écran"};
   b.hidden=false;

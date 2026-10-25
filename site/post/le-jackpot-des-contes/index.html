@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=0fb55648">
+<link rel="stylesheet" href="/style.css?v=7d7499c1">
 </head>
 <body class="fond fond-cascade">
 <header class="site-header">
@@ -62,7 +62,14 @@
   <h1>Le Jackpot des contes</h1>
   <p class="meta">21 octobre 2026 · <span class="chip">Langage oral</span></p>
   
-  <div class="prose"><p>Une machine à histoires pour lancer un cercle conteur, en GS ou en CP : on tire le levier, la machine propose un personnage, un lieu de conte et un objet de conte (pantoufle de verre, baguette magique, calebasse…), et le groupe invente une histoire qui les relie.</p><div class="embed"><iframe src="/outils/le-jackpot-des-contes.html" style="height:760px" title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe><a class="embed-full" href="/outils/le-jackpot-des-contes.html" target="_blank" rel="noopener">Ouvrir en plein écran ↗</a></div><h2>Comment l&#x27;utiliser</h2><ol><li>Tirer le levier devant le groupe et lire à voix haute les trois cartes.</li><li>Chaque enfant ajoute à son tour une phrase à l&#x27;histoire, en utilisant le personnage, le lieu et l&#x27;objet.</li><li>Le journal des tirages garde les combinaisons : on peut y revenir pour raconter à nouveau.</li></ol></div>
+  <div class="prose"><p>Une machine à histoires pour lancer un cercle conteur, en GS ou en CP : on tire le levier, la machine propose un personnage, un lieu de conte et un objet de conte (pantoufle de verre, baguette magique, calebasse…), et le groupe invente une histoire qui les relie.</p><div class="embed"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div><iframe src="/outils/le-jackpot-des-contes.html" style="height:760px" title="Outil interactif" loading="lazy" allow="microphone; fullscreen" allowfullscreen></iframe></div><script>
+function pleinEcran(b){
+  var f = b.closest('.embed').querySelector('iframe');
+  var req = f.requestFullscreen || f.webkitRequestFullscreen;
+  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
+}
+</script><h2>Comment l&#x27;utiliser</h2><ol><li>Tirer le levier devant le groupe et lire à voix haute les trois cartes.</li><li>Chaque enfant ajoute à son tour une phrase à l&#x27;histoire, en utilisant le personnage, le lieu et l&#x27;objet.</li><li>Le journal des tirages garde les combinaisons : on peut y revenir pour raconter à nouveau.</li></ol></div>
 </article>
 <section class="wrap narrow comments" id="commentaires" data-page="le-jackpot-des-contes" hidden>
   <h2>Vos commentaires</h2>
