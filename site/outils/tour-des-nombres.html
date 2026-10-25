@@ -168,7 +168,7 @@
     </div>
     <div class="erreur-reglage" id="msgReglage"></div>
     <button class="btn btn-go" id="btnCommencer">Construire ma tour !</button>
-    <p class="note">Clavier : <b>Espace</b> = nombre suivant, <b>Entrée</b> = bien lu, <b>X</b> = erreur.<br>Mode « choisir » : touches <b>1, 2, 3…</b> pour répondre, <b>R</b> pour réécouter. Pensez à activer le son.</p>
+    <p class="note">Le nombre suivant arrive tout seul après 3 secondes. Clavier : <b>Espace</b> = passer tout de suite au suivant, <b>Entrée</b> = bien lu, <b>X</b> = erreur.<br>Mode « choisir » : touches <b>1, 2, 3…</b> pour répondre, <b>R</b> pour réécouter. Pensez à activer le son.</p>
   </div>
 </section>
 
@@ -345,10 +345,19 @@
     pret();
   }
 
+  // Après une réponse, le nombre suivant arrive tout seul (on peut aussi cliquer pour aller plus vite)
+  const DELAI_AUTO = 3;  // secondes
+  function enchainer(secondes){
+    clearTimeout(etat.suivant);
+    etat.suivant = setTimeout(() => {
+      if(etat.phase === "pret" && $("ecranJeu").classList.contains("actif")) lancer();
+    }, secondes * 1000);
+  }
   function pret(){
     etat.phase = "pret";
     $("boutons").classList.remove("choix");
     boutons([[etat.commence ? "Nombre suivant ▶" : "Commencer ▶", "btn-bleu", lancer]]);
+    if(etat.commence) enchainer(DELAI_AUTO);
   }
 
   function tirer(){
@@ -403,6 +412,7 @@
   }
 
   function lancer(){
+    clearTimeout(etat.suivant);
     etat.commence = true;
     etat.phase = "affiche";
     etat.nombre = tirer();
@@ -461,11 +471,13 @@
       if(auto){
         etat.phase = "pret";
         boutons([["Nombre suivant ▶", "btn-bleu", lancer], ["Oups, c'était juste ✓", "btn-gris", corriger]]);
+        enchainer(DELAI_AUTO + 2);  // un peu plus long pour laisser le temps de corriger
       } else pret();
     }, 1800);
   }
 
   function corriger(){
+    clearTimeout(etat.suivant);
     if(etat.perdu !== null){ etat.blocs.push(etat.perdu); etat.perdu = null; }
     indicateur("");
     etat.phase = "reponse";
@@ -533,7 +545,7 @@
   }
 
   function stopMinuteur(){
-    clearTimeout(etat.minuteur); clearTimeout(etat.limite);
+    clearTimeout(etat.minuteur); clearTimeout(etat.limite); clearTimeout(etat.suivant);
     etat.jeton++;
     if(etat.reco){ try{ etat.reco.abort(); }catch(e){} etat.reco = null; }
     indicateur("");
