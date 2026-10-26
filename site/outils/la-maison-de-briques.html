@@ -171,6 +171,30 @@
     80%{transform:translate(calc(.8 * (760px + 160px) - 160px),0)}90%{transform:translate(calc(.9 * (760px + 160px) - 160px),-26px)}
     100%{transform:translate(760px,0)}}
   .fin p{font-size:1.2rem}
+
+  /* Tenir dans la hauteur de l'écran : les tailles suivent la hauteur disponible */
+  .btn.mini{font-size:1.1rem;padding:6px 12px;margin-left:4px}
+  .ecran#jeu{padding-top:clamp(6px,1.2vh,12px);padding-bottom:clamp(6px,1.2vh,12px)}
+  .piste{padding:clamp(3px,.6vh,6px) 12px;margin-bottom:clamp(6px,1vh,10px)}
+  .case{height:clamp(36px,6.5vh,58px)}
+  .pion-loup{width:clamp(50px,8.5vh,78px)}
+  .maison-zone{display:flex;flex-direction:column;align-items:center;padding:clamp(6px,1vh,10px) 12px}
+  .maison{width:min(calc(100% - 64px), calc(130vh - 250px));margin:0 60px 0 4px}
+  .toit{height:clamp(44px,10vh,110px)}
+  .du{margin-top:clamp(4px,1vh,10px)}
+  .du td{font-size:clamp(1.3rem,3.2vh,1.7rem)}
+  .panneau{gap:clamp(6px,1.2vh,12px)}
+  .bloc{padding:clamp(6px,1.1vh,14px) 14px}
+  .bloc h2{font-size:clamp(1rem,2.2vh,1.2rem);margin-bottom:clamp(2px,.8vh,8px)}
+  .de{width:clamp(62px,10vh,96px);height:clamp(62px,10vh,96px);font-size:clamp(2rem,5vh,3rem)}
+  .message{font-size:clamp(.95rem,1.9vh,1.08rem);margin-top:clamp(2px,.6vh,6px);min-height:1.2em}
+  .prendre{padding:clamp(4px,.8vh,8px) 12px;gap:clamp(3px,.6vh,6px)}
+  .brouette{min-height:clamp(40px,6.5vh,64px);margin-top:clamp(4px,1vh,10px);padding:clamp(4px,.8vh,8px)}
+  .actions{margin-top:clamp(4px,1vh,10px)}
+  #poser{padding:clamp(6px,1.2vh,12px) 24px}
+  .calcul{font-size:clamp(1.5rem,4vh,2.1rem);margin:0 0 clamp(2px,.8vh,8px)}
+  .clavier{gap:clamp(4px,.7vh,6px)}
+  .clavier button{font-size:clamp(1.1rem,3vh,1.5rem);padding:clamp(1px,.6vh,8px) 0}
 </style>
 </head>
 <body>
@@ -207,6 +231,7 @@
     <div class="route"><div class="cases" id="cases"></div><img class="pion-loup" id="loup" src="/images/maison-de-briques/loup.png" alt="Le loup"></div>
     <span class="bout" title="La maison">🏠</span>
     <span class="rappel">🎲 2, 5, 7, 9 = 🐺 avance</span>
+    <button class="btn btn-gris mini" id="recommencer" title="Recommencer une partie">↺</button>
   </div>
 
   <div class="jeu">
@@ -256,7 +281,6 @@
         <p class="message" id="msg-total"></p>
       </div>
 
-      <div class="centre"><button class="btn btn-gris" id="recommencer">↺ Recommencer</button></div>
     </div>
   </div>
 </section>
@@ -542,7 +566,7 @@
     if (+etat.reponse === juste){ validerTour(true); return; }
     etat.erreursTotal++; etat.fautes++;
     if (etat.erreursTotal === 1){
-      message('msg-total', 'Pas tout à fait… Compte les rangées pleines (les dizaines), puis les briques toutes seules.', 'ko');
+      message('msg-total', 'Pas tout à fait… Compte les dizaines, puis les briques seules.', 'ko');
       flashRangees(juste);
       etat.reponse = ''; afficherCalcul();
     } else {
