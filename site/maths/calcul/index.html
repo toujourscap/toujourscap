@@ -66,9 +66,13 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
     document.querySelectorAll('.filtres button').forEach(function (x) {
       x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
     });
+    var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
       c.hidden = !!f && c.dataset.comp !== f;
+      if (!c.hidden) n++;
     });
+    var v = document.querySelector('.filtres-vide');
+    if (v) v.hidden = n > 0;
   });
 });
 </script>

@@ -60,23 +60,27 @@
   <h1>Lecture</h1>
   <p class="lead">Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.</p>
   <p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante.</p>
-  <div class="chips filtres" role="group" aria-label="Trier par compétence"><span class="filtres-label">Trier par :</span><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="sons-syllabes" aria-pressed="false">Sons et syllabes</button><button class="chip" data-f="mots" aria-pressed="false">Mots</button><button class="chip" data-f="fluence" aria-pressed="false">Fluence</button></div><script>
+  <div class="chips filtres" role="group" aria-label="Trier par compétence"><span class="filtres-label">Trier par :</span><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="sons-syllabes" aria-pressed="false">Lecture de syllabes</button><button class="chip" data-f="mots" aria-pressed="false">Lecture de mots</button><button class="chip" data-f="phrases-textes" aria-pressed="false">Lecture de phrases</button><button class="chip" data-f="fluence" aria-pressed="false">Fluence</button></div><p class="muted filtres-vide" hidden>Les jeux arrivent bientôt&nbsp;!</p><script>
 document.querySelectorAll('.filtres button').forEach(function (b) {
   b.addEventListener('click', function () {
     var f = b.dataset.f;
     document.querySelectorAll('.filtres button').forEach(function (x) {
       x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
     });
+    var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
       c.hidden = !!f && c.dataset.comp !== f;
+      if (!c.hidden) n++;
     });
+    var v = document.querySelector('.filtres-vide');
+    if (v) v.hidden = n > 0;
   });
 });
 </script>
   <div class="grid"><a class="card" href="/post/la-minute-des-syllabes/" data-comp="sons-syllabes">
   <div class="card-img"><img src="/images/jeux/la-minute-des-syllabes.jpg" alt="La minute des syllabes" loading="lazy"></div>
   <div class="card-body">
-    <span class="chip">Sons et syllabes</span>
+    <span class="chip">Lecture de syllabes</span>
     <h3>La minute des syllabes</h3>
     <p>Lire le plus de syllabes possible en une minute : le micro valide chaque syllabe bien lue, ou un adulte appuie sur « Bien lu ». Cinq niveaux, des syllabes simples aux syllabes complexes.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur, en binôme ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
@@ -85,7 +89,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/puissance-4-syllabiques/" data-comp="sons-syllabes">
   <div class="card-img"><img src="/images/jeux/puissance-4-syllabiques.jpg" alt="Puissance 4 syllabique" loading="lazy"></div>
   <div class="card-body">
-    <span class="chip">Sons et syllabes</span>
+    <span class="chip">Lecture de syllabes</span>
     <h3>Puissance 4 syllabique</h3>
     <p>Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l&#x27;écran, à deux ou contre l&#x27;ordinateur, ou sur papier avec des jetons de deux couleurs.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 2 joueurs</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>
@@ -94,7 +98,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/les-formules-du-sorcier/" data-comp="mots">
   <div class="card-img"><img src="/images/jeux/les-formules-du-sorcier.jpg" alt="Les Formules du Sorcier" loading="lazy"></div>
   <div class="card-body">
-    <span class="chip">Mots</span>
+    <span class="chip">Lecture de mots</span>
     <h3>Les Formules du Sorcier</h3>
     <p>Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le troll ne remplisse ses fioles.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 à 4 joueurs ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>

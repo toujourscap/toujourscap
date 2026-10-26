@@ -42,9 +42,9 @@ CATS = {
 # Dans posts.json, chaque jeu porte un champ "jeu" :
 #   {"competence": "sons-syllabes", "niveaux": ["CP"], "joueurs": "2 joueurs", "supports": ["ecran", "imprimable", "projetable"]}
 COMPETENCES = {
-    "sons-syllabes": "Sons et syllabes",
-    "mots": "Mots",
-    "phrases-textes": "Phrases et textes",
+    "sons-syllabes": "Lecture de syllabes",
+    "mots": "Lecture de mots",
+    "phrases-textes": "Lecture de phrases",
     "fluence": "Fluence",
     # Jeux de calcul (onglets de la page Calcul)
     "addition": "Addition",
@@ -382,9 +382,13 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
     document.querySelectorAll('.filtres button').forEach(function (x) {
       x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
     });
+    var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
       c.hidden = !!f && c.dataset.comp !== f;
+      if (!c.hidden) n++;
     });
+    var v = document.querySelector('.filtres-vide');
+    if (v) v.hidden = n > 0;
   });
 });
 </script>"""
@@ -557,13 +561,15 @@ def main():
         filtres = ""
         if k == "lecture":
             lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence", "fluence")), q["title"]))
-            presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
+            # Les trois filtres « Lecture de… » sont toujours affichés, même sans jeu pour l'instant
+            toujours = ("sons-syllabes", "mots", "phrases-textes")
+            presentes = [c for c in COMPETENCES if c in toujours or any((q.get("jeu") or {}).get("competence") == c for q in lst)]
             if len(presentes) > 1:
                 filtres = ('<div class="chips filtres" role="group" aria-label="Trier par compétence">'
                            '<span class="filtres-label">Trier par :</span>'
                            '<button class="chip active" data-f="" aria-pressed="true">Tout</button>'
                            + "".join(f'<button class="chip" data-f="{c}" aria-pressed="false">{COMPETENCES[c]}</button>' for c in presentes)
-                           + '</div>' + FILTRES_JS)
+                           + '</div><p class="muted filtres-vide" hidden>Les jeux arrivent bientôt&nbsp;!</p>' + FILTRES_JS)
         write(f"/francais/{k}/", page(t, f"""<section class="wrap">
   <nav class="crumbs"><a href="/francais/">Français</a> › {t}</nav>
   <h1>{t}</h1>
