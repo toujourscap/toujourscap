@@ -5,7 +5,7 @@
    "title": "Le Tape-taupe des additions",
    "slug": "le-tape-taupe-des-additions",
    "cat": "calcul",
-   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse à l'addition. Calcul mental avec des nombres jusqu'à 1000.",
+   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse à l'addition. Calcul mental de 0 à 1000, réglable selon le niveau.",
    "date": "2026-10-26T17:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -66,7 +66,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Une addition de deux nombres inférieurs à 1000 s'affiche sur le panneau.",
+             "text": "Une addition s'affiche sur le panneau.",
              "decorations": []
             }
            }
@@ -155,8 +155,36 @@
       ]
      },
      {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avant de jouer, un écran de réglages permet de choisir les nombres et la difficulté.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
       "type": "BULLETED_LIST",
       "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Nombres : l'intervalle dans lequel sont choisis les deux nombres (de 0 à 10, de 0 à 100, de 100 à 999… ou un intervalle libre, jusqu'à 999)."
+            }
+           }
+          ]
+         }
+        ]
+       },
        {
         "type": "LIST_ITEM",
         "nodes": [
@@ -201,23 +229,6 @@
             "type": "TEXT",
             "textData": {
              "text": "Nombre de questions : 5, 10 ou 15.",
-             "decorations": []
-            }
-           }
-          ]
-         }
-        ]
-       },
-       {
-        "type": "LIST_ITEM",
-        "nodes": [
-         {
-          "type": "PARAGRAPH",
-          "nodes": [
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": "Résultat au-delà de 999 : à cocher pour autoriser des sommes jusqu'à 1998.",
              "decorations": []
             }
            }
