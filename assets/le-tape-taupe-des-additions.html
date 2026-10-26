@@ -70,6 +70,16 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
 .btn2.fort{background:var(--red);border-color:#8e2f24;color:#fff}
 .top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
 .top h1{font-size:clamp(1.6rem,3.5vw,2.3rem)}
+.expl{background:var(--paper);border:4px solid var(--wood);border-radius:18px;padding:14px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 0 rgba(122,74,34,.25)}
+.expl h2{margin:0;font-family:var(--display);font-weight:400;font-size:1.6rem;color:var(--wood-dark);letter-spacing:.02em}
+.expl h3{margin:4px 0 0;font-size:1.05rem}
+.expl p{margin:0;font-size:1.15rem}
+.etapes{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;font-size:1.45rem;font-weight:700;font-variant-numeric:tabular-nums}
+.etape{background:#fff;border:2px solid #e2c49c;border-radius:12px;padding:4px 12px;white-space:nowrap}
+.etape b{color:var(--red)}
+.fleche{color:var(--wood);font-size:1.3rem}
+.expl .res{color:#2e7a2a}
+#suivant{align-self:flex-end;font-size:1.15rem;padding:6px 18px}
 @media (max-width:640px){.setup .deco{display:none}.setup{min-height:0}}
 </style>
 </head>
@@ -118,6 +128,14 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
           <label class="pill"><input type="radio" name="count" id="q10" value="10" checked><span>10</span></label>
           <label class="pill"><input type="radio" name="count" id="q15" value="15"><span>15</span></label>
         </div>
+      </fieldset>
+      <fieldset class="reg">
+        <legend class="reg-t">Explication</legend>
+        <div class="reg-l">
+          <label class="pill"><input type="radio" name="expl" id="ex-non" value="non" checked><span>Non</span></label>
+          <label class="pill"><input type="radio" name="expl" id="ex-oui" value="oui"><span>Oui</span></label>
+        </div>
+        <p class="hint">Après chaque bonne réponse, une méthode pour calculer s'affiche sous le dessin.</p>
       </fieldset>
       <button type="button" id="play">Jouer !</button>
     </form>
@@ -168,6 +186,10 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
 
       <g id="fx"></g>
     </svg>
+  </div>
+  <div class="expl" id="expl" hidden aria-live="polite">
+    <div id="explBody"></div>
+    <button type="button" class="btn2 fort" id="suivant">Question suivante</button>
   </div>
   </section>
 </div>
@@ -322,10 +344,82 @@ function choices(a, b, s, n, op) {
   return shuffle([s, ...out.slice(0, n - 1)]);
 }
 
+/* ---------- méthodes de calcul ---------- */
+const parts = n => [Math.floor(n / 100) * 100, Math.floor(n / 10) % 10 * 10, n % 10];
+const st = (x, o, y, r) => `<span class="etape">${fmt(x)} ${o} <b>${fmt(y)}</b> = ${fmt(r)}</span>`;
+const chain = arr => '<div class="etapes">' + arr.join('<span class="fleche">→</span>') + '</div>';
+function stepsAdd(x, y) {
+  const out = []; let c = x;
+  parts(y).forEach((p, k) => {
+    if (!p) return;
+    if (k === 2 && c % 10 && c % 10 + p > 10) {
+      const d = 10 - c % 10; out.push(st(c, "+", d, c + d)); c += d;
+      out.push(st(c, "+", p - d, c + p - d)); c += p - d;
+    } else { out.push(st(c, "+", p, c + p)); c += p; }
+  });
+  return out.length ? out : [st(x, "+", 0, x)];
+}
+function stepsSub(x, y) {
+  const out = []; let c = x;
+  parts(y).forEach((p, k) => {
+    if (!p) return;
+    if (k === 2 && c % 10 && c % 10 < p) {
+      const d = c % 10; out.push(st(c, "−", d, c - d)); c -= d;
+      out.push(st(c, "−", p - d, c - p + d)); c -= p - d;
+    } else { out.push(st(c, "−", p, c - p)); c -= p; }
+  });
+  return out.length ? out : [st(x, "−", 0, x)];
+}
+function decomp(y) {
+  const p = parts(y).filter(v => v);
+  return p.length > 1 ? `Je décompose <strong>${fmt(y)}</strong> en ${p.map(fmt).join(" + ")}.` : "";
+}
+function methode(a, b, s, op) {
+  let html = "<h2>Une méthode pour calculer</h2>";
+  if (op === "add") {
+    const x = Math.max(a, b), y = Math.min(a, b);
+    html += `<p>${a < b ? `Je pars du plus grand nombre, <strong>${fmt(x)}</strong>, et j'ajoute l'autre petit à petit. ` : `Je pars de <strong>${fmt(x)}</strong> et j'ajoute <strong>${fmt(y)}</strong> petit à petit. `}${decomp(y)}</p>`;
+    html += chain(stepsAdd(x, y));
+    const k = [y, x].find(n => n >= 10 && n % 10 >= 8);
+    if (k !== undefined) {
+      const o = k === y ? x : y, r = k + 10 - k % 10, d = r - k;
+      html += `<h3>Autre méthode : arrondir</h3><p>${fmt(k)}, c'est ${fmt(r)} − ${d}. À ${fmt(o)}, j'ajoute ${fmt(r)}, puis j'enlève ${d}.</p>`;
+      html += chain([st(o, "+", r, o + r), st(o + r, "−", d, s)]);
+    }
+  } else {
+    html += `<p>Je pars de <strong>${fmt(a)}</strong> et j'enlève <strong>${fmt(b)}</strong> petit à petit. ${decomp(b)}</p>`;
+    html += chain(stepsSub(a, b));
+    if (b >= 10 && b % 10 >= 8) {
+      const r = b + 10 - b % 10, d = r - b;
+      html += `<h3>Autre méthode : arrondir</h3><p>${fmt(b)}, c'est ${fmt(r)} − ${d}. J'enlève ${fmt(r)}, puis je rajoute ${d}.</p>`;
+      html += chain([st(a, "−", r, a - r), st(a - r, "+", d, s)]);
+    }
+    if (s <= 20 && b >= 10 && s > 0) {
+      const up = []; let c = b;
+      if (c % 10 && c + (10 - c % 10) <= a) { const d = 10 - c % 10; up.push(st(c, "+", d, c + d)); c += d; }
+      if (c < a) up.push(st(c, "+", a - c, a));
+      html += `<h3>Autre méthode : compléter</h3><p>Les deux nombres sont proches : je cherche combien il faut ajouter à ${fmt(b)} pour arriver à ${fmt(a)}.</p>`;
+      html += chain(up);
+    }
+  }
+  html += `<p class="res"><strong>${fmt(a)} ${sign(op)} ${fmt(b)} = ${fmt(s)}</strong></p>`;
+  return html;
+}
+let goOn = null;
+function showExpl() {
+  $("explBody").innerHTML = methode(cur.a, cur.b, cur.s, cur.op);
+  $("expl").hidden = false;
+  $("suivant").textContent = q >= total ? "Voir le score" : "Question suivante";
+  $("suivant").focus({ preventScroll: true });
+  return new Promise(r => { goOn = r; });
+}
+$("suivant").addEventListener("click", () => { $("expl").hidden = true; const r = goOn; goOn = null; r && r(); });
+
 /* ---------- partie ---------- */
 const TAUNTS = ["Nananère !", "Hi hi hi !", "Même pas cap !", "Trop lent !", "Attrape-moi !", "Raté, raté !", "Cherche bien !"];
 let state = "idle", cur = null, q = 0, total = 10, score = 0, firstTry = true, taunter = null;
 const eq = $("eq");
+function setEq(t) { eq.textContent = t; eq.setAttribute("font-size", t.length <= 13 ? 92 : t.length <= 15 ? 80 : 70); }
 function readCfg() {
   const f = $("settings");
   let lo = Math.max(0, Math.min(999, parseInt($("nmin").value, 10) || 0));
@@ -333,7 +427,7 @@ function readCfg() {
   if (lo > hi) [lo, hi] = [hi, lo];
   if (hi - lo < 2) hi = Math.min(999, lo + 2), lo = hi - 2;
   $("nmin").value = lo; $("nmax").value = hi;
-  cfg = { op: f.op.value, level: f.level.value, n: +f.moles.value, count: +f.count.value, min: lo, max: hi };
+  cfg = { op: f.op.value, level: f.level.value, n: +f.moles.value, count: +f.count.value, min: lo, max: hi, expl: f.expl.value === "oui" };
 }
 function hud() {
   $("qCount").textContent = `Question ${Math.min(q, total)} / ${total}`;
@@ -343,7 +437,7 @@ let gid = 0;
 async function start() {
   readCfg(); total = cfg.count; q = 0; score = 0; last = 0; gid++;
   state = "busy"; clearInterval(taunter);
-  $("setup").hidden = true; $("jeu").hidden = false; $("again").hidden = true;
+  $("setup").hidden = true; $("jeu").hidden = false; $("again").hidden = true; $("expl").hidden = true; goOn = null;
   buildHoles(cfg.n);
   setG(REST.x, REST.y); setL(0);
   taunter = setInterval(idleTaunt, 2600);
@@ -351,6 +445,7 @@ async function start() {
 }
 function back() {
   gid++; state = "idle"; clearInterval(taunter);
+  $("expl").hidden = true; goOn = null;
   $("jeu").hidden = true; $("setup").hidden = false;
 }
 async function next() {
@@ -358,7 +453,7 @@ async function next() {
   q++; firstTry = true; hud();
   if (q > total) return finish();
   cur = makeSum();
-  eq.textContent = `${cur.a} ${sign(cur.op)} ${cur.b} = ?`; eq.setAttribute("fill", "#3a2412"); eq.setAttribute("font-size", "92");
+  setEq(`${cur.a} ${sign(cur.op)} ${cur.b} = ?`); eq.setAttribute("fill", "#3a2412");
   const vals = choices(cur.a, cur.b, cur.s, moles.length, cur.op);
   moles.forEach((m, k) => setValue(m, vals[k]));
   await Promise.all(moles.map((m, k) => wait(k * 110).then(() => up(m))));
@@ -382,7 +477,7 @@ async function hit(m) {
     await tween(120, p => squash(m, 1 - .35 * p));
     if (firstTry) score++;
     hud();
-    eq.textContent = `${cur.a} ${sign(cur.op)} ${cur.b} = ${fmt(cur.s)}`; eq.setAttribute("fill", "#2e7a2a");
+    setEq(`${cur.a} ${sign(cur.op)} ${cur.b} = ${fmt(cur.s)}`); eq.setAttribute("fill", "#2e7a2a");
     await wait(150);
     await down(m, 240);
     const others = moles.filter(o => o !== m);
@@ -391,6 +486,7 @@ async function hit(m) {
     swing(0, 220);
     await Promise.all(others.map(o => down(o, 220)));
     await walkTo(REST.x, REST.y, 300);
+    if (cfg.expl && my === gid) await showExpl();
     await wait(250);
     if (my === gid) next();
   } else {
