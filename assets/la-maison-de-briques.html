@@ -164,19 +164,10 @@
   /* Défaite : la maison est soufflée, le loup court après les petits cochons */
   .scene.perdu .scene-maison,.scene.perdu .confettis{display:none}
   .scene.perdu .scene-tas{display:block}
-  .scene.perdu .perso{left:0;animation:course 4.5s linear infinite}
-  .scene.perdu .c1{animation-delay:-1.5s}
-  .scene.perdu .c2{animation-delay:-1.95s}
-  .scene.perdu .c3{animation-delay:-2.4s}
-  .scene.perdu .loup-fin{width:160px;animation-delay:-.55s;z-index:3}
-  .scene.perdu .perso img,.scene.perdu .perso{will-change:transform}
-  @keyframes course{
-    0%{transform:translate(-160px,0)}10%{transform:translate(calc(.1 * (760px + 160px) - 160px),-26px)}
-    20%{transform:translate(calc(.2 * (760px + 160px) - 160px),0)}30%{transform:translate(calc(.3 * (760px + 160px) - 160px),-26px)}
-    40%{transform:translate(calc(.4 * (760px + 160px) - 160px),0)}50%{transform:translate(calc(.5 * (760px + 160px) - 160px),-26px)}
-    60%{transform:translate(calc(.6 * (760px + 160px) - 160px),0)}70%{transform:translate(calc(.7 * (760px + 160px) - 160px),-26px)}
-    80%{transform:translate(calc(.8 * (760px + 160px) - 160px),0)}90%{transform:translate(calc(.9 * (760px + 160px) - 160px),-26px)}
-    100%{transform:translate(760px,0)}}
+  /* Défaite : seul le loup saute de joie devant le tas de briques */
+  .scene.perdu .c1,.scene.perdu .c2,.scene.perdu .c3{display:none}
+  .scene.perdu .loup-fin{left:calc(50% - 70px);width:140px;z-index:3;animation:saut .7s ease-in-out infinite}
+  .scene.perdu .scene-tas{left:auto;right:12%}
   .fin p{font-size:1.2rem}
 
   /* Tenir dans la hauteur de l'écran : les tailles suivent la hauteur disponible */
@@ -310,7 +301,7 @@
       <img class="perso c1" src="/images/maison-de-briques/cochon-bleu.png" alt="">
       <img class="perso c2" src="/images/maison-de-briques/cochon-rouge.png" alt="">
       <img class="perso c3" src="/images/maison-de-briques/cochon-vert.png" alt="">
-      <img class="perso loup-fin" src="/images/maison-de-briques/loup.png" alt="">
+      <img class="perso loup-fin" src="/images/maison-de-briques/loup-joie.png" alt="">
       <div class="confettis" id="confettis"></div>
       <div class="scene-sol"></div>
     </div>
