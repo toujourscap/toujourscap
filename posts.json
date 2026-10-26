@@ -251,6 +251,23 @@
           ]
          }
         ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Explication : après chaque bonne réponse, une méthode de calcul s'affiche sous le dessin (décomposer, passer par la dizaine, arrondir, compléter). L'élève passe à la question suivante quand il a lu.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
        }
       ]
      },
