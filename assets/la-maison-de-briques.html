@@ -79,8 +79,9 @@
   @keyframes arrive{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
   .rangee-flash{animation:flash .9s 2}
   @keyframes flash{50%{filter:brightness(1.6) drop-shadow(0 0 4px #ffd166)}}
-  .reperes{display:grid;grid-template-rows:repeat(10,1fr);padding:4px 0;font-weight:700;font-size:1.15rem;color:var(--diz);width:34px}
-  .reperes span{display:flex;align-items:center;justify-content:flex-end}
+  .b{position:relative}
+  .b[data-n]::after{content:attr(data-n);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(.85rem,2.4vh,1.35rem);color:var(--diz);opacity:.45;pointer-events:none}
+  .b.posee[data-n]::after,.b.neuve[data-n]::after{color:#fff;opacity:.6}
   .sol{height:14px;background:linear-gradient(var(--herbe),var(--herbe2));border-radius:0 0 10px 10px;margin:0 -18px}
   .cochon{position:absolute;right:-62px;bottom:4px;width:84px}
   @media (max-width:500px){.maison{margin-right:36px}}
@@ -248,7 +249,6 @@
       <div class="maison" id="maison">
         <div class="toit" id="toit"></div>
         <div class="mur-ligne">
-          <div class="reperes" id="reperes"></div>
           <div class="mur" id="mur"></div>
         </div>
         <div class="porte"></div>
@@ -406,12 +406,10 @@
       b.className = 'b';
       b.style.gridRow = String(10 - Math.floor(i / 10));   // on construit de bas en haut
       b.style.gridColumn = String(i % 10 + 1);
+      // Repères 10, 20… 90 en transparence dans la première brique des rangées 2 à 10
+      if (i % 10 === 0 && i >= 10) b.dataset.n = i;
       mur.appendChild(b);
       briques.push(b);
-    }
-    var rep = $('reperes');
-    for (var r = 10; r >= 1; r--){
-      var s = document.createElement('span'); s.textContent = r > 1 ? (r - 1) * 10 : ''; rep.appendChild(s);
     }
     var clav = $('clavier');
     '1234567890'.split('').forEach(function(c){
