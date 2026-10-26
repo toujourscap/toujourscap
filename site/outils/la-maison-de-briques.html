@@ -245,6 +245,7 @@
     <span class="bout" title="La maison">🏠</span>
     <span class="rappel">🎲 2, 5, 7, 9 = 🐺 avance</span>
     <button class="btn btn-gris mini" id="recommencer" title="Recommencer une partie">↺</button>
+    <button class="btn btn-gris mini" id="menu" title="Retour au menu">☰ Menu</button>
   </div>
 
   <div class="jeu">
@@ -713,6 +714,11 @@
   $('rejouer').addEventListener('click', nouvellePartie);
   $('recommencer').addEventListener('click', function(){ if (confirm('Recommencer une nouvelle partie ?')) nouvellePartie(); });
   $('reglages').addEventListener('click', function(){ montrer('accueil'); });
+  $('menu').addEventListener('click', function(){
+    if (etat.tours && !confirm('Quitter la partie et revenir au menu\u00a0?')) return;
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    montrer('accueil');
+  });
 })();
 </script>
 </body>
