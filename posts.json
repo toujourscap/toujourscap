@@ -7361,7 +7361,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Si le dé tombe sur 2, 5, 7 ou 9, le loup avance d'une case. S'il arrive à la maison avant qu'elle soit finie, il souffle et la partie est perdue. À 100 briques, la maison est construite : c'est gagné !",
+             "text": "Si le dé tombe sur 2, 5, 7 ou 9, le loup avance d'une case et on ne pose pas de briques ce tour-ci. S'il arrive à la maison avant qu'elle soit finie, il souffle et la partie est perdue. À 100 briques, la maison est construite : c'est gagné !",
              "decorations": []
             }
            }
@@ -7392,7 +7392,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine, et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
+         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine (les repères 10, 20, 30… sont écrits devant chaque rangée), et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
          "decorations": []
         }
        }
@@ -7431,7 +7431,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "On choisit la distance du loup (10, 8 ou 6 cases) et les aides : tableau dizaines / unités, repères 10, 20, 30… à côté du mur, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
+         "text": "On choisit la distance du loup (12, 10 ou 8 cases) et les aides : tableau dizaines / unités, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
          "decorations": []
         }
        }

@@ -68,7 +68,7 @@
 
   /* Maison */
   .maison-zone{background:rgba(255,255,255,.55);border-radius:20px;padding:10px 12px 12px}
-  .maison{position:relative;margin:0 60px 0 22px}
+  .maison{position:relative;margin:0 60px 0 4px}
   .toit{height:clamp(70px,9vw,110px);margin:0 -18px 2px;clip-path:polygon(50% 0,100% 100%,0 100%);background:repeating-linear-gradient(90deg,#d7dee6 0 10px,#cdd5de 10px 20px);transition:background .6s}
   .toit.fini{background:repeating-linear-gradient(90deg,#8b3a2b 0 10px,#7a3124 10px 20px)}
   .mur-ligne{display:flex;align-items:stretch;gap:6px}
@@ -79,8 +79,8 @@
   @keyframes arrive{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
   .rangee-flash{animation:flash .9s 2}
   @keyframes flash{50%{filter:brightness(1.6) drop-shadow(0 0 4px #ffd166)}}
-  .reperes{display:grid;grid-template-rows:repeat(10,1fr);padding:4px 0;font-weight:700;font-size:1rem;color:var(--diz);width:28px;text-align:left}
-  .reperes span{display:flex;align-items:center}
+  .reperes{display:grid;grid-template-rows:repeat(10,1fr);padding:4px 0;font-weight:700;font-size:1.15rem;color:var(--diz);width:34px}
+  .reperes span{display:flex;align-items:center;justify-content:flex-end}
   .sol{height:14px;background:linear-gradient(var(--herbe),var(--herbe2));border-radius:0 0 10px 10px;margin:0 -18px}
   .cochon{position:absolute;right:-62px;bottom:4px;width:84px}
   @media (max-width:500px){.maison{margin-right:36px}}
@@ -181,19 +181,18 @@
   <div class="reglages">
     <p class="regle"><span>🎯</span><span>Aide le petit cochon à construire sa maison de <strong>100 briques</strong> avant que le loup n'arrive&nbsp;!</span></p>
     <p class="regle"><span>🎲</span><span>Lance le dé, prends <strong>autant de briques</strong> que le dé l'indique, puis trouve <strong>combien de briques</strong> il y a maintenant dans la maison.</span></p>
-    <p class="regle"><span>🐺</span><span>Si le dé tombe sur <strong>2</strong>, <strong>5</strong>, <strong>7</strong> ou <strong>9</strong>, le loup avance d'une case.</span></p>
+    <p class="regle"><span>🐺</span><span>Si le dé tombe sur <strong>2</strong>, <strong>5</strong>, <strong>7</strong> ou <strong>9</strong>, le loup avance d'une case et on ne pose <strong>pas de briques</strong> ce tour-ci.</span></p>
     <p class="regle"><span>🧱</span><span>Chaque rangée du mur compte <strong>10 briques</strong>&nbsp;: une rangée pleine, c'est une <strong>dizaine</strong>.</span></p>
 
     <div class="ligne"><span class="titre">Le loup part de loin…</span>
       <div class="choix" id="choix-dist">
-        <button data-v="10">10 cases (facile)</button>
-        <button data-v="8" class="on">8 cases</button>
-        <button data-v="6">6 cases (difficile)</button>
+        <button data-v="12">12 cases (facile)</button>
+        <button data-v="10" class="on">10 cases</button>
+        <button data-v="8">8 cases (difficile)</button>
       </div>
     </div>
     <div class="ligne"><span class="titre">Aides</span>
       <label class="coche"><input type="checkbox" id="opt-du" checked> Tableau dizaines / unités sous la maison</label>
-      <label class="coche"><input type="checkbox" id="opt-reperes"> Repères 10, 20, 30… à côté du mur</label>
       <label class="coche"><input type="checkbox" id="opt-calcul" checked> Écrire l'addition (35 + 8 = ?)</label>
       <label class="coche"><input type="checkbox" id="opt-voix" checked> Le dé est dit à voix haute</label>
     </div>
@@ -215,8 +214,8 @@
       <div class="maison" id="maison">
         <div class="toit" id="toit"></div>
         <div class="mur-ligne">
+          <div class="reperes" id="reperes"></div>
           <div class="mur" id="mur"></div>
-          <div class="reperes" id="reperes" hidden></div>
         </div>
         <div class="porte"></div>
         <div class="sol"></div>
@@ -289,7 +288,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var TOTAL = 100;
   var etat = {};
-  var reglages = { dist: 8 };
+  var reglages = { dist: 10 };
   var NOMBRES_LOUP = [2, 5, 7, 9];
 
   /* ---------- Réglages ---------- */
@@ -329,7 +328,7 @@
     }
     var rep = $('reperes');
     for (var r = 10; r >= 1; r--){
-      var s = document.createElement('span'); s.textContent = r * 10; rep.appendChild(s);
+      var s = document.createElement('span'); s.textContent = r < 10 ? r * 10 : ''; rep.appendChild(s);
     }
     var clav = $('clavier');
     '1234567890'.split('').forEach(function(c){
@@ -402,7 +401,6 @@
   /* ---------- Partie ---------- */
   function nouvellePartie(){
     etat = { total: 0, ajout: 0, de: 0, loup: 0, brouette: [], erreursBriques: 0, erreursTotal: 0, tours: 0, reponse: '', fautes: 0 };
-    $('reperes').hidden = !$('opt-reperes').checked;
     $('de').textContent = '?'; $('de').classList.remove('loup');
     ['msg-de', 'msg-briques', 'msg-total'].forEach(function(m){ message(m, ''); });
     $('calcul').innerHTML = '';
@@ -419,6 +417,9 @@
   $('lancer').addEventListener('click', function(){
     etape(0);
     var de = $('de'); de.classList.remove('loup'); de.classList.add('roule');
+    // Nouveau tour : on vide la brouette et les messages du tour précédent
+    etat.brouette = []; dessinerBrouette();
+    message('msg-briques', ''); message('msg-total', ''); $('calcul').innerHTML = '';
     message('msg-de', '');
     var n = 0, t = setInterval(function(){
       de.textContent = 1 + Math.floor(Math.random() * 12);
@@ -442,9 +443,9 @@
         setTimeout(function(){ terminer(false); }, 2200);
         return;
       }
-      alerte('🎲 ' + v + '\u00a0: le loup avance\u00a0! 🐺', 1500);
-      message('msg-de', '🐺 ' + v + '\u00a0! Le loup avance. Encore ' + reste + ' case' + (reste > 1 ? 's' : '') + ' avant la maison.', 'ko');
-      setTimeout(function(){ suiteLancer(v); }, 1400);
+      alerte('🎲 ' + v + '\u00a0: le loup avance\u00a0! 🐺 Pas de briques.', 1700);
+      message('msg-de', '🐺 ' + v + '\u00a0! Le loup avance, pas de briques ce tour-ci. Encore ' + reste + ' case' + (reste > 1 ? 's' : '') + ' avant la maison.', 'ko');
+      setTimeout(function(){ etape(1); }, 1600);
       return;
     }
     suiteLancer(v);
