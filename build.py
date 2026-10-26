@@ -551,7 +551,6 @@ def main():
 </a>""" for k, t, d, lst in subs) + "</div>"
     write("/francais/", page("Français", f"""<section class="wrap">
   <h1>Français</h1>
-  <p class="lead">Des activités ludiques testées et validées par nos petits écoliers.</p>
   {vignettes}
 </section>""", "/francais/", "Français au cycle 2 : contes à raconter en cercle conteur et outils de lecture (tachistoscope, téléprompteurs, jeux de déchiffrage) pour la GS, le CP et le CE1."))
     for k, t, d, lst in subs:
