@@ -92,14 +92,6 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
       </fieldset>
       <div class="reg">
         <span class="reg-t">Nombres utilisés</span>
-        <div class="reg-l" id="presets">
-          <button type="button" class="btn2" data-a="0" data-b="10">0 à 10</button>
-          <button type="button" class="btn2" data-a="0" data-b="20">0 à 20</button>
-          <button type="button" class="btn2" data-a="0" data-b="100">0 à 100</button>
-          <button type="button" class="btn2" data-a="10" data-b="99">10 à 99</button>
-          <button type="button" class="btn2" data-a="100" data-b="999">100 à 999</button>
-          <button type="button" class="btn2" data-a="0" data-b="999">0 à 999</button>
-        </div>
         <div class="inter"><label for="nmin">De</label><input type="number" id="nmin" min="0" max="999" value="0" inputmode="numeric"><label for="nmax">à</label><input type="number" id="nmax" min="0" max="999" value="999" inputmode="numeric"></div>
         <p class="hint">Les deux nombres du calcul sont choisis dans cet intervalle (de 0 à 999). En soustraction, le plus grand est toujours placé en premier.</p>
       </div>
@@ -177,7 +169,6 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
       <g id="fx"></g>
     </svg>
   </div>
-  <p class="note">Clique (ou touche 1 à 5) sur la taupe qui porte le bon résultat. Une taupe tapée retourne dans son trou ; les autres se moquent si tu te trompes.</p>
   </section>
 </div>
 
@@ -437,13 +428,6 @@ document.addEventListener("keydown", e => {
 $("play").addEventListener("click", start);
 $("again").addEventListener("click", start);
 $("back").addEventListener("click", back);
-const presets = [...document.querySelectorAll("#presets button")];
-function markPreset() {
-  presets.forEach(b => b.classList.toggle("fort", b.dataset.a === $("nmin").value && b.dataset.b === $("nmax").value));
-}
-presets.forEach(b => b.addEventListener("click", () => { $("nmin").value = b.dataset.a; $("nmax").value = b.dataset.b; markPreset(); }));
-["nmin", "nmax"].forEach(id => $(id).addEventListener("input", markPreset));
-markPreset();
 })();
 </script>
 
