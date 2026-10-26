@@ -1,5 +1,5 @@
 {
- "count": 22,
+ "count": 23,
  "posts": [
   {
    "title": "Le Tape-taupe des additions et soustractions",
@@ -7740,6 +7740,224 @@
        "containerData": {
         "height": {
          "custom": "960"
+        },
+        "large": true
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "title": "Images du quotidien",
+   "slug": "images-du-quotidien",
+   "excerpt": "Une image, quatre phrases : l'élève lit et choisit la phrase qui décrit l'image. Trois niveaux, des pièges de plus en plus proches, pour travailler la compréhension de phrases au CP et au CE1.",
+   "date": "2026-10-26T21:30:00.000Z",
+   "cat": "lecture",
+   "jeu": {
+    "competence": "phrases-textes",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu de lecture de phrases : une image du quotidien s'affiche avec quatre phrases. Une seule décrit vraiment l'image, les trois autres sont des pièges. L'élève doit lire chaque phrase jusqu'au bout pour trouver la bonne.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "On choisit un niveau.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève regarde l'image, puis lit les quatre phrases. Le haut-parleur à gauche de chaque phrase la lit à voix haute si besoin.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il touche la phrase qui va avec l'image. Si c'est faux, la phrase est barrée et il peut réessayer.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une étoile est gagnée quand la bonne phrase est trouvée du premier coup. Le score s'affiche après les 24 images.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les trois niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 : phrases courtes, pièges très différents (« Je fais du vélo. » / « Je fais un gâteau. »).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 : phrases moyennes, les pièges se ressemblent un peu (« Mon vélo rouge a deux roues. » / « Mon vélo bleu a deux roues. »).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 : phrases longues, un seul mot change. L'élève doit lire chaque mot avec attention.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le jeu mêle dessins et photos d'enfants dans leur vie de tous les jours : la classe, la maison, la plage, le jardin.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/images-du-quotidien.html",
+       "containerData": {
+        "height": {
+         "custom": "900"
         },
         "large": true
        }
