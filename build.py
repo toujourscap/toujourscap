@@ -36,7 +36,7 @@ CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
-    "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions jusqu'à 1000.", "domain": "maths"},
+    "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
 # Dans posts.json, chaque jeu porte un champ "jeu" :
@@ -433,7 +433,7 @@ SEO_TITRES = {
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
-    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe des additions : calcul mental jusqu'à 1000, CP-CE2",
+    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : additions et soustractions en calcul mental, CP-CE2",
     "/post/la-course-des-multiplications/": "La Course des Multiplications : jeu de tables de multiplication CE1-CE2",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
 }

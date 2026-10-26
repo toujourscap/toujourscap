@@ -2,10 +2,10 @@
  "count": 22,
  "posts": [
   {
-   "title": "Le Tape-taupe des additions",
+   "title": "Le Tape-taupe des additions et soustractions",
    "slug": "le-tape-taupe-des-additions",
    "cat": "calcul",
-   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse à l'addition. Calcul mental de 0 à 1000, réglable selon le niveau.",
+   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le niveau.",
    "date": "2026-10-26T17:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -33,7 +33,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jardinier en colère, des taupes qui se moquent de lui : chaque taupe sort de son trou avec une pancarte, et une seule porte le bon résultat de l'addition. À l'élève de calculer de tête et de taper la bonne taupe !",
+         "text": "Un jardinier en colère, des taupes qui se moquent de lui : chaque taupe sort de son trou avec une pancarte, et une seule porte le bon résultat du calcul (addition ou soustraction). À l'élève de calculer de tête et de taper la bonne taupe !",
          "decorations": []
         }
        }
@@ -66,7 +66,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Une addition s'affiche sur le panneau.",
+             "text": "Une addition ou une soustraction s'affiche sur le panneau.",
              "decorations": []
             }
            }
@@ -133,7 +133,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "En fin de partie, le score indique le nombre d'additions trouvées du premier coup.",
+         "text": "En fin de partie, le score indique le nombre de calculs trouvés du premier coup.",
          "decorations": []
         }
        }
@@ -178,6 +178,22 @@
            {
             "type": "TEXT",
             "textData": {
+             "text": "Opération : addition, soustraction ou les deux mélangées."
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
              "text": "Nombres : l'intervalle dans lequel sont choisis les deux nombres (de 0 à 10, de 0 à 100, de 100 à 999… ou un intervalle libre, jusqu'à 999)."
             }
            }
@@ -194,7 +210,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Retenue : additions sans retenue, avec retenue, ou mélangées.",
+             "text": "Retenue : calculs sans retenue, avec retenue, ou mélangés. En soustraction, le plus grand nombre est toujours placé en premier.",
              "decorations": []
             }
            }
@@ -244,7 +260,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les mauvaises réponses ne sont pas tirées au hasard : ce sont les erreurs que font vraiment les élèves (retenue oubliée, erreur de 10 ou de 100, erreur de 1). Elles obligent à vérifier chaque rang.",
+         "text": "Les mauvaises réponses ne sont pas tirées au hasard : ce sont les erreurs que font vraiment les élèves (retenue oubliée, petit chiffre retiré du grand en soustraction, erreur de 10 ou de 100, erreur de 1). Elles obligent à vérifier chaque rang.",
          "decorations": []
         }
        }

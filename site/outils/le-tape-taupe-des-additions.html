@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Le Tape-taupe des additions</title><link rel="canonical" href="https://toujourscap.com/post/le-tape-taupe-des-additions/"><meta name="description" content="Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse à l&#x27;addition. Calcul mental de 0 à 1000, réglable selon le…">
+<title>Le Tape-taupe</title><link rel="canonical" href="https://toujourscap.com/post/le-tape-taupe-des-additions/"><meta name="description" content="Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le…">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Luckiest+Guy&display=swap">
 <style>
 /* Layout : une scène de champ en 16/9 (SVG unique, images Canva), réglages au-dessus. Monde visuel unique, ensoleillé. */
@@ -82,8 +82,16 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
     <form class="card" id="settings" onsubmit="return false">
       <h1>Tape-taupe</h1>
       <p class="sub">Calcul mental : tape la taupe qui porte le bon résultat !</p>
+      <fieldset class="reg">
+        <legend class="reg-t">Opération</legend>
+        <div class="reg-l">
+          <label class="pill"><input type="radio" name="op" id="op-add" value="add" checked><span>Addition</span></label>
+          <label class="pill"><input type="radio" name="op" id="op-sub" value="sub"><span>Soustraction</span></label>
+          <label class="pill"><input type="radio" name="op" id="op-mix" value="mix"><span>Les deux</span></label>
+        </div>
+      </fieldset>
       <div class="reg">
-        <span class="reg-t">Nombres à additionner</span>
+        <span class="reg-t">Nombres utilisés</span>
         <div class="reg-l" id="presets">
           <button type="button" class="btn2" data-a="0" data-b="10">0 à 10</button>
           <button type="button" class="btn2" data-a="0" data-b="20">0 à 20</button>
@@ -93,10 +101,10 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
           <button type="button" class="btn2" data-a="0" data-b="999">0 à 999</button>
         </div>
         <div class="inter"><label for="nmin">De</label><input type="number" id="nmin" min="0" max="999" value="0" inputmode="numeric"><label for="nmax">à</label><input type="number" id="nmax" min="0" max="999" value="999" inputmode="numeric"></div>
-        <p class="hint">Chaque nombre de l'addition est choisi dans cet intervalle (de 0 à 999).</p>
+        <p class="hint">Les deux nombres du calcul sont choisis dans cet intervalle (de 0 à 999). En soustraction, le plus grand est toujours placé en premier.</p>
       </div>
       <fieldset class="reg">
-        <legend class="reg-t">Retenue</legend>
+        <legend class="reg-t">Retenue (ou emprunt en soustraction)</legend>
         <div class="reg-l">
           <label class="pill"><input type="radio" name="level" id="lv-sans" value="sans"><span>Sans</span></label>
           <label class="pill"><input type="radio" name="level" id="lv-avec" value="avec"><span>Avec</span></label>
@@ -293,23 +301,30 @@ $("mute").addEventListener("click", e => { muted = !muted; e.currentTarget.textC
 const dig = n => [n % 10, Math.floor(n / 10) % 10, Math.floor(n / 100)];
 function carries(a, b) { const A = dig(a), B = dig(b); const c1 = A[0] + B[0] > 9 ? 1 : 0; return c1 || A[1] + B[1] + c1 > 9 || a + b > 999; }
 function noCarry(a, b) { const A = dig(a), B = dig(b); return ((A[2] + B[2]) % 10) * 100 + ((A[1] + B[1]) % 10) * 10 + (A[0] + B[0]) % 10; }
+function borrows(a, b) { const A = dig(a), B = dig(b); const e1 = A[0] < B[0] ? 1 : 0; return !!e1 || A[1] - e1 < B[1]; }
+function noBorrow(a, b) { const A = dig(a), B = dig(b); return Math.abs(A[2] - B[2]) * 100 + Math.abs(A[1] - B[1]) * 10 + Math.abs(A[0] - B[0]); }
 let cfg = {}, last = 0;
 function makeSum() {
   for (let t = 0; t < 6000; t++) {
-    const a = rand(cfg.min, cfg.max), b = rand(cfg.min, cfg.max);
-    const s = a + b; if (s === last && t < 5000) continue;
-    const c = carries(a, b);
+    const op = cfg.op === "mix" ? (Math.random() < .5 ? "add" : "sub") : cfg.op;
+    let a = rand(cfg.min, cfg.max), b = rand(cfg.min, cfg.max);
+    if (op === "sub" && a < b) [a, b] = [b, a];
+    const s = op === "add" ? a + b : a - b;
+    if (s === last && t < 5000) continue;
+    if (op === "sub" && a === b && t < 5000) continue;
+    const c = op === "add" ? carries(a, b) : borrows(a, b);
     const lvl = cfg.level === "mix" ? (Math.random() < .5 ? "sans" : "avec") : cfg.level;
     if (t < 4000 && lvl === "sans" && c) continue;
     if (t < 4000 && lvl === "avec" && !c) continue;
-    last = s; return { a, b, s };
+    last = s; return { a, b, s, op };
   }
-  const a = rand(cfg.min, cfg.max), b = rand(cfg.min, cfg.max); return { a, b, s: a + b };
+  const a = rand(cfg.min, cfg.max), b = rand(cfg.min, cfg.max); return { a, b, s: a + b, op: "add" };
 }
-function choices(a, b, s, n) {
+const sign = op => op === "add" ? "+" : "\u2212";
+function choices(a, b, s, n, op) {
   const top = cfg.max * 2 + 10;
-  const pool = [noCarry(a, b), ...shuffle([s + 10, s - 10]), ...shuffle([s + 1, s - 1]), ...shuffle([s + 100, s - 100, s + 11, s - 9, s + 2, s - 2, s + 20, s - 20, s + 110, s - 90])];
-  if (s < 100) pool.sort((x, y) => (x === noCarry(a, b) ? -1 : 0));
+  const err = op === "add" ? noCarry(a, b) : noBorrow(a, b);
+  const pool = [err, ...shuffle([s + 10, s - 10]), ...shuffle([s + 1, s - 1]), ...shuffle([s + 100, s - 100, s + 11, s - 9, s + 2, s - 2, s + 20, s - 20, s + 110, s - 90])];
   const out = [];
   for (const v of pool) if (v !== s && v >= 0 && v <= top && !out.includes(v)) out.push(v);
   for (let d = 3; out.length < n - 1; d++) { if (!out.includes(s + d)) out.push(s + d); }
@@ -327,7 +342,7 @@ function readCfg() {
   if (lo > hi) [lo, hi] = [hi, lo];
   if (hi - lo < 2) hi = Math.min(999, lo + 2), lo = hi - 2;
   $("nmin").value = lo; $("nmax").value = hi;
-  cfg = { level: f.level.value, n: +f.moles.value, count: +f.count.value, min: lo, max: hi };
+  cfg = { op: f.op.value, level: f.level.value, n: +f.moles.value, count: +f.count.value, min: lo, max: hi };
 }
 function hud() {
   $("qCount").textContent = `Question ${Math.min(q, total)} / ${total}`;
@@ -352,8 +367,8 @@ async function next() {
   q++; firstTry = true; hud();
   if (q > total) return finish();
   cur = makeSum();
-  eq.textContent = `${cur.a} + ${cur.b} = ?`; eq.setAttribute("fill", "#3a2412"); eq.setAttribute("font-size", "92");
-  const vals = choices(cur.a, cur.b, cur.s, moles.length);
+  eq.textContent = `${cur.a} ${sign(cur.op)} ${cur.b} = ?`; eq.setAttribute("fill", "#3a2412"); eq.setAttribute("font-size", "92");
+  const vals = choices(cur.a, cur.b, cur.s, moles.length, cur.op);
   moles.forEach((m, k) => setValue(m, vals[k]));
   await Promise.all(moles.map((m, k) => wait(k * 110).then(() => up(m))));
   if (my === gid) state = "ready";
@@ -376,7 +391,7 @@ async function hit(m) {
     await tween(120, p => squash(m, 1 - .35 * p));
     if (firstTry) score++;
     hud();
-    eq.textContent = `${cur.a} + ${cur.b} = ${fmt(cur.s)}`; eq.setAttribute("fill", "#2e7a2a");
+    eq.textContent = `${cur.a} ${sign(cur.op)} ${cur.b} = ${fmt(cur.s)}`; eq.setAttribute("fill", "#2e7a2a");
     await wait(150);
     await down(m, 240);
     const others = moles.filter(o => o !== m);
