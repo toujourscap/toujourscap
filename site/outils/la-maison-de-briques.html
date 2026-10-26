@@ -68,7 +68,7 @@
 
   /* Maison */
   .maison-zone{background:rgba(255,255,255,.55);border-radius:20px;padding:10px 12px 12px}
-  .maison{position:relative;margin:0 60px 0 4px}
+  .maison{position:relative;margin:0 4px 0 60px}
   .toit{height:clamp(70px,9vw,110px);margin:0 -18px 2px;clip-path:polygon(50% 0,100% 100%,0 100%);background:repeating-linear-gradient(90deg,#d7dee6 0 10px,#cdd5de 10px 20px);transition:background .6s}
   .toit.fini{background:repeating-linear-gradient(90deg,#8b3a2b 0 10px,#7a3124 10px 20px)}
   .mur-ligne{display:flex;align-items:stretch;gap:6px}
@@ -83,7 +83,7 @@
   .b[data-n]::after{content:attr(data-n);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(.85rem,2.4vh,1.35rem);color:var(--diz);opacity:.45;pointer-events:none}
   .b.posee[data-n]::after,.b.neuve[data-n]::after{color:#fff;opacity:.6}
   .sol{height:14px;background:linear-gradient(var(--herbe),var(--herbe2));border-radius:0 0 10px 10px;margin:0 -18px}
-  .cochon{position:absolute;right:-62px;bottom:4px;width:84px}
+  .cochon{position:absolute;left:-66px;bottom:4px;width:84px}
   @media (max-width:500px){.maison{margin-right:36px}}
   .porte{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:14px;width:16%;height:30%;background:#6b4226;border-radius:30px 30px 0 0;border:3px solid #4a2c17}
   .maison.finie .porte{display:block}
@@ -183,7 +183,7 @@
   .case{height:clamp(36px,6.5vh,58px)}
   .pion-loup{width:clamp(50px,8.5vh,78px)}
   .maison-zone{display:flex;flex-direction:column;align-items:center;padding:clamp(6px,1vh,10px) 12px}
-  .maison{width:min(calc(100% - 64px), calc(130vh - 250px));margin:0 60px 0 4px}
+  .maison{width:min(calc(100% - 64px), calc(130vh - 250px));margin:0 4px 0 60px}
   .toit{height:clamp(44px,10vh,110px)}
   .du{margin-top:clamp(4px,1vh,10px)}
   .du td{font-size:clamp(1.3rem,3.2vh,1.7rem)}
@@ -406,8 +406,8 @@
       b.className = 'b';
       b.style.gridRow = String(10 - Math.floor(i / 10));   // on construit de bas en haut
       b.style.gridColumn = String(i % 10 + 1);
-      // Repères 10, 20… 90 en transparence dans la première brique des rangées 2 à 10
-      if (i % 10 === 0 && i >= 10) b.dataset.n = i;
+      // Repères en transparence : la 10e brique tombe sur 10, la 20e sur 20… jusqu'à 100
+      if (i % 10 === 9) b.dataset.n = i + 1;
       mur.appendChild(b);
       briques.push(b);
     }

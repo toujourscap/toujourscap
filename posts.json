@@ -7392,7 +7392,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine (les repères 10, 20, 30… sont écrits en transparence dans la première brique des rangées), et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
+         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine (la 10ᵉ brique tombe sur le repère 10, la 20ᵉ sur 20, et ainsi de suite jusqu'à 100), et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
          "decorations": []
         }
        }
