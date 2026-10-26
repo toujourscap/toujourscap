@@ -1,5 +1,5 @@
 {
- "count": 20,
+ "count": 21,
  "posts": [
   {
    "title": "La minute des syllabes",
@@ -7244,6 +7244,210 @@
      "ecran",
      "imprimable",
      "projetable"
+    ]
+   }
+  },
+  {
+   "title": "La maison de briques",
+   "slug": "la-maison-de-briques",
+   "excerpt": "Aider le petit cochon à construire sa maison de 100 briques avant l'arrivée du loup : un jeu de dé pour comprendre les dizaines et les unités au CP.",
+   "date": "2026-10-26T11:45:00.000Z",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu inspiré des Trois petits cochons pour comprendre les dizaines et les unités au CP : le petit cochon doit construire sa maison de 100 briques avant que le loup n'arrive.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève lance le dé (de 1 à 12).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il prend autant de briques que le dé l'indique : une brique à la fois, ou une rangée de 10 briques d'un coup quand le dé fait 10, 11 ou 12. Puis il pose les briques sur le mur.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il trouve combien de briques il y a maintenant dans la maison, en ajoutant les nouvelles briques à celles qui étaient déjà posées.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Si le dé tombe sur 2 ou sur 5, le loup avance d'une case. S'il arrive à la maison avant qu'elle soit finie, il souffle et la partie est perdue. À 100 briques, la maison est construite : c'est gagné !",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les dizaines et les unités",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine, et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En cas d'erreur sur le total, les rangées pleines clignotent pour aider l'élève à compter de 10 en 10, puis les briques seules. À la deuxième erreur, la bonne réponse s'affiche avec sa décomposition.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les réglages",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "On choisit la distance du loup (8, 6 ou 4 cases) et les aides : tableau dizaines / unités, repères 10, 20, 30… à côté du mur, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-maison-de-briques.html",
+       "containerData": {
+        "height": {
+         "custom": "900"
+        }
+       }
+      }
+     }
     ]
    }
   }

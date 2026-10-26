@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La maison de briques</title><link rel="canonical" href="https://toujourscap.com/post/la-maison-de-briques/"><meta name="description" content="Aider le petit cochon à construire sa maison de 100 briques avant l&#x27;arrivée du loup : un jeu de dé pour comprendre les dizaines et les unités au CP.">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ciel1:#bfe6ff; --ciel2:#eaf7ff; --herbe:#7cc36a; --herbe2:#5aa64a;
+    --encre:#1f2a44; --carte:#ffffff; --ok:#2fb35a; --ko:#e2483d; --accent:#ff9f1c;
+    --brique:#c8553d; --brique2:#a8402c; --neuve:#f4a259; --neuve2:#d9823b; --joint:#e9dccb;
+    --diz:#3a86ff; --uni:#e2483d;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  html,body{margin:0}
+  body{font-family:"Andika",system-ui,sans-serif;color:var(--encre);
+    background:linear-gradient(var(--ciel1),var(--ciel2) 70%,#d8f0c8);min-height:100vh;overflow-x:hidden}
+  h1{margin:.3em 0 .1em;text-align:center;font-size:clamp(1.5rem,4vw,2.3rem)}
+  .ecran{display:none;padding:12px 16px;max-width:1100px;margin:0 auto}
+  .ecran.actif{display:block}
+  .btn{font:inherit;font-weight:700;font-size:1.25rem;border:none;border-radius:14px;padding:12px 24px;cursor:pointer;
+    box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+  .btn:disabled{opacity:.4;cursor:default;transform:none}
+  .btn-go{background:var(--accent);color:#fff}
+  .btn-ok{background:var(--ok);color:#fff}
+  .btn-bleu{background:var(--diz);color:#fff}
+  .btn-gris{background:#e7ecf2;color:var(--encre);font-size:1rem;padding:8px 16px}
+
+  /* Accueil */
+  .reglages{background:var(--carte);border-radius:20px;padding:18px 24px;max-width:640px;margin:10px auto;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  .reglages p{margin:.4em 0;font-size:1.08rem;line-height:1.45}
+  .regle{display:flex;gap:10px;align-items:flex-start}
+  .regle span:first-child{font-size:1.5rem;line-height:1.1}
+  .ligne{margin:14px 0 6px}
+  .ligne .titre{font-weight:700;display:block;margin-bottom:6px}
+  .choix{display:flex;gap:8px;flex-wrap:wrap}
+  .choix button{font:inherit;font-size:1.05rem;border:2px solid #cfd8e3;background:#fff;border-radius:12px;padding:6px 14px;cursor:pointer}
+  .choix button.on{border-color:var(--accent);background:#fff3e2;font-weight:700}
+  .coche{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:1.05rem}
+  .coche input{width:22px;height:22px}
+  .centre{text-align:center}
+
+  /* Piste du loup */
+  .piste{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.7);border-radius:16px;padding:6px 12px;margin-bottom:10px}
+  .piste .bout{font-size:1.8rem}
+  .cases{display:flex;flex:1;gap:6px}
+  .case{flex:1;height:44px;border-radius:10px;background:#d9c7a7;border:2px solid #b89f77;display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative}
+  .case.passee{background:#c5b18f}
+  .loup-ici{animation:sauter .5s}
+  @keyframes sauter{0%{transform:translateY(0)}40%{transform:translateY(-14px)}100%{transform:translateY(0)}}
+  .rappel{font-size:.95rem;white-space:nowrap}
+
+  /* Jeu */
+  .jeu{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+  @media (max-width:760px){.jeu{grid-template-columns:1fr}.rappel{display:none}}
+
+  /* Maison */
+  .maison-zone{background:rgba(255,255,255,.55);border-radius:20px;padding:10px 12px 12px}
+  .maison{position:relative;margin:0 auto;max-width:430px}
+  .toit{height:70px;margin:0 -18px 2px;clip-path:polygon(50% 0,100% 100%,0 100%);background:repeating-linear-gradient(90deg,#d7dee6 0 10px,#cdd5de 10px 20px);transition:background .6s}
+  .toit.fini{background:repeating-linear-gradient(90deg,#8b3a2b 0 10px,#7a3124 10px 20px)}
+  .mur-ligne{display:flex;align-items:stretch;gap:6px}
+  .mur{flex:1;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;background:var(--joint);padding:4px;border-radius:4px;aspect-ratio:10/6.4}
+  .b{border-radius:3px;border:2px dashed #d4c3ad;background:transparent;transition:background .3s}
+  .b.posee{border:none;background:linear-gradient(var(--brique),var(--brique2));box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
+  .b.neuve{border:none;background:linear-gradient(var(--neuve),var(--neuve2));animation:arrive .35s}
+  @keyframes arrive{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+  .rangee-flash{animation:flash .9s 2}
+  @keyframes flash{50%{filter:brightness(1.6) drop-shadow(0 0 4px #ffd166)}}
+  .reperes{display:grid;grid-template-rows:repeat(10,1fr);padding:4px 0;font-weight:700;font-size:.85rem;color:var(--diz);width:28px;text-align:left}
+  .reperes span{display:flex;align-items:center}
+  .sol{height:14px;background:linear-gradient(var(--herbe),var(--herbe2));border-radius:0 0 10px 10px;margin:0 -18px}
+  .cochon{position:absolute;right:-42px;bottom:8px;font-size:2.2rem}
+  @media (max-width:500px){.maison{margin-right:36px}}
+  .porte{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:14px;width:16%;height:30%;background:#6b4226;border-radius:30px 30px 0 0;border:3px solid #4a2c17}
+  .maison.finie .porte{display:block}
+
+  /* Tableau dizaines / unités */
+  .du{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}
+  .du table{border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;font-size:1.15rem}
+  .du th,.du td{border:2px solid #cfd8e3;padding:4px 16px;text-align:center}
+  .du th.d{color:var(--diz)} .du th.u{color:var(--uni)}
+  .du td{font-size:1.7rem;font-weight:700}
+  .du td.d{color:var(--diz)} .du td.u{color:var(--uni)}
+  .du .phrase{font-size:1.05rem}
+
+  /* Panneau de droite */
+  .panneau{display:flex;flex-direction:column;gap:12px}
+  .bloc{background:var(--carte);border-radius:20px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .bloc h2{margin:0 0 8px;font-size:1.2rem}
+  .bloc.inactif{opacity:.45;pointer-events:none}
+  .de-ligne{display:flex;align-items:center;gap:16px;justify-content:center}
+  .de{width:96px;height:96px;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:700;color:#fff;
+    background:radial-gradient(circle at 35% 30%,#7fb2ff,#2f6fd6);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%)}
+  .de.roule{animation:roule .12s linear infinite}
+  @keyframes roule{50%{transform:rotate(18deg) scale(.92)}}
+  .de.loup{background:radial-gradient(circle at 35% 30%,#b0b0b0,#5a5a5a)}
+  .message{min-height:1.4em;font-size:1.08rem;text-align:center;margin:6px 0 0}
+  .message.ko{color:var(--ko);font-weight:700}
+  .message.ok{color:var(--ok);font-weight:700}
+
+  .tas{display:flex;gap:14px;justify-content:center;align-items:flex-end;flex-wrap:wrap}
+  .prendre{font:inherit;border:2px solid #e3d5c3;background:#fff8ef;border-radius:14px;padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .prendre:active{transform:translateY(2px)}
+  .brique-seule{width:34px;height:20px;border-radius:3px;background:linear-gradient(var(--neuve),var(--neuve2))}
+  .barre-dix{display:flex;gap:2px}
+  .barre-dix i{width:12px;height:20px;border-radius:2px;background:linear-gradient(var(--neuve),var(--neuve2))}
+  .prendre small{font-size:.9rem}
+  .brouette{min-height:64px;margin-top:10px;border:3px dashed #cfd8e3;border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:#fbfcfe}
+  .brouette .vide{opacity:.55}
+  .brouette .item{cursor:pointer;display:flex;gap:2px;padding:2px;border-radius:4px}
+  .brouette .item:hover{outline:2px solid var(--ko)}
+  .brouette .item.u{width:30px;height:20px;border-radius:3px;background:linear-gradient(var(--neuve),var(--neuve2))}
+  .brouette .item.d i{width:10px;height:20px;border-radius:2px;background:linear-gradient(var(--neuve),var(--neuve2))}
+  .compte{font-weight:700;margin-left:6px}
+  .actions{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+
+  .calcul{font-size:2.1rem;font-weight:700;text-align:center;margin:4px 0 8px}
+  .calcul .rep{display:inline-block;min-width:2.4ch;border-bottom:4px solid var(--accent);color:var(--accent)}
+  .clavier{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:360px;margin:0 auto}
+  .clavier button{font:inherit;font-size:1.5rem;font-weight:700;padding:8px 0;border-radius:12px;border:2px solid #cfd8e3;background:#fff;cursor:pointer}
+  .clavier button.eff{background:#fdecea;border-color:#f3b8b2}
+  .clavier button.val{background:var(--ok);color:#fff;border-color:var(--ok)}
+
+  /* Fin */
+  .fin{background:var(--carte);border-radius:22px;padding:22px;max-width:560px;margin:30px auto;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.1)}
+  .fin .grand{font-size:4rem}
+  .fin p{font-size:1.2rem}
+</style>
+</head>
+<body>
+
+<!-- Accueil -->
+<section class="ecran actif" id="accueil">
+  <h1>🐷 La maison de briques 🧱</h1>
+  <div class="reglages">
+    <p class="regle"><span>🎯</span><span>Aide le petit cochon à construire sa maison de <strong>100 briques</strong> avant que le loup n'arrive&nbsp;!</span></p>
+    <p class="regle"><span>🎲</span><span>Lance le dé, prends <strong>autant de briques</strong> que le dé l'indique, puis trouve <strong>combien de briques</strong> il y a maintenant dans la maison.</span></p>
+    <p class="regle"><span>🐺</span><span>Si le dé tombe sur <strong>2</strong> ou sur <strong>5</strong>, le loup avance d'une case.</span></p>
+    <p class="regle"><span>🧱</span><span>Chaque rangée du mur compte <strong>10 briques</strong>&nbsp;: une rangée pleine, c'est une <strong>dizaine</strong>.</span></p>
+
+    <div class="ligne"><span class="titre">Le loup part de loin…</span>
+      <div class="choix" id="choix-dist">
+        <button data-v="8">8 cases (facile)</button>
+        <button data-v="6" class="on">6 cases</button>
+        <button data-v="4">4 cases (difficile)</button>
+      </div>
+    </div>
+    <div class="ligne"><span class="titre">Aides</span>
+      <label class="coche"><input type="checkbox" id="opt-du" checked> Tableau dizaines / unités sous la maison</label>
+      <label class="coche"><input type="checkbox" id="opt-reperes"> Repères 10, 20, 30… à côté du mur</label>
+      <label class="coche"><input type="checkbox" id="opt-calcul" checked> Écrire l'addition (35 + 8 = ?)</label>
+      <label class="coche"><input type="checkbox" id="opt-voix" checked> Le dé est dit à voix haute</label>
+    </div>
+    <div class="centre"><button class="btn btn-go" id="jouer">Jouer&nbsp;!</button></div>
+  </div>
+</section>
+
+<!-- Jeu -->
+<section class="ecran" id="jeu">
+  <div class="piste">
+    <span class="bout" title="La forêt">🌲</span>
+    <div class="cases" id="cases"></div>
+    <span class="bout" title="La maison">🏠</span>
+    <span class="rappel">🎲 2 ou 5 = 🐺 avance</span>
+  </div>
+
+  <div class="jeu">
+    <div class="maison-zone">
+      <div class="maison" id="maison">
+        <div class="toit" id="toit"></div>
+        <div class="mur-ligne">
+          <div class="mur" id="mur"></div>
+          <div class="reperes" id="reperes" hidden></div>
+        </div>
+        <div class="porte"></div>
+        <div class="sol"></div>
+        <div class="cochon">🐷</div>
+      </div>
+      <div class="du" id="du">
+        <table><tr><th class="d">dizaines</th><th class="u">unités</th></tr>
+          <tr><td class="d" id="du-d">0</td><td class="u" id="du-u">0</td></tr></table>
+        <span class="phrase" id="du-phrase">0 brique</span>
+      </div>
+    </div>
+
+    <div class="panneau">
+      <div class="bloc" id="bloc-de">
+        <h2>1. Lance le dé</h2>
+        <div class="de-ligne">
+          <div class="de" id="de">?</div>
+          <button class="btn btn-bleu" id="lancer">🎲 Lancer</button>
+        </div>
+        <p class="message" id="msg-de"></p>
+      </div>
+
+      <div class="bloc inactif" id="bloc-briques">
+        <h2>2. Prends les briques</h2>
+        <div class="tas">
+          <button class="prendre" id="prendre-u" title="Prendre 1 brique"><span class="brique-seule"></span><small>1 brique</small></button>
+          <button class="prendre" id="prendre-d" title="Prendre une rangée de 10 briques"><span class="barre-dix"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><small>10 briques</small></button>
+        </div>
+        <div class="brouette" id="brouette"></div>
+        <div class="actions"><button class="btn btn-ok" id="poser">Poser les briques</button></div>
+        <p class="message" id="msg-briques"></p>
+      </div>
+
+      <div class="bloc inactif" id="bloc-total">
+        <h2>3. Combien de briques dans la maison&nbsp;?</h2>
+        <div class="calcul" id="calcul"></div>
+        <div class="clavier" id="clavier"></div>
+        <p class="message" id="msg-total"></p>
+      </div>
+
+      <div class="centre"><button class="btn btn-gris" id="recommencer">↺ Recommencer</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- Fin -->
+<section class="ecran" id="fin">
+  <div class="fin">
+    <div class="grand" id="fin-emoji"></div>
+    <h1 id="fin-titre"></h1>
+    <p id="fin-texte"></p>
+    <button class="btn btn-go" id="rejouer">Rejouer</button>
+    <p><button class="btn btn-gris" id="reglages">Changer les réglages</button></p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var TOTAL = 100;
+  var etat = {};
+  var reglages = { dist: 6 };
+
+  /* ---------- Réglages ---------- */
+  document.querySelectorAll('#choix-dist button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#choix-dist button').forEach(function(x){ x.classList.toggle('on', x === b); });
+      reglages.dist = +b.dataset.v;
+    });
+  });
+
+  function montrer(id){
+    document.querySelectorAll('.ecran').forEach(function(e){ e.classList.toggle('actif', e.id === id); });
+    window.scrollTo(0, 0);
+  }
+
+  function dire(txt){
+    if (!$('opt-voix').checked || !('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'fr-FR'; u.rate = .9;
+      speechSynthesis.speak(u);
+    } catch(e){}
+  }
+
+  /* ---------- Construction de l'écran ---------- */
+  var briques = [];
+  (function construireMur(){
+    var mur = $('mur');
+    for (var i = 0; i < TOTAL; i++){
+      var b = document.createElement('div');
+      b.className = 'b';
+      b.style.gridRow = String(10 - Math.floor(i / 10));   // on construit de bas en haut
+      b.style.gridColumn = String(i % 10 + 1);
+      mur.appendChild(b);
+      briques.push(b);
+    }
+    var rep = $('reperes');
+    for (var r = 10; r >= 1; r--){
+      var s = document.createElement('span'); s.textContent = r * 10; rep.appendChild(s);
+    }
+    var clav = $('clavier');
+    '1234567890'.split('').forEach(function(c){
+      var k = document.createElement('button'); k.textContent = c;
+      k.addEventListener('click', function(){ taper(c); });
+      clav.appendChild(k);
+    });
+    var eff = document.createElement('button'); eff.textContent = '⌫'; eff.className = 'eff'; eff.title = 'Effacer';
+    eff.addEventListener('click', function(){ taper('eff'); });
+    var val = document.createElement('button'); val.textContent = 'OK'; val.className = 'val';
+    val.style.gridColumn = 'span 4';
+    val.addEventListener('click', verifierTotal);
+    clav.appendChild(eff); clav.appendChild(val);
+  })();
+
+  function dessinerPiste(){
+    var c = $('cases'); c.innerHTML = '';
+    for (var i = 1; i <= reglages.dist; i++){
+      var d = document.createElement('div');
+      d.className = 'case' + (i < etat.loup ? ' passee' : '');
+      if (i === etat.loup) d.innerHTML = '<span class="loup-ici">🐺</span>';
+      c.appendChild(d);
+    }
+    // Le loup attend dans la forêt au départ
+    c.parentNode.querySelector('.bout').textContent = etat.loup === 0 ? '🌲🐺' : '🌲';
+  }
+
+  function dessinerMur(){
+    briques.forEach(function(b, i){
+      b.classList.toggle('posee', i < etat.total);
+      b.classList.toggle('neuve', i >= etat.total && i < etat.total + etat.ajout);
+    });
+    $('toit').classList.toggle('fini', etat.total >= TOTAL);
+    $('maison').classList.toggle('finie', etat.total >= TOTAL);
+  }
+
+  function dessinerDU(){
+    var n = etat.total, d = Math.floor(n / 10), u = n % 10;
+    $('du-d').textContent = d; $('du-u').textContent = u;
+    $('du-phrase').textContent = n === 0 ? '0 brique' :
+      d + ' dizaine' + (d > 1 ? 's' : '') + ' et ' + u + ' unité' + (u > 1 ? 's' : '') + ' = ' + n + ' briques';
+    $('du').hidden = !$('opt-du').checked;
+  }
+
+  function etape(n){
+    $('bloc-de').classList.toggle('inactif', n !== 1);
+    $('bloc-briques').classList.toggle('inactif', n !== 2);
+    $('bloc-total').classList.toggle('inactif', n !== 3);
+    $('lancer').disabled = n !== 1;
+  }
+
+  /* ---------- Partie ---------- */
+  function nouvellePartie(){
+    etat = { total: 0, ajout: 0, de: 0, loup: 0, brouette: [], erreursBriques: 0, erreursTotal: 0, tours: 0, reponse: '', fautes: 0 };
+    $('reperes').hidden = !$('opt-reperes').checked;
+    $('de').textContent = '?'; $('de').classList.remove('loup');
+    ['msg-de', 'msg-briques', 'msg-total'].forEach(function(m){ message(m, ''); });
+    $('calcul').innerHTML = '';
+    dessinerPiste(); dessinerMur(); dessinerDU(); dessinerBrouette();
+    etape(1);
+    montrer('jeu');
+  }
+
+  function message(id, txt, cls){
+    var m = $(id); m.textContent = txt; m.className = 'message' + (cls ? ' ' + cls : '');
+  }
+
+  /* 1. Le dé */
+  $('lancer').addEventListener('click', function(){
+    etape(0);
+    var de = $('de'); de.classList.remove('loup'); de.classList.add('roule');
+    message('msg-de', '');
+    var n = 0, t = setInterval(function(){
+      de.textContent = 1 + Math.floor(Math.random() * 12);
+      if (++n > 9){ clearInterval(t); finLancer(); }
+    }, 70);
+  });
+
+  function finLancer(){
+    var de = $('de');
+    var v = 1 + Math.floor(Math.random() * 12);
+    etat.de = v; etat.tours++;
+    de.classList.remove('roule'); de.textContent = v;
+    dire(String(v));
+    if (v === 2 || v === 5){
+      de.classList.add('loup');
+      etat.loup++;
+      dessinerPiste();
+      if (etat.loup >= reglages.dist){
+        message('msg-de', 'Le loup est arrivé à la maison… 🐺', 'ko');
+        setTimeout(function(){ terminer(false); }, 1300);
+        return;
+      }
+      message('msg-de', '🐺 ' + v + ' ! Le loup avance d\'une case.', 'ko');
+    }
+    var reste = TOTAL - etat.total;
+    etat.besoin = Math.min(v, reste);
+    if (v > reste){
+      message('msg-briques', 'Il ne manque plus que quelques briques : prends seulement ce qu\'il faut pour finir le mur !');
+    } else {
+      message('msg-briques', '');
+    }
+    etat.brouette = []; etat.erreursBriques = 0;
+    dessinerBrouette();
+    etape(2);
+  }
+
+  /* 2. Les briques */
+  function compteBrouette(){
+    return etat.brouette.reduce(function(s, x){ return s + (x === 'd' ? 10 : 1); }, 0);
+  }
+  function dessinerBrouette(){
+    var br = $('brouette'); br.innerHTML = '';
+    if (!etat.brouette || !etat.brouette.length){
+      br.innerHTML = '<span class="vide">Clique sur le tas de briques pour les prendre.</span>';
+      return;
+    }
+    etat.brouette.forEach(function(x, i){
+      var it = document.createElement('span');
+      it.className = 'item ' + x;
+      it.title = 'Reposer';
+      if (x === 'd') it.innerHTML = new Array(11).join('<i></i>');
+      it.addEventListener('click', function(){ etat.brouette.splice(i, 1); dessinerBrouette(); });
+      br.appendChild(it);
+    });
+    if (etat.erreursBriques >= 2){
+      var c = document.createElement('span'); c.className = 'compte'; c.textContent = '(' + compteBrouette() + ')';
+      br.appendChild(c);
+    }
+  }
+  function prendre(x){
+    if ($('bloc-briques').classList.contains('inactif')) return;
+    if (compteBrouette() + (x === 'd' ? 10 : 1) > 20) return;
+    etat.brouette.push(x); dessinerBrouette(); message('msg-briques', '');
+  }
+  $('prendre-u').addEventListener('click', function(){ prendre('u'); });
+  $('prendre-d').addEventListener('click', function(){ prendre('d'); });
+
+  $('poser').addEventListener('click', function(){
+    if ($('bloc-briques').classList.contains('inactif')) return;
+    var n = compteBrouette();
+    if (n === etat.besoin){
+      etat.ajout = n;
+      dessinerMur();
+      message('msg-briques', 'Bravo ! ' + n + ' brique' + (n > 1 ? 's' : '') + ' de plus.', 'ok');
+      demanderTotal();
+      return;
+    }
+    etat.erreursBriques++; etat.fautes++;
+    var txt = etat.besoin < etat.de ? 'Ce n\'est pas le bon nombre. Remplis juste le mur, pas plus !' :
+      'Ce n\'est pas le bon nombre de briques. Regarde bien le dé et recompte.';
+    if (etat.erreursBriques >= 2) txt = 'Tu as ' + n + ' brique' + (n > 1 ? 's' : '') + '. Il en faut ' + etat.besoin + '.';
+    message('msg-briques', txt, 'ko');
+    dessinerBrouette();
+  });
+
+  /* 3. Le total */
+  function demanderTotal(){
+    etat.reponse = ''; etat.erreursTotal = 0;
+    message('msg-total', '');
+    afficherCalcul();
+    etape(3);
+  }
+  function afficherCalcul(){
+    var r = '<span class="rep">' + (etat.reponse || '&nbsp;') + '</span>';
+    $('calcul').innerHTML = $('opt-calcul').checked ? (etat.total + ' + ' + etat.ajout + ' = ' + r) : r + ' briques';
+  }
+  function taper(c){
+    if ($('bloc-total').classList.contains('inactif')) return;
+    if (c === 'eff') etat.reponse = etat.reponse.slice(0, -1);
+    else if (etat.reponse.length < 3) etat.reponse += c;
+    afficherCalcul();
+  }
+  document.addEventListener('keydown', function(e){
+    if (/^[0-9]$/.test(e.key)) taper(e.key);
+    else if (e.key === 'Backspace') taper('eff');
+    else if (e.key === 'Enter' && !$('bloc-total').classList.contains('inactif')){ e.preventDefault(); verifierTotal(); }
+  });
+
+  function verifierTotal(){
+    if ($('bloc-total').classList.contains('inactif') || !etat.reponse) return;
+    var juste = etat.total + etat.ajout;
+    if (+etat.reponse === juste){ validerTour(true); return; }
+    etat.erreursTotal++; etat.fautes++;
+    if (etat.erreursTotal === 1){
+      message('msg-total', 'Pas tout à fait… Compte les rangées pleines (les dizaines), puis les briques toutes seules.', 'ko');
+      flashRangees(juste);
+      etat.reponse = ''; afficherCalcul();
+    } else {
+      validerTour(false);
+    }
+  }
+  function flashRangees(n){
+    var pleines = Math.floor(n / 10);
+    briques.forEach(function(b, i){
+      if (i < pleines * 10){ b.classList.remove('rangee-flash'); void b.offsetWidth; b.classList.add('rangee-flash'); }
+    });
+  }
+
+  function validerTour(bien){
+    var avant = etat.total;
+    etat.total += etat.ajout; etat.ajout = 0;
+    var n = etat.total, d = Math.floor(n / 10), u = n % 10;
+    var deco = d + ' dizaine' + (d > 1 ? 's' : '') + ' et ' + u + ' unité' + (u > 1 ? 's' : '');
+    if (bien){
+      message('msg-total', 'Oui ! ' + n + ' briques : ' + deco + '.', 'ok');
+    } else {
+      message('msg-total', 'Il y a ' + n + ' briques : ' + deco + '.', 'ko');
+      etat.reponse = String(n); afficherCalcul();
+    }
+    dire(n + ' briques');
+    dessinerMur(); dessinerDU();
+    if (Math.floor(n / 10) > Math.floor(avant / 10) && n < TOTAL){
+      flashRangees(n);
+      message('msg-de', '🎉 Une nouvelle dizaine !', 'ok');
+    } else {
+      message('msg-de', '');
+    }
+    if (n >= TOTAL){ setTimeout(function(){ terminer(true); }, 1400); etape(0); return; }
+    etape(1);
+  }
+
+  /* Fin de partie */
+  function terminer(gagne){
+    etape(0);
+    if (gagne){
+      $('fin-emoji').textContent = '🏠🐷';
+      $('fin-titre').textContent = 'La maison est construite !';
+      $('fin-texte').textContent = '100 briques, c\'est 10 dizaines. Le loup peut souffler, la maison ne tombera pas ! ' +
+        '(' + etat.tours + ' lancers de dé)';
+      dire('Bravo ! La maison est construite.');
+    } else {
+      $('fin-emoji').textContent = '🐺💨';
+      $('fin-titre').textContent = 'Le loup a soufflé…';
+      $('fin-texte').textContent = 'La maison n\'était pas finie : ' + etat.total + ' briques sur 100. On réessaie ?';
+      dire('Le loup a soufflé. On réessaie ?');
+    }
+    montrer('fin');
+  }
+
+  $('jouer').addEventListener('click', nouvellePartie);
+  $('rejouer').addEventListener('click', nouvellePartie);
+  $('recommencer').addEventListener('click', function(){ if (confirm('Recommencer une nouvelle partie ?')) nouvellePartie(); });
+  $('reglages').addEventListener('click', function(){ montrer('accueil'); });
+})();
+</script>
+</body>
+</html>
