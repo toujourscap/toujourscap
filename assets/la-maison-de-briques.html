@@ -107,6 +107,9 @@
   .de.roule{animation:roule .12s linear infinite}
   @keyframes roule{50%{transform:rotate(18deg) scale(.92)}}
   .de.loup{background:radial-gradient(circle at 35% 30%,#b0b0b0,#5a5a5a)}
+  .choix-de{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(3px,.6vh,6px);flex:1;max-width:330px}
+  .choix-de button{font:inherit;font-weight:700;font-size:clamp(1.05rem,2.6vh,1.35rem);padding:clamp(2px,.7vh,7px) 0;border-radius:10px;border:2px solid #b9cdf3;background:#eef4ff;color:#2f6fd6;cursor:pointer}
+  .choix-de button:hover{background:#dce8ff}
   .message{min-height:1.4em;font-size:1.08rem;text-align:center;margin:6px 0 0}
   .message.ko{color:var(--ko);font-weight:700}
   .message.ok{color:var(--ok);font-weight:700}
@@ -208,6 +211,12 @@
     <p class="regle"><span>🐺</span><span>Si le dé tombe sur <strong>2</strong>, <strong>5</strong>, <strong>7</strong> ou <strong>9</strong>, le loup avance d'une case et on ne pose <strong>pas de briques</strong> ce tour-ci.</span></p>
     <p class="regle"><span>🧱</span><span>Chaque rangée du mur compte <strong>10 briques</strong>&nbsp;: une rangée pleine, c'est une <strong>dizaine</strong>.</span></p>
 
+    <div class="ligne"><span class="titre">Le dé</span>
+      <div class="choix" id="choix-mode">
+        <button data-v="ordi" class="on">🎲 Dé de l'ordinateur</button>
+        <button data-v="vrai">✋ Vrais dés en classe</button>
+      </div>
+    </div>
     <div class="ligne"><span class="titre">Le loup part de loin…</span>
       <div class="choix" id="choix-dist">
         <button data-v="12">12 cases (facile)</button>
@@ -255,10 +264,11 @@
 
     <div class="panneau">
       <div class="bloc" id="bloc-de">
-        <h2>1. Lance le dé</h2>
+        <h2 id="titre-de">1. Lance le dé</h2>
         <div class="de-ligne">
           <div class="de" id="de">?</div>
           <button class="btn btn-bleu" id="lancer">🎲 Lancer</button>
+          <div class="choix-de" id="choix-de" hidden></div>
         </div>
         <p class="message" id="msg-de"></p>
       </div>
@@ -312,7 +322,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var TOTAL = 100;
   var etat = {};
-  var reglages = { dist: 10 };
+  var reglages = { dist: 10, mode: 'ordi' };
   var NOMBRES_LOUP = [2, 5, 7, 9];
 
   /* ---------- Réglages ---------- */
@@ -348,6 +358,28 @@
   window.addEventListener('resize', ajuster);
   document.addEventListener('fullscreenchange', ajuster);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+
+  document.querySelectorAll('#choix-mode button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#choix-mode button').forEach(function(x){ x.classList.toggle('on', x === b); });
+      reglages.mode = b.dataset.v;
+    });
+  });
+  (function(){
+    // Mode « vrais dés » : l'élève lance un vrai dé et clique sur le nombre obtenu
+    var c = $('choix-de');
+    for (var i = 1; i <= 12; i++){
+      var k = document.createElement('button'); k.textContent = i; k.dataset.v = i;
+      k.addEventListener('click', function(){ if (!$('bloc-de').classList.contains('inactif')) nombreChoisi(+this.dataset.v); });
+      c.appendChild(k);
+    }
+  })();
+  function appliquerMode(){
+    var vrai = reglages.mode === 'vrai';
+    $('lancer').hidden = vrai;
+    $('choix-de').hidden = !vrai;
+    $('titre-de').textContent = vrai ? '1. Lance le dé et clique sur le nombre' : '1. Lance le dé';
+  }
 
   function montrer(id){
     document.querySelectorAll('.ecran').forEach(function(e){ e.classList.toggle('actif', e.id === id); });
@@ -453,6 +485,7 @@
   function nouvellePartie(){
     etat = { total: 0, ajout: 0, de: 0, loup: 0, brouette: [], erreursBriques: 0, erreursTotal: 0, tours: 0, reponse: '', fautes: 0 };
     $('de').textContent = '?'; $('de').classList.remove('loup');
+    appliquerMode();
     ['msg-de', 'msg-briques', 'msg-total'].forEach(function(m){ message(m, ''); });
     $('calcul').innerHTML = '';
     dessinerPiste(); dessinerMur(); dessinerDU(); dessinerBrouette();
@@ -465,22 +498,32 @@
   }
 
   /* 1. Le dé */
-  $('lancer').addEventListener('click', function(){
+  function nouveauTour(){
     etape(0);
-    var de = $('de'); de.classList.remove('loup'); de.classList.add('roule');
+    $('de').classList.remove('loup');
     // Nouveau tour : on vide la brouette et les messages du tour précédent
     etat.brouette = []; dessinerBrouette();
     message('msg-briques', ''); message('msg-total', ''); $('calcul').innerHTML = '';
     message('msg-de', '');
+  }
+
+  $('lancer').addEventListener('click', function(){
+    nouveauTour();
+    var de = $('de'); de.classList.add('roule');
     var n = 0, t = setInterval(function(){
       de.textContent = 1 + Math.floor(Math.random() * 12);
-      if (++n > 9){ clearInterval(t); finLancer(); }
+      if (++n > 9){ clearInterval(t); finLancer(1 + Math.floor(Math.random() * 12)); }
     }, 70);
   });
 
-  function finLancer(){
+  // Vrais dés : le nombre est saisi à la main
+  function nombreChoisi(v){
+    nouveauTour();
+    finLancer(v);
+  }
+
+  function finLancer(v){
     var de = $('de');
-    var v = 1 + Math.floor(Math.random() * 12);
     etat.de = v; etat.tours++;
     de.classList.remove('roule'); de.textContent = v;
     dire(String(v));
