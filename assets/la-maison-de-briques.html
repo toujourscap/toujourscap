@@ -111,9 +111,9 @@
   .de.roule{animation:roule .12s linear infinite}
   @keyframes roule{50%{transform:rotate(18deg) scale(.92)}}
   .de.loup{background:radial-gradient(circle at 35% 30%,#b0b0b0,#5a5a5a)}
-  .choix-de{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(3px,.6vh,6px);flex:1;max-width:330px}
-  .choix-de button{font:inherit;font-weight:700;font-size:clamp(1.05rem,2.6vh,1.35rem);padding:clamp(2px,.7vh,7px) 0;border-radius:10px;border:2px solid #b9cdf3;background:#eef4ff;color:#2f6fd6;cursor:pointer}
-  .choix-de button:hover{background:#dce8ff}
+  .choix-de{display:flex;align-items:center;gap:12px}
+  .aide-de{font-size:clamp(.95rem,2vh,1.1rem);line-height:1.3}
+  .aide-de kbd{font:inherit;font-weight:700;background:#eef1f5;border:1px solid #cfd8e3;border-bottom-width:3px;border-radius:6px;padding:0 6px}
   .message{min-height:1.4em;font-size:1.08rem;text-align:center;margin:6px 0 0}
   .message.ko{color:var(--ko);font-weight:700}
   .message.ok{color:var(--ok);font-weight:700}
@@ -360,20 +360,39 @@
       reglages.mode = b.dataset.v;
     });
   });
+  // Mode « vrais dés » : le nombre du dé est tapé au clavier (pavé numérique) puis Entrée
+  var saisieDe = '';
   (function(){
-    // Mode « vrais dés » : l'élève lance un vrai dé et clique sur le nombre obtenu
-    var c = $('choix-de');
-    for (var i = 1; i <= 12; i++){
-      var k = document.createElement('button'); k.textContent = i; k.dataset.v = i;
-      k.addEventListener('click', function(){ if (!$('bloc-de').classList.contains('inactif')) nombreChoisi(+this.dataset.v); });
-      c.appendChild(k);
-    }
+    $('choix-de').innerHTML = '<span class="aide-de">Tape le nombre du dé<br>puis <kbd>Entrée</kbd></span>' +
+      '<button class="btn btn-bleu" id="valider-de" type="button">OK</button>';
+    $('valider-de').addEventListener('click', validerDe);
   })();
+  function deActif(){ return reglages.mode === 'vrai' && !$('bloc-de').classList.contains('inactif') && $('jeu').classList.contains('actif'); }
+  function taperDe(c){
+    if (c === 'eff') saisieDe = saisieDe.slice(0, -1);
+    else if (saisieDe.length < 2) saisieDe += c;
+    if (saisieDe === '0') saisieDe = '';
+    $('de').classList.remove('loup');
+    $('de').textContent = saisieDe || '?';
+    message('msg-de', '');
+  }
+  function validerDe(){
+    if (!deActif()) return;
+    var v = +saisieDe;
+    if (!(v >= 1 && v <= 12)){
+      message('msg-de', 'Tape un nombre de 1 à 12.', 'ko');
+      saisieDe = ''; $('de').textContent = '?';
+      return;
+    }
+    saisieDe = '';
+    nombreChoisi(v);
+  }
   function appliquerMode(){
     var vrai = reglages.mode === 'vrai';
     $('lancer').hidden = vrai;
     $('choix-de').hidden = !vrai;
-    $('titre-de').textContent = vrai ? '1. Lance le dé et clique sur le nombre' : '1. Lance le dé';
+    saisieDe = '';
+    $('titre-de').textContent = vrai ? '1. Lance le dé et tape le nombre' : '1. Lance le dé';
   }
 
   function montrer(id){
@@ -624,9 +643,17 @@
     afficherCalcul();
   }
   document.addEventListener('keydown', function(e){
-    if (/^[0-9]$/.test(e.key)) taper(e.key);
-    else if (e.key === 'Backspace') taper('eff');
-    else if (e.key === 'Enter' && !$('bloc-total').classList.contains('inactif')){ e.preventDefault(); verifierTotal(); }
+    // Pavé numérique : on lit aussi le code de la touche (utile si Verr. Num est désactivé)
+    var k = /^Numpad[0-9]$/.test(e.code) ? e.code.slice(-1) : (e.code === 'NumpadEnter' ? 'Enter' : e.key);
+    if (deActif()){
+      if (/^[0-9]$/.test(k)) taperDe(k);
+      else if (k === 'Backspace'){ e.preventDefault(); taperDe('eff'); }
+      else if (k === 'Enter'){ e.preventDefault(); validerDe(); }
+      return;
+    }
+    if (/^[0-9]$/.test(k)) taper(k);
+    else if (k === 'Backspace') taper('eff');
+    else if (k === 'Enter' && !$('bloc-total').classList.contains('inactif')){ e.preventDefault(); verifierTotal(); }
   });
 
   function verifierTotal(){

@@ -7431,7 +7431,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "On choisit le dé : celui de l'ordinateur, ou de vrais dés lancés en classe (l'élève clique alors sur le nombre obtenu, de 1 à 12). On choisit la distance du loup (12, 10 ou 8 cases) et les aides : tableau dizaines / unités, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
+         "text": "On choisit le dé : celui de l'ordinateur, ou de vrais dés lancés en classe (on tape alors le nombre obtenu au clavier ou au pavé numérique, puis Entrée). On choisit la distance du loup (12, 10 ou 8 cases) et les aides : tableau dizaines / unités, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
          "decorations": []
         }
        }
