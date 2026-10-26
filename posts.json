@@ -1,6 +1,257 @@
 {
- "count": 21,
+ "count": 22,
  "posts": [
+  {
+   "title": "Le Tape-taupe des additions",
+   "slug": "le-tape-taupe-des-additions",
+   "cat": "calcul",
+   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse à l'addition. Calcul mental avec des nombres jusqu'à 1000.",
+   "date": "2026-10-26T17:10:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ],
+    "competence": "addition"
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jardinier en colère, des taupes qui se moquent de lui : chaque taupe sort de son trou avec une pancarte, et une seule porte le bon résultat de l'addition. À l'élève de calculer de tête et de taper la bonne taupe !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une addition de deux nombres inférieurs à 1000 s'affiche sur le panneau.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les taupes sortent de leur trou, chacune avec un résultat sur sa pancarte.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève calcule de tête puis clique sur la taupe qui porte le bon résultat (ou tape le numéro de la taupe, de 1 à 5, au clavier).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bonne réponse : le jardinier lui donne un coup de bâton et la taupe rentre dans son trou. Erreur : la taupe esquive et se moque du jardinier, il faut chercher encore.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En fin de partie, le score indique le nombre d'additions trouvées du premier coup.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Régler la difficulté",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Retenue : additions sans retenue, avec retenue, ou mélangées.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Nombre de taupes : 3, 4 ou 5 réponses proposées.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Nombre de questions : 5, 10 ou 15.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Résultat au-delà de 999 : à cocher pour autoriser des sommes jusqu'à 1998.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les mauvaises réponses ne sont pas tirées au hasard : ce sont les erreurs que font vraiment les élèves (retenue oubliée, erreur de 10 ou de 100, erreur de 1). Elles obligent à vérifier chaque rang.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-tape-taupe-des-additions.html",
+       "containerData": {
+        "height": {
+         "custom": "880"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "La minute des syllabes",
    "slug": "la-minute-des-syllabes",

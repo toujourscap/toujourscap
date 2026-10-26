@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Tape-taupe des additions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Luckiest+Guy&display=swap">
+<style>
+/* Layout : une scène de champ en 16/9 (SVG unique, images Canva), réglages au-dessus. Monde visuel unique, ensoleillé. */
+:root{
+  --page:#eaf4dc; --ink:#2d2416; --wood:#b9773c; --wood-dark:#7a4a22;
+  --leaf:#3f8a3a; --red:#c94a3a; --paper:#fffaf0; --muted:#5f5a44;
+  --display:"Luckiest Guy","Arial Black",Impact,sans-serif;
+  --body:"Andika","Comic Sans MS","Trebuchet MS",sans-serif;
+}
+html,body{background:var(--page);color:var(--ink)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font-family:var(--body);font-size:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 28px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);margin:0;letter-spacing:.02em;color:var(--wood-dark);text-wrap:balance;line-height:1}
+.sub{color:var(--muted);font-size:1.05rem}
+.bar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;background:var(--paper);border:3px solid var(--wood);border-radius:14px;padding:10px 14px}
+fieldset{border:0;margin:0;padding:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+legend{float:left;margin-right:6px;font-weight:700;font-size:.95rem}
+.pill{position:relative}
+.pill input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.pill span{display:inline-block;padding:5px 12px;border-radius:999px;border:2px solid var(--wood);background:#fff;font-weight:700;font-size:.95rem;color:var(--wood-dark)}
+.pill input:checked+span{background:var(--wood);color:#fff}
+.pill input:focus-visible+span,.check input:focus-visible+span{outline:3px solid var(--leaf);outline-offset:2px}
+.check{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.95rem;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--wood)}
+#play{margin-left:auto;font-family:var(--display);font-size:1.4rem;letter-spacing:.03em;background:var(--red);color:#fff;border:0;border-bottom:4px solid #8e2f24;border-radius:12px;padding:8px 22px 6px;cursor:pointer}
+#play:hover{filter:brightness(1.08)}
+#play:active{transform:translateY(2px);border-bottom-width:2px}
+#play:focus-visible,#mute:focus-visible{outline:3px solid var(--leaf);outline-offset:3px}
+.hud{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;font-weight:700;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.hud .chip{background:var(--paper);border:2px solid var(--wood);border-radius:999px;padding:3px 14px}
+#mute{margin-left:auto;background:none;border:2px solid var(--wood);color:var(--wood-dark);border-radius:999px;padding:3px 12px;font:inherit;font-size:.95rem;cursor:pointer}
+.scene{border:5px solid var(--wood-dark);border-radius:20px;overflow:hidden;background:#8fd3ff;box-shadow:0 8px 0 rgba(122,74,34,.25)}
+svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.hole-hit{cursor:pointer}
+.hole-hit:focus{outline:none}
+.hole-hit:focus-visible .mound{stroke:#ffe14d;stroke-width:8}
+.num{font-family:var(--body);font-weight:700;fill:#3a2412}
+.eq{font-family:var(--body);font-weight:700}
+.bubble text{font-family:var(--body);font-weight:700;fill:#2d2416}
+.bonk text{font-family:var(--display)}
+.note{color:var(--muted);font-size:.95rem;margin:0}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>Tape-taupe</h1>
+    <span class="sub">Calcul mental · additions de deux nombres inférieurs à 1000</span>
+  </header>
+
+  <form class="bar" id="settings" onsubmit="return false">
+    <fieldset>
+      <legend>Retenue</legend>
+      <label class="pill"><input type="radio" name="level" id="lv-sans" value="sans"><span>Sans</span></label>
+      <label class="pill"><input type="radio" name="level" id="lv-avec" value="avec"><span>Avec</span></label>
+      <label class="pill"><input type="radio" name="level" id="lv-mix" value="mix" checked><span>Mélangé</span></label>
+    </fieldset>
+    <fieldset>
+      <legend>Taupes</legend>
+      <label class="pill"><input type="radio" name="moles" id="m3" value="3"><span>3</span></label>
+      <label class="pill"><input type="radio" name="moles" id="m4" value="4" checked><span>4</span></label>
+      <label class="pill"><input type="radio" name="moles" id="m5" value="5"><span>5</span></label>
+    </fieldset>
+    <fieldset>
+      <legend>Questions</legend>
+      <label class="pill"><input type="radio" name="count" id="q5" value="5"><span>5</span></label>
+      <label class="pill"><input type="radio" name="count" id="q10" value="10" checked><span>10</span></label>
+      <label class="pill"><input type="radio" name="count" id="q15" value="15"><span>15</span></label>
+    </fieldset>
+    <label class="check"><input type="checkbox" id="big"><span>Résultat au-delà de 999</span></label>
+    <button type="button" id="play">Jouer</button>
+  </form>
+
+  <div class="hud">
+    <span class="chip" id="qCount">Question – / –</span>
+    <span class="chip" id="score">Du premier coup : 0</span>
+    <button type="button" id="mute" aria-pressed="false">Son : oui</button>
+  </div>
+
+  <div class="scene">
+    <svg id="game" viewBox="0 0 1600 900" role="img" aria-label="Champ avec des taupes qui portent des pancartes">
+      <defs>
+        <linearGradient id="plankG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b678"/><stop offset="1" stop-color="#cf9150"/></linearGradient>
+        <clipPath id="holeClip" clipPathUnits="userSpaceOnUse"><rect x="-200" y="-800" width="400" height="812"/></clipPath>
+      </defs>
+
+      <image href="/images/tape-taupe/champ.jpg" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
+
+      <!-- panneau de l'addition -->
+      <g id="banner">
+        <rect x="560" y="12" width="12" height="40" fill="#7a4a22"/><rect x="1028" y="12" width="12" height="40" fill="#7a4a22"/>
+        <rect x="430" y="40" width="740" height="136" rx="18" fill="url(#plankG)" stroke="#7a4a22" stroke-width="7"/>
+        <path d="M465 75 h120 M980 150 h150 M700 160 h90" stroke="#b97c3e" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+        <text id="eq" class="eq" x="800" y="138" text-anchor="middle" font-size="64" fill="#3a2412">Clique sur Jouer !</text>
+      </g>
+
+      <g id="holes"></g>
+
+      <!-- jardinier : pieds en 0,0 -->
+      <g id="gardener" transform="translate(120 870)">
+        <ellipse cx="0" cy="0" rx="85" ry="14" fill="#000" opacity=".2"/>
+        <g id="gBody"><image href="/images/tape-taupe/jardinier.png" x="-99" y="-360" width="198" height="360"/></g>
+        <g id="grr" class="bubble" visibility="hidden" transform="translate(-10 -400)">
+          <rect x="-80" y="-34" width="160" height="64" rx="26" fill="#fff" stroke="#3a2412" stroke-width="4"/>
+          <path d="M-14 28 l10 22 l18 -22" fill="#fff" stroke="#3a2412" stroke-width="4" stroke-linejoin="round"/>
+          <rect x="-16" y="24" width="34" height="8" fill="#fff"/>
+          <text x="0" y="11" text-anchor="middle" font-size="32">Grrr !</text>
+        </g>
+      </g>
+
+      <g id="fx"></g>
+    </svg>
+  </div>
+  <p class="note">Clique (ou touche 1 à 5) sur la taupe qui porte le bon résultat. Une taupe tapée retourne dans son trou ; les autres se moquent si tu te trompes.</p>
+</div>
+
+<script>
+(() => {
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const shuffle = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = rand(0, i); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+const fmt = n => n >= 1000 ? Math.floor(n / 1000) + " " + String(n % 1000).padStart(3, "0") : String(n);
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+function tween(dur, fn, ease = easeOut) {
+  if (reduce) dur = Math.min(dur, 60);
+  return new Promise(res => {
+    const t0 = performance.now();
+    const step = t => { const p = Math.min(1, (t - t0) / dur); fn(ease(p)); p < 1 ? requestAnimationFrame(step) : res(); };
+    requestAnimationFrame(step);
+  });
+}
+
+/* ---------- taupes (image Canva) ---------- */
+const POS = { 3: [480, 800, 1120], 4: [400, 700, 1000, 1300], 5: [360, 630, 900, 1170, 1440] };
+const HOLE_Y = 720;
+let MW = 290, MH = 296, DOWN = 340;
+
+let moles = [];
+function buildHoles(n) {
+  MW = n === 5 ? 255 : 290; MH = MW * 572 / 560; DOWN = MH + 40;
+  const top = 30 - MH, fs = Math.round(MW * 0.29), ty = top + 0.235 * MH + fs * 0.36;
+  const g = $("holes"); g.innerHTML = ""; moles = [];
+  POS[n].forEach((x, i) => {
+    const h = document.createElementNS(NS, "g");
+    h.setAttribute("transform", `translate(${x} ${HOLE_Y})`);
+    h.setAttribute("class", "hole-hit");
+    h.setAttribute("tabindex", "0");
+    h.setAttribute("role", "button");
+    h.innerHTML = `
+      <ellipse class="mound" cx="0" cy="4" rx="${MW * .47}" ry="40" fill="#8a5a34"/>
+      <ellipse cx="0" cy="0" rx="${MW * .38}" ry="26" fill="#2b1a10"/>
+      <g clip-path="url(#holeClip)">
+        <g class="moleG"><g class="squash">
+          <image href="/images/tape-taupe/taupe.png" x="${-MW / 2}" y="${top}" width="${MW}" height="${MH}"/>
+          <text class="num" x="0" y="${ty}" text-anchor="middle" font-size="${fs}">?</text>
+        </g></g>
+      </g>
+      <path d="M${-MW * .47} 4 A${MW * .47} 40 0 0 0 ${MW * .47} 4 L${MW * .38} 0 A${MW * .38} 26 0 0 1 ${-MW * .38} 0 Z" fill="#a06a3d"/>
+      <path d="M${-MW * .42} 18 q20 10 40 4 M${MW * .2} 26 q24 2 44 -10" stroke="#7a4a25" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <g class="bubble" visibility="hidden" transform="translate(0 ${top - 48})">
+        <rect x="-110" y="-34" width="220" height="64" rx="26" fill="#fff" stroke="#3a2412" stroke-width="4"/>
+        <path d="M-14 28 l10 22 l18 -22" fill="#fff" stroke="#3a2412" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="-16" y="24" width="34" height="8" fill="#fff"/>
+        <text x="0" y="11" text-anchor="middle" font-size="32"></text>
+      </g>`;
+    const m = {
+      i, x, h, value: null, off: DOWN,
+      g: h.querySelector(".moleG"), sq: h.querySelector(".squash"), num: h.querySelector(".num"),
+      bubble: h.querySelector(".bubble"), bRect: h.querySelector(".bubble rect"), bText: h.querySelector(".bubble text")
+    };
+    setOff(m, DOWN);
+    h.addEventListener("click", () => hit(m));
+    h.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hit(m); } });
+    g.appendChild(h); moles.push(m);
+  });
+}
+function setOff(m, v) { m.off = v; m.g.setAttribute("transform", `translate(0 ${v})`); }
+function squash(m, k) { m.sq.setAttribute("transform", `translate(0 30) scale(${1 + (1 - k) * .12} ${k}) translate(0 -30)`); }
+function setValue(m, v) { m.value = v; m.num.textContent = v == null ? "?" : fmt(v); m.h.setAttribute("aria-label", `Taupe ${m.i + 1} : ${v == null ? "?" : v}`); }
+const up = (m, d = 320) => { const s = m.off; squash(m, 1); return tween(d, p => setOff(m, s + (0 - s) * p)); };
+const down = (m, d = 260) => { const s = m.off; return tween(d, p => setOff(m, s + (DOWN - s) * p)); };
+function say(m, txt, ms = 1300) {
+  m.bText.textContent = txt;
+  const w = Math.max(150, txt.length * 17 + 46);
+  m.bRect.setAttribute("x", -w / 2); m.bRect.setAttribute("width", w);
+  m.bubble.setAttribute("visibility", "visible");
+  clearTimeout(m.bt); m.bt = setTimeout(() => m.bubble.setAttribute("visibility", "hidden"), ms);
+}
+
+/* ---------- jardinier (image Canva) ---------- */
+const gard = $("gardener"), gBody = $("gBody"), grr = $("grr");
+const REST = { x: 120, y: 870 }; let gx = REST.x, gy = REST.y, lean = 0;
+const setG = (x, y) => { gx = x; gy = y; gard.setAttribute("transform", `translate(${x} ${y})`); };
+const setL = a => { lean = a; gBody.setAttribute("transform", `rotate(${a} 0 -150)`); };
+const walkTo = (x, y, d = 340) => { const sx = gx, sy = gy; return tween(d, p => setG(sx + (x - sx) * p, sy - Math.sin(p * Math.PI) * 30 + (y - sy) * p)); };
+const swing = (to, d) => { const s = lean; return tween(d, p => setL(s + (to - s) * p), p => p * p); };
+async function stomp() {
+  grr.setAttribute("visibility", "visible");
+  for (let k = 0; k < 3; k++) { await tween(70, p => setG(gx, REST.y - 18 * Math.sin(p * Math.PI))); }
+  setTimeout(() => grr.setAttribute("visibility", "hidden"), 900);
+}
+
+function burst(x, y, label, color) {
+  const g = document.createElementNS(NS, "g");
+  g.setAttribute("class", "bonk");
+  let pts = []; for (let k = 0; k < 16; k++) { const r = k % 2 ? 40 : 95, a = k * Math.PI / 8; pts.push(`${Math.cos(a) * r},${Math.sin(a) * r}`); }
+  g.innerHTML = `<polygon points="${pts.join(" ")}" fill="#ffe14d" stroke="#e08a00" stroke-width="5"/><text y="16" text-anchor="middle" font-size="46" fill="${color}" stroke="#fff" stroke-width="3" paint-order="stroke">${label}</text>`;
+  $("fx").appendChild(g);
+  tween(380, p => g.setAttribute("transform", `translate(${x} ${y}) scale(${.3 + .7 * p})`)).then(() => wait(380)).then(() => g.remove());
+}
+
+/* ---------- sons ---------- */
+let ac = null, muted = false;
+function tone(type, f0, f1, dur, vol, delay = 0) {
+  if (muted) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const t = ac.currentTime + delay, o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + .02);
+  } catch (e) {}
+}
+const sBonk = () => { tone("sine", 320, 70, .18, .5); tone("square", 900, 400, .06, .08); };
+const sWhoosh = () => tone("triangle", 220, 700, .15, .15);
+const sLaugh = () => [0, .14, .28].forEach((d, k) => tone("square", k % 2 ? 560 : 680, 500, .1, .06, d));
+const sWin = () => [523, 659, 784].forEach((f, k) => tone("triangle", f, f, .16, .18, k * .12));
+$("mute").addEventListener("click", e => { muted = !muted; e.currentTarget.textContent = "Son : " + (muted ? "non" : "oui"); e.currentTarget.setAttribute("aria-pressed", muted); });
+
+/* ---------- additions ---------- */
+const dig = n => [n % 10, Math.floor(n / 10) % 10, Math.floor(n / 100)];
+function carries(a, b) { const A = dig(a), B = dig(b); const c1 = A[0] + B[0] > 9 ? 1 : 0; return c1 || A[1] + B[1] + c1 > 9 || a + b > 999; }
+function noCarry(a, b) { const A = dig(a), B = dig(b); return ((A[2] + B[2]) % 10) * 100 + ((A[1] + B[1]) % 10) * 10 + (A[0] + B[0]) % 10; }
+let cfg = {}, last = 0;
+function makeSum() {
+  const max = cfg.big ? 1998 : 999;
+  for (let t = 0; t < 5000; t++) {
+    const a = rand(10, 999), b = rand(10, 999);
+    if (a < 100 && b < 100) continue;
+    const s = a + b; if (s > max || s === last) continue;
+    const c = carries(a, b);
+    const lvl = cfg.level === "mix" ? (Math.random() < .5 ? "sans" : "avec") : cfg.level;
+    if (lvl === "sans" && c) continue;
+    if (lvl === "avec" && !c) continue;
+    last = s; return { a, b, s };
+  }
+  return { a: 123, b: 456, s: 579 };
+}
+function choices(a, b, s, n) {
+  const max = cfg.big ? 1998 : 999;
+  const pool = [noCarry(a, b), ...shuffle([s + 10, s - 10, s + 100, s - 100]), ...shuffle([s + 1, s - 1, s + 11, s - 9, s + 110, s - 90])];
+  const out = [];
+  for (const v of pool) if (v !== s && v > 0 && v <= max && !out.includes(v)) out.push(v);
+  return shuffle([s, ...out.slice(0, n - 1)]);
+}
+
+/* ---------- partie ---------- */
+const TAUNTS = ["Nananère !", "Hi hi hi !", "Même pas cap !", "Trop lent !", "Attrape-moi !", "Raté, raté !", "Cherche bien !"];
+let state = "idle", cur = null, q = 0, total = 10, score = 0, firstTry = true, taunter = null;
+const eq = $("eq");
+function readCfg() {
+  const f = $("settings");
+  cfg = { level: f.level.value, n: +f.moles.value, count: +f.count.value, big: $("big").checked };
+}
+function hud() {
+  $("qCount").textContent = `Question ${Math.min(q, total)} / ${total}`;
+  $("score").textContent = `Du premier coup : ${score}`;
+}
+async function start() {
+  readCfg(); total = cfg.count; q = 0; score = 0; last = 0;
+  state = "busy"; clearInterval(taunter);
+  await Promise.all(moles.map(m => down(m, 200)));
+  buildHoles(cfg.n);
+  setG(REST.x, REST.y); setL(0);
+  $("play").textContent = "Recommencer";
+  taunter = setInterval(idleTaunt, 2600);
+  next();
+}
+async function next() {
+  q++; firstTry = true; hud();
+  if (q > total) return finish();
+  cur = makeSum();
+  eq.textContent = `${cur.a} + ${cur.b} = ?`; eq.setAttribute("fill", "#3a2412"); eq.setAttribute("font-size", "92");
+  const vals = choices(cur.a, cur.b, cur.s, moles.length);
+  moles.forEach((m, k) => setValue(m, vals[k]));
+  await Promise.all(moles.map((m, k) => wait(k * 110).then(() => up(m))));
+  state = "ready";
+}
+function idleTaunt() {
+  if (state !== "ready") return;
+  const m = moles[rand(0, moles.length - 1)];
+  say(m, TAUNTS[rand(0, TAUNTS.length - 1)], 1400);
+  const s = m.off; tween(160, p => setOff(m, s + 22 * p)).then(() => tween(200, p => setOff(m, s + 22 - 22 * p)));
+}
+async function hit(m) {
+  if (state !== "ready") return;
+  state = "busy";
+  const ok = m.value === cur.s;
+  await walkTo(m.x - MW * .62, REST.y);
+  if (ok) {
+    sWhoosh(); await swing(26, 150);
+    sBonk(); burst(m.x, HOLE_Y - MH * .55, "BONK !", "#c94a3a");
+    await tween(120, p => squash(m, 1 - .35 * p));
+    if (firstTry) score++;
+    hud();
+    eq.textContent = `${cur.a} + ${cur.b} = ${fmt(cur.s)}`; eq.setAttribute("fill", "#2e7a2a");
+    await wait(150);
+    await down(m, 240);
+    const others = moles.filter(o => o !== m);
+    others.forEach(o => say(o, "Oh non !", 900));
+    await wait(450);
+    swing(0, 220);
+    await Promise.all(others.map(o => down(o, 220)));
+    await walkTo(REST.x, REST.y, 300);
+    await wait(250);
+    next();
+  } else {
+    firstTry = false;
+    sWhoosh();
+    const duck = down(m, 110);
+    await swing(26, 150); await duck;
+    burst(m.x, HOLE_Y - 60, "RATÉ !", "#3d6fb6");
+    await wait(250);
+    await up(m, 220);
+    sLaugh(); say(m, "Raté ! Hi hi hi !", 1500);
+    const others = moles.filter(o => o !== m);
+    if (others.length) { const o = others[rand(0, others.length - 1)]; setTimeout(() => say(o, TAUNTS[rand(0, TAUNTS.length - 1)], 1200), 350); }
+    await swing(0, 200);
+    await stomp();
+    await walkTo(REST.x, REST.y, 280);
+    state = "ready";
+  }
+}
+async function finish() {
+  state = "done"; clearInterval(taunter); q = total; hud();
+  eq.setAttribute("font-size", "62"); eq.setAttribute("fill", "#2e7a2a");
+  eq.textContent = `Bravo ! ${score} / ${total} du premier coup`;
+  sWin();
+  moles.forEach(m => setValue(m, null));
+  const msg = ["Bien joué...", "On se rend !", "Pitié !", "Ouille !", "Revanche ?"];
+  await Promise.all(moles.map((m, k) => wait(k * 120).then(() => up(m)).then(() => say(m, msg[k % msg.length], 2600))));
+  $("play").textContent = "Rejouer";
+}
+
+document.addEventListener("keydown", e => {
+  const k = parseInt(e.key, 10);
+  if (k >= 1 && k <= moles.length && !e.target.closest("form")) hit(moles[k - 1]);
+});
+$("play").addEventListener("click", start);
+
+/* écran d'accueil : taupes visibles avec un « ? » */
+buildHoles(4);
+moles.forEach(m => { setValue(m, null); setOff(m, 0); });
+say(moles[1], "Même pas cap !", 999999);
+})();
+</script>
+
+</body>
+</html>
