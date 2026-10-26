@@ -15,7 +15,7 @@
   *{box-sizing:border-box}
   [hidden]{display:none!important}
   html,body{margin:0}
-  body{font-family:"Andika",system-ui,sans-serif;color:var(--encre);
+  body{font-family:"Andika",system-ui,sans-serif;color:var(--encre);line-height:1.25;
     background:linear-gradient(var(--ciel1),var(--ciel2) 70%,#d8f0c8);min-height:100vh;overflow-x:hidden}
   h1{margin:.3em 0 .1em;text-align:center;font-size:clamp(1.5rem,4vw,2.3rem)}
   .ecran{display:none;padding:12px 16px;max-width:1250px;margin:0 auto}
@@ -323,9 +323,36 @@
     });
   });
 
+  /* Le jeu doit tenir dans la hauteur de l'écran (plein écran, TBI, petit portable).
+     On mesure la colonne de droite et la maison dans leur état le plus haut
+     (tous les messages affichés), puis on les réduit avec "zoom" si besoin. */
+  function ajuster(){
+    var jeu = $('jeu');
+    if (!jeu.classList.contains('actif') || window.innerWidth <= 620) return;
+    var pan = document.querySelector('.panneau'), zone = document.querySelector('.maison-zone');
+    pan.style.zoom = ''; zone.style.zoom = '';
+    var ids = ['msg-de', 'msg-briques', 'msg-total', 'calcul', 'brouette'], sauve = {};
+    ids.forEach(function(id){ sauve[id] = $(id).innerHTML; });
+    $('msg-de').textContent = '🐺 7 ! Le loup avance, pas de briques ce tour-ci. Encore 9 cases avant la maison.';
+    $('msg-briques').textContent = 'Il ne manque plus que quelques briques : prends seulement ce qu\'il faut !';
+    $('msg-total').textContent = 'Pas tout à fait… Compte les dizaines, puis les briques seules.';
+    $('calcul').innerHTML = '88 + 12 = <span class="rep">100</span>';
+    $('brouette').innerHTML = '<span class="item d">' + new Array(11).join('<i></i>') + '</span>' + new Array(10).join('<span class="item u"></span>');
+    var bas = window.innerHeight - 10;
+    [pan, zone].forEach(function(el){
+      var r = el.getBoundingClientRect();
+      if (r.bottom > bas) el.style.zoom = Math.max(.55, (bas - r.top) / r.height).toFixed(3);
+    });
+    ids.forEach(function(id){ $(id).innerHTML = sauve[id]; });
+  }
+  window.addEventListener('resize', ajuster);
+  document.addEventListener('fullscreenchange', ajuster);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+
   function montrer(id){
     document.querySelectorAll('.ecran').forEach(function(e){ e.classList.toggle('actif', e.id === id); });
     window.scrollTo(0, 0);
+    ajuster();
   }
 
   function dire(txt){
