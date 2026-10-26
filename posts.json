@@ -7361,7 +7361,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Si le dé tombe sur 2 ou sur 5, le loup avance d'une case. S'il arrive à la maison avant qu'elle soit finie, il souffle et la partie est perdue. À 100 briques, la maison est construite : c'est gagné !",
+             "text": "Si le dé tombe sur 2, 5, 7 ou 9, le loup avance d'une case. S'il arrive à la maison avant qu'elle soit finie, il souffle et la partie est perdue. À 100 briques, la maison est construite : c'est gagné !",
              "decorations": []
             }
            }
@@ -7431,7 +7431,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "On choisit la distance du loup (8, 6 ou 4 cases) et les aides : tableau dizaines / unités, repères 10, 20, 30… à côté du mur, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
+         "text": "On choisit la distance du loup (10, 8 ou 6 cases) et les aides : tableau dizaines / unités, repères 10, 20, 30… à côté du mur, addition écrite (35 + 8 = ?) et dé dit à voix haute.",
          "decorations": []
         }
        }
@@ -7443,8 +7443,9 @@
        "url": "/outils/la-maison-de-briques.html",
        "containerData": {
         "height": {
-         "custom": "900"
-        }
+         "custom": "960"
+        },
+        "large": true
        }
       }
      }
