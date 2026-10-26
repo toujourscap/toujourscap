@@ -433,7 +433,7 @@ SEO_TITRES = {
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
-    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe des additions : calcul mental jusqu'à 1000, CE1-CE2",
+    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe des additions : calcul mental jusqu'à 1000, CP-CE2",
     "/post/la-course-des-multiplications/": "La Course des Multiplications : jeu de tables de multiplication CE1-CE2",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
 }
