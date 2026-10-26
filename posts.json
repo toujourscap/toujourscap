@@ -7392,7 +7392,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Chaque rangée du mur fait 10 briques : une rangée pleine, c'est une dizaine (la 10ᵉ brique tombe sur le repère 10, la 20ᵉ sur 20, et ainsi de suite jusqu'à 100), et les briques toutes seules de la rangée en cours sont les unités. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
+         "text": "Le mur se lit comme un tableau des nombres : la première case vaut 0 et ne compte pas, puis la brique n° 1 va dans la case 1, la n° 2 dans la case 2… La colonne de gauche porte les dizaines (10, 20, 30… 90) : la 10ᵉ brique tombe sur 10, la 20ᵉ sur 20, et la 100ᵉ brique est la cheminée. Sous la maison, un tableau dizaines / unités se met à jour à chaque tour (35 briques = 3 dizaines et 5 unités).",
          "decorations": []
         }
        }
@@ -7404,7 +7404,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "En cas d'erreur sur le total, les rangées pleines clignotent pour aider l'élève à compter de 10 en 10, puis les briques seules. À la deuxième erreur, la bonne réponse s'affiche avec sa décomposition.",
+         "text": "En cas d'erreur sur le total, les dizaines déjà posées clignotent pour aider l'élève à compter de 10 en 10, puis les briques seules. À la deuxième erreur, la bonne réponse s'affiche avec sa décomposition.",
          "decorations": []
         }
        }

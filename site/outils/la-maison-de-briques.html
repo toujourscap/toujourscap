@@ -70,6 +70,9 @@
   .maison-zone{background:rgba(255,255,255,.55);border-radius:20px;padding:10px 12px 12px}
   .maison{position:relative;margin:0 4px 0 60px}
   .toit{height:clamp(70px,9vw,110px);margin:0 -18px 2px;clip-path:polygon(50% 0,100% 100%,0 100%);background:repeating-linear-gradient(90deg,#d7dee6 0 10px,#cdd5de 10px 20px);transition:background .6s}
+  .toit-zone{position:relative}
+  .cheminee{position:absolute;left:4px;bottom:2px;width:calc((100% - 35px) / 10);aspect-ratio:1.6;z-index:2;background:rgba(255,255,255,.55)}
+  .b.zero{border:none;background:#c9cfd6}
   .toit.fini{background:repeating-linear-gradient(90deg,#8b3a2b 0 10px,#7a3124 10px 20px)}
   .mur-ligne{display:flex;align-items:stretch;gap:6px}
   .mur{flex:1;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;background:var(--joint);padding:4px;border-radius:4px;aspect-ratio:10/6.4}
@@ -210,7 +213,7 @@
     <p class="regle"><span>🎯</span><span>Aide le petit cochon à construire sa maison de <strong>100 briques</strong> avant que le loup n'arrive&nbsp;!</span></p>
     <p class="regle"><span>🎲</span><span>Lance le dé, prends <strong>autant de briques</strong> que le dé l'indique, puis trouve <strong>combien de briques</strong> il y a maintenant dans la maison.</span></p>
     <p class="regle"><span>🐺</span><span>Si le dé tombe sur <strong>2</strong>, <strong>5</strong>, <strong>7</strong> ou <strong>9</strong>, le loup avance d'une case et on ne pose <strong>pas de briques</strong> ce tour-ci.</span></p>
-    <p class="regle"><span>🧱</span><span>Chaque rangée du mur compte <strong>10 briques</strong>&nbsp;: une rangée pleine, c'est une <strong>dizaine</strong>.</span></p>
+    <p class="regle"><span>🧱</span><span>Toutes les <strong>10 briques</strong>, on arrive sur un nombre de la colonne de gauche&nbsp;: 10, 20, 30… C'est une <strong>dizaine</strong> de plus. La 100ᵉ brique, c'est la cheminée&nbsp;!</span></p>
 
     <div class="ligne"><span class="titre">Le dé</span>
       <div class="choix" id="choix-mode">
@@ -247,7 +250,7 @@
   <div class="jeu">
     <div class="maison-zone">
       <div class="maison" id="maison">
-        <div class="toit" id="toit"></div>
+        <div class="toit-zone"><div class="toit" id="toit"></div><div class="b cheminee" id="cheminee" data-n="100" title="La 100ᵉ brique : la cheminée"></div></div>
         <div class="mur-ligne">
           <div class="mur" id="mur"></div>
         </div>
@@ -406,8 +409,10 @@
       b.className = 'b';
       b.style.gridRow = String(10 - Math.floor(i / 10));   // on construit de bas en haut
       b.style.gridColumn = String(i % 10 + 1);
-      // Repères en transparence : la 10e brique tombe sur 10, la 20e sur 20… jusqu'à 100
-      if (i % 10 === 9) b.dataset.n = i + 1;
+      // Case 0 : elle ne compte pas. La brique n° k va dans la case k :
+      // la 10e brique tombe sur 10, la 20e sur 20… (colonne de gauche), la 100e est la cheminée.
+      if (i === 0) b.classList.add('zero');
+      if (i % 10 === 0) b.dataset.n = i;
       mur.appendChild(b);
       briques.push(b);
     }
@@ -457,9 +462,13 @@
 
   function dessinerMur(){
     briques.forEach(function(b, i){
-      b.classList.toggle('posee', i < etat.total);
-      b.classList.toggle('neuve', i >= etat.total && i < etat.total + etat.ajout);
+      if (i === 0) return;
+      b.classList.toggle('posee', i <= etat.total);
+      b.classList.toggle('neuve', i > etat.total && i <= etat.total + etat.ajout);
     });
+    var ch = $('cheminee');
+    ch.classList.toggle('posee', etat.total >= TOTAL);
+    ch.classList.toggle('neuve', etat.total < TOTAL && etat.total + etat.ajout >= TOTAL);
     $('toit').classList.toggle('fini', etat.total >= TOTAL);
     $('maison').classList.toggle('finie', etat.total >= TOTAL);
   }
@@ -643,8 +652,8 @@
   }
   function flashRangees(n){
     var pleines = Math.floor(n / 10);
-    briques.forEach(function(b, i){
-      if (i < pleines * 10){ b.classList.remove('rangee-flash'); void b.offsetWidth; b.classList.add('rangee-flash'); }
+    briques.concat([$('cheminee')]).forEach(function(b, i){
+      if (i >= 1 && i <= pleines * 10){ b.classList.remove('rangee-flash'); void b.offsetWidth; b.classList.add('rangee-flash'); }
     });
   }
 
