@@ -352,7 +352,7 @@
     }
     var rep = $('reperes');
     for (var r = 10; r >= 1; r--){
-      var s = document.createElement('span'); s.textContent = r < 10 ? r * 10 : ''; rep.appendChild(s);
+      var s = document.createElement('span'); s.textContent = r > 1 ? (r - 1) * 10 : ''; rep.appendChild(s);
     }
     var clav = $('clavier');
     '1234567890'.split('').forEach(function(c){
