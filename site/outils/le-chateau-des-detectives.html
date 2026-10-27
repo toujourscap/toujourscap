@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Château des Détectives</title><link rel="canonical" href="https://toujourscap.com/post/le-chateau-des-detectives/"><meta name="description" content="Lire les messages cachés sur les portes d&#x27;un château pour trouver la pièce secrète au trésor : pronoms, inférences, implicite, états mentaux et connecteurs…">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+body{margin:0}
+
+/* Layout : château de nuit (choix d'un seul thème sombre), plan du château en haut, scène de la salle avec sa porte, message sur parchemin à lire */
+:root{
+  --night:#171B2B; --stone:#2C3247; --stone-2:#3B4260; --mortar:#232839; --moon:#E9ECF7; --muted:#A6AEC8;
+  --parch:#F4E7C5; --parch-edge:#D9C391; --ink:#2C2014; --gold:#F0B83A; --torch:#F2803A;
+  --ok:#3FB872; --ok-bg:#E1F3E6; --ko:#D2463C; --ko-bg:#FBE3DF; --hl:#FFD94D;
+  --pro:#4F86F0; --inf:#E9A21E; --imp:#21B09C; --men:#E0589A; --con:#8F73EA;
+  --f-display:"Grandstander", "Comic Sans MS", system-ui, sans-serif;
+  --f-read:"Andika", "Verdana", system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{background:var(--night);color:var(--moon);font-family:var(--f-read);font-size:16px;line-height:1.45;
+  background-image:radial-gradient(circle at 85% 6%, rgba(233,236,247,.14) 0 40px, transparent 41px),
+    radial-gradient(1px 1px at 20% 10%, #fff8, transparent), radial-gradient(1px 1px at 60% 4%, #fff8, transparent),
+    radial-gradient(1px 1px at 35% 18%, #fff6, transparent), radial-gradient(1px 1px at 75% 15%, #fff6, transparent);
+  background-repeat:no-repeat;}
+.wrap{max-width:1360px;margin:0 auto;padding-block:18px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;text-wrap:balance}
+.btn{font:inherit;font-family:var(--f-display);font-weight:800;font-size:19px;border:0;border-radius:14px;padding:12px 22px;cursor:pointer;
+  background:var(--gold);color:#2A1D05;box-shadow:0 4px 0 #A97A16}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #A97A16}
+.btn.ghost{background:transparent;color:var(--moon);border:2px solid var(--stone-2);box-shadow:none}
+.btn:focus-visible,.choice:focus-visible,.det:focus-visible,.speak:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* Images Canva : chaque emplacement a un visuel provisoire tant que l'image n'est pas fournie */
+.slot{position:relative;overflow:hidden;max-width:100%}
+.slot img{display:block;width:100%;height:100%;object-fit:contain;position:relative;z-index:1}
+.hero img{object-position:center bottom;filter:drop-shadow(0 6px 8px #0009)}
+.det .slot img{filter:drop-shadow(0 4px 6px #0007)}
+.castle img,.treasure .slot.big img{object-fit:cover}
+.slot .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center}
+
+/* Accueil */
+.home{display:grid;gap:22px;justify-items:center;text-align:center;padding-top:6px}
+.home h1{font-size:clamp(32px,6vw,58px);line-height:1.05;color:var(--gold)}
+.home p.lead{max-width:60ch;color:var(--muted);font-size:18px;margin:0}
+.castle{width:min(980px,100%);aspect-ratio:16/9;border-radius:20px}
+.castle .ph{background:linear-gradient(to bottom, transparent 70%, #12162299)}
+.dets{display:grid;grid-template-columns:repeat(2,minmax(0,290px));gap:16px;justify-content:center}
+.det{font:inherit;color:var(--moon);background:var(--stone);border:3px solid var(--stone-2);border-radius:18px;padding:12px;cursor:pointer;display:grid;gap:8px;justify-items:center}
+.det[aria-pressed="true"]{border-color:var(--gold);background:var(--stone-2)}
+.det .slot{width:100%;aspect-ratio:3/4}
+.det b{font-family:var(--f-display);font-size:19px}
+
+/* Plan du château */
+.plan{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.plan .room{width:34px;height:34px;border-radius:8px 8px 3px 3px;background:var(--stone);border:2px solid var(--stone-2);
+  display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:14px;color:var(--muted)}
+.plan .room.done{background:var(--gold);border-color:var(--gold);color:#2A1D05}
+.plan .room.here{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 3px #F0B83A44}
+.plan .room.secret{width:auto;padding:0 10px;border-style:dashed}
+.plan .room.secret.here{background:var(--gold);color:#2A1D05}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.topbar h2{font-size:20px;color:var(--gold)}
+.keys{font-family:var(--f-display);font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Scène */
+.scene{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.scene{grid-template-columns:1fr}}
+.roomview{background:var(--stone);border-radius:20px;overflow:hidden;border:3px solid var(--stone-2)}
+.roomhead{padding:10px 16px;display:flex;justify-content:space-between;gap:10px;align-items:baseline;background:var(--mortar)}
+.roomhead b{font-family:var(--f-display);font-size:20px}
+.roomhead span{color:var(--muted);font-size:14px}
+.stage{position:relative;aspect-ratio:4/3;max-width:100%;
+  background:
+   linear-gradient(var(--mortar) 2px, transparent 2px) 0 0/48px 26px,
+   linear-gradient(90deg, var(--mortar) 2px, transparent 2px) 0 0/48px 52px,
+   linear-gradient(90deg, var(--mortar) 2px, transparent 2px) 24px 26px/48px 52px,
+   var(--stone-2);}
+.stage .roomimg{position:absolute;inset:0;z-index:0}
+.stage .roomimg img{object-fit:cover}
+.doorbox{position:absolute;left:50%;bottom:0;width:40%;transform:translateX(-50%);aspect-ratio:3/4.4;perspective:600px;z-index:2}
+.doorframe{position:absolute;inset:0;border-radius:999px 999px 0 0;background:#0D0F18;border:6px solid #6B5A44;border-bottom:0;overflow:hidden}
+.doorframe .light{position:absolute;inset:0;background:radial-gradient(circle at 50% 70%, #FFE7A0, #F0B83A 40%, #7a4f0a);opacity:0;transition:opacity .6s}
+.door{position:absolute;inset:6px 6px 0 6px;border-radius:999px 999px 0 0;transform-origin:left center;transition:transform .9s cubic-bezier(.3,.7,.3,1);
+  background:repeating-linear-gradient(90deg,#7A4B26 0 18%,#6A3F1E 18% 20%);box-shadow:inset 0 0 0 4px #5A3518}
+.door::after{content:"";position:absolute;right:14%;top:55%;width:12px;height:12px;border-radius:50%;background:var(--gold)}
+.lock{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:clamp(20px,3vw,30px)}
+.open .door{transform:rotateY(-105deg)}
+.open .doorframe .light{opacity:1}
+.open .lock{display:none}
+.hero{position:absolute;left:3%;bottom:0;width:30%;aspect-ratio:3/4;z-index:3;transition:left 1.2s ease-in-out, bottom 1.2s ease-in-out, width 1.2s ease-in-out}
+.stage.has-img .doorbox,.stage.has-img .torch{display:none}
+.stage .roomimg img{width:100%;height:100%}
+.glow,.pin{position:absolute;left:var(--dx);top:var(--dy);transform:translate(-50%,-50%);z-index:2;display:none}
+.stage.has-img .glow,.stage.has-img .pin{display:block}
+.pin{font-size:clamp(22px,3.4vw,34px);filter:drop-shadow(0 2px 4px #000a)}
+.glow{width:30%;aspect-ratio:1;border-radius:50%;opacity:0;transition:opacity .8s;
+  background:radial-gradient(circle, #FFF3B0 0%, #F0B83Acc 30%, #F0B83A00 70%);mix-blend-mode:screen}
+.stage.has-img.open .glow{opacity:1;animation:pulse 1.4s ease-in-out infinite alternate}
+.stage.has-img.open .pin{display:none}
+@keyframes pulse{to{transform:translate(-50%,-50%) scale(1.15)}}
+.stage.has-img.open .hero{left:calc(var(--dx) - 9%);bottom:calc(100% - var(--dy) - 18%);width:18%}
+.torch{position:absolute;top:14%;width:14px;height:40px;background:#5a3a1c;border-radius:3px;z-index:1}
+.torch::before{content:"";position:absolute;left:50%;top:-22px;width:22px;height:28px;transform:translateX(-50%);border-radius:50% 50% 45% 45%;
+  background:radial-gradient(circle at 50% 70%, #FFE38A, var(--torch) 60%, transparent 70%);animation:flick 1.6s infinite alternate}
+@keyframes flick{to{transform:translateX(-50%) scale(.85,1.1)}}
+
+/* Message */
+.parch{background:var(--parch);color:var(--ink);border-radius:6px;padding:20px 22px 22px;position:relative;
+  box-shadow:inset 0 0 0 2px var(--parch-edge), inset 0 0 40px #C9A96455, 0 10px 30px #0008}
+.parch .tag{display:inline-block;font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:.04em;color:#fff;background:var(--c);border-radius:999px;padding:3px 12px}
+.parch .intro{color:#6C5638;font-style:italic;margin:10px 0 4px}
+.texte{font-size:clamp(22px,3.2vw,29px);line-height:1.5;margin:0 0 12px}
+mark{background:transparent;color:inherit;border-radius:4px;transition:background .3s}
+.show-clue mark{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.q{font-family:var(--f-display);font-weight:800;font-size:clamp(20px,2.8vw,25px);margin:0 0 12px;color:#3B2A12}
+.choices{display:grid;gap:10px}
+.choice{font:inherit;font-size:clamp(18px,2.5vw,22px);text-align:left;padding:11px 16px;border-radius:12px;cursor:pointer;
+  background:#FFF8E6;color:var(--ink);border:2px solid var(--parch-edge);display:flex;gap:12px;align-items:center}
+.choice .l{font-family:var(--f-display);font-weight:800;color:var(--c)}
+.choice:hover:not(:disabled){border-color:var(--c)}
+.choice:disabled{cursor:default;opacity:.55}
+.choice.ok{background:var(--ok-bg);border-color:var(--ok);opacity:1}
+.choice.ko{background:var(--ko-bg);border-color:var(--ko);text-decoration:line-through}
+.speak{font:inherit;font-weight:700;background:transparent;color:#6C5638;border:2px solid var(--parch-edge);border-radius:999px;padding:3px 12px;cursor:pointer;float:right}
+.bilan{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:18px;color:var(--ink)}
+.bilan.ok{background:var(--ok-bg);border:2px solid var(--ok)}
+.bilan.ko{background:var(--ko-bg);border:2px solid var(--ko)}
+.bilan strong{font-family:var(--f-display)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.parch .actions .ghost{color:var(--ink);border-color:var(--parch-edge)}
+
+/* Présentation des 5 familles */
+.intro-page{display:grid;gap:20px}
+.intro-page header{text-align:center;display:grid;gap:8px;justify-items:center}
+.intro-page h1{font-size:clamp(28px,5vw,46px);color:var(--gold)}
+.intro-page .lead{color:var(--muted);font-size:18px;margin:0;max-width:62ch}
+.fams{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.fam{background:var(--parch);color:var(--ink);border-radius:10px;padding:16px 18px;display:grid;gap:8px;align-content:start;
+  border-top:8px solid var(--c);box-shadow:inset 0 0 0 2px var(--parch-edge)}
+.fam.off{opacity:.45}
+.fam h3{font-size:24px;color:var(--c);filter:brightness(.8)}
+.fam .say{font-size:18px;margin:0}
+.fam .ex{background:#FFF8E6;border:2px dashed var(--parch-edge);border-radius:10px;padding:10px 12px;font-size:18px;margin:0}
+.fam .ex mark{background:var(--hl);box-shadow:0 0 0 2px var(--hl)}
+.fam .ex .ans{display:block;margin-top:4px;font-weight:700;color:#5A4527}
+.fam label{display:flex;gap:8px;align-items:center;font-size:15px;color:#6C5638;cursor:pointer}
+.fam input{width:20px;height:20px;accent-color:var(--c)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.opt{background:var(--stone);border:2px solid var(--stone-2);border-radius:16px;padding:16px 18px;display:grid;gap:10px;align-content:start}
+.opt h3{font-size:20px;color:var(--gold)}
+.opt p{margin:0;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{font:inherit;font-weight:700;font-size:17px;padding:10px 16px;border-radius:12px;cursor:pointer;background:transparent;color:var(--moon);border:2px solid var(--stone-2)}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#2A1D05;border-color:var(--gold)}
+.seg button:focus-visible,.fam input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hearts{font-size:24px;letter-spacing:4px}
+.lives{font-size:22px;letter-spacing:3px}
+.lives .lost{filter:grayscale(1);opacity:.35}
+.go .slot.big img{filter:grayscale(.5) brightness(.6)}
+.warn{color:var(--ko);font-weight:700}
+
+/* Pièce secrète */
+.treasure{display:grid;gap:18px;justify-items:center;text-align:center}
+.treasure h1{font-size:clamp(30px,5.5vw,52px);color:var(--gold)}
+.treasure .slot.big{width:min(980px,100%);aspect-ratio:16/9;border-radius:20px}
+.recap{background:var(--stone);border:2px solid var(--stone-2);border-radius:16px;padding:14px 18px;text-align:left;width:min(560px,100%)}
+.recap h3{font-size:18px;margin-bottom:6px;color:var(--gold)}
+.recap ul{margin:0;padding-left:20px}
+.recap li{margin:3px 0}
+.coins{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.coin{position:absolute;top:-30px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF2B8,var(--gold) 55%,#A97A16);animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <!-- Accueil -->
+  <section class="home" id="home">
+    <h1>Le Château des Détectives</h1>
+    <div class="slot castle" data-img="chateau"></div>
+    <p class="lead">Dans ce vieux château, un trésor est caché dans une pièce secrète. Pour l'atteindre, il faut ouvrir 10 portes. Sur chaque porte, un message : lis-le bien et réponds juste pour que la porte s'ouvre.</p>
+    <h2 style="font-size:22px">Choisis ton détective</h2>
+    <div class="dets" id="dets"></div>
+    <button class="btn" id="toIntro">Continuer</button>
+  </section>
+
+  <!-- Présentation -->
+  <section class="intro-page" id="intro" hidden>
+    <header>
+      <h1>Les 5 sortes de messages</h1>
+      <p class="lead">Dans le château, chaque porte cache un message. Voici les 5 sortes de messages que tu vas rencontrer, et comment un bon détective les résout.</p>
+    </header>
+    <div class="fams" id="fams"></div>
+    <div class="opts">
+      <div class="opt">
+        <h3>🔊 Écouter les messages</h3>
+        <p>Le bouton « Écouter » lit le message et la question à voix haute.</p>
+        <div class="seg" id="audioSeg">
+          <button id="audioOn" aria-pressed="true">Oui, on peut écouter</button>
+          <button id="audioOff" aria-pressed="false">Non, je lis tout seul</button>
+        </div>
+      </div>
+      <div class="opt">
+        <h3>La règle du chemin</h3>
+        <div class="hearts" aria-label="3 vies">❤️❤️❤️</div>
+        <p>Tu as droit à <b style="color:var(--moon)">3 erreurs</b> sur tout le chemin. À la 3ᵉ erreur, ton détective est bloqué et ne peut pas aller plus loin : il faudra recommencer.</p>
+      </div>
+    </div>
+    <p class="warn" id="famWarn" hidden>Choisis au moins une sorte de message.</p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn ghost" id="backHome">Retour</button>
+      <button class="btn" id="startBtn">Entrer dans le château</button>
+    </div>
+  </section>
+
+  <!-- Jeu -->
+  <section id="game" hidden>
+    <div class="topbar">
+      <h2 id="who"></h2>
+      <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div class="lives" id="lives" aria-live="polite"></div><div class="keys" id="keys"></div></div>
+    </div>
+    <div class="plan" id="plan" aria-label="Plan du château"></div>
+    <div class="scene">
+      <div class="roomview">
+        <div class="roomhead"><b id="roomName"></b><span id="roomNum"></span></div>
+        <div class="stage" id="stage">
+          <div class="slot roomimg" id="roomImg"></div>
+          <span class="torch" style="left:12%"></span><span class="torch" style="right:12%"></span>
+          <div class="doorbox"><div class="doorframe"><div class="light"></div><div class="door"></div></div><span class="lock" aria-hidden="true">🔒</span></div>
+          <div class="glow" id="glow" aria-hidden="true"></div>
+          <span class="pin" id="pin" aria-hidden="true">🔒</span>
+          <div class="slot hero" id="heroImg"></div>
+        </div>
+      </div>
+      <div class="parch" id="parch"></div>
+    </div>
+  </section>
+
+  <!-- Trésor -->
+  <section class="treasure" id="end" hidden></section>
+</div>
+<div class="coins" id="coins"></div>
+
+<script>
+const DATA = {"cats": [{"id": "pro", "nom": "Qui ? Quoi ?", "but": "Retrouver de qui ou de quoi on parle (pronoms et substituts)."}, {"id": "inf", "nom": "Détective", "but": "Trouver une information grâce aux indices du texte."}, {"id": "imp", "nom": "Pas écrit !", "but": "Comprendre ce qui s'est passé alors que le texte ne le dit pas."}, {"id": "men", "nom": "Dans sa tête", "but": "Deviner ce que ressent ou ce que pense le personnage."}, {"id": "con", "nom": "Quand ? Pourquoi ?", "but": "Comprendre l'ordre des actions et les causes (d'abord, puis, parce que, alors…)."}], "cartes": [{"cat": "pro", "texte": "Léo a un petit chat. Il lui donne du lait.", "q": "Qui donne du lait ?", "rep": ["Léo", "le chat", "le lait"], "indice": ["Léo", "Il"]}, {"cat": "pro", "texte": "Mamie prépare un gâteau. Elle le met au four.", "q": "Qu'est-ce que Mamie met au four ?", "rep": ["le gâteau", "Mamie", "le four"], "indice": ["un gâteau", "le"]}, {"cat": "pro", "texte": "Zoé et Tom jouent au ballon. Ils rient très fort.", "q": "Qui rit très fort ?", "rep": ["Zoé et Tom", "le ballon", "Zoé toute seule"], "indice": ["Zoé et Tom", "Ils"]}, {"cat": "pro", "texte": "Le petit chien voit un os. L'animal court vite le chercher.", "q": "Qui est « l'animal » ?", "rep": ["le chien", "l'os", "un chat"], "indice": ["Le petit chien", "L'animal"]}, {"cat": "pro", "texte": "Papa cherche ses clés partout. Lina les trouve sous le lit.", "q": "Qu'est-ce que Lina trouve ?", "rep": ["les clés", "Papa", "le lit"], "indice": ["ses clés", "les"]}, {"cat": "pro", "texte": "La maîtresse lit une histoire aux élèves. Ils l'écoutent sans bruit.", "q": "Qui écoute sans bruit ?", "rep": ["les élèves", "la maîtresse", "l'histoire"], "indice": ["aux élèves", "Ils"]}, {"cat": "inf", "texte": "Sami met ses bottes et prend son parapluie avant de sortir.", "q": "Quel temps fait-il ?", "rep": ["Il pleut.", "Il fait très chaud.", "Il fait nuit."], "indice": ["bottes", "parapluie"]}, {"cat": "inf", "texte": "Lou souffle sur les bougies. Tout le monde chante et applaudit.", "q": "Qu'est-ce qu'on fête ?", "rep": ["un anniversaire", "la rentrée", "un mariage"], "indice": ["souffle sur les bougies", "chante"]}, {"cat": "inf", "texte": "Le bébé pleure. Maman lui donne son biberon. Il se calme tout de suite.", "q": "Pourquoi le bébé pleurait-il ?", "rep": ["Il avait faim.", "Il avait froid.", "Il voulait jouer."], "indice": ["biberon", "se calme tout de suite"]}, {"cat": "inf", "texte": "Nina met son maillot, son bonnet de bain et une serviette dans son sac.", "q": "Où va Nina ?", "rep": ["à la piscine", "à l'école", "au cinéma"], "indice": ["maillot", "bonnet de bain"]}, {"cat": "inf", "texte": "Il fait tout noir. Tom allume sa lampe pour lire dans son lit.", "q": "À quel moment de la journée sommes-nous ?", "rep": ["le soir", "le matin", "à midi"], "indice": ["tout noir", "dans son lit"]}, {"cat": "inf", "texte": "Le monsieur porte une blouse blanche. Il regarde la gorge de Jade et écoute son cœur.", "q": "Qui est ce monsieur ?", "rep": ["un médecin", "un boulanger", "un pompier"], "indice": ["blouse blanche", "écoute son cœur"]}, {"cat": "imp", "texte": "Jules court trop vite dans la cour. Boum ! Il pleure et tient son genou.", "q": "Que s'est-il passé ?", "rep": ["Jules est tombé.", "Jules a gagné la course.", "Jules a perdu son goûter."], "indice": ["court trop vite", "Boum", "tient son genou"]}, {"cat": "imp", "texte": "Le verre était plein. Le chat saute sur la table. Maintenant, la nappe est toute mouillée.", "q": "Que s'est-il passé ?", "rep": ["Le chat a renversé le verre.", "Il a plu dans la maison.", "Maman a lavé la nappe."], "indice": ["verre était plein", "saute sur la table", "mouillée"]}, {"cat": "imp", "texte": "Emma regarde son assiette vide. Sous la table, le chien se lèche les babines.", "q": "Qui a mangé le repas d'Emma ?", "rep": ["le chien", "Emma", "personne"], "indice": ["assiette vide", "se lèche les babines"]}, {"cat": "imp", "texte": "Ali ouvre le frigo : il n'y a plus de lait. Il prend son porte-monnaie et met sa veste.", "q": "Que va faire Ali ?", "rep": ["acheter du lait", "aller dormir", "faire un gâteau"], "indice": ["plus de lait", "porte-monnaie"]}, {"cat": "imp", "texte": "Ce matin, le bonhomme de neige était très grand. Ce soir, il reste une carotte et une écharpe dans l'herbe.", "q": "Pourquoi le bonhomme de neige a-t-il disparu ?", "rep": ["La neige a fondu.", "Un voleur l'a pris.", "Il est parti se promener."], "indice": ["Ce soir", "une carotte et une écharpe dans l'herbe"]}, {"cat": "imp", "texte": "Rose lève le doigt et dit : « Moi, je sais la réponse ! »", "q": "Où est Rose ?", "rep": ["en classe", "à la piscine", "dans son lit"], "indice": ["lève le doigt", "la réponse"]}, {"cat": "men", "texte": "Le ballon rouge de Léa s'envole très haut dans le ciel. Léa ne peut plus l'attraper.", "q": "Comment se sent Léa ?", "rep": ["triste", "contente", "fière"], "indice": ["s'envole", "ne peut plus l'attraper"]}, {"cat": "men", "texte": "Pour Noël, Hugo reçoit le vélo dont il rêvait depuis longtemps.", "q": "Comment se sent Hugo ?", "rep": ["très content", "en colère", "il a peur"], "indice": ["dont il rêvait"]}, {"cat": "men", "texte": "Pendant l'orage, Mia se cache sous sa couette et serre fort son doudou.", "q": "Comment se sent Mia ?", "rep": ["Elle a peur.", "Elle s'ennuie.", "Elle est joyeuse."], "indice": ["se cache", "serre fort son doudou"]}, {"cat": "men", "texte": "Tom a mis son goûter dans son sac. Pendant qu'il joue, sa sœur le mange en cachette.", "q": "Où Tom croit-il que son goûter se trouve ?", "rep": ["dans son sac", "dans le ventre de sa sœur", "à la poubelle"], "indice": ["a mis son goûter dans son sac", "en cachette"]}, {"cat": "men", "texte": "Sacha a fini son grand puzzle tout seul. Il appelle tout le monde pour le montrer.", "q": "Comment se sent Sacha ?", "rep": ["fier", "triste", "fâché"], "indice": ["tout seul", "pour le montrer"]}, {"cat": "men", "texte": "Lili veut une glace. Papa dit non. Lili tape du pied et croise les bras.", "q": "Comment se sent Lili ?", "rep": ["en colère", "contente", "fatiguée"], "indice": ["tape du pied", "croise les bras"]}, {"cat": "con", "texte": "D'abord, Noé se lave les mains. Ensuite, il passe à table.", "q": "Que fait Noé en premier ?", "rep": ["Il se lave les mains.", "Il passe à table.", "Il va dormir."], "indice": ["D'abord", "Ensuite"]}, {"cat": "con", "texte": "Inès reste à la maison parce qu'elle a de la fièvre.", "q": "Pourquoi Inès reste-t-elle à la maison ?", "rep": ["Elle a de la fièvre.", "Il pleut.", "C'est dimanche."], "indice": ["parce qu'elle a de la fièvre"]}, {"cat": "con", "texte": "Avant de sortir dans le froid, Paul met son manteau et ses gants.", "q": "Quand Paul met-il son manteau ?", "rep": ["avant de sortir", "après être rentré", "pendant le repas"], "indice": ["Avant de sortir"]}, {"cat": "con", "texte": "Il fait très froid, alors Maman allume le feu dans la cheminée.", "q": "Pourquoi Maman allume-t-elle le feu ?", "rep": ["parce qu'il fait froid", "parce qu'il fait nuit", "pour faire cuire un gâteau"], "indice": ["Il fait très froid, alors"]}, {"cat": "con", "texte": "Le chat voit une souris. Puis il court derrière elle.", "q": "Que fait le chat après avoir vu la souris ?", "rep": ["Il court derrière elle.", "Il s'endort.", "Il boit son lait."], "indice": ["Puis il court"]}, {"cat": "con", "texte": "Nous irons au parc quand la pluie sera finie.", "q": "Quand iront-ils au parc ?", "rep": ["après la pluie", "pendant la pluie", "demain matin"], "indice": ["quand la pluie sera finie"]}]};
+const IMAGES = {"chateau": "/images/chateau-des-detectives/chateau.jpg", "detective-1": "/images/chateau-des-detectives/detective-1.png", "detective-2": "/images/chateau-des-detectives/detective-2.png", "piece-secrete": "/images/chateau-des-detectives/piece-secrete.jpg", "salle-armures": "/images/chateau-des-detectives/salle-armures.jpg", "salle-bibliotheque": "/images/chateau-des-detectives/salle-bibliotheque.jpg", "salle-cave": "/images/chateau-des-detectives/salle-cave.jpg", "salle-chambre": "/images/chateau-des-detectives/salle-chambre.jpg", "salle-couloir": "/images/chateau-des-detectives/salle-couloir.jpg", "salle-cour": "/images/chateau-des-detectives/salle-cour.jpg", "salle-cuisine": "/images/chateau-des-detectives/salle-cuisine.jpg", "salle-grande-salle": "/images/chateau-des-detectives/salle-grande-salle.jpg", "salle-pont-levis": "/images/chateau-des-detectives/salle-pont-levis.jpg", "salle-tour": "/images/chateau-des-detectives/salle-tour.jpg"};   // noms des images Canva fournies dans le dossier images/
+const CAT = Object.fromEntries(DATA.cats.map(c => [c.id, c]));
+const ORDER = ["pro","inf","imp","men","con"];
+const DETS = [
+  {id:"detective-1", nom:"Lila Loupe", couleur:"#E0589A", e:"e"},
+  {id:"detective-2", nom:"Max Indice", couleur:"#4F86F0", e:""}];
+const ROOMS = [
+  {id:"pont-levis",  nom:"Le pont-levis",       x:50, y:53, intro:"Sur la grande porte du château, un message est gravé :"},
+  {id:"cour",        nom:"La cour",             x:53, y:42, intro:"Près du puits, un parchemin est accroché :"},
+  {id:"grande-salle",nom:"La grande salle",     x:56, y:47, intro:"Sur la longue table, une lettre t'attend :"},
+  {id:"cuisine",     nom:"La cuisine",          x:65, y:36, intro:"Dans une marmite, tu trouves un papier :"},
+  {id:"bibliotheque",nom:"La bibliothèque",     x:67, y:50, intro:"Entre deux vieux livres, un message est glissé :"},
+  {id:"armures",     nom:"La salle des armures",x:62, y:58, intro:"Une armure tient un parchemin dans sa main :"},
+  {id:"tour",        nom:"La tour",             x:13, y:46, intro:"Tout en haut de l'escalier, un mot est cloué :"},
+  {id:"chambre",     nom:"La chambre du roi",   x:93, y:45, intro:"Sous l'oreiller du roi, un message est caché :"},
+  {id:"couloir",     nom:"Le couloir sombre",   x:59, y:52, intro:"À la lueur de la torche, tu lis sur le mur :"},
+  {id:"cave",        nom:"La cave",             x:65, y:53, intro:"Sur un vieux tonneau, quelqu'un a écrit :"}];
+
+const PLACEHOLDER = {
+  chateau:`<svg viewBox="0 0 320 180" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <rect x="0" y="150" width="320" height="30" fill="#232839"/>
+    <g fill="#3B4260"><rect x="70" y="70" width="180" height="82"/><rect x="50" y="40" width="40" height="112"/><rect x="230" y="40" width="40" height="112"/><rect x="138" y="22" width="44" height="130"/>
+    <path d="M50 40h8v-8h8v8h8v-8h8v8h8v-8M230 40h8v-8h8v8h8v-8h8v8h8v-8M138 22h8v-8h8v8h8v-8h8v8h8v-8"/></g>
+    <path d="M45 40 70 12 95 40ZM225 40 250 12 275 40ZM134 22 160-6 186 22Z" fill="#E0589A"/>
+    <path d="M140 152v-30a20 20 0 0 1 40 0v30Z" fill="#0D0F18"/>
+    <g fill="#F0B83A"><rect x="64" y="70" width="10" height="16" rx="5"/><rect x="244" y="70" width="10" height="16" rx="5"/><rect x="154" y="50" width="12" height="18" rx="6"/></g></svg>`,
+  detective:(c)=>`<svg viewBox="0 0 120 160" width="80%" height="90%" aria-hidden="true">
+    <ellipse cx="60" cy="150" rx="40" ry="6" fill="#0006"/>
+    <path d="M28 150 34 92h52l6 58Z" fill="${c}"/><circle cx="60" cy="68" r="24" fill="#F2C9A0"/>
+    <path d="M30 56h60l-6-14H36Z" fill="#6B4A2B"/><rect x="40" y="30" width="40" height="14" rx="4" fill="#6B4A2B"/>
+    <circle cx="51" cy="70" r="3" fill="#2C2014"/><circle cx="69" cy="70" r="3" fill="#2C2014"/><path d="M52 80q8 6 16 0" stroke="#2C2014" stroke-width="3" fill="none"/>
+    <circle cx="96" cy="104" r="12" fill="#cfe6ff88" stroke="#F0B83A" stroke-width="4"/><path d="M88 113 76 128" stroke="#F0B83A" stroke-width="5"/></svg>`,
+  tresor:`<svg viewBox="0 0 320 180" width="100%" height="100%" aria-hidden="true">
+    <rect width="320" height="180" fill="#2C3247"/><ellipse cx="160" cy="150" rx="120" ry="18" fill="#F0B83A55"/>
+    <rect x="105" y="90" width="110" height="60" rx="6" fill="#7A4B26"/><path d="M105 92q55-50 110 0Z" fill="#8A5A2E"/>
+    <rect x="152" y="104" width="16" height="20" rx="3" fill="#F0B83A"/>
+    <g fill="#F0B83A"><circle cx="90" cy="148" r="9"/><circle cx="74" cy="152" r="8"/><circle cx="232" cy="148" r="9"/><circle cx="248" cy="153" r="7"/><circle cx="130" cy="86" r="7"/><circle cx="190" cy="84" r="8"/></g>
+    <g fill="#E0589A"><path d="M60 140l8-10 8 10-8 8Z"/></g><g fill="#21B09C"><path d="M250 132l7-9 7 9-7 7Z"/></g></svg>`
+};
+function fillSlot(el, name, fallback){
+  el.innerHTML = `<div class="ph">${fallback}</div>`;
+  if(IMAGES[name]){
+    const img = new Image(); img.alt = ""; img.src = IMAGES[name];
+    img.onload = () => { const ph = el.querySelector(".ph"); if(ph) ph.remove(); };
+    img.onerror = () => img.remove();
+    el.appendChild(img);
+  }
+}
+
+function esc(s){ return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function highlight(text, clues){
+  let h = esc(text);
+  clues.forEach(cl => { const re = new RegExp("(?<![\\p{L}])(" + esc(cl).replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + ")(?![\\p{L}])","u"); h = h.replace(re,"<mark>$1</mark>"); });
+  return h;
+}
+
+// ---- Accueil
+let detIdx = 0;
+fillSlot(document.querySelector('[data-img="chateau"]'), "chateau", PLACEHOLDER.chateau);
+const detsEl = document.getElementById("dets");
+detsEl.innerHTML = DETS.map((d,i)=>`<button class="det" data-i="${i}" aria-pressed="${i===0}"><div class="slot"></div><b>${d.nom}</b></button>`).join("");
+detsEl.querySelectorAll(".det").forEach((b,i) => {
+  fillSlot(b.querySelector(".slot"), DETS[i].id, PLACEHOLDER.detective(DETS[i].couleur));
+  b.onclick = () => { detIdx = i; detsEl.querySelectorAll(".det").forEach((x,j)=>x.setAttribute("aria-pressed", j===i)); };
+});
+// ---- Présentation
+const EX = {
+  pro:{say:"Il, elle, le, lui, ils… Je retrouve de qui ou de quoi on parle.", ex:"Léo a un chat. Il lui donne du lait.", hl:["Léo","Il"], ans:"« Il », c'est Léo."},
+  inf:{say:"Je trouve la réponse grâce aux indices, comme un vrai détective.", ex:"Sami met ses bottes et prend son parapluie.", hl:["bottes","parapluie"], ans:"Quel temps fait-il ? Il pleut."},
+  imp:{say:"Ce n'est pas écrit, mais je peux le comprendre.", ex:"Boum ! Jules pleure et tient son genou.", hl:["Boum","tient son genou"], ans:"Que s'est-il passé ? Il est tombé."},
+  men:{say:"Je devine ce que le personnage ressent ou ce qu'il pense.", ex:"Lili tape du pied et croise les bras.", hl:["tape du pied","croise les bras"], ans:"Comment se sent Lili ? En colère."},
+  con:{say:"D'abord, ensuite, puis, parce que, alors… Je comprends l'ordre et la cause.", ex:"Inès reste à la maison parce qu'elle a de la fièvre.", hl:["parce qu'elle a de la fièvre"], ans:"Pourquoi ? Parce qu'elle a de la fièvre."}};
+let audio = true, chosen = new Set(ORDER);
+const famsEl = document.getElementById("fams");
+famsEl.innerHTML = ORDER.map(id => `
+  <article class="fam" style="--c:var(--${id})" data-id="${id}">
+    <h3>${esc(CAT[id].nom)}</h3>
+    <p class="say">${esc(EX[id].say)}</p>
+    <p class="ex">${highlight(EX[id].ex, EX[id].hl)}<span class="ans">→ ${esc(EX[id].ans)}</span></p>
+    <label><input type="checkbox" id="fam-${id}" checked> Dans la partie</label>
+  </article>`).join("");
+ORDER.forEach(id => document.getElementById("fam-"+id).onchange = e => {
+  e.target.checked ? chosen.add(id) : chosen.delete(id);
+  e.target.closest(".fam").classList.toggle("off", !e.target.checked);
+  document.getElementById("famWarn").hidden = chosen.size > 0;
+});
+function setAudio(v){ audio = v; document.getElementById("audioOn").setAttribute("aria-pressed", v); document.getElementById("audioOff").setAttribute("aria-pressed", !v); }
+document.getElementById("audioOn").onclick = () => setAudio(true);
+document.getElementById("audioOff").onclick = () => setAudio(false);
+document.getElementById("toIntro").onclick = () => show("intro");
+document.getElementById("backHome").onclick = () => show("home");
+document.getElementById("startBtn").onclick = () => { if(!chosen.size){ document.getElementById("famWarn").hidden = false; return; } start(); };
+
+// ---- Partie
+let decks = {}, g;
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function draw(cat){ if(!decks[cat]||!decks[cat].length) decks[cat]=shuffle(DATA.cartes.filter(c=>c.cat===cat)); return decks[cat].pop(); }
+function start(){
+  const fams = ORDER.filter(f => chosen.has(f));
+  let cats = []; while(cats.length < 10) cats = cats.concat(shuffle(fams));   // familles choisies, réparties sur les 10 portes
+  cats = cats.slice(0,10);
+  g = {room:0, cards:cats.map(draw), fautes:cats.map(()=>0), vies:3};
+  show("game");
+  document.getElementById("who").textContent = "Détective " + DETS[detIdx].nom;
+  fillSlot(document.getElementById("heroImg"), DETS[detIdx].id, PLACEHOLDER.detective(DETS[detIdx].couleur));
+  loadRoom();
+}
+function show(id){ ["home","intro","game","end"].forEach(s => document.getElementById(s).hidden = s!==id); window.scrollTo(0,0); }
+function renderPlan(){
+  document.getElementById("plan").innerHTML = ROOMS.map((r,i)=>
+    `<span class="room ${i<g.room?"done":""} ${i===g.room?"here":""}" title="${r.nom}">${i<g.room?"✓":i+1}</span>`).join("")
+    + `<span class="room secret ${g.room>=10?"here":""}">? Pièce secrète</span>`;
+  document.getElementById("keys").textContent = `🗝️ ${g.room} / 10 portes ouvertes`;
+  renderLives();
+}
+function renderLives(){
+  const el = document.getElementById("lives");
+  el.innerHTML = [0,1,2].map(i => `<span class="${i < g.vies ? "" : "lost"}">❤️</span>`).join("");
+  el.setAttribute("aria-label", `${g.vies} erreur${g.vies>1?"s":""} possible${g.vies>1?"s":""}`);
+}
+function speak(t){ try{ const s=window.speechSynthesis; if(!s) return; s.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.85; s.speak(u);}catch(e){} }
+
+function loadRoom(){
+  renderPlan();
+  const r = ROOMS[g.room], card = g.cards[g.room], c = CAT[card.cat];
+  document.getElementById("roomName").textContent = r.nom;
+  document.getElementById("roomNum").textContent = `Porte ${g.room+1} sur 10`;
+  const st = document.getElementById("stage");
+  st.classList.remove("open");
+  st.classList.toggle("has-img", !!IMAGES["salle-"+r.id]);
+  st.style.setProperty("--dx", r.x+"%"); st.style.setProperty("--dy", r.y+"%");
+  fillSlot(document.getElementById("roomImg"), "salle-"+r.id, "");
+  const opts = shuffle(card.rep.map((t,k)=>({t, ok:k===0})));
+  const p = document.getElementById("parch");
+  p.style.setProperty("--c", `var(--${card.cat})`);
+  p.classList.remove("show-clue");
+  p.innerHTML = `
+    ${audio ? '<button class="speak" id="spk">🔊 Écouter</button>' : ''}
+    <span class="tag">${esc(c.nom)}</span>
+    <p class="intro">${esc(r.intro)}</p>
+    <p class="texte">${highlight(card.texte, card.indice)}</p>
+    <p class="q">${esc(card.q)}</p>
+    <div class="choices">${opts.map((o,k)=>`<button class="choice" data-k="${k}"><span class="l">${"abc"[k]}</span>${esc(o.t)}</button>`).join("")}</div>
+    <div id="after" aria-live="polite"></div>`;
+  if(audio) p.querySelector("#spk").onclick = () => speak(card.texte+" "+card.q+" "+opts.map(o=>o.t).join(", "));
+  const btns = [...p.querySelectorAll(".choice")];
+  btns.forEach(b => b.onclick = () => answer(+b.dataset.k));
+  btns[0].focus({preventScroll:true});
+
+  function answer(k){
+    const after = p.querySelector("#after");
+    if(opts[k].ok){
+      btns.forEach(b=>b.disabled=true); btns[k].classList.add("ok");
+      document.getElementById("stage").classList.add("open");
+      const last = g.room === 9;
+      after.innerHTML = `<div class="bilan ok"><strong>Bravo, détective !</strong> La porte s'ouvre.<br>Montre dans le message les mots qui t'ont aidé.</div>
+        <div class="actions"><button class="btn ghost" id="clue">Voir les indices</button>
+        <button class="btn" id="next">${last?"Entrer dans la pièce secrète":"Passer la porte"}</button></div>`;
+      after.querySelector("#clue").onclick = () => p.classList.toggle("show-clue");
+      after.querySelector("#next").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; g.room++; g.room>=10 ? finish() : loadRoom(); };
+      after.querySelector("#next").focus({preventScroll:true});
+    } else {
+      g.fautes[g.room]++; g.vies--; renderLives();
+      btns[k].disabled = true; btns[k].classList.add("ko");
+      p.classList.add("show-clue");
+      if(g.vies <= 0){
+        btns.forEach((b,j) => { b.disabled = true; if(opts[j].ok) b.classList.add("ok"); });
+        after.innerHTML = `<div class="bilan ko"><strong>C'était ta 3ᵉ erreur.</strong> La bonne réponse est en vert.</div>
+          <div class="actions"><button class="btn" id="stop">Continuer</button></div>`;
+        after.querySelector("#stop").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; gameOver(); };
+        after.querySelector("#stop").focus({preventScroll:true});
+      } else {
+        after.innerHTML = `<div class="bilan ko"><strong>La porte reste fermée.</strong> Il te reste ${g.vies} erreur${g.vies>1?"s":""} possible${g.vies>1?"s":""}.<br>
+          Regarde les mots surlignés dans le message : ils vont t'aider. Essaie encore.</div>`;
+      }
+    }
+  }
+}
+
+function carnet(){
+  const parFam = {};
+  g.cards.forEach((c,i)=>{ if(g.fautes[i]) parFam[c.cat]=(parFam[c.cat]||0)+1; });
+  const fams = Object.keys(parFam);
+  return fams.length ? `<li>Messages à retravailler : ${fams.map(f=>"<b>"+esc(CAT[f].nom)+"</b>").join(", ")}</li>` : "";
+}
+function gameOver(){
+  const r = ROOMS[g.room];
+  const end = document.getElementById("end");
+  end.classList.add("go");
+  end.innerHTML = `
+    <h1 style="color:var(--moon)">Oh non, la porte reste fermée !</h1>
+    <p style="font-size:19px;margin:0;color:var(--muted)">Tu as fait 3 erreurs : ${esc(DETS[detIdx].nom)} est bloqué${DETS[detIdx].e} dans ${esc(r.nom.charAt(0).toLowerCase()+r.nom.slice(1))} et ne peut pas aller plus loin.</p>
+    <div class="slot big" id="goImg"></div>
+    <div class="recap"><h3>Carnet du détective</h3>
+      <ul><li>Portes ouvertes : <b>${g.room} sur 10</b></li>${carnet()}</ul></div>
+    <div class="actions" style="justify-content:center"><button class="btn" id="again">Recommencer</button>
+      <button class="btn ghost" id="intro2">Revoir les 5 sortes de messages</button></div>`;
+  fillSlot(end.querySelector("#goImg"), "salle-"+r.id, PLACEHOLDER.chateau);
+  end.querySelector("#again").onclick = start;
+  end.querySelector("#intro2").onclick = () => show("intro");
+  show("end");
+}
+function finish(){
+  document.getElementById("end").classList.remove("go");
+  const sans = g.fautes.filter(f=>f===0).length;
+  const parFam = {};
+  g.cards.forEach((c,i)=>{ if(g.fautes[i]) parFam[c.cat]=(parFam[c.cat]||0)+1; });
+  const fams = Object.keys(parFam);
+  const end = document.getElementById("end");
+  end.innerHTML = `
+    <h1>Le trésor est à toi !</h1>
+    <p style="font-size:19px;margin:0;color:var(--muted)">Bravo ${esc(DETS[detIdx].nom)} : tu as ouvert les 10 portes et trouvé la pièce secrète.</p>
+    <div class="slot big" id="tresorImg"></div>
+    <div class="recap"><h3>Carnet du détective</h3>
+      <ul><li>Portes ouvertes du premier coup : <b>${sans} sur 10</b></li>
+      ${fams.length ? `<li>Messages à retravailler : ${fams.map(f=>"<b>"+esc(CAT[f].nom)+"</b>").join(", ")}</li>` : `<li>Aucune erreur : un vrai chef détective !</li>`}</ul></div>
+    <div class="actions" style="justify-content:center"><button class="btn" id="again">Rejouer avec de nouveaux messages</button>
+      <button class="btn ghost" id="home2">Changer de détective</button></div>`;
+  fillSlot(end.querySelector("#tresorImg"), "piece-secrete", PLACEHOLDER.tresor);
+  end.querySelector("#again").onclick = start;
+  end.querySelector("#home2").onclick = () => show("home");
+  show("end");
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const box = document.getElementById("coins"); box.innerHTML="";
+    for(let i=0;i<40;i++){ const s=document.createElement("span"); s.className="coin"; s.style.left=Math.random()*100+"vw";
+      s.style.animationDuration=(2+Math.random()*2)+"s"; s.style.animationDelay=Math.random()*1.5+"s"; box.appendChild(s); }
+    setTimeout(()=>box.innerHTML="", 5000);
+  }
+}
+</script>
+
+</body>
+</html>

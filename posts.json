@@ -1,5 +1,5 @@
 {
- "count": 24,
+ "count": 25,
  "posts": [
   {
    "title": "Le Tape-taupe des additions et soustractions",
@@ -8246,6 +8246,414 @@
        }
       }
      }
+    ]
+   }
+  },
+  {
+   "title": "Le Château des Détectives",
+   "slug": "le-chateau-des-detectives",
+   "excerpt": "Lire les messages cachés sur les portes d'un château pour trouver la pièce secrète au trésor : pronoms, inférences, implicite, états mentaux et connecteurs pour le CP et le CE1.",
+   "date": "2026-10-27T15:00:00.000Z",
+   "cat": "comprehension",
+   "categoryIds": [],
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un trésor est caché dans la pièce secrète d'un vieux château. Pour l'atteindre, le détective doit ouvrir 10 portes. Sur chaque porte, un message à lire et une question : une bonne réponse, et la porte s'ouvre !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-chateau-des-detectives.html",
+       "containerData": {
+        "height": {
+         "custom": "1050"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève choisit son détective : Lila Loupe ou Max Indice.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La page de présentation montre les 5 sortes de messages, avec un exemple pour chacune. L'adulte peut décocher des familles pour cibler une compétence, et choisir si le message peut être écouté à voix haute ou non.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Dans chaque salle, l'élève lit le message, la question, et choisit parmi trois réponses.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Bonne réponse : la porte s'ouvre. On demande alors à l'élève de ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "montrer dans le texte les mots qui l'ont aidé",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", puis on affiche les indices pour vérifier.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève a droit à 3 erreurs sur tout le chemin. À chaque erreur, les indices se surlignent pour l'aider à réessayer. À la 3ᵉ erreur, le détective est bloqué et il faut recommencer.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 5 sortes de messages",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Qui ? Quoi ? ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "— pronoms et substituts : retrouver de qui ou de quoi on parle (chaîne anaphorique).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Détective ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "— inférences simples : trouver une information grâce aux indices du texte.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Pas écrit ! ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "— implicite : comprendre ce qui s'est passé alors que le texte ne le dit pas.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Dans sa tête ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "— états mentaux : deviner ce que le personnage ressent ou ce qu'il pense.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Quand ? Pourquoi ? ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "— connecteurs temporels et causaux simples : d'abord, ensuite, puis, parce que, alors…",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "30 messages courts (6 par famille), tirés au hasard : chaque partie propose de nouveaux messages.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le carnet du détective",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En fin de partie, le carnet indique le nombre de portes ouvertes et les sortes de messages à retravailler.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Version papier",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les mêmes 30 messages en jeu de plateau à imprimer : règle, plateau et cartes à découper. La réponse et les indices sont écrits à l'envers en bas de chaque carte, pour vérifier et faire justifier. De 2 à 4 équipes.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BUTTON",
+      "nodes": [],
+      "buttonData": {
+       "text": "Télécharger la version papier (PDF)",
+       "link": {
+        "url": "/fichiers/le-chateau-des-detectives-version-papier.pdf",
+        "target": "BLANK"
+       }
+      }
+     }
+    ]
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
     ]
    }
   }
