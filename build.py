@@ -35,6 +35,7 @@ JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e
 CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
+    "comprehension": {"name": "Compréhension", "desc": "Jeux pour comprendre ce qu'on lit au CP et au CE1 : pronoms et substituts, inférences, implicite, états mentaux des personnages, connecteurs.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
@@ -430,6 +431,8 @@ SEO_TITRES = {
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
+    "/francais/comprehension/": "Jeux de compréhension de texte en ligne gratuits pour le CP et le CE1",
+    "/post/le-chateau-des-detectives/": "Le Château des Détectives : jeu de compréhension de texte CP-CE1",
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
@@ -468,7 +471,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -549,10 +552,12 @@ def main():
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
     cc = epingles_d_abord([p for p in fr if p["cat"] == "cercle-conteur"])
     lec = [p for p in fr if p["cat"] == "lecture"]
+    comp = epingles_d_abord([p for p in fr if p["cat"] == "comprehension"])
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
     subs = [("cercle-conteur", "Langage oral", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
-            ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
+            ("lecture", "Lecture", CATS["lecture"]["desc"], lec),
+            ("comprehension", "Compréhension", CATS["comprehension"]["desc"], comp)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -560,7 +565,7 @@ def main():
     write("/francais/", page("Français", f"""<section class="wrap">
   <h1>Français</h1>
   {vignettes}
-</section>""", "/francais/", "Français au cycle 2 : contes à raconter en cercle conteur et outils de lecture (tachistoscope, téléprompteurs, jeux de déchiffrage) pour la GS, le CP et le CE1."))
+</section>""", "/francais/", "Français au cycle 2 : contes à raconter en cercle conteur, outils de lecture (tachistoscope, téléprompteurs, jeux de déchiffrage) et jeux de compréhension pour la GS, le CP et le CE1."))
     for k, t, d, lst in subs:
         filtres = ""
         if k == "lecture":
