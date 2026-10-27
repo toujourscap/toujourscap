@@ -61,6 +61,10 @@ input[type=text],select{font:inherit;font-size:18px;padding:8px 10px;border:2px 
 .btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 #8f1f1d}
 .btn-sec{background:#efe5d2;color:var(--encre)}
 .alerte{color:var(--err);font-weight:700}
+.micro-test{display:flex;align-items:center;gap:10px;margin-top:8px}
+.jauge{flex:1;height:12px;border-radius:6px;background:#efe5d2;overflow:hidden}
+.jauge i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
+#micro-msg.erreur{color:var(--err);font-weight:700}
 
 /* ---------- Jeu ---------- */
 .jeu{display:flex;flex-direction:column;gap:14px}
@@ -169,12 +173,16 @@ td a{font-size:13px;color:var(--bois)}
       <div class="mots-apercu" id="apercu"></div>
       <label class="coche"><input type="checkbox" id="colorier" checked> Colorier le son dans le mot</label>
       <label class="coche"><input type="checkbox" id="enregistrer" checked> Enregistrer la lecture de l'élève</label>
+      <div class="micro-test">
+        <button type="button" class="btn-petit" id="b-micro">Tester le micro</button>
+        <div class="jauge" aria-hidden="true"><i id="jauge"></i></div>
+      </div>
+      <p class="note" id="micro-msg">Parlez après avoir cliqué : la barre doit bouger.</p>
     </fieldset>
 
     <fieldset>
-      <legend>Les personnages (Canva)</legend>
+      <legend>Les personnages</legend>
       <div class="persos" id="persos"></div>
-      <p class="note">Images créées sur Canva. Pour les changer : PNG (fond transparent pour les personnages, format 2:1 pour le fond). Elles restent sur cet ordinateur.</p>
     </fieldset>
   </div>
 
@@ -263,7 +271,7 @@ mamie:`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg"><path d="M3
 };
 const CANVA = {"fond": "/images/chemin-des-sons/fond.jpg", "chaperon": "/images/chemin-des-sons/chaperon.png", "loup": "/images/chemin-des-sons/loup.png", "mamie": "/images/chemin-des-sons/mamie.png"};
 const PERSOS = [["chaperon","Chaperon"],["loup","Loup"],["mamie","Mère-Grand et sa maison"]];
-const SLOTS = [...PERSOS,["fond","Fond de la forêt"]];
+const SLOTS = PERSOS;
 
 /* ---------- Stockage local ---------- */
 const store = {
@@ -272,7 +280,7 @@ const store = {
   del(k){try{localStorage.removeItem(k)}catch(e){}}
 };
 const imgs = {}; const flips = {};
-SLOTS.forEach(([k])=>{imgs[k]=store.get("pcr-img-"+k); flips[k]=store.get("pcr-flip-"+k)==="1";});
+/* Images fixes du jeu (créées sur Canva) */
 
 function rendrePerso(k){
   if(imgs[k]) return `<img src="${imgs[k]}" alt="">`;
@@ -305,8 +313,6 @@ function majPersos(){
     <div class="perso">
       <div class="vignette">${imgs[k]?`<img src="${imgs[k]}" alt="" class="${k==="fond"?"fond":""}" style="${flips[k]?'transform:scaleX(-1)':''}">`:`<img src="${CANVA[k]}" alt="" class="${k==="fond"?"fond":""}">`}</div>
       <strong>${nom}</strong>
-      <label class="btn-file">Remplacer<input type="file" accept="image/*" data-k="${k}" id="file-${k}"></label>
-      ${imgs[k]?`<div class="mini">${k==="fond"?"":`<button data-flip="${k}">Retourner</button>`}<button data-del="${k}">Retirer</button></div>`:""}
     </div>`).join("");
 }
 majPersos();
@@ -321,6 +327,34 @@ $("persos").addEventListener("click",e=>{
   if(f){flips[f]=!flips[f]; store.set("pcr-flip-"+f,flips[f]?"1":"0"); majPersos();}
   if(d){imgs[d]=null; store.del("pcr-img-"+d); majPersos();}
 });
+
+/* ---------- Micro ---------- */
+const MSG_MICRO_BLOQUE = "Le micro est bloqué. Dans Chrome, cliquez sur l'icône à gauche de l'adresse du site, mettez « Micro » sur « Autoriser », puis rechargez la page.";
+function messageMicro(e){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return "Ce navigateur ne permet pas d'enregistrer. Utilisez Chrome ou Edge.";
+  if(e&&(e.name==="NotFoundError"||e.name==="DevicesNotFoundError")) return "Aucun micro détecté. Branchez un micro ou un casque, puis réessayez.";
+  if(e&&(e.name==="NotReadableError"||e.name==="TrackStartError")) return "Le micro est déjà utilisé par une autre application (visio…). Fermez-la puis réessayez.";
+  return MSG_MICRO_BLOQUE;
+}
+let testFlux=null, testRaf=0;
+async function testerMicro(){
+  const msg=$("micro-msg"); msg.className="note";
+  if(testFlux){arreterTest();return;}
+  try{ testFlux=await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ msg.textContent=messageMicro(e); msg.className="note erreur"; return; }
+  msg.textContent="Le micro fonctionne si la barre bouge quand vous parlez.";
+  $("b-micro").textContent="Arrêter le test";
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const src=actx.createMediaStreamSource(testFlux), an=actx.createAnalyser(); an.fftSize=512; src.connect(an);
+    const d=new Uint8Array(an.fftSize);
+    const boucle=()=>{an.getByteTimeDomainData(d);let m=0;for(const v of d)m=Math.max(m,Math.abs(v-128));$("jauge").style.width=Math.min(100,m*1.6)+"%";testRaf=requestAnimationFrame(boucle);};
+    boucle();
+  }catch(e){}
+  setTimeout(()=>{ if(testFlux) arreterTest(); },15000);
+}
+function arreterTest(){cancelAnimationFrame(testRaf);if(testFlux){testFlux.getTracks().forEach(t=>t.stop());testFlux=null;}$("jauge").style.width="0";$("b-micro").textContent="Tester le micro";}
+$("b-micro").onclick=testerMicro;
 
 /* ---------- Sons d'ambiance (WebAudio) ---------- */
 let actx=null;
@@ -392,12 +426,13 @@ async function demarrer(mots){
   jeu={mots:liste,i:0,gap:cfg.gap,res:[],fini:false,debut:new Date()};
   $("msg-reglages").textContent="";
   if(cfg.rec && !stream){
+    arreterTest();
     try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }
-    catch(e){ stream=null; }
+    catch(e){ stream=null; cfg.erreurMicro=messageMicro(e); }
   }
   if(!cfg.rec && stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
   $("rec").classList.remove("on");
-  $("rec-txt").textContent = cfg.rec ? (stream?"Micro prêt":"Micro indisponible : la partie continue sans enregistrement") : "Pas d'enregistrement";
+  $("rec-txt").textContent = cfg.rec ? (stream?"Micro prêt":(cfg.erreurMicro||"Micro indisponible")+" La partie continue sans enregistrement.") : "Pas d'enregistrement";
 
   $("titre-jeu").textContent = cfg.prenom ? `Le chemin de ${cfg.prenom}` : "Le chemin des sons";
   dessinerDecor();
