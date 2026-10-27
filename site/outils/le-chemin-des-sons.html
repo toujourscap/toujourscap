@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le chemin des sons</title><link rel="canonical" href="https://toujourscap.com/post/le-chemin-des-sons/"><meta name="description" content="Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Des mots simples avec un son complexe (ou, an/en, in, eu…">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* Livre d'images : scène de forêt en haut, grande pancarte au centre, commandes adulte en bas. Un seul thème volontaire. */
+:root{
+  --sapin:#1f3d2b; --mousse:#4f7a3a; --chemin:#eadbbd; --rouge:#c8322f;
+  --bois:#8a5a34; --bois-clair:#c49a63; --ciel:#e3ecd9; --encre:#2a2119;
+  --papier:#fbf6ec; --ok:#2f7d4a; --err:#d0661b; --gris:#6f6a62;
+  --f-titre:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-lecture:"Andika","Arial",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--sapin);color:var(--encre);font-family:var(--f-lecture);font-size:16px;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}
+h1,h2,h3{font-family:var(--f-titre);text-wrap:balance;margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-within{outline:3px solid #f5d33b;outline-offset:2px}
+[hidden]{display:none!important}
+
+/* ---------- Réglages ---------- */
+.carte{background:var(--papier);border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.entete{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.entete h1{font-size:clamp(28px,5vw,44px);color:var(--rouge)}
+.entete p{margin:4px 0 0;color:var(--gris)}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+fieldset{border:2px solid #e4d8c2;border-radius:14px;padding:14px 16px;margin:0;min-width:0}
+legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bois)}
+.champ{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.champ:last-child{margin-bottom:0}
+input[type=text],select{font:inherit;font-size:18px;padding:8px 10px;border:2px solid #d9cbb1;border-radius:10px;background:#fff;color:var(--encre)}
+.sons{display:flex;flex-wrap:wrap;gap:8px}
+.son-chip{position:relative}
+.son-chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.son-chip span{display:inline-block;padding:8px 16px;border-radius:999px;border:2px solid #d9cbb1;font-size:22px;font-weight:700;background:#fff;min-width:64px;text-align:center}
+.son-chip input:checked+span{background:var(--rouge);border-color:var(--rouge);color:#fff}
+.son-chip input:focus-visible+span{outline:3px solid #f5d33b;outline-offset:2px}
+.mots-apercu{font-size:14px;color:var(--gris);margin-top:8px;line-height:1.5}
+.coche{display:flex;gap:10px;align-items:center;font-size:16px;margin:6px 0}
+.coche input{width:20px;height:20px}
+.persos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.perso{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:14px}
+.perso .vignette{width:100%;aspect-ratio:1;max-width:110px;background:var(--ciel);border-radius:12px;display:grid;place-items:center;overflow:hidden;border:2px dashed #b9c9a6}
+.perso .vignette img,.perso .vignette svg{max-width:85%;max-height:85%}
+.perso .vignette img.fond{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:cover}
+.perso label.btn-file{font-size:13px;background:var(--bois);color:#fff;padding:5px 10px;border-radius:8px;cursor:pointer}
+.perso label.btn-file input{display:none}
+.perso .mini{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:12px}
+.perso .mini button{font-size:12px;background:none;border:1px solid #d9cbb1;border-radius:6px;padding:2px 6px;color:var(--gris)}
+.note{font-size:13px;color:var(--gris);margin-top:8px}
+.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;flex-wrap:wrap;align-items:center}
+.btn{border:none;border-radius:14px;padding:14px 26px;font-size:20px;font-weight:700;font-family:var(--f-titre)}
+.btn-go{background:var(--rouge);color:#fff;box-shadow:0 5px 0 #8f1f1d}
+.btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 #8f1f1d}
+.btn-sec{background:#efe5d2;color:var(--encre)}
+.alerte{color:var(--err);font-weight:700}
+
+/* ---------- Jeu ---------- */
+.jeu{display:flex;flex-direction:column;gap:14px}
+.bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#f3ead7;flex-wrap:wrap}
+.bandeau h2{font-size:22px}
+.distance{display:flex;align-items:center;gap:8px;font-size:17px}
+.pas{display:flex;gap:4px}
+.pas i{width:14px;height:14px;border-radius:50%;background:#f3ead7;display:block}
+.pas i.mange{background:var(--err)}
+.scene{position:relative;width:100%;aspect-ratio:1000/360;border-radius:18px;overflow:hidden;background:var(--ciel);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.scene svg.decor{position:absolute;inset:0;width:100%;height:100%}
+.sprite{position:absolute;transform:translate(-50%,-96%);transition:left .9s cubic-bezier(.4,.1,.3,1),top .9s cubic-bezier(.4,.1,.3,1);pointer-events:none}
+.sprite img,.sprite svg{width:100%;height:auto;display:block}
+.sprite.flip img{transform:scaleX(-1)}
+#sp-chaperon{width:7.5%;z-index:3}
+#sp-loup{width:13%;z-index:4}
+#sp-mamie{width:15%;z-index:2}
+.sprite.marche>*{animation:sautille .3s ease-in-out 3}
+@keyframes sautille{50%{transform:translateY(-8%)}}
+.sprite.grogne>*{animation:grogne .12s linear 6}
+@keyframes grogne{25%{transform:translateX(-4%) rotate(-3deg)}75%{transform:translateX(4%) rotate(3deg)}}
+.sprite.flip.marche>*{animation-name:sautilleF}
+@keyframes sautilleF{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-8%)}}
+
+.pancarte-zone{display:flex;flex-direction:column;align-items:center;gap:6px}
+.poteau-haut{display:flex;gap:min(40%,300px)}
+.poteau-haut i{width:14px;height:22px;background:var(--bois);display:block;border-radius:3px 3px 0 0}
+.pancarte{background:linear-gradient(180deg,#d8b07a,#c49a63);border:6px solid var(--bois);border-radius:16px;padding:18px 40px 22px;min-width:min(100%,420px);text-align:center;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.3);position:relative}
+.pancarte .mot{font-family:var(--f-lecture);font-weight:700;font-size:clamp(56px,12vw,128px);line-height:1.05;color:var(--encre);letter-spacing:.02em}
+.pancarte .mot .son{color:var(--rouge)}
+.pancarte .mot .son.souligne{border-bottom:5px solid var(--rouge);border-radius:0 0 40% 40%}
+.pancarte .num{position:absolute;top:8px;left:12px;font-size:14px;color:rgba(42,33,25,.6)}
+.pancarte.apparait{animation:apparait .45s ease-out}
+@keyframes apparait{from{transform:scale(.85) rotate(-3deg);opacity:.3}}
+.consigne{color:#f3ead7;font-size:18px}
+
+.adulte{background:rgba(251,246,236,.96);border-radius:16px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.adulte .boutons{display:flex;gap:10px;flex-wrap:wrap}
+.btn-ok{background:var(--ok);color:#fff;box-shadow:0 4px 0 #1d5531}
+.btn-err{background:var(--err);color:#fff;box-shadow:0 4px 0 #8f440f}
+.btn-petit{border:2px solid #d9cbb1;background:#fff;border-radius:10px;padding:8px 12px;font-size:15px;color:var(--encre)}
+.btn:disabled,.btn-petit:disabled{opacity:.45;cursor:default}
+.rec{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gris)}
+.rec .point{width:12px;height:12px;border-radius:50%;background:#bbb}
+.rec.on .point{background:#e0201b;animation:clignote 1s infinite}
+@keyframes clignote{50%{opacity:.25}}
+.raccourcis{font-size:12px;color:var(--gris);width:100%}
+kbd{background:#efe5d2;border-radius:4px;padding:1px 5px;font-family:inherit}
+
+/* ---------- Fin ---------- */
+.fin-titre{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fin-titre h1{font-size:clamp(26px,5vw,40px)}
+.fin-titre.gagne h1{color:var(--ok)}
+.fin-titre.perdu h1{color:var(--err)}
+.score{font-size:18px;margin:0 0 16px}
+.parson{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.parson span{background:#efe5d2;border-radius:999px;padding:6px 12px;font-size:15px;font-variant-numeric:tabular-nums}
+.parson b{color:var(--rouge)}
+.tab-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th{text-align:left;font-size:13px;color:var(--gris);font-weight:400;padding:6px 8px;border-bottom:2px solid #e4d8c2}
+td{padding:8px;border-bottom:1px solid #eee3cf;vertical-align:middle}
+td.mot{font-size:22px;font-weight:700}
+td.mot .son{color:var(--rouge)}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:14px;font-weight:700;color:#fff}
+.pill.ok{background:var(--ok)} .pill.err{background:var(--err)}
+audio{height:34px;max-width:220px}
+td a{font-size:13px;color:var(--bois)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:600px){.carte{padding:16px}.pancarte{padding:14px 18px 16px}.btn{padding:12px 18px;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= RÉGLAGES ================= -->
+<section id="ecran-reglages" class="carte">
+  <div class="entete">
+    <div id="logo" style="width:64px"></div>
+    <div>
+      <h1>Le chemin des sons</h1>
+      <p>Le Petit Chaperon rouge lit les pancartes pour arriver chez Mère-Grand avant le loup.</p>
+    </div>
+  </div>
+
+  <div class="grille">
+    <fieldset>
+      <legend>L'élève</legend>
+      <div class="champ">
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" placeholder="ex. Léa" autocomplete="off">
+      </div>
+      <div class="champ">
+        <label for="nb">Nombre de pancartes</label>
+        <select id="nb"><option>6</option><option selected>8</option><option>10</option><option>12</option></select>
+      </div>
+      <div class="champ">
+        <label for="erreurs">Erreurs permises avant que le loup l'attrape</label>
+        <select id="erreurs"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option></select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Les sons travaillés</legend>
+      <div class="sons" id="sons"></div>
+      <div class="mots-apercu" id="apercu"></div>
+      <label class="coche"><input type="checkbox" id="colorier" checked> Colorier le son dans le mot</label>
+      <label class="coche"><input type="checkbox" id="enregistrer" checked> Enregistrer la lecture de l'élève</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Les personnages (Canva)</legend>
+      <div class="persos" id="persos"></div>
+      <p class="note">Images créées sur Canva. Pour les changer : PNG (fond transparent pour les personnages, format 2:1 pour le fond). Elles restent sur cet ordinateur.</p>
+    </fieldset>
+  </div>
+
+  <div class="actions">
+    <span class="alerte" id="msg-reglages"></span>
+    <button class="btn btn-go" id="partir">Partir dans les bois</button>
+  </div>
+</section>
+
+<!-- ================= JEU ================= -->
+<section id="ecran-jeu" class="jeu" hidden>
+  <div class="bandeau">
+    <h2 id="titre-jeu">Le chemin de Léa</h2>
+    <div class="distance"><span id="txt-distance">Le loup est à 3 pas</span><span class="pas" id="pas"></span></div>
+  </div>
+
+  <div class="scene" id="scene">
+    <svg class="decor" id="decor" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="sprite" id="sp-mamie"></div>
+    <div class="sprite" id="sp-chaperon"></div>
+    <div class="sprite" id="sp-loup"></div>
+  </div>
+
+  <div class="pancarte-zone">
+    <div class="consigne" id="consigne">Lis la pancarte !</div>
+    <div class="pancarte" id="pancarte"><span class="num" id="num"></span><div class="mot" id="mot"></div></div>
+  </div>
+
+  <div class="adulte">
+    <div class="boutons">
+      <button class="btn btn-ok" id="b-ok">Bien lu</button>
+      <button class="btn btn-err" id="b-err">Erreur</button>
+    </div>
+    <div class="boutons">
+      <button class="btn-petit" id="b-ecouter">Entendre le mot</button>
+      <button class="btn-petit" id="b-annuler">Annuler la dernière réponse</button>
+      <button class="btn-petit" id="b-quitter">Quitter</button>
+    </div>
+    <div class="rec" id="rec"><span class="point"></span><span id="rec-txt">Pas d'enregistrement</span></div>
+    <div class="raccourcis">Clavier : <kbd>→</kbd> ou <kbd>V</kbd> bien lu · <kbd>←</kbd> ou <kbd>X</kbd> erreur · <kbd>Z</kbd> annuler</div>
+  </div>
+</section>
+
+<!-- ================= FIN ================= -->
+<section id="ecran-fin" class="carte" hidden>
+  <div class="fin-titre" id="fin-titre">
+    <div id="fin-img" style="width:72px"></div>
+    <h1 id="fin-h1"></h1>
+  </div>
+  <p class="score" id="fin-score"></p>
+  <div class="parson" id="fin-parson"></div>
+  <div class="tab-wrap">
+    <table>
+      <thead><tr><th>N°</th><th>Mot</th><th>Son</th><th>Lecture</th><th>Enregistrement</th></tr></thead>
+      <tbody id="fin-lignes"></tbody>
+    </table>
+  </div>
+  <div class="actions">
+    <span id="msg-fin" class="note"></span>
+    <button class="btn btn-sec" id="b-copier">Copier le bilan</button>
+    <button class="btn btn-sec" id="b-tout">Télécharger les enregistrements</button>
+    <button class="btn btn-sec" id="b-rates">Retravailler les mots ratés</button>
+    <button class="btn btn-sec" id="b-reglages">Changer les réglages</button>
+    <button class="btn btn-go" id="b-rejouer">Rejouer</button>
+  </div>
+</section>
+</div>
+
+<script>
+/* ---------- Données : mots CP, une seule voyelle complexe ---------- */
+const MOTS = {
+  ou:[["loup","ou"],["chou","ou"],["roue","ou"],["cou","ou"],["joue","ou"],["poule","ou"],["route","ou"],["soupe","ou"],["moule","ou"],["four","ou"],["tour","ou"],["jour","ou"],["louve","ou"]],
+  an:[["maman","an"],["tante","an"],["plante","an"],["danse","an"],["gant","an"],["dans","an"],["dent","en"],["vent","en"],["pente","en"],["tente","en"],["lent","en"]],
+  in:[["lapin","in"],["sapin","in"],["matin","in"],["lutin","in"],["patin","in"],["jardin","in"],["chemin","in"],["pin","in"],["vin","in"],["linge","in"]],
+  eu:[["feu","eu"],["jeu","eu"],["bleu","eu"],["peu","eu"],["peur","eu"],["fleur","eu"],["neuf","eu"],["seul","eu"],["meule","eu"]],
+  on:[["savon","on"],["melon","on"],["salon","on"],["ballon","on"],["bonbon","on"],["pont","on"],["rond","on"],["long","on"],["lion","on"],["monde","on"]],
+  ei:[["neige","ei"],["reine","ei"],["peine","ei"],["baleine","ei"],["seize","ei"],["treize","ei"],["beige","ei"],["veine","ei"]]
+};
+const LIBELLE = {ou:"ou",an:"an / en",in:"in",eu:"eu",on:"on",ei:"ei"};
+
+/* ---------- Personnages par défaut ---------- */
+const SVG = {
+chaperon:`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg"><rect x="38" y="126" width="8" height="12" rx="2" fill="#3a2a20"/><rect x="54" y="126" width="8" height="12" rx="2" fill="#3a2a20"/><path d="M50 16C28 16 22 40 24 58L12 128Q50 138 88 128L76 58C78 40 72 16 50 16Z" fill="#c8322f"/><path d="M50 16C34 16 28 30 28 44Q50 34 72 44C72 30 66 16 50 16Z" fill="#a8241f"/><circle cx="50" cy="50" r="16" fill="#f3d2b3"/><path d="M34 46Q42 34 50 36Q58 34 66 46Q60 40 50 40Q40 40 34 46Z" fill="#6b3b1f"/><circle cx="44" cy="52" r="2.3" fill="#2a1a12"/><circle cx="56" cy="52" r="2.3" fill="#2a1a12"/><circle cx="40" cy="57" r="3" fill="#f0a3a0" opacity=".7"/><circle cx="60" cy="57" r="3" fill="#f0a3a0" opacity=".7"/><path d="M45 59Q50 63 55 59" stroke="#2a1a12" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M60 98q11-18 22 0" stroke="#8a5a34" stroke-width="3" fill="none"/><path d="M57 98h28l-4 17h-20z" fill="#c49a63"/><path d="M59 104h24" stroke="#8a5a34" stroke-width="2"/></svg>`,
+loup:`<svg viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg"><path d="M26 52Q0 44 6 20Q14 40 32 46Z" fill="#646b75"/><rect x="34" y="68" width="9" height="28" rx="3" fill="#646b75"/><rect x="52" y="70" width="9" height="26" rx="3" fill="#5a616a"/><rect x="72" y="70" width="9" height="26" rx="3" fill="#5a616a"/><rect x="88" y="68" width="9" height="28" rx="3" fill="#646b75"/><ellipse cx="63" cy="57" rx="38" ry="21" fill="#7d8590"/><ellipse cx="63" cy="64" rx="26" ry="10" fill="#9aa1aa"/><path d="M88 28L91 6L103 24Z" fill="#5d646d"/><path d="M104 26L111 6L115 30Z" fill="#5d646d"/><circle cx="101" cy="40" r="17" fill="#7d8590"/><path d="M110 32L135 43L112 55Z" fill="#7d8590"/><circle cx="134" cy="43" r="3.2" fill="#222"/><circle cx="105" cy="36" r="3" fill="#f5d33b"/><circle cx="106" cy="36" r="1.3" fill="#222"/><path d="M98 31l12 2" stroke="#3b4048" stroke-width="2.5" stroke-linecap="round"/><path d="M113 52l3 5 3-4 3 5 3-5" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>`,
+mamie:`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg"><path d="M30 62L16 134H84L70 62Z" fill="#8c6fb0"/><path d="M24 104h52" stroke="#a98fc9" stroke-width="5"/><path d="M30 62h40l2 14H28z" fill="#f1ece4"/><circle cx="50" cy="42" r="18" fill="#f3d2b3"/><path d="M32 40Q34 20 50 20Q66 20 68 40Q62 28 50 28Q38 28 32 40Z" fill="#e8e6e2"/><circle cx="50" cy="17" r="8" fill="#e8e6e2"/><circle cx="43" cy="43" r="5" fill="#fff" fill-opacity=".4" stroke="#3a2a20" stroke-width="1.8"/><circle cx="57" cy="43" r="5" fill="#fff" fill-opacity=".4" stroke="#3a2a20" stroke-width="1.8"/><path d="M48 43h4" stroke="#3a2a20" stroke-width="1.8"/><path d="M44 52Q50 57 56 52" stroke="#3a2a20" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`
+};
+const CANVA = {"fond": "/images/chemin-des-sons/fond.jpg", "chaperon": "/images/chemin-des-sons/chaperon.png", "loup": "/images/chemin-des-sons/loup.png", "mamie": "/images/chemin-des-sons/mamie.png"};
+const PERSOS = [["chaperon","Chaperon"],["loup","Loup"],["mamie","Mère-Grand et sa maison"]];
+const SLOTS = [...PERSOS,["fond","Fond de la forêt"]];
+
+/* ---------- Stockage local ---------- */
+const store = {
+  get(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+const imgs = {}; const flips = {};
+SLOTS.forEach(([k])=>{imgs[k]=store.get("pcr-img-"+k); flips[k]=store.get("pcr-flip-"+k)==="1";});
+
+function rendrePerso(k){
+  if(imgs[k]) return `<img src="${imgs[k]}" alt="">`;
+  return `<img src="${CANVA[k]}" alt="">`;
+}
+function appliquerSprite(el,k){
+  el.innerHTML = rendrePerso(k);
+  el.classList.toggle("flip", !!(imgs[k] && flips[k]));
+}
+
+/* ---------- Écran réglages ---------- */
+const $ = id => document.getElementById(id);
+$("logo").innerHTML = `<img src="${CANVA.chaperon}" alt="" style="width:100%">`;
+
+const sonsSauves = (store.get("pcr-sons")||"ou,an,in,eu,on,ei").split(",");
+$("sons").innerHTML = Object.keys(MOTS).map(s=>
+  `<label class="son-chip"><input type="checkbox" value="${s}" id="son-${s}" ${sonsSauves.includes(s)?"checked":""}><span>${LIBELLE[s]}</span></label>`).join("");
+["nb","erreurs"].forEach(id=>{const v=store.get("pcr-"+id); if(v) $(id).value=v;});
+["colorier","enregistrer"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
+
+function sonsChoisis(){return [...document.querySelectorAll("#sons input:checked")].map(i=>i.value)}
+function majApercu(){
+  const s=sonsChoisis();
+  $("apercu").textContent = s.length ? "Mots possibles : " + s.flatMap(x=>MOTS[x].map(m=>m[0])).join(", ") : "Choisissez au moins un son.";
+}
+$("sons").addEventListener("change",majApercu); majApercu();
+
+function majPersos(){
+  $("persos").innerHTML = SLOTS.map(([k,nom])=>`
+    <div class="perso">
+      <div class="vignette">${imgs[k]?`<img src="${imgs[k]}" alt="" class="${k==="fond"?"fond":""}" style="${flips[k]?'transform:scaleX(-1)':''}">`:`<img src="${CANVA[k]}" alt="" class="${k==="fond"?"fond":""}">`}</div>
+      <strong>${nom}</strong>
+      <label class="btn-file">Remplacer<input type="file" accept="image/*" data-k="${k}" id="file-${k}"></label>
+      ${imgs[k]?`<div class="mini">${k==="fond"?"":`<button data-flip="${k}">Retourner</button>`}<button data-del="${k}">Retirer</button></div>`:""}
+    </div>`).join("");
+}
+majPersos();
+$("persos").addEventListener("change",e=>{
+  const inp=e.target; if(!inp.files||!inp.files[0]) return;
+  const k=inp.dataset.k, r=new FileReader();
+  r.onload=()=>{ imgs[k]=r.result; if(!store.set("pcr-img-"+k,r.result)) $("msg-reglages").textContent="Image trop lourde pour être gardée : elle servira pour cette séance seulement."; majPersos(); };
+  r.readAsDataURL(inp.files[0]);
+});
+$("persos").addEventListener("click",e=>{
+  const f=e.target.dataset.flip, d=e.target.dataset.del;
+  if(f){flips[f]=!flips[f]; store.set("pcr-flip-"+f,flips[f]?"1":"0"); majPersos();}
+  if(d){imgs[d]=null; store.del("pcr-img-"+d); majPersos();}
+});
+
+/* ---------- Sons d'ambiance (WebAudio) ---------- */
+let actx=null;
+function bip(type){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const t=actx.currentTime;
+    if(type==="ok"){
+      [660,880].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+i*.12);g.gain.exponentialRampToValueAtTime(.25,t+i*.12+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.12+.3);o.connect(g).connect(actx.destination);o.start(t+i*.12);o.stop(t+i*.12+.32);});
+    }else if(type==="loup"){
+      const o=actx.createOscillator(),g=actx.createGain();o.type="sawtooth";o.frequency.setValueAtTime(110,t);o.frequency.linearRampToValueAtTime(70,t+.6);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.2,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+.65);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.7);
+    }else if(type==="gagne"){
+      [523,659,784,1046].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+i*.14);g.gain.exponentialRampToValueAtTime(.22,t+i*.14+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.14+.4);o.connect(g).connect(actx.destination);o.start(t+i*.14);o.stop(t+i*.14+.42);});
+    }
+  }catch(e){}
+}
+
+/* ---------- Scène ---------- */
+const Y = x => 262 + 4*Math.sin(x/160);
+let N=8, G=3;
+const X = k => 70 + (k+G)*(800/(N+G));
+
+function dessinerDecor(){
+  const fond=imgs.fond||CANVA.fond; let s="";
+  s+=`<rect width="1000" height="360" fill="#3f6b45"/>`;
+  s+=`<image href="${fond}" x="0" y="0" width="1000" height="360" preserveAspectRatio="xMidYMax slice"/>`;
+  // pancartes du chemin
+  for(let k=1;k<=N;k++){
+    const x=X(k-.5), y=Y(x)-30;
+    s+=`<g id="pc-${k}"><rect x="${x-3}" y="${y}" width="6" height="30" fill="#6b4529"/><rect class="pc-board" x="${x-20}" y="${y-22}" width="40" height="24" rx="4" fill="#c49a63" stroke="#8a5a34" stroke-width="2.5"/><text class="pc-txt" x="${x}" y="${y-5}" text-anchor="middle" font-family="Andika, Arial" font-weight="700" font-size="16" fill="#2a2119">${k}</text></g>`;
+  }
+  $("decor").innerHTML=s;
+}
+function placer(id,x){const el=$(id);el.style.left=(x/10)+"%";el.style.top=(Y(x)/3.6+3)+"%";}
+function etatPancarte(k,etat){
+  const g=document.getElementById("pc-"+k); if(!g) return;
+  const b=g.querySelector(".pc-board"), t=g.querySelector(".pc-txt");
+  if(etat==="actuelle"){b.setAttribute("fill","#f5d33b");t.textContent="?";}
+  else if(etat==="ok"){b.setAttribute("fill","#8fc79a");t.textContent="✓";}
+  else if(etat==="err"){b.setAttribute("fill","#f0a36b");t.textContent="✗";}
+  else {b.setAttribute("fill","#c49a63");t.textContent=k;}
+}
+
+/* ---------- Partie ---------- */
+let cfg={}, jeu=null, stream=null, recorder=null, chunks=[], occupe=false;
+
+function melanger(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function tirerMots(sons,n){
+  const paquets=sons.map(s=>melanger(MOTS[s].map(m=>({w:m[0],g:m[1],son:s}))));
+  const out=[];let i=0;
+  while(out.length<n){const p=paquets[i%paquets.length]; if(p.length) out.push(p.shift()); i++; if(paquets.every(x=>!x.length)) break;}
+  return melanger(out);
+}
+function motHTML(m,colorer){
+  const i=m.w.indexOf(m.g);
+  if(!colorer||i<0) return m.w;
+  return m.w.slice(0,i)+`<span class="son souligne">${m.w.slice(i,i+m.g.length)}</span>`+m.w.slice(i+m.g.length);
+}
+function motHTMLsimple(m){const i=m.w.indexOf(m.g);return m.w.slice(0,i)+`<span class="son">${m.w.slice(i,i+m.g.length)}</span>`+m.w.slice(i+m.g.length);}
+
+async function demarrer(mots){
+  const sons=sonsChoisis();
+  if(!mots && !sons.length){$("msg-reglages").textContent="Choisissez au moins un son.";return;}
+  cfg={prenom:$("prenom").value.trim(), n:+$("nb").value, gap:+$("erreurs").value+1, colorer:$("colorier").checked, rec:$("enregistrer").checked, sons};
+  store.set("pcr-sons",sons.join(",")); store.set("pcr-nb",$("nb").value); store.set("pcr-erreurs",$("erreurs").value);
+  store.set("pcr-colorier",cfg.colorer?"1":"0"); store.set("pcr-enregistrer",cfg.rec?"1":"0");
+  const liste = mots || tirerMots(sons,cfg.n);
+  N=liste.length; G=cfg.gap;
+  jeu={mots:liste,i:0,gap:cfg.gap,res:[],fini:false,debut:new Date()};
+  $("msg-reglages").textContent="";
+  if(cfg.rec && !stream){
+    try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }
+    catch(e){ stream=null; }
+  }
+  if(!cfg.rec && stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  $("rec").classList.remove("on");
+  $("rec-txt").textContent = cfg.rec ? (stream?"Micro prêt":"Micro indisponible : la partie continue sans enregistrement") : "Pas d'enregistrement";
+
+  $("titre-jeu").textContent = cfg.prenom ? `Le chemin de ${cfg.prenom}` : "Le chemin des sons";
+  dessinerDecor();
+  PERSOS.forEach(([k])=>appliquerSprite($("sp-"+k),k));
+  placer("sp-mamie",918);
+  placer("sp-chaperon",X(0)); placer("sp-loup",X(-jeu.gap));
+  majDistance();
+  montrer("ecran-jeu");
+  afficherMot();
+}
+function majDistance(){
+  const g=jeu.gap;
+  $("txt-distance").textContent = g<=0 ? "Le loup l'a rattrapé !" : g===1 ? "Attention, le loup est tout près !" : `Le loup est à ${g} pas`;
+  let s=""; for(let i=0;i<cfg.gap;i++) s+=`<i class="${i>=g?'mange':''}"></i>`;
+  $("pas").innerHTML=s;
+}
+function afficherMot(){
+  const m=jeu.mots[jeu.i];
+  $("mot").innerHTML=motHTML(m,cfg.colorer);
+  $("num").textContent=`Pancarte ${jeu.i+1} / ${N}`;
+  const p=$("pancarte"); p.classList.remove("apparait"); void p.offsetWidth; p.classList.add("apparait");
+  $("consigne").textContent = cfg.prenom ? `${cfg.prenom}, lis la pancarte !` : "Lis la pancarte !";
+  for(let k=1;k<=N;k++){const r=jeu.res[k-1]; etatPancarte(k, r?(r.ok?"ok":"err"):(k===jeu.i+1?"actuelle":""));}
+  boutons(true);
+  demarrerRec();
+}
+function boutons(on){["b-ok","b-err"].forEach(id=>$(id).disabled=!on); $("b-annuler").disabled=!on||!jeu.res.length;}
+
+function demarrerRec(){
+  if(!stream) return;
+  try{
+    chunks=[]; recorder=new MediaRecorder(stream);
+    recorder.ondataavailable=e=>{if(e.data&&e.data.size) chunks.push(e.data)};
+    recorder.start();
+    $("rec").classList.add("on"); $("rec-txt").textContent="Enregistrement en cours";
+  }catch(e){recorder=null;}
+}
+function arreterRec(garder){
+  return new Promise(res=>{
+    $("rec").classList.remove("on");
+    if(!recorder||recorder.state==="inactive"){res(null);return;}
+    const r=recorder;
+    r.onstop=()=>{ $("rec-txt").textContent="Micro prêt"; res(garder&&chunks.length? new Blob(chunks,{type:r.mimeType||"audio/webm"}) : null); };
+    r.stop();
+  });
+}
+
+async function repondre(ok){
+  if(occupe||!jeu||jeu.fini) return;
+  occupe=true; boutons(false);
+  const m=jeu.mots[jeu.i];
+  const blob=await arreterRec(true);
+  jeu.res.push({...m, ok, blob, url: blob?URL.createObjectURL(blob):null});
+  etatPancarte(jeu.i+1, ok?"ok":"err");
+  const pos=jeu.i+1;
+  if(!ok) jeu.gap--;
+  majDistance();
+  bouger("sp-chaperon",X(pos));
+  bouger("sp-loup",X(pos-jeu.gap));
+  if(ok) bip("ok"); else { bip("loup"); $("sp-loup").classList.add("grogne"); setTimeout(()=>$("sp-loup").classList.remove("grogne"),800); }
+  $("consigne").textContent = ok ? "Bravo, on avance !" : "Oh ! Le loup se rapproche…";
+  await pause(1000);
+  if(jeu.gap<=0){ return finir(false); }
+  if(pos>=N){ return finir(true); }
+  jeu.i++; occupe=false; afficherMot();
+}
+function bouger(id,x){const el=$(id);el.classList.remove("marche");void el.offsetWidth;el.classList.add("marche");placer(id,x);}
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function annuler(){
+  if(occupe||!jeu||jeu.fini||!jeu.res.length) return;
+  occupe=true;
+  await arreterRec(false);
+  const r=jeu.res.pop(); if(r.url) URL.revokeObjectURL(r.url);
+  if(!r.ok) jeu.gap++;
+  jeu.i=jeu.res.length;
+  placer("sp-chaperon",X(jeu.i)); placer("sp-loup",X(jeu.i-jeu.gap));
+  majDistance(); occupe=false; afficherMot();
+}
+
+function ecouter(){
+  try{
+    const u=new SpeechSynthesisUtterance(jeu.mots[jeu.i].w);
+    u.lang="fr-FR"; u.rate=.8;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("fr")); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- Fin de partie ---------- */
+async function finir(gagne){
+  jeu.fini=true; occupe=false;
+  if(gagne){ bip("gagne"); placer("sp-mamie",918); }
+  await pause(gagne?700:300);
+  const nom="le Petit Chaperon rouge";
+  $("fin-titre").className="fin-titre "+(gagne?"gagne":"perdu");
+  $("fin-img").innerHTML = rendrePerso(gagne?"mamie":"loup");
+  $("fin-h1").textContent = gagne ? (cfg.prenom?`Bravo ${cfg.prenom} ! `:"Bravo ! ")+"Le Petit Chaperon rouge est arrivé chez Mère-Grand." : `Le loup a rattrapé ${nom}… On recommence ?`;
+  const bons=jeu.res.filter(r=>r.ok).length;
+  $("fin-score").textContent = `${bons} mot${bons>1?"s":""} bien lu${bons>1?"s":""} sur ${jeu.res.length} lu${jeu.res.length>1?"s":""} (${N} pancartes sur le chemin).`;
+  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok)parSon[r.son][0]++;});
+  $("fin-parson").innerHTML=Object.entries(parSon).map(([s,[a,b]])=>`<span><b>${LIBELLE[s]}</b> ${a}/${b}</span>`).join("");
+  const nomF=(cfg.prenom||"eleve").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]/g,"");
+  const date=jeu.debut.toISOString().slice(0,10);
+  $("fin-lignes").innerHTML=jeu.res.map((r,i)=>{
+    const ext=(r.blob&&r.blob.type.includes("mp4"))?"m4a":"webm";
+    r.fichier=`${nomF}_${date}_${String(i+1).padStart(2,"0")}_${r.w}_${r.ok?"juste":"erreur"}.${ext}`;
+    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?"ok":"err"}">${r.ok?"Bien lu":"Erreur"}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
+  }).join("");
+  $("b-rates").hidden=!jeu.res.some(r=>!r.ok);
+  $("b-tout").hidden=!jeu.res.some(r=>r.url);
+  $("msg-fin").textContent="";
+  montrer("ecran-fin");
+}
+function bilanTexte(){
+  const d=jeu.debut.toLocaleDateString("fr-FR");
+  const bons=jeu.res.filter(r=>r.ok).length;
+  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok)parSon[r.son][0]++;});
+  const erreurs=jeu.res.filter(r=>!r.ok).map(r=>r.w);
+  return `${cfg.prenom||"Élève"} – ${d} – Chemin des sons\n${bons}/${jeu.res.length} mots bien lus (${jeu.res.length<N?"rattrapé par le loup":"arrivé chez Mère-Grand"})\n`+
+    Object.entries(parSon).map(([s,[a,b]])=>`${LIBELLE[s]} : ${a}/${b}`).join(" · ")+
+    `\nErreurs : ${erreurs.length?erreurs.join(", "):"aucune"}`;
+}
+$("b-copier").onclick=async()=>{
+  const t=bilanTexte();
+  try{await navigator.clipboard.writeText(t);$("msg-fin").textContent="Bilan copié.";}
+  catch(e){$("msg-fin").textContent=t;}
+};
+$("b-tout").onclick=async()=>{
+  for(const r of jeu.res){ if(!r.url) continue; const a=document.createElement("a"); a.href=r.url; a.download=r.fichier; document.body.appendChild(a); a.click(); a.remove(); await pause(450); }
+  $("msg-fin").textContent="Enregistrements envoyés dans le dossier Téléchargements.";
+};
+$("b-rates").onclick=()=>demarrer(melanger(jeu.res.filter(r=>!r.ok).map(r=>({w:r.w,g:r.g,son:r.son}))));
+$("b-rejouer").onclick=()=>demarrer();
+$("b-reglages").onclick=()=>{fermerMicro();montrer("ecran-reglages");};
+
+/* ---------- Navigation ---------- */
+function montrer(id){["ecran-reglages","ecran-jeu","ecran-fin"].forEach(e=>$(e).hidden=e!==id);window.scrollTo(0,0);}
+function fermerMicro(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+$("partir").onclick=()=>demarrer();
+$("b-ok").onclick=()=>repondre(true);
+$("b-err").onclick=()=>repondre(false);
+$("b-annuler").onclick=annuler;
+$("b-ecouter").onclick=ecouter;
+$("b-quitter").onclick=async()=>{await arreterRec(false);jeu.fini=true;occupe=false;fermerMicro();montrer("ecran-reglages");};
+document.addEventListener("keydown",e=>{
+  if($("ecran-jeu").hidden||e.target.tagName==="INPUT") return;
+  const k=e.key.toLowerCase();
+  if(k==="arrowright"||k==="v"){e.preventDefault();repondre(true);}
+  else if(k==="arrowleft"||k==="x"){e.preventDefault();repondre(false);}
+  else if(k==="z"){e.preventDefault();annuler();}
+});
+</script>
+</body>
+</html>
