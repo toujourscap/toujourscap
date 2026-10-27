@@ -8196,6 +8196,45 @@
       ]
      },
      {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Validation automatique (facultative)",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En cochant « Validation automatique », le jeu écoute l'élève : quand le mot est reconnu, le Chaperon avance tout seul. L'adulte garde la main avec les boutons « Bien lu » et « Erreur ».",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "À utiliser dans un environnement calme, micro près de l'élève : le bruit de la classe empêche la reconnaissance. Elle fonctionne dans Chrome ou Edge avec une connexion Internet, la voix étant analysée par Google. Attention : le navigateur cherche toujours un vrai mot et peut accepter une lecture approximative (« lapan » entendu « lapin ») ; l'écoute de l'adulte reste la référence.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
       "type": "HTML",
       "htmlData": {
        "url": "/outils/le-chemin-des-sons.html",

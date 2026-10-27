@@ -44,7 +44,7 @@ input[type=text],select{font:inherit;font-size:18px;padding:8px 10px;border:2px 
 .son-chip input:focus-visible+span{outline:3px solid #f5d33b;outline-offset:2px}
 .mots-apercu{font-size:14px;color:var(--gris);margin-top:8px;line-height:1.5}
 .coche{display:flex;gap:10px;align-items:center;font-size:16px;margin:6px 0}
-.coche input{width:20px;height:20px}
+.coche input{width:20px;height:20px;flex:0 0 auto}
 .persos{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .perso{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:14px}
 .perso .vignette{width:100%;aspect-ratio:1;max-width:110px;background:var(--ciel);border-radius:12px;display:grid;place-items:center;overflow:hidden;border:2px dashed #b9c9a6}
@@ -65,6 +65,9 @@ input[type=text],select{font:inherit;font-size:18px;padding:8px 10px;border:2px 
 .jauge{flex:1;height:12px;border-radius:6px;background:#efe5d2;overflow:hidden}
 .jauge i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s}
 #micro-msg.erreur{color:var(--err);font-weight:700}
+.ecoute{font-size:15px;color:var(--ok);font-weight:700;width:100%}
+.ecoute.ko{color:var(--gris);font-weight:400}
+.pill.auto{background:#4f7a3a}
 
 /* ---------- Jeu ---------- */
 .jeu{display:flex;flex-direction:column;gap:14px}
@@ -117,6 +120,8 @@ kbd{background:#efe5d2;border-radius:4px;padding:1px 5px;font-family:inherit}
 /* ---------- Fin ---------- */
 .fin-titre{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .fin-titre h1{font-size:clamp(26px,5vw,40px)}
+#fin-img{flex:0 0 auto}
+#fin-img img,#fin-img svg{width:100%;height:auto;display:block}
 .fin-titre.gagne h1{color:var(--ok)}
 .fin-titre.perdu h1{color:var(--err)}
 .score{font-size:18px;margin:0 0 16px}
@@ -173,6 +178,8 @@ td a{font-size:13px;color:var(--bois)}
       <div class="mots-apercu" id="apercu"></div>
       <label class="coche"><input type="checkbox" id="colorier" checked> Colorier le son dans le mot</label>
       <label class="coche"><input type="checkbox" id="enregistrer" checked> Enregistrer la lecture de l'élève</label>
+      <label class="coche" id="ligne-auto"><input type="checkbox" id="auto"> Validation automatique (reconnaissance vocale)</label>
+      <p class="note" id="note-auto">Le Chaperon avance tout seul quand le mot est reconnu ; l'adulte peut toujours corriger avec les boutons. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
       <div class="micro-test">
         <button type="button" class="btn-petit" id="b-micro">Tester le micro</button>
         <div class="jauge" aria-hidden="true"><i id="jauge"></i></div>
@@ -222,6 +229,7 @@ td a{font-size:13px;color:var(--bois)}
       <button class="btn-petit" id="b-quitter">Quitter</button>
     </div>
     <div class="rec" id="rec"><span class="point"></span><span id="rec-txt">Pas d'enregistrement</span></div>
+    <div class="ecoute" id="ecoute" hidden></div>
     <div class="raccourcis">Clavier : <kbd>→</kbd> ou <kbd>V</kbd> bien lu · <kbd>←</kbd> ou <kbd>X</kbd> erreur · <kbd>Z</kbd> annuler</div>
   </div>
 </section>
@@ -229,7 +237,7 @@ td a{font-size:13px;color:var(--bois)}
 <!-- ================= FIN ================= -->
 <section id="ecran-fin" class="carte" hidden>
   <div class="fin-titre" id="fin-titre">
-    <div id="fin-img" style="width:72px"></div>
+    <div id="fin-img" style="width:110px"></div>
     <h1 id="fin-h1"></h1>
   </div>
   <p class="score" id="fin-score"></p>
@@ -299,7 +307,8 @@ const sonsSauves = (store.get("pcr-sons")||"ou,an,in,eu,on,ei").split(",");
 $("sons").innerHTML = Object.keys(MOTS).map(s=>
   `<label class="son-chip"><input type="checkbox" value="${s}" id="son-${s}" ${sonsSauves.includes(s)?"checked":""}><span>${LIBELLE[s]}</span></label>`).join("");
 ["nb","erreurs"].forEach(id=>{const v=store.get("pcr-"+id); if(v) $(id).value=v;});
-["colorier","enregistrer"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
+if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome ou Edge."; }
+["colorier","enregistrer","auto"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
 
 function sonsChoisis(){return [...document.querySelectorAll("#sons input:checked")].map(i=>i.value)}
 function majApercu(){
@@ -355,6 +364,57 @@ async function testerMicro(){
 }
 function arreterTest(){cancelAnimationFrame(testRaf);if(testFlux){testFlux.getTracks().forEach(t=>t.stop());testFlux=null;}$("jauge").style.width="0";$("b-micro").textContent="Tester le micro";}
 $("b-micro").onclick=testerMicro;
+
+/* ---------- Validation automatique (reconnaissance vocale de Chrome) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// Formes acceptées : le mot et ses homophones (même son, autre écriture), plus les chiffres que Chrome écrit parfois.
+const HOMOPHONES = {
+  chou:"choux", roue:"roux", cou:"coup coût coud coups", joue:"joues", four:"fours", tour:"tours",
+  tante:"tente tantes", tente:"tante tentes", danse:"dense danses", gant:"gants", dans:"dent dents", dent:"dents dans",
+  vent:"vend vends vents van", lent:"lents", plante:"plantes",
+  patin:"patins", pin:"pain peint pains pins", vin:"vingt vain vint vins 20", sapin:"sapins", lapin:"lapins", lutin:"lutins",
+  feu:"feux", jeu:"jeux", bleu:"bleus", peu:"peut peux", fleur:"fleurs", neuf:"9 neufs", seul:"seuls seule",
+  pont:"ponts ponds", rond:"ronds", ballon:"ballons", bonbon:"bonbons", melon:"melons", lion:"lions",
+  reine:"rêne renne reines rennes", veine:"vaine", peine:"pène", seize:"16", treize:"13"
+};
+function normaliser(t){return " "+t.toLowerCase().replace(/[’']/g," ").replace(/[^a-zàâäçéèêëîïôöùûüœ0-9 ]/g," ").replace(/\s+/g," ").trim()+" ";}
+function reconnu(texte, mot){
+  const t=normaliser(texte);
+  const formes=[mot,...(HOMOPHONES[mot]||"").split(" ").filter(Boolean)];
+  if(mot==="lent") formes.push("l an");
+  return formes.some(f=>t.includes(" "+f+" "));
+}
+let reco=null, ecouteActive=false, recoBloquee=false;
+function indicEcoute(txt,ok){const e=$("ecoute");e.hidden=false;e.textContent=txt;e.className="ecoute"+(ok?"":" ko");}
+function lancerEcoute(){
+  if(!cfg.auto||!SR||recoBloquee) return;
+  ecouteActive=true; nouvelleReco();
+}
+function nouvelleReco(){
+  if(!ecouteActive) return;
+  const mot=jeu.mots[jeu.i].w, r=new SR(); reco=r;
+  r.lang="fr-FR"; r.continuous=true; r.interimResults=true; r.maxAlternatives=5;
+  r.onstart=()=>{ if(reco===r) indicEcoute("J'écoute…",true); };
+  r.onresult=e=>{
+    if(reco!==r||!ecouteActive) return;
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const res=e.results[i];
+      for(let j=0;j<res.length;j++){ if(reconnu(res[j].transcript,mot)){ indicEcoute("Mot reconnu !",true); arreterEcoute(); repondre(true,true); return; } }
+      const vu=res[0].transcript.trim(); if(vu) indicEcoute("J'entends : « "+vu.split(/\s+/).slice(-3).join(" ")+" »  —  à l'adulte de valider si besoin",false);
+    }
+  };
+  r.onerror=e=>{
+    if(reco!==r) return;
+    const msg={ "not-allowed":"Reconnaissance vocale refusée par le navigateur : validez avec les boutons.",
+      "service-not-allowed":"Reconnaissance vocale refusée par le navigateur : validez avec les boutons.",
+      "network":"Pas de connexion Internet pour la reconnaissance vocale : validez avec les boutons.",
+      "audio-capture":"Aucun micro trouvé : validez avec les boutons." }[e.error];
+    if(msg){ recoBloquee=true; ecouteActive=false; indicEcoute(msg,false); }
+  };
+  r.onend=()=>{ if(reco===r&&ecouteActive) setTimeout(nouvelleReco,60); };
+  try{ r.start(); }catch(e){ setTimeout(nouvelleReco,300); }
+}
+function arreterEcoute(){ ecouteActive=false; const r=reco; reco=null; if(r){ try{r.abort();}catch(e){} } }
 
 /* ---------- Sons d'ambiance (WebAudio) ---------- */
 let actx=null;
@@ -418,9 +478,10 @@ function motHTMLsimple(m){const i=m.w.indexOf(m.g);return m.w.slice(0,i)+`<span 
 async function demarrer(mots){
   const sons=sonsChoisis();
   if(!mots && !sons.length){$("msg-reglages").textContent="Choisissez au moins un son.";return;}
-  cfg={prenom:$("prenom").value.trim(), n:+$("nb").value, gap:+$("erreurs").value+1, colorer:$("colorier").checked, rec:$("enregistrer").checked, sons};
+  cfg={prenom:$("prenom").value.trim(), n:+$("nb").value, gap:+$("erreurs").value+1, colorer:$("colorier").checked, rec:$("enregistrer").checked, auto:$("auto").checked&&!$("auto").disabled, sons};
   store.set("pcr-sons",sons.join(",")); store.set("pcr-nb",$("nb").value); store.set("pcr-erreurs",$("erreurs").value);
-  store.set("pcr-colorier",cfg.colorer?"1":"0"); store.set("pcr-enregistrer",cfg.rec?"1":"0");
+  store.set("pcr-colorier",cfg.colorer?"1":"0"); store.set("pcr-enregistrer",cfg.rec?"1":"0"); store.set("pcr-auto",cfg.auto?"1":"0");
+  recoBloquee=false; $("ecoute").hidden=!cfg.auto; if(cfg.auto) indicEcoute("Validation automatique active",true);
   const liste = mots || tirerMots(sons,cfg.n);
   N=liste.length; G=cfg.gap;
   jeu={mots:liste,i:0,gap:cfg.gap,res:[],fini:false,debut:new Date()};
@@ -458,6 +519,7 @@ function afficherMot(){
   for(let k=1;k<=N;k++){const r=jeu.res[k-1]; etatPancarte(k, r?(r.ok?"ok":"err"):(k===jeu.i+1?"actuelle":""));}
   boutons(true);
   demarrerRec();
+  lancerEcoute();
 }
 function boutons(on){["b-ok","b-err"].forEach(id=>$(id).disabled=!on); $("b-annuler").disabled=!on||!jeu.res.length;}
 
@@ -480,12 +542,12 @@ function arreterRec(garder){
   });
 }
 
-async function repondre(ok){
+async function repondre(ok,auto){
   if(occupe||!jeu||jeu.fini) return;
-  occupe=true; boutons(false);
+  occupe=true; boutons(false); arreterEcoute();
   const m=jeu.mots[jeu.i];
   const blob=await arreterRec(true);
-  jeu.res.push({...m, ok, blob, url: blob?URL.createObjectURL(blob):null});
+  jeu.res.push({...m, ok, auto:!!auto, blob, url: blob?URL.createObjectURL(blob):null});
   etatPancarte(jeu.i+1, ok?"ok":"err");
   const pos=jeu.i+1;
   if(!ok) jeu.gap--;
@@ -504,7 +566,7 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms));
 
 async function annuler(){
   if(occupe||!jeu||jeu.fini||!jeu.res.length) return;
-  occupe=true;
+  occupe=true; arreterEcoute();
   await arreterRec(false);
   const r=jeu.res.pop(); if(r.url) URL.revokeObjectURL(r.url);
   if(!r.ok) jeu.gap++;
@@ -540,7 +602,7 @@ async function finir(gagne){
   $("fin-lignes").innerHTML=jeu.res.map((r,i)=>{
     const ext=(r.blob&&r.blob.type.includes("mp4"))?"m4a":"webm";
     r.fichier=`${nomF}_${date}_${String(i+1).padStart(2,"0")}_${r.w}_${r.ok?"juste":"erreur"}.${ext}`;
-    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?"ok":"err"}">${r.ok?"Bien lu":"Erreur"}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
+    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?(r.auto?"auto":"ok"):"err"}">${r.ok?(r.auto?"Reconnu":"Bien lu"):"Erreur"}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
   }).join("");
   $("b-rates").hidden=!jeu.res.some(r=>!r.ok);
   $("b-tout").hidden=!jeu.res.some(r=>r.url);
@@ -573,15 +635,15 @@ $("b-reglages").onclick=()=>{fermerMicro();montrer("ecran-reglages");};
 function montrer(id){["ecran-reglages","ecran-jeu","ecran-fin"].forEach(e=>$(e).hidden=e!==id);window.scrollTo(0,0);}
 function fermerMicro(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
 $("partir").onclick=()=>demarrer();
-$("b-ok").onclick=()=>repondre(true);
+$("b-ok").onclick=()=>repondre(true,false);
 $("b-err").onclick=()=>repondre(false);
 $("b-annuler").onclick=annuler;
 $("b-ecouter").onclick=ecouter;
-$("b-quitter").onclick=async()=>{await arreterRec(false);jeu.fini=true;occupe=false;fermerMicro();montrer("ecran-reglages");};
+$("b-quitter").onclick=async()=>{arreterEcoute();await arreterRec(false);jeu.fini=true;occupe=false;fermerMicro();montrer("ecran-reglages");};
 document.addEventListener("keydown",e=>{
   if($("ecran-jeu").hidden||e.target.tagName==="INPUT") return;
   const k=e.key.toLowerCase();
-  if(k==="arrowright"||k==="v"){e.preventDefault();repondre(true);}
+  if(k==="arrowright"||k==="v"){e.preventDefault();repondre(true,false);}
   else if(k==="arrowleft"||k==="x"){e.preventDefault();repondre(false);}
   else if(k==="z"){e.preventDefault();annuler();}
 });
