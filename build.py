@@ -37,6 +37,7 @@ CATS = {
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
     "comprehension": {"name": "Compréhension", "desc": "Jeux pour comprendre ce qu'on lit au CP et au CE1 : pronoms et substituts, inférences, implicite, états mentaux des personnages, connecteurs.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
+    "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -439,6 +440,8 @@ SEO_TITRES = {
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
+    "/maths/problemes/": "Résolution de problèmes CP-CE1 : jeux en ligne gratuits",
+    "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
     "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : additions et soustractions en calcul mental, CP-CE2",
     "/post/la-course-des-multiplications/": "La Course des Multiplications : jeu de tables de multiplication CE1-CE2",
@@ -474,7 +477,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -600,9 +603,9 @@ def main():
   {embed(t['src'], t['height'], t['title'])}
   <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
 </section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
-    msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul")]
+    msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul", "problemes")]
     # Image choisie pour une vignette de sous-rubrique (sinon : couverture du premier article)
-    VIGNETTES = {"calcul": "/images/domaines/calcul.jpg"}
+    VIGNETTES = {"calcul": "/images/domaines/calcul.jpg", "problemes": "/images/domaines/problemes.jpg"}
     vimg = lambda k, lst: VIGNETTES.get(k) or cover_of(lst)
     mvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/maths/{k}/">
   <div class="card-img">{f'<img src="{esc(vimg(k, lst))}" alt="{esc(t)}" loading="lazy">' if vimg(k, lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
@@ -613,7 +616,7 @@ def main():
   <p class="lead">Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.</p>
   {NOTE_LECTURE}
   {mvignettes}
-</section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération et de calcul mental pour la GS, le CP et le CE1."))
+</section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération, de calcul mental et de résolution de problèmes pour la GS, le CP et le CE1."))
     for k, t, d, lst in msubs:
         presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
         filtres = ""

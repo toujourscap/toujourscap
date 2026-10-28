@@ -1,6 +1,262 @@
 {
- "count": 26,
+ "count": 27,
  "posts": [
+  {
+   "title": "Le secret de la pyramide",
+   "slug": "le-secret-de-la-pyramide",
+   "cat": "problemes",
+   "excerpt": "Un jeu de résolution de problèmes en 4 étapes : lire l'énoncé, choisir l'image, trouver l'opération, trouver la réponse. 7 problèmes pour reconstituer la carte de la tombe du roi.",
+   "date": "2026-10-28T18:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu de résolution de problèmes à l'écran. L'élève choisit son explorateur ou son exploratrice et entre dans la pyramide. Chaque problème résolu lui donne un morceau de carte. Après 7 problèmes, la carte est complète et mène à la tombe du roi.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Quatre étapes pour chaque problème",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lire l'énoncé. ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un bouton permet de l'écouter.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir l'image qui correspond au problème ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "parmi trois : se représenter la situation avant de calculer.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Trouver l'opération.",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Trouver la réponse.",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Chaque étape n'apparaît que lorsque la précédente est réussie. En cas d'erreur, un message aide l'élève à se corriger.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Deux niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CP : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "additions et soustractions jusqu'à 20. L'élève choisit l'opération puis la réponse parmi trois propositions.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CE1 : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "nombres jusqu'à 100, situations d'addition, de soustraction, de multiplication et de partage. L'élève écrit lui-même l'opération et la réponse. Les trois images se ressemblent : une seule correspond exactement à l'énoncé.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-secret-de-la-pyramide.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "Les fusées des syllabes",
    "slug": "les-fusees-des-syllabes",
