@@ -100,6 +100,12 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @keyframes non{20%{margin-left:-1.4%}40%{margin-left:1.4%}60%{margin-left:-.9%}80%{margin-left:.9%}}
 .fumee{position:absolute;bottom:13%;width:9%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(230,220,215,.6) 55%,rgba(230,220,215,0) 72%);transform:translate(-50%,0) scale(.2);pointer-events:none;z-index:2;animation:fumee 1.4s ease-out forwards}
 @keyframes fumee{to{transform:translate(calc(-50% + var(--dx,0px)),-30%) scale(2.4);opacity:0}}
+.cosmo{position:absolute;left:1.5%;bottom:3%;width:13%;z-index:4;pointer-events:none;transform-origin:50% 100%}
+.cosmo img{width:100%;display:block}
+.cosmo.saute{animation:saute .5s ease-out 3}
+@keyframes saute{40%{transform:translateY(-14%)}}
+.cosmo.boude{animation:boude .5s ease-in-out 2}
+@keyframes boude{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
 .decompte{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);font:800 clamp(48px,12vw,130px)/1 var(--f-titre);color:#fff;text-shadow:0 4px 0 var(--mars-fonce),0 0 30px rgba(0,0,0,.4);z-index:7;pointer-events:none}
 .decompte.anim{animation:compte .9s ease-out}
 @keyframes compte{0%{transform:translate(-50%,-50%) scale(1.8);opacity:0}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:.85}}
@@ -191,6 +197,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
   </div>
   <div class="scene" id="scene">
     <div class="consigne" id="consigne">Range les fusées pour former un mot</div>
+    <div class="cosmo" id="cosmo"><img src="/images/fusees-syllabes/cosmonaute.png" alt="" draggable="false" onerror="this.parentNode.hidden=true"></div>
     <canvas id="feux"></canvas>
   </div>
   <p class="lecture" id="lecture" aria-live="polite"></p>
@@ -229,7 +236,7 @@ const MOTS = {
 const NOMS_NIV = {1:"Niveau 1",2:"Niveau 2",3:"Niveau 3",perso:"Mes mots"};
 
 /* ---------- Images (créées sur Canva) ---------- */
-const CANVA = {"fond":"/images/fusees-syllabes/fond.jpg","fusee":"/images/fusees-syllabes/fusee.png"};
+const CANVA = {"fond":"/images/fusees-syllabes/fond.jpg","fusee":"/images/fusees-syllabes/fusee.png","cosmonaute":"/images/fusees-syllabes/cosmonaute.png"};
 const SVG_FUSEE = `<svg class="corps" viewBox="0 0 90 178" xmlns="http://www.w3.org/2000/svg"><path d="M45 4C25 26 18 58 20 104L22 150H68L70 104C72 58 65 26 45 4Z" fill="#f4f1ec" stroke="#d8d1c6" stroke-width="2"/><path d="M45 4C33 17 27 30 24 42H66C63 30 57 17 45 4Z" fill="#d93a2b"/><path d="M24 42H66l1 5H23z" fill="#f2b630"/><circle cx="45" cy="74" r="17" fill="#fff" stroke="#f2b630" stroke-width="5"/><path d="M21 104L4 150 6 168 23 150Z" fill="#d93a2b"/><path d="M69 104L86 150 84 168 67 150Z" fill="#d93a2b"/><path d="M40 120h10l2 52h-14z" fill="#d93a2b"/><rect x="26" y="150" width="38" height="10" rx="3" fill="#9a9a9a"/></svg>`;
 let fuseeOk = true;
 (function(){const im=new Image(); im.onerror=()=>{fuseeOk=false; document.querySelectorAll(".fusee img").forEach(i=>i.outerHTML=SVG_FUSEE); majLogo();}; im.src=CANVA.fusee;})();
@@ -415,7 +422,7 @@ async function decoller(){
   const r=scene.getBoundingClientRect();
   const points = els.map(e=>{ const b=e.getBoundingClientRect(); return {x:(b.left+b.width/2-r.left)/r.width, y:Math.max(.12,(b.top+b.height*.3-r.top)/r.height)}; });
   els.forEach(e=>e.style.visibility="hidden");
-  boum(); exploser(points);
+  boum(); exploser(points); reagir("saute");
   await pause(450);
   afficherMot();
 }
@@ -423,7 +430,7 @@ async function echec(els){
   els.forEach(e=>e.classList.remove("allume","vibre"));
   await pause(250);
   els.forEach(e=>{ e.classList.remove("non"); void e.offsetWidth; e.classList.add("non"); });
-  rate();
+  rate(); reagir("boude");
   tour.essais++;
   const m=document.createElement("div"); m.className="message"; m.textContent="Pas dans le bon ordre : relis et essaie encore !"; scene.appendChild(m);
   if(tour.essais>=2 && $("opt-aide").checked){
@@ -459,6 +466,8 @@ function afficherMot(){
   $("suivant").textContent = partie.i>=partie.mots.length ? "Fin de la mission →" : "Mot suivant →";
   setTimeout(()=>$("suivant").focus({preventScroll:true}),1600);
 }
+
+function reagir(c){ const e=$("cosmo"); e.classList.remove("saute","boude"); void e.offsetWidth; e.classList.add(c); }
 
 /* ---------- Feux d'artifice (canvas) ---------- */
 const cv=$("feux"), cx=cv.getContext("2d"); let parts=[], anim=null;
