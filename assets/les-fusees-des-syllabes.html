@@ -7,11 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
 <style>
-/* Base de lancement sur Mars : réglages sur une carte, puis la scène (fond Canva) avec les fusées-syllabes. */
+/* Base de lancement sur Mars : l'image du mot, des fusées vides, et une réserve de syllabes à glisser dans les hublots. */
 :root{
   --nuit:#2a1631; --nuit-2:#3d2045; --mars:#d4552a; --mars-fonce:#9c3517; --sable:#f7dfc0;
   --papier:#fff8ef; --jaune:#f6c437; --encre:#2a1a22; --gris:#75656a; --ok:#2f8a4e; --err:#d0661b;
-  --bleu:#2563c9; --rouge:#c8322f;
   --f-titre:"Grandstander","Comic Sans MS",system-ui,sans-serif;
   --f-lecture:"Andika","Arial",system-ui,sans-serif;
   color-scheme:light;
@@ -49,119 +48,134 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--mars
 .chip span{display:inline-block;padding:7px 14px;border-radius:999px;border:2px solid #e2cdb0;background:#fff;font-weight:700;font-size:17px}
 .chip input:checked+span{background:var(--mars);border-color:var(--mars);color:#fff}
 .chip input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
+.etiq{font-size:13px;color:var(--gris);margin:12px 0 6px}
+.etiq:first-of-type{margin-top:0}
 .coche{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-size:15px}
 .coche input{width:20px;height:20px;flex:0 0 auto;margin:1px 0 0}
 textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px solid #e2cdb0;border-radius:10px;min-height:84px;resize:vertical}
 .note{font-size:13px;color:var(--gris);margin:6px 0 0;line-height:1.45}
-.apercu{font-size:14px;color:var(--gris);margin-top:14px;line-height:1.6}
-.apercu b{color:var(--encre)}
+.apercu{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.apercu figure{margin:0;width:74px;text-align:center;font-size:13px;color:var(--gris)}
+.apercu figure img{width:74px;height:74px;object-fit:contain;background:#fff;border-radius:10px;border:2px solid #ecd9c0;display:block}
+.apercu p{margin:0;font-size:14px;color:var(--gris)}
 .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;align-items:center;flex-wrap:wrap}
-.alerte{color:var(--err);font-weight:700}
 .btn{border:none;border-radius:14px;padding:13px 24px;font-size:20px;font-weight:800;font-family:var(--f-titre)}
 .btn-go{background:var(--mars);color:#fff;box-shadow:0 5px 0 var(--mars-fonce)}
 .btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--mars-fonce)}
-.btn-go:disabled{opacity:.5;cursor:default}
+.btn-go:disabled{opacity:.45;cursor:default;transform:none}
 .btn-sec{background:#f3e3cf;color:var(--encre)}
 
 /* ---------- Jeu ---------- */
 .bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--sable);margin-bottom:10px;flex-wrap:wrap}
 .bandeau h2{font-size:20px}
-.progres{display:flex;gap:5px;align-items:center}
+.progres{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 .progres i{width:16px;height:16px;border-radius:50%;background:rgba(247,223,192,.25);display:block}
 .progres i.fait{background:var(--jaune);box-shadow:0 0 8px var(--jaune)}
 .progres i.encours{outline:2px solid var(--sable)}
 .lien{background:none;border:2px solid rgba(247,223,192,.4);color:var(--sable);border-radius:10px;padding:5px 12px;font-size:15px}
-.scene{position:relative;width:100%;aspect-ratio:1680/944;border-radius:18px;overflow:hidden;background:#e98d55 center/cover no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:none}
+.scene{position:relative;width:100%;aspect-ratio:1680/944;border-radius:18px 18px 0 0;overflow:hidden;background:#e98d55 center/cover no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none}
 .scene canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
-.consigne{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:rgba(42,22,49,.78);color:#fff;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);white-space:nowrap;z-index:5;transition:opacity .3s}
-.fusee{position:absolute;bottom:14%;width:14%;aspect-ratio:399/830;transform:translateX(-50%);border:none;background:none;padding:0;container-type:inline-size;transition:left .35s cubic-bezier(.3,.7,.3,1),transform .2s;z-index:3;cursor:grab;touch-action:none}
+
+/* image du mot */
+.image-mot{position:absolute;z-index:8;background:#fff;border-radius:6%;box-shadow:0 8px 24px rgba(0,0,0,.3);padding:1%;left:50%;top:50%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);transition:left .7s cubic-bezier(.5,0,.2,1),top .7s cubic-bezier(.5,0,.2,1),width .7s cubic-bezier(.5,0,.2,1),transform .7s cubic-bezier(.5,0,.2,1);pointer-events:none;border:4px solid var(--jaune)}
+.image-mot img{width:100%;height:100%;object-fit:contain;display:block}
+.image-mot.coin{left:2%;top:4%;width:15%;transform:none;pointer-events:auto;cursor:pointer}
+.image-mot.arrive{animation:apparait .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes apparait{from{transform:translate(-50%,-50%) scale(.2);opacity:0}}
+
+/* fusées */
+.fusee{position:absolute;bottom:14%;width:14%;aspect-ratio:399/830;transform:translateX(-50%);container-type:inline-size;z-index:3}
 .fusee img,.fusee svg.corps{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
-.fusee .syl{position:absolute;left:50%;top:43.3%;transform:translate(-50%,-50%);font-family:var(--f-lecture);font-weight:700;color:var(--encre);line-height:1;white-space:nowrap;pointer-events:none;background:rgba(255,255,255,.9);border-radius:.35em;padding:.06em .12em}
-.fusee .syl.l1,.fusee .syl.l2{font-size:32cqw}
-.fusee .syl.l3{font-size:30cqw}
-.fusee .syl.l4{font-size:27cqw}
-.fusee .syl.l5{font-size:23cqw}
-.fusee .syl.l6{font-size:20cqw}
-.fusee .syl.l7{font-size:17cqw}
-.fusee:hover{transform:translateX(-50%) translateY(-2%)}
-.fusee.drag{transition:none;z-index:5;cursor:grabbing;transform:translateX(-50%) translateY(-5%) scale(1.06);filter:drop-shadow(0 12px 10px rgba(0,0,0,.35))}
-.fusee.choisie{transform:translateX(-50%) translateY(-6%);filter:drop-shadow(0 0 10px var(--jaune)) drop-shadow(0 0 4px var(--jaune))}
-.fusee:focus-visible{outline:none;filter:drop-shadow(0 0 8px #fff)}
-.fusee .indice{position:absolute;left:50%;top:-12%;transform:translateX(-50%);width:34cqw;height:34cqw;min-width:22px;min-height:22px;border-radius:50%;background:var(--jaune);color:var(--encre);font:800 22cqw/1 var(--f-titre);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.3);animation:pop .4s}
-@keyframes pop{0%{transform:translateX(-50%) scale(0)}70%{transform:translateX(-50%) scale(1.2)}}
+.hublot{position:absolute;left:50%;top:43.3%;width:56%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:none;background:transparent;padding:0;cursor:pointer;display:grid;place-items:center}
+.hublot:empty::after{content:"";width:62%;aspect-ratio:1;border-radius:50%;border:3px dashed rgba(212,85,42,.55);animation:attend 1.4s ease-in-out infinite}
+@keyframes attend{50%{transform:scale(.85);opacity:.5}}
+.hublot.cible{background:rgba(246,196,55,.45);box-shadow:0 0 0 4px var(--jaune)}
+.hublot .syl{font-family:var(--f-lecture);font-weight:700;color:var(--encre);line-height:1;white-space:nowrap;background:rgba(255,255,255,.92);border-radius:.3em;padding:.06em .12em;animation:pose .25s ease-out}
+@keyframes pose{from{transform:scale(1.5);opacity:.3}}
+.syl.l1,.syl.l2{font-size:32cqw}.syl.l3{font-size:30cqw}.syl.l4{font-size:27cqw}.syl.l5{font-size:23cqw}.syl.l6{font-size:20cqw}.syl.l7{font-size:17cqw}
 .flamme{position:absolute;left:50%;top:92%;width:40%;height:0;transform:translateX(-50%);border-radius:50% 50% 50% 50%/30% 30% 70% 70%;background:radial-gradient(ellipse at 50% 15%,#fff7c2 0%,#ffd23f 30%,#ff7a1a 60%,rgba(255,60,0,0) 75%);pointer-events:none;transition:height .3s}
 .allume .flamme{height:55%;animation:flamme .09s infinite alternate}
 @keyframes flamme{to{transform:translateX(-50%) scaleY(1.15) scaleX(.92)}}
 .vibre{animation:vibre .08s infinite}
 @keyframes vibre{0%{margin-left:-.25%}50%{margin-left:.25%}100%{margin-left:0}}
-.decolle .flamme{height:95%}
-.decolle{transition:bottom 1.5s cubic-bezier(.55,0,.9,.6)!important;bottom:118%!important}
+.vole .flamme{height:95%}
 .non{animation:non .45s}
 @keyframes non{20%{margin-left:-1.4%}40%{margin-left:1.4%}60%{margin-left:-.9%}80%{margin-left:.9%}}
 .fumee{position:absolute;bottom:13%;width:9%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(230,220,215,.6) 55%,rgba(230,220,215,0) 72%);transform:translate(-50%,0) scale(.2);pointer-events:none;z-index:2;animation:fumee 1.4s ease-out forwards}
 @keyframes fumee{to{transform:translate(calc(-50% + var(--dx,0px)),-30%) scale(2.4);opacity:0}}
+
+.consigne{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:rgba(42,22,49,.78);color:#fff;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);white-space:nowrap;z-index:5;transition:opacity .3s}
+.decompte{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);font:800 clamp(48px,12vw,130px)/1 var(--f-titre);color:#fff;text-shadow:0 4px 0 var(--mars-fonce),0 0 30px rgba(0,0,0,.4);z-index:9;pointer-events:none}
+.decompte.anim{animation:compte .9s ease-out}
+@keyframes compte{0%{transform:translate(-50%,-50%) scale(1.8);opacity:0}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:.85}}
+.mot{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font:700 clamp(40px,10vw,120px)/1.1 var(--f-lecture);color:#fff;z-index:9;pointer-events:none;text-shadow:0 3px 0 rgba(0,0,0,.3);white-space:nowrap;background:rgba(42,22,49,.62);border-radius:.3em;padding:.08em .35em .14em;animation:grossit .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes grossit{from{transform:translate(-50%,-50%) scale(.1);opacity:0}}
+.bravo{position:absolute;left:50%;top:50%;transform:translateX(-50%);font:800 clamp(18px,3.4vw,34px)/1 var(--f-titre);color:var(--jaune);z-index:9;text-shadow:0 2px 0 rgba(0,0,0,.35);white-space:nowrap;background:rgba(42,22,49,.72);border-radius:999px;padding:.25em .8em;animation:grossit .5s backwards}
+.message{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:var(--err);color:#fff;font-weight:700;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);z-index:9;white-space:nowrap;animation:grossit .3s}
 .cosmo{position:absolute;left:1.5%;bottom:3%;width:13%;z-index:4;pointer-events:none;transform-origin:50% 100%}
 .cosmo img{width:100%;display:block}
 .cosmo.saute{animation:saute .5s ease-out 3}
 @keyframes saute{40%{transform:translateY(-14%)}}
 .cosmo.boude{animation:boude .5s ease-in-out 2}
 @keyframes boude{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
-.decompte{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);font:800 clamp(48px,12vw,130px)/1 var(--f-titre);color:#fff;text-shadow:0 4px 0 var(--mars-fonce),0 0 30px rgba(0,0,0,.4);z-index:7;pointer-events:none}
-.decompte.anim{animation:compte .9s ease-out}
-@keyframes compte{0%{transform:translate(-50%,-50%) scale(1.8);opacity:0}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:.85}}
-.mot{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);display:flex;gap:.35em;font:700 clamp(40px,10vw,120px)/1.1 var(--f-lecture);color:#fff;z-index:7;pointer-events:none;text-shadow:0 3px 0 rgba(0,0,0,.3);transition:gap .6s ease;white-space:nowrap;background:rgba(42,22,49,.62);border-radius:.3em;padding:.08em .35em .14em}
-.mot span{display:inline-block;animation:arrive .5s backwards}
-.mot span:nth-child(odd){color:#fff}
-.mot span:nth-child(even){color:var(--jaune)}
-.mot.colle{gap:0}
-.mot.colle span{color:#fff}
-@keyframes arrive{from{transform:scale(0) rotate(-12deg);opacity:0}}
-.bravo{position:absolute;left:50%;top:50%;transform:translateX(-50%);font:800 clamp(18px,3.4vw,34px)/1 var(--f-titre);color:var(--jaune);z-index:7;text-shadow:0 2px 0 rgba(0,0,0,.35);animation:arrive .5s backwards;white-space:nowrap;background:rgba(42,22,49,.72);border-radius:999px;padding:.25em .8em}
-.message{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:var(--err);color:#fff;font-weight:700;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);z-index:8;white-space:nowrap;animation:arrive .3s}
+
+/* réserve de syllabes */
+.reserve{background:var(--nuit-2);border-radius:0 0 18px 18px;padding:14px 12px 16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;min-height:84px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.tuile{font:700 clamp(24px,4vw,40px)/1 var(--f-lecture);color:var(--encre);background:#fff;border:none;border-radius:14px;padding:.3em .55em .35em;min-width:2.6em;box-shadow:0 5px 0 #c9b49a;touch-action:none;cursor:grab;transition:transform .15s,opacity .2s}
+.tuile:hover{transform:translateY(-3px)}
+.tuile.posee{visibility:hidden}
+.tuile.fantome{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%) scale(1.12);box-shadow:0 14px 20px rgba(0,0,0,.35);cursor:grabbing;transition:none}
 .commandes{display:flex;justify-content:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .lecture{margin-top:10px;text-align:center;color:var(--sable);font-size:clamp(16px,2.4vw,22px);min-height:1.5em}
 .lecture b{font-size:1.25em;color:#fff;letter-spacing:.02em}
 .fin{text-align:center}
 .fin h2{font-size:clamp(28px,5vw,44px);color:var(--mars)}
-.fin .liste{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
-.fin .liste span{background:#fdeee3;border:2px solid #f0c9a8;border-radius:10px;padding:6px 12px;font-size:20px;font-weight:700}
-.fin .liste span.aide{border-style:dashed}
-@media (max-width:560px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}}
-@media (prefers-reduced-motion:reduce){.allume .flamme,.vibre{animation:none}}
+.fin .liste{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0}
+.fin .liste figure{margin:0;background:#fdeee3;border:2px solid #f0c9a8;border-radius:12px;padding:6px 10px;font-size:20px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+.fin .liste figure img{width:64px;height:64px;object-fit:contain}
+.fin .liste figure.aide{border-style:dashed}
+@media (max-width:560px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.reserve{gap:8px}}
+@media (prefers-reduced-motion:reduce){.allume .flamme,.vibre,.hublot:empty::after{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- ========== Écran de réglages ========== -->
+<!-- ========== Réglages ========== -->
 <section id="ecran-reglages" class="carte">
   <div class="entete">
     <div class="logo" id="logo"></div>
     <div>
       <h1>Les fusées des syllabes</h1>
-      <p>Range les fusées dans le bon ordre pour former le mot… et décollage !</p>
+      <p>Regarde l'image, mets les bonnes syllabes dans les fusées… et décollage !</p>
     </div>
   </div>
 
-  <div class="niveaux" id="niveaux" role="radiogroup" aria-label="Niveau">
+  <div class="niveaux" role="radiogroup" aria-label="Niveau">
     <label class="niv"><input type="radio" name="niveau" value="1"><span><b>Niveau 1</b><small>Syllabes simples, sans voyelle complexe : mo-to, to-ma-te</small></span></label>
-    <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Quelques sons complexes (ou, on, an, in, oi, eau, ch…) : mou-ton, ca-deau</small></span></label>
-    <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Mots plus difficiles (pl, tr, gn, ill, ph…) : pa-pil-lon, cham-pi-gnon</small></span></label>
-    <label class="niv"><input type="radio" name="niveau" value="perso"><span><b>Mes mots</b><small>Votre propre liste de mots, découpés en syllabes</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Quelques sons complexes (ou, on, an, oi, eau, ch…) : mou-ton, ba-teau</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Mots plus difficiles (pl, cr, gn, ill, ph…) : pa-pil-lon, cham-pi-gnon</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="perso"><span><b>Mes mots</b><small>Votre propre liste, découpée en syllabes (sans image)</small></span></label>
   </div>
 
   <div class="grille">
     <fieldset>
       <legend>Partie</legend>
-      <p class="note" style="margin:0 0 6px">Nombre de mots</p>
-      <div class="choix" id="nb">
+      <p class="etiq">Nombre de mots</p>
+      <div class="choix">
         <label class="chip"><input type="radio" name="nb" value="5"><span>5</span></label>
         <label class="chip"><input type="radio" name="nb" value="8"><span>8</span></label>
-        <label class="chip"><input type="radio" name="nb" value="10"><span>10</span></label>
-        <label class="chip"><input type="radio" name="nb" value="15"><span>15</span></label>
+        <label class="chip"><input type="radio" name="nb" value="12"><span>12</span></label>
       </div>
-      <p class="note" style="margin:12px 0 6px">Nombre de fusées</p>
-      <div class="choix" id="nbsyl">
+      <p class="etiq">Syllabes en trop (intrus)</p>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="intrus" value="0"><span>0</span></label>
+        <label class="chip"><input type="radio" name="intrus" value="1"><span>1</span></label>
+        <label class="chip"><input type="radio" name="intrus" value="2"><span>2</span></label>
+        <label class="chip"><input type="radio" name="intrus" value="3"><span>3</span></label>
+      </div>
+      <p class="etiq">Nombre de fusées</p>
+      <div class="choix">
         <label class="chip"><input type="radio" name="nbsyl" value="2"><span>2</span></label>
         <label class="chip"><input type="radio" name="nbsyl" value="3"><span>3</span></label>
         <label class="chip"><input type="radio" name="nbsyl" value="23"><span>2 ou 3</span></label>
@@ -170,25 +184,24 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
     <fieldset>
       <legend>Options</legend>
       <label class="coche"><input type="checkbox" id="opt-dire"><span>Dire le mot à voix haute quand il apparaît</span></label>
-      <label class="coche"><input type="checkbox" id="opt-ecouter"><span>Bouton « Écouter le mot » (un indice pour trouver l'ordre)</span></label>
-      <label class="coche"><input type="checkbox" id="opt-aide"><span>Après 2 essais ratés, la 1<sup>re</sup> fusée est montrée</span></label>
+      <label class="coche"><input type="checkbox" id="opt-ecouter"><span>Bouton « Écouter le mot » (indice à l'oral)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-aide"><span>Après 2 essais ratés, la 1<sup>re</sup> syllabe se place toute seule</span></label>
       <label class="coche"><input type="checkbox" id="opt-sons"><span>Bruitages (compte à rebours, décollage, explosion)</span></label>
     </fieldset>
     <fieldset id="bloc-perso" hidden>
       <legend>Mes mots</legend>
       <textarea id="perso" spellcheck="false" placeholder="ra-quet-te&#10;ca-na-pé&#10;mou-ton"></textarea>
-      <p class="note">Un mot par ligne (ou séparés par des virgules), syllabes séparées par un tiret. 2 ou 3 syllabes par mot.</p>
+      <p class="note">Un mot par ligne (ou séparés par des virgules), syllabes séparées par un tiret, 2 ou 3 syllabes par mot.</p>
     </fieldset>
   </div>
 
-  <p class="apercu" id="apercu"></p>
+  <div class="apercu" id="apercu"></div>
   <div class="actions">
-    <span class="alerte" id="alerte" role="alert"></span>
     <button class="btn btn-go" id="go">Lancer la mission</button>
   </div>
 </section>
 
-<!-- ========== Écran de jeu ========== -->
+<!-- ========== Jeu ========== -->
 <section id="ecran-jeu" hidden>
   <div class="bandeau">
     <h2 id="titre-niveau">Niveau 1</h2>
@@ -196,19 +209,20 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
     <button class="lien" id="quitter">Réglages</button>
   </div>
   <div class="scene" id="scene">
-    <div class="consigne" id="consigne">Range les fusées pour former un mot</div>
-    <div class="cosmo" id="cosmo"><img src="/images/fusees-syllabes/cosmonaute.png" alt="" draggable="false" onerror="this.parentNode.hidden=true"></div>
+    <div class="consigne" id="consigne">Mets les syllabes dans les fusées</div>
+    <div class="cosmo" id="cosmo"><img alt="" draggable="false"></div>
     <canvas id="feux"></canvas>
   </div>
+  <div class="reserve" id="reserve" aria-label="Syllabes à placer"></div>
   <p class="lecture" id="lecture" aria-live="polite"></p>
   <div class="commandes">
     <button class="btn btn-sec" id="ecouter" hidden>🔊 Écouter le mot</button>
-    <button class="btn btn-go" id="decollage">🚀 Décollage !</button>
+    <button class="btn btn-go" id="decollage" disabled>🚀 Décollage !</button>
     <button class="btn btn-go" id="suivant" hidden>Mot suivant →</button>
   </div>
 </section>
 
-<!-- ========== Fin de mission ========== -->
+<!-- ========== Fin ========== -->
 <section id="ecran-fin" class="carte fin" hidden>
   <h2>Mission accomplie !</h2>
   <p id="bilan"></p>
@@ -221,26 +235,33 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 
 </div>
 <script>
-/* ---------- Mots (syllabes écrites, séparées par des tirets) ---------- */
+/* ---------- Images (créées sur Canva) ---------- */
+const DOSSIER = "/images/fusees-syllabes/";
+const CANVA = {fond:DOSSIER+"fond.jpg", fusee:DOSSIER+"fusee.png", cosmonaute:DOSSIER+"cosmonaute.png"};
+const imageMot = cle => DOSSIER + "mots/" + cle + ".jpg";
+
+/* ---------- Mots : syllabes écrites séparées par des tirets, et nom du fichier image ---------- */
 const MOTS = {
-  1: ["lu-ne","mo-to","vé-lo","ca-fé","so-fa","ju-do","la-ma","mu-le","ro-bot","ra-me","pi-le","pu-ma","ki-wi",
-      "to-ma-te","sa-la-de","do-mi-no","la-va-bo","pi-ra-te","ba-na-ne","ca-ba-ne","tu-li-pe","li-ma-ce","nu-mé-ro",
-      "ca-na-pé","sa-me-di","ki-mo-no","ma-la-de","ca-ra-fe"],
-  2: ["fu-sée","la-pin","mou-ton","sa-pin","cha-ton","pois-son","mai-son","mou-lin","ca-deau","ba-teau","gâ-teau",
-      "cha-peau","pous-sin","lun-di","ca-nard","jar-din","boî-te","mou-che","pou-let","ma-man",
-      "pan-ta-lon","cho-co-lat","ro-bi-net","é-toi-le","ca-rot-te","pan-tou-fle","voi-tu-re","cou-teau"],
-  3: ["pin-gouin","dra-gon","flo-con","cra-yon","bri-quet","clo-cher","plon-geon","pom-pier","prin-temps","tré-sor",
-      "pa-pil-lon","é-lé-phant","cham-pi-gnon","pa-ra-pluie","é-cu-reuil","es-car-got","ci-trouil-le","a-rai-gnée",
-      "gre-nouil-le","car-ta-ble","tri-cy-cle","trom-pet-te","pla-nè-te","fro-ma-ge","tra-pè-ze","co-mè-te"]
+  1: [["lu-ne","lune"],["mo-to","moto"],["vé-lo","velo"],["la-ma","lama"],["ro-bot","robot"],["ki-wi","kiwi"],
+      ["to-ma-te","tomate"],["do-mi-no","domino"],["la-va-bo","lavabo"],["pi-ra-te","pirate"],["ba-na-ne","banane"],["tu-li-pe","tulipe"]],
+  2: [["la-pin","lapin"],["mou-ton","mouton"],["pois-son","poisson"],["mai-son","maison"],["ba-teau","bateau"],["gâ-teau","gateau"],
+      ["cha-peau","chapeau"],["ca-nard","canard"],["pan-ta-lon","pantalon"],["cho-co-lat","chocolat"],["é-toi-le","etoile"],["ca-rot-te","carotte"]],
+  3: [["pin-gouin","pingouin"],["dra-gon","dragon"],["cra-yon","crayon"],["pa-pil-lon","papillon"],["é-lé-phant","elephant"],["cham-pi-gnon","champignon"],
+      ["pa-ra-pluie","parapluie"],["é-cu-reuil","ecureuil"],["es-car-got","escargot"],["ci-trouil-le","citrouille"],["gre-nouil-le","grenouille"],["trom-pet-te","trompette"]]
+};
+/* Intrus supplémentaires par niveau (en plus des syllabes des autres mots du niveau) */
+const INTRUS = {
+  1: ["ma","ri","so","pa","ne","li","fu","vo","ra","du"],
+  2: ["mon","pou","sou","chon","rou","van","ton","lou","bou","son"],
+  3: ["plan","trou","pli","gnon","cro","bran","pail","clo","fleur","tra"],
+  perso: ["la","ri","mo","pu","ton","cha","ve","ra"]
 };
 const NOMS_NIV = {1:"Niveau 1",2:"Niveau 2",3:"Niveau 3",perso:"Mes mots"};
 
-/* ---------- Images (créées sur Canva) ---------- */
-const CANVA = {"fond":"/images/fusees-syllabes/fond.jpg","fusee":"/images/fusees-syllabes/fusee.png","cosmonaute":"/images/fusees-syllabes/cosmonaute.png"};
-const SVG_FUSEE = `<svg class="corps" viewBox="0 0 90 178" xmlns="http://www.w3.org/2000/svg"><path d="M45 4C25 26 18 58 20 104L22 150H68L70 104C72 58 65 26 45 4Z" fill="#f4f1ec" stroke="#d8d1c6" stroke-width="2"/><path d="M45 4C33 17 27 30 24 42H66C63 30 57 17 45 4Z" fill="#d93a2b"/><path d="M24 42H66l1 5H23z" fill="#f2b630"/><circle cx="45" cy="74" r="17" fill="#fff" stroke="#f2b630" stroke-width="5"/><path d="M21 104L4 150 6 168 23 150Z" fill="#d93a2b"/><path d="M69 104L86 150 84 168 67 150Z" fill="#d93a2b"/><path d="M40 120h10l2 52h-14z" fill="#d93a2b"/><rect x="26" y="150" width="38" height="10" rx="3" fill="#9a9a9a"/></svg>`;
+const SVG_FUSEE = `<svg class="corps" viewBox="0 0 90 178" xmlns="http://www.w3.org/2000/svg"><path d="M45 4C25 26 18 58 20 104L22 150H68L70 104C72 58 65 26 45 4Z" fill="#f4f1ec" stroke="#d8d1c6" stroke-width="2"/><path d="M45 4C33 17 27 30 24 42H66C63 30 57 17 45 4Z" fill="#d93a2b"/><path d="M24 42H66l1 5H23z" fill="#f2b630"/><circle cx="45" cy="77" r="17" fill="#fff" stroke="#f2b630" stroke-width="5"/><path d="M21 104L4 150 6 168 23 150Z" fill="#d93a2b"/><path d="M69 104L86 150 84 168 67 150Z" fill="#d93a2b"/><path d="M40 120h10l2 52h-14z" fill="#d93a2b"/></svg>`;
 let fuseeOk = true;
-(function(){const im=new Image(); im.onerror=()=>{fuseeOk=false; document.querySelectorAll(".fusee img").forEach(i=>i.outerHTML=SVG_FUSEE); majLogo();}; im.src=CANVA.fusee;})();
 function imgFusee(){ return fuseeOk ? `<img src="${CANVA.fusee}" alt="" draggable="false">` : SVG_FUSEE; }
+(function(){ const im=new Image(); im.onerror=()=>{ fuseeOk=false; document.querySelectorAll(".fusee img").forEach(i=>i.outerHTML=SVG_FUSEE); majLogo(); }; im.src=CANVA.fusee; })();
 
 /* ---------- Stockage local ---------- */
 const store = {
@@ -250,31 +271,30 @@ const store = {
 const $ = id => document.getElementById(id);
 function majLogo(){ $("logo").innerHTML = imgFusee(); }
 majLogo();
+(function(){ const c=$("cosmo").querySelector("img"); c.onerror=()=>{$("cosmo").hidden=true;}; c.src=CANVA.cosmonaute; })();
 
 /* ---------- Réglages ---------- */
 function radio(name,def){ const v=store.get(name)||def; const el=document.querySelector(`input[name=${name}][value="${v}"]`)||document.querySelector(`input[name=${name}][value="${def}"]`); el.checked=true; }
-radio("niveau","1"); radio("nb","8"); radio("nbsyl","23");
+radio("niveau","1"); radio("nb","8"); radio("intrus","2"); radio("nbsyl","23");
 const OPTS = {dire:true, ecouter:false, aide:true, sons:true};
 for(const k in OPTS){ const v=store.get(k); $("opt-"+k).checked = v===null ? OPTS[k] : v==="1"; }
 $("perso").value = store.get("perso") || "ra-quet-te\nca-na-pé\nmou-ton\nva-li-se";
-
 const val = n => document.querySelector(`input[name=${n}]:checked`).value;
+
 function lirePerso(){
-  return $("perso").value.split(/[\n,;]+/).map(s=>s.trim().replace(/\s*[-–]\s*/g,"-")).filter(s=>s && s.includes("-"))
-    .filter(s=>{const n=s.split("-").filter(Boolean).length; return n>=2 && n<=3;});
+  return $("perso").value.split(/[\n,;]+/).map(s=>s.trim().replace(/\s*[-–]\s*/g,"-")).filter(s=>s.includes("-"))
+    .filter(s=>{const n=s.split("-").filter(Boolean).length; return n>=2 && n<=3;}).map(s=>[s,null]);
 }
 function motsDispo(){
   const niv=val("niveau"), ns=val("nbsyl");
-  let liste = niv==="perso" ? lirePerso() : MOTS[niv];
-  liste = liste.filter(m=>{ const p=m.split("-"); if(new Set(p).size<p.length) return false; return ns==="23" || p.length===+ns; });
-  return [...new Set(liste)];
+  const liste = niv==="perso" ? lirePerso() : MOTS[niv];
+  return liste.filter(([m])=>{ const p=m.split("-"); return ns==="23" || p.length===+ns; });
 }
 function majApercu(){
-  const niv=val("niveau");
-  $("bloc-perso").hidden = niv!=="perso";
+  const niv=val("niveau"); $("bloc-perso").hidden = niv!=="perso";
   const l=motsDispo();
-  $("apercu").innerHTML = l.length ? `<b>${l.length} mots possibles :</b> ` + l.join(", ")
-    : (niv==="perso" ? "Écrivez vos mots, par exemple : ra-quet-te" : "Aucun mot pour ce réglage.");
+  $("apercu").innerHTML = !l.length ? `<p>${niv==="perso"?"Écrivez vos mots, par exemple : ra-quet-te":"Aucun mot pour ce réglage."}</p>`
+    : l.map(([m,c])=> c ? `<figure><img src="${imageMot(c)}" alt="" loading="lazy">${m}</figure>` : `<figure>${m}</figure>`).join("");
   $("go").disabled = !l.length;
 }
 document.addEventListener("change",e=>{
@@ -283,16 +303,17 @@ document.addEventListener("change",e=>{
   if(t.type==="checkbox") store.set(t.id.replace("opt-",""), t.checked?"1":"0");
   majApercu();
 });
-$("perso").addEventListener("input",()=>{store.set("perso",$("perso").value); majApercu();});
+$("perso").addEventListener("input",()=>{ store.set("perso",$("perso").value); majApercu(); });
 majApercu();
 
-/* ---------- Sons (Web Audio, sans fichier) ---------- */
+/* ---------- Sons (Web Audio) ---------- */
 let actx=null;
 function audio(){ if(!$("opt-sons").checked) return null; try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==="suspended") actx.resume(); return actx; }catch(e){ return null; } }
 function bip(f=660,d=.15,type="sine",vol=.18){ const a=audio(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; g.gain.setValueAtTime(vol,a.currentTime); g.gain.exponentialRampToValueAtTime(.001,a.currentTime+d); o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime+d); }
 function bruit(d=1.6,vol=.35,filtre=500,montee=false){ const a=audio(); if(!a) return; const n=a.sampleRate*d, b=a.createBuffer(1,n,a.sampleRate), c=b.getChannelData(0); for(let i=0;i<n;i++) c[i]=Math.random()*2-1; const s=a.createBufferSource(); s.buffer=b; const f=a.createBiquadFilter(); f.type="lowpass"; f.frequency.value=filtre; const g=a.createGain(); const t=a.currentTime; if(montee){g.gain.setValueAtTime(.001,t); g.gain.exponentialRampToValueAtTime(vol,t+.4); g.gain.exponentialRampToValueAtTime(.001,t+d);} else {g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+d);} s.connect(f).connect(g).connect(a.destination); s.start(); }
 function boum(){ bruit(1.1,.6,900); bip(90,.5,"triangle",.4); }
 function rate(){ bip(220,.18,"square",.08); setTimeout(()=>bip(165,.25,"square",.08),170); }
+function clic(){ bip(560,.06,"sine",.1); }
 
 /* ---------- Voix ---------- */
 let voix=null;
@@ -301,18 +322,18 @@ if("speechSynthesis" in window){ choisirVoix(); speechSynthesis.onvoiceschanged 
 function dire(t){ if(!("speechSynthesis" in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; if(voix) u.voice=voix; u.rate=.85; speechSynthesis.speak(u); }
 
 /* ---------- Partie ---------- */
-const scene=$("scene");
-let partie=null;   // {mots, i, reussis:[]}
-let tour=null;     // {mot, syl:[], ordre:[ids], els:{}, essais, verrou}
-
+const scene=$("scene"), reserve=$("reserve");
+let partie=null;  // {mots:[[syl,cle]], i, reussis:[]}
+let tour=null;    // {mot, cle, syl:[], cases:[tuileId|null], tuiles:[{id,s}], essais, verrou}
+const pause = ms => new Promise(r=>setTimeout(r,ms));
 function melanger(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function slots(n){ return n===2 ? [38,62] : [27,50,73]; }
 
 function lancerPartie(){
   const liste=motsDispo(); if(!liste.length) return;
   const nb=+val("nb"); let mots=[];
-  while(mots.length<nb){ mots = mots.concat(melanger(liste)); }
-  mots = mots.slice(0,nb);
-  partie={mots,i:0,reussis:[]};
+  while(mots.length<nb) mots = mots.concat(melanger(liste));
+  partie={mots:mots.slice(0,nb), i:0, reussis:[]};
   $("titre-niveau").textContent = NOMS_NIV[val("niveau")];
   scene.style.backgroundImage = `url("${CANVA.fond}")`;
   $("ecran-reglages").hidden=true; $("ecran-fin").hidden=true; $("ecran-jeu").hidden=false;
@@ -321,125 +342,170 @@ function lancerPartie(){
   nouveauTour();
 }
 
-function slots(n){ return n===2 ? [38,62] : [27,50,73]; }
+function choisirIntrus(syl, n){
+  if(!n) return [];
+  const niv=val("niveau");
+  const pris=new Set(syl);
+  // d'abord des syllabes proches (même première lettre), puis le reste du niveau
+  const autres = (niv==="perso" ? lirePerso() : MOTS[niv]).flatMap(([m])=>m.split("-"));
+  const pool = [...new Set(autres.concat(INTRUS[niv]))].filter(s=>!pris.has(s));
+  const proches = melanger(pool.filter(s=>syl.some(x=>x[0]===s[0])));
+  const loin = melanger(pool.filter(s=>!proches.includes(s)));
+  return proches.slice(0,1).concat(loin).slice(0,n);
+}
 
-function nouveauTour(){
-  scene.querySelectorAll(".fusee,.mot,.bravo,.decompte,.message,.fumee").forEach(e=>e.remove());
-  const mot=partie.mots[partie.i], syl=mot.split("-");
-  const ids=syl.map((s,k)=>k);
-  let ordre; do{ ordre=melanger(ids); }while(syl.length>1 && ordre.map(k=>syl[k]).join("")===syl.join(""));
-  tour={mot, syl, ordre, els:{}, essais:0, verrou:false, choisie:null};
-  ids.forEach(k=>{
-    const b=document.createElement("button");
-    b.className="fusee"; b.dataset.k=k;
-    const s=syl[k]; const l=Math.min(7,[...s].length);
-    b.innerHTML = imgFusee() + `<span class="syl l${l}">${s}</span><span class="flamme"></span>`;
-    b.setAttribute("aria-label","Fusée "+s);
-    scene.appendChild(b); tour.els[k]=b;
-    branche(b);
+async function nouveauTour(){
+  scene.querySelectorAll(".fusee,.mot,.bravo,.decompte,.message,.fumee,.image-mot").forEach(e=>e.remove());
+  const [mot,cle]=partie.mots[partie.i], syl=mot.split("-");
+  const tuiles = melanger(syl.concat(choisirIntrus(syl,+val("intrus")))).map((s,id)=>({id,s}));
+  tour={mot,cle,syl,tuiles,cases:syl.map(()=>null),essais:0,verrou:true,fusees:[]};
+  // fusées vides
+  const x=slots(syl.length);
+  syl.forEach((_,i)=>{
+    const f=document.createElement("div"); f.className="fusee"; f.style.left=x[i]+"%";
+    f.innerHTML = imgFusee() + `<button class="hublot" data-i="${i}" aria-label="Fusée ${i+1}, vide"></button><span class="flamme"></span>`;
+    scene.appendChild(f); tour.fusees.push(f);
   });
-  placer();
-  $("consigne").style.opacity=1;
-  $("decollage").hidden=false; $("decollage").disabled=false; $("suivant").hidden=true;
+  scene.querySelectorAll(".hublot").forEach(h=>h.addEventListener("click",()=>vider(+h.dataset.i)));
+  // réserve
+  reserve.innerHTML = tour.tuiles.map(t=>`<button class="tuile" data-id="${t.id}">${t.s}</button>`).join("");
+  reserve.querySelectorAll(".tuile").forEach(brancheTuile);
+  $("consigne").style.opacity = 1;
+  $("decollage").hidden=false; $("decollage").disabled=true; $("suivant").hidden=true;
   majProgres(); majLecture();
+  // l'image du mot apparaît en grand, puis va se ranger dans le coin
+  if(cle){
+    const im=document.createElement("div"); im.className="image-mot arrive";
+    im.innerHTML=`<img src="${imageMot(cle)}" alt="">`;
+    im.querySelector("img").onerror=()=>im.remove();
+    im.addEventListener("click",()=>{ if($("opt-ecouter").checked) dire(syl.join("")); });
+    scene.appendChild(im);
+    await pause(1700);
+    im.classList.remove("arrive"); im.classList.add("coin");
+    await pause(500);
+  }
+  tour.verrou=false;
 }
 
-function placer(sauf){
-  const x=slots(tour.ordre.length);
-  tour.ordre.forEach((k,i)=>{ if(+k!==sauf) tour.els[k].style.left=x[i]+"%"; });
-}
 function majLecture(){
-  $("lecture").innerHTML = "Je lis : <b>" + tour.ordre.map(k=>tour.syl[k]).join(" ") + "</b>";
+  const t = tour.cases.map(id=> id===null ? "…" : tour.tuiles[id].s);
+  $("lecture").innerHTML = tour.cases.some(c=>c!==null) ? "Je lis : <b>" + t.join(" ") + "</b>" : "&nbsp;";
 }
 function majProgres(){
   $("progres").innerHTML = partie.mots.map((m,i)=>`<i class="${i<partie.i?"fait":i===partie.i?"encours":""}"></i>`).join("");
 }
+function majCases(){
+  tour.cases.forEach((id,i)=>{
+    const h=tour.fusees[i].querySelector(".hublot");
+    if(id===null){ h.innerHTML=""; h.setAttribute("aria-label",`Fusée ${i+1}, vide`); }
+    else { const s=tour.tuiles[id].s; h.innerHTML=`<span class="syl l${Math.min(7,[...s].length)}">${s}</span>`; h.setAttribute("aria-label",`Fusée ${i+1} : ${s}`); }
+  });
+  reserve.querySelectorAll(".tuile").forEach(b=>b.classList.toggle("posee", tour.cases.includes(+b.dataset.id)));
+  $("decollage").disabled = tour.verrou || tour.cases.includes(null);
+  majLecture();
+}
+function poser(id,i){
+  if(tour.verrou) return;
+  const deja=tour.cases.indexOf(id); if(deja>=0) tour.cases[deja]=null;
+  if(i===undefined){ i=tour.cases.indexOf(null); if(i<0) return; }
+  tour.cases[i]=id; clic(); majCases();
+}
+function vider(i){
+  if(tour.verrou || tour.cases[i]===null) return;
+  tour.cases[i]=null; bip(420,.06,"sine",.08); majCases();
+}
 
-/* ---------- Déplacer les fusées : glisser, ou toucher deux fusées pour les échanger ---------- */
-function branche(b){
-  let depart=null;
+/* glisser une syllabe vers un hublot, ou la toucher pour remplir la 1re fusée vide */
+function brancheTuile(b){
+  let d=null;
   b.addEventListener("pointerdown",e=>{
     if(tour.verrou) return;
-    e.preventDefault(); b.focus({preventScroll:true});
-    const r=scene.getBoundingClientRect();
-    depart={x:e.clientX, bouge:false, r, dx:e.clientX - (r.left + parseFloat(b.style.left)/100*r.width)};
-    b.setPointerCapture(e.pointerId);
+    e.preventDefault(); d={x:e.clientX,y:e.clientY,bouge:false,f:null}; b.setPointerCapture(e.pointerId);
   });
   b.addEventListener("pointermove",e=>{
-    if(!depart) return;
-    if(!depart.bouge && Math.abs(e.clientX-depart.x)<8) return;
-    if(!depart.bouge){ depart.bouge=true; b.classList.add("drag"); deselect(); }
-    const r=depart.r; let px=(e.clientX - depart.dx - r.left)/r.width*100;
-    px=Math.max(8,Math.min(92,px)); b.style.left=px+"%";
-    const x=slots(tour.ordre.length); let best=0; x.forEach((v,i)=>{ if(Math.abs(v-px)<Math.abs(x[best]-px)) best=i; });
-    const k=+b.dataset.k, cur=tour.ordre.indexOf(k);
-    if(best!==cur){ tour.ordre.splice(cur,1); tour.ordre.splice(best,0,k); placer(k); majLecture(); bip(520,.06,"sine",.08); }
+    if(!d) return;
+    if(!d.bouge && Math.hypot(e.clientX-d.x,e.clientY-d.y)<8) return;
+    if(!d.bouge){ d.bouge=true; d.f=b.cloneNode(true); d.f.classList.add("fantome"); document.body.appendChild(d.f); b.style.opacity=.3; }
+    d.f.style.left=e.clientX+"px"; d.f.style.top=e.clientY+"px";
+    const h=hublotSous(e.clientX,e.clientY);
+    scene.querySelectorAll(".hublot").forEach(x=>x.classList.toggle("cible",x===h));
   });
   const fin=e=>{
-    if(!depart) return;
-    const bouge=depart.bouge; depart=null; b.classList.remove("drag");
-    if(bouge){ placer(); return; }
-    toucher(+b.dataset.k);
+    if(!d) return;
+    const etait=d; d=null; b.style.opacity="";
+    scene.querySelectorAll(".hublot").forEach(x=>x.classList.remove("cible"));
+    if(etait.f) etait.f.remove();
+    if(!etait.bouge){ poser(+b.dataset.id); return; }
+    const h=hublotSous(e.clientX,e.clientY);
+    if(h) poser(+b.dataset.id,+h.dataset.i);
   };
   b.addEventListener("pointerup",fin);
-  b.addEventListener("pointercancel",()=>{ if(depart){depart=null; b.classList.remove("drag"); placer();} });
-  b.addEventListener("keydown",e=>{
-    if(tour.verrou) return;
-    const k=+b.dataset.k, cur=tour.ordre.indexOf(k);
-    if(e.key==="ArrowLeft"||e.key==="ArrowRight"){
-      e.preventDefault(); const to=cur+(e.key==="ArrowLeft"?-1:1); if(to<0||to>=tour.ordre.length) return;
-      tour.ordre.splice(cur,1); tour.ordre.splice(to,0,k); placer(); majLecture(); bip(520,.06,"sine",.08);
-    } else if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toucher(k); }
-  });
+  b.addEventListener("pointercancel",()=>{ if(d){ if(d.f) d.f.remove(); d=null; b.style.opacity=""; } });
+  b.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); poser(+b.dataset.id); } });
 }
-function deselect(){ if(tour.choisie!==null){ tour.els[tour.choisie].classList.remove("choisie"); tour.choisie=null; } }
-function toucher(k){
-  if(tour.verrou) return;
-  if(tour.choisie===null){ tour.choisie=k; tour.els[k].classList.add("choisie"); bip(700,.07,"sine",.08); return; }
-  if(tour.choisie===k){ deselect(); return; }
-  const a=tour.ordre.indexOf(tour.choisie), c=tour.ordre.indexOf(k);
-  [tour.ordre[a],tour.ordre[c]]=[tour.ordre[c],tour.ordre[a]];
-  deselect(); placer(); majLecture(); bip(520,.06,"sine",.08);
+function hublotSous(x,y){
+  // toute la fusée sert de cible, pour les petites mains
+  for(const f of tour.fusees){ const r=f.getBoundingClientRect(); if(x>=r.left-8&&x<=r.right+8&&y>=r.top&&y<=r.bottom) return f.querySelector(".hublot"); }
+  return null;
 }
 
 /* ---------- Décollage ---------- */
-const pause = ms => new Promise(r=>setTimeout(r,ms));
 async function decoller(){
-  if(tour.verrou) return;
-  tour.verrou=true; deselect(); $("decollage").disabled=true; $("consigne").style.opacity=0;
-  const bon = tour.ordre.map(k=>tour.syl[k]).join("") === tour.syl.join("");
-  const els = tour.ordre.map(k=>tour.els[k]);
-  // compte à rebours
+  if(tour.verrou || tour.cases.includes(null)) return;
+  tour.verrou=true; $("decollage").disabled=true; $("consigne").style.opacity=0;
+  const lu = tour.cases.map(id=>tour.tuiles[id].s);
+  const bon = lu.join("") === tour.syl.join("");
+  const els = tour.fusees;
   const dc=document.createElement("div"); dc.className="decompte"; scene.appendChild(dc);
   for(const t of ["3","2","1"]){ dc.textContent=t; dc.classList.remove("anim"); void dc.offsetWidth; dc.classList.add("anim"); bip(t==="1"?880:660,.18); await pause(650); }
   dc.remove();
   els.forEach(e=>e.classList.add("allume","vibre")); fumee(els);
-  bruit(bon?2.2:1,.32,420,true);
+  bruit(bon?2.4:1,.32,420,true);
   await pause(700);
-  if(!bon){ await echec(els); return; }
-  els.forEach(e=>{ e.classList.remove("vibre"); e.classList.add("decolle"); });
-  await pause(1000);
+  if(!bon){ await echec(els, lu); return; }
+  await rejoindre(els);
   const r=scene.getBoundingClientRect();
-  const points = els.map(e=>{ const b=e.getBoundingClientRect(); return {x:(b.left+b.width/2-r.left)/r.width, y:Math.max(.12,(b.top+b.height*.3-r.top)/r.height)}; });
   els.forEach(e=>e.style.visibility="hidden");
-  boum(); exploser(points); reagir("saute");
-  await pause(450);
+  boum(); exploser([{x:.5,y:.3}], true); reagir("saute");
+  await pause(300);
   afficherMot();
 }
-async function echec(els){
+/* les fusées montent en se rapprochant, et se rejoignent au centre du ciel */
+function rejoindre(els){
+  const r=scene.getBoundingClientRect(), dur=1500, t0=performance.now();
+  const dep = els.map(e=>({x:parseFloat(e.style.left), b:14}));
+  els.forEach(e=>{ e.classList.remove("vibre"); e.classList.add("vole"); });
+  return new Promise(res=>{
+    function pas(t){
+      const k=Math.min(1,(t-t0)/dur), e=k*k*(3-2*k), monte=k*k;
+      els.forEach((el,i)=>{
+        const x = dep[i].x + (50-dep[i].x)*e;
+        const tourne = (50-dep[i].x)*(1-k)*0.5;
+        el.style.left = x+"%";
+        el.style.bottom = (dep[i].b + 46*monte)+"%";
+        el.style.transform = `translateX(-50%) rotate(${tourne}deg) scale(${1-.35*e})`;
+      });
+      if(k<1) requestAnimationFrame(pas); else res();
+    }
+    requestAnimationFrame(pas);
+  });
+}
+async function echec(els, lu){
   els.forEach(e=>e.classList.remove("allume","vibre"));
   await pause(250);
   els.forEach(e=>{ e.classList.remove("non"); void e.offsetWidth; e.classList.add("non"); });
   rate(); reagir("boude");
   tour.essais++;
-  const m=document.createElement("div"); m.className="message"; m.textContent="Pas dans le bon ordre : relis et essaie encore !"; scene.appendChild(m);
-  if(tour.essais>=2 && $("opt-aide").checked){
-    const k0=0; const el=tour.els[k0];
-    if(!el.querySelector(".indice")){ const s=document.createElement("span"); s.className="indice"; s.textContent="1"; el.appendChild(s); }
+  const m=document.createElement("div"); m.className="message"; m.textContent="Ce n'est pas le bon mot : regarde l'image et relis !"; scene.appendChild(m);
+  await pause(1100);
+  // les syllabes mal placées retournent dans la réserve
+  tour.cases = tour.cases.map((id,i)=> id!==null && tour.tuiles[id].s===tour.syl[i] ? id : null);
+  if(tour.essais>=2 && $("opt-aide").checked && tour.cases[0]===null){
+    const t=tour.tuiles.find(t=>t.s===tour.syl[0] && !tour.cases.includes(t.id)); if(t) tour.cases[0]=t.id;
   }
-  await pause(1800); m.remove();
+  tour.verrou=false; majCases();
+  await pause(700); m.remove();
   els.forEach(e=>e.classList.remove("non"));
-  tour.verrou=false; $("decollage").disabled=false;
 }
 function fumee(els){
   els.forEach(e=>{
@@ -451,46 +517,42 @@ function fumee(els){
   });
 }
 function afficherMot(){
-  const d=document.createElement("div"); d.className="mot";
-  d.innerHTML = tour.syl.map((s,i)=>`<span style="animation-delay:${i*180}ms">${s}</span>`).join("");
-  scene.appendChild(d);
-  setTimeout(()=>{ d.classList.add("colle"); if($("opt-dire").checked) dire(tour.mot.replace(/-/g,"")); }, 400+tour.syl.length*180+500);
-  setTimeout(()=>{
-    const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Décollage réussi !","Génial !"][Math.floor(Math.random()*5)];
-    scene.appendChild(b);
-  }, 1500);
-  $("lecture").innerHTML = "Le mot : <b>" + tour.syl.join("") + "</b>";
-  partie.reussis.push({mot:tour.syl.join(""), aide:tour.essais>=2});
+  const mot=tour.syl.join("");
+  const d=document.createElement("div"); d.className="mot"; d.textContent=mot; scene.appendChild(d);
+  if($("opt-dire").checked) setTimeout(()=>dire(mot),350);
+  setTimeout(()=>{ const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Décollage réussi !","Génial !"][Math.floor(Math.random()*5)]; scene.appendChild(b); },900);
+  $("lecture").innerHTML = "Le mot : <b>" + mot + "</b>";
+  reserve.querySelectorAll(".tuile").forEach(b=>b.classList.add("posee"));
+  partie.reussis.push({mot, cle:tour.cle, aide:tour.essais>=2});
   partie.i++; majProgres();
   $("decollage").hidden=true; $("suivant").hidden=false;
   $("suivant").textContent = partie.i>=partie.mots.length ? "Fin de la mission →" : "Mot suivant →";
-  setTimeout(()=>$("suivant").focus({preventScroll:true}),1600);
+  setTimeout(()=>$("suivant").focus({preventScroll:true}),1200);
 }
-
 function reagir(c){ const e=$("cosmo"); e.classList.remove("saute","boude"); void e.offsetWidth; e.classList.add(c); }
 
-/* ---------- Feux d'artifice (canvas) ---------- */
+/* ---------- Explosion (canvas) ---------- */
 const cv=$("feux"), cx=cv.getContext("2d"); let parts=[], anim=null;
 const COULEURS=["#ffd23f","#ff7a1a","#ff3d6e","#ffffff","#7ad7ff","#9cff6b","#c77dff"];
-function exploser(points){
+function exploser(points, grosse){
   const r=scene.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
   cv.width=r.width*dpr; cv.height=r.height*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
-  points.forEach((p,j)=>{
-    const x=p.x*r.width, y=p.y*r.height, base=COULEURS[(j*2)%COULEURS.length];
-    parts.push({x,y,vx:0,vy:0,v:0,flash:1,taille:r.width*.13,c:"#fff"});
-    for(let i=0;i<120;i++){
-      const a=Math.random()*Math.PI*2, v=(.3+Math.random()*.7)*r.width*.011;
-      parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:1,decr:.008+Math.random()*.012,c:Math.random()<.6?base:COULEURS[Math.floor(Math.random()*COULEURS.length)],t:(2+Math.random()*2.6)*Math.max(1,r.width/900)});
+  points.forEach(p=>{
+    const x=p.x*r.width, y=p.y*r.height, n=grosse?300:120, f=grosse?1.5:1;
+    parts.push({x,y,flash:1,taille:r.width*.2*f});
+    for(let i=0;i<n;i++){
+      const a=Math.random()*Math.PI*2, v=(.25+Math.random()*.75)*r.width*.012*f;
+      parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:1,decr:.006+Math.random()*.01,c:COULEURS[Math.floor(Math.random()*COULEURS.length)],t:(2+Math.random()*2.6)*Math.max(1,r.width/900)});
     }
   });
   if(!anim) anim=requestAnimationFrame(boucle);
 }
 function boucle(){
-  const w=cv.width/(window.devicePixelRatio||1), h=cv.height/(window.devicePixelRatio||1);
+  const dpr=window.devicePixelRatio||1, w=cv.width/dpr, h=cv.height/dpr;
   cx.globalCompositeOperation="source-over"; cx.clearRect(0,0,w,h);
   cx.globalCompositeOperation="lighter";
   parts = parts.filter(p=>{
-    if(p.flash!==undefined){ p.flash-=.045; if(p.flash<=0) return false;
+    if(p.flash!==undefined){ p.flash-=.035; if(p.flash<=0) return false;
       const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.taille); g.addColorStop(0,`rgba(255,250,220,${p.flash})`); g.addColorStop(1,"rgba(255,200,80,0)");
       cx.fillStyle=g; cx.beginPath(); cx.arc(p.x,p.y,p.taille,0,7); cx.fill(); return true; }
     p.vx*=.975; p.vy=p.vy*.975+.05; p.x+=p.vx; p.y+=p.vy; p.vie-=p.decr; if(p.vie<=0) return false;
@@ -504,7 +566,7 @@ function finPartie(){
   $("ecran-jeu").hidden=true; $("ecran-fin").hidden=false;
   const n=partie.reussis.length, aides=partie.reussis.filter(r=>r.aide).length;
   $("bilan").textContent = `${n} fusée${n>1?"s":""} lancée${n>1?"s":""} sur Mars !` + (aides ? ` (${aides} mot${aides>1?"s":""} trouvé${aides>1?"s":""} avec l'aide, en pointillés)` : "");
-  $("liste").innerHTML = partie.reussis.map(r=>`<span class="${r.aide?"aide":""}">${r.mot}</span>`).join("");
+  $("liste").innerHTML = partie.reussis.map(r=>`<figure class="${r.aide?"aide":""}">${r.cle?`<img src="${imageMot(r.cle)}" alt="">`:""}${r.mot}</figure>`).join("");
 }
 
 /* ---------- Boutons ---------- */
