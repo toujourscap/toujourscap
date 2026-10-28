@@ -4,7 +4,7 @@
   {
    "title": "Les fusées des syllabes",
    "slug": "les-fusees-des-syllabes",
-   "excerpt": "Sur une base de lancement martienne, chaque syllabe est dans une fusée : il faut les ranger dans le bon ordre pour former le mot. Si c'est juste, les fusées décollent, explosent en feu d'artifice et le mot apparaît. Trois niveaux.",
+   "excerpt": "Sur une base martienne, l'image d'un mot apparaît : l'enfant place les bonnes syllabes dans les fusées. Si c'est juste, elles décollent, se rejoignent, explosent et le mot apparaît. Trois niveaux, 36 mots illustrés.",
    "date": "2026-10-28T13:00:00.000Z",
    "categoryIds": [],
    "media": {
@@ -32,7 +32,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jeu de combinatoire syllabique sur une base de lancement de fusées, sur la planète Mars. Chaque syllabe est écrite dans une fusée, mais les fusées sont dans le désordre. L'élève les range pour former le mot : si l'ordre est bon, les fusées décollent, explosent en feu d'artifice dans le ciel martien… et le mot entier apparaît !",
+         "text": "Un jeu de combinatoire syllabique sur une base de lancement martienne. L'image d'un mot apparaît d'abord en grand, puis se range dans un coin de l'écran. Sous les fusées, une réserve de syllabes : les bonnes et quelques intrus. L'enfant place les syllabes dans les hublots pour former le mot de l'image. Si c'est juste, les fusées décollent, se rejoignent dans le ciel, explosent en feu d'artifice… et le mot entier apparaît !",
          "decorations": []
         }
        }
@@ -65,7 +65,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "L'adulte choisit le niveau, le nombre de mots et le nombre de fusées (2, 3 ou un mélange).",
+             "text": "L'adulte choisit le niveau, le nombre de mots, le nombre de syllabes en trop (0 à 3) et le nombre de fusées (2, 3 ou un mélange).",
              "decorations": []
             }
            }
@@ -82,7 +82,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "L'élève lit les syllabes et déplace les fusées : il les fait glisser, ou il touche une fusée puis une autre pour les échanger. Sous la scène, « Je lis » montre ce que donne l'ordre choisi.",
+             "text": "L'image du mot s'affiche. L'élève fait glisser chaque syllabe dans une fusée, ou la touche pour remplir la première fusée vide. Toucher une fusée remplie renvoie la syllabe dans la réserve. Sous la scène, « Je lis » montre ce qui est formé.",
              "decorations": []
             }
            }
@@ -99,7 +99,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Il appuie sur « Décollage ! » : compte à rebours 3, 2, 1… Si l'ordre est juste, les fusées partent, explosent et le mot s'affiche. Sinon, elles tremblent sur place et il peut réessayer.",
+             "text": "Il appuie sur « Décollage ! » : compte à rebours 3, 2, 1… Si le mot est juste, les fusées montent en se rapprochant, explosent ensemble et le mot s'affiche. Sinon, elles tremblent et les syllabes mal placées retournent dans la réserve.",
              "decorations": []
             }
            }
@@ -116,7 +116,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "À la fin de la mission, la liste des mots formés s'affiche.",
+             "text": "À la fin de la mission, les mots formés s'affichent avec leur image.",
              "decorations": []
             }
            }
@@ -170,7 +170,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 2 : quelques sons complexes, ou, on, an, in, oi, eau, ch… (mou-ton, ca-deau, pan-ta-lon, é-toi-le).",
+             "text": "Niveau 2 : quelques sons complexes, ou, on, an, oi, eau, ch… (mou-ton, ba-teau, cho-co-lat, é-toi-le).",
              "decorations": []
             }
            }
@@ -204,7 +204,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Mes mots : l'enseignant tape sa propre liste, syllabes séparées par des tirets (ra-quet-te).",
+             "text": "Mes mots : l'enseignant tape sa propre liste, syllabes séparées par des tirets (ra-quet-te). Ces mots n'ont pas d'image.",
              "decorations": []
             }
            }
@@ -275,7 +275,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Après deux essais ratés, la première fusée est signalée par un « 1 ».",
+             "text": "Après deux essais ratés, la première syllabe se place toute seule.",
              "decorations": []
             }
            }
@@ -308,7 +308,7 @@
        "url": "/outils/les-fusees-des-syllabes.html",
        "containerData": {
         "height": {
-         "custom": "820"
+         "custom": "900"
         },
         "large": true
        }
