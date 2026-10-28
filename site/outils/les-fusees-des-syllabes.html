@@ -18,28 +18,29 @@
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--nuit);color:var(--encre);font-family:var(--f-lecture);font-size:16px;min-height:100vh}
-.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 28px}
+.wrap{max-width:1100px;margin:0 auto;padding:10px 16px 12px}
+#ecran-jeu{max-width:min(100%,calc((100vh - 150px) * 1.7797));margin:0 auto}
 h1,h2,h3{font-family:var(--f-titre);text-wrap:balance;margin:0}
 button{font-family:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-within{outline:3px solid var(--jaune);outline-offset:2px}
 [hidden]{display:none!important}
 
 /* ---------- Réglages ---------- */
-.carte{background:var(--papier);border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-.entete{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-.entete .logo{width:54px;flex:0 0 auto}
+.carte{background:var(--papier);border-radius:18px;padding:18px 22px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.entete{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.entete .logo{width:40px;flex:0 0 auto}
 .entete .logo img{width:100%;display:block}
-.entete h1{font-size:clamp(26px,5vw,42px);color:var(--mars)}
+.entete h1{font-size:clamp(24px,4vw,36px);color:var(--mars)}
 .entete p{margin:4px 0 0;color:var(--gris)}
-.niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
 .niv{position:relative}
 .niv input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
-.niv span{display:block;height:100%;border:3px solid #ecd9c0;border-radius:14px;padding:12px 14px;background:#fff}
+.niv span{display:block;height:100%;border:3px solid #ecd9c0;border-radius:14px;padding:9px 12px;background:#fff}
 .niv b{display:block;font-family:var(--f-titre);font-size:20px;color:var(--mars-fonce)}
 .niv small{display:block;color:var(--gris);font-size:14px;margin-top:4px;line-height:1.35}
 .niv input:checked+span{border-color:var(--mars);background:#fdeee3;box-shadow:0 4px 0 var(--mars)}
 .niv input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
-.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 fieldset{border:2px solid #ecd9c0;border-radius:14px;padding:12px 16px;margin:0;min-width:0}
 legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--mars-fonce)}
 .choix{display:flex;flex-wrap:wrap;gap:8px}
@@ -48,17 +49,17 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--mars
 .chip span{display:inline-block;padding:7px 14px;border-radius:999px;border:2px solid #e2cdb0;background:#fff;font-weight:700;font-size:17px}
 .chip input:checked+span{background:var(--mars);border-color:var(--mars);color:#fff}
 .chip input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
-.etiq{font-size:13px;color:var(--gris);margin:12px 0 6px}
+.etiq{font-size:13px;color:var(--gris);margin:8px 0 5px}
 .etiq:first-of-type{margin-top:0}
 .coche{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-size:15px}
 .coche input{width:20px;height:20px;flex:0 0 auto;margin:1px 0 0}
 textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px solid #e2cdb0;border-radius:10px;min-height:84px;resize:vertical}
 .note{font-size:13px;color:var(--gris);margin:6px 0 0;line-height:1.45}
-.apercu{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.apercu figure{margin:0;width:74px;text-align:center;font-size:13px;color:var(--gris)}
-.apercu figure img{width:74px;height:74px;object-fit:contain;background:#fff;border-radius:10px;border:2px solid #ecd9c0;display:block}
+.apercu{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.apercu figure{margin:0;width:62px;text-align:center;font-size:12px;color:var(--gris)}
+.apercu figure img{width:62px;height:62px;object-fit:contain;background:#fff;border-radius:10px;border:2px solid #ecd9c0;display:block}
 .apercu p{margin:0;font-size:14px;color:var(--gris)}
-.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;align-items:center;flex-wrap:wrap}
+.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:12px;align-items:center;flex-wrap:wrap}
 .btn{border:none;border-radius:14px;padding:13px 24px;font-size:20px;font-weight:800;font-family:var(--f-titre)}
 .btn-go{background:var(--mars);color:#fff;box-shadow:0 5px 0 var(--mars-fonce)}
 .btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--mars-fonce)}
@@ -66,7 +67,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .btn-sec{background:#f3e3cf;color:var(--encre)}
 
 /* ---------- Jeu ---------- */
-.bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--sable);margin-bottom:10px;flex-wrap:wrap}
+.bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--sable);margin-bottom:8px;flex-wrap:wrap}
 .bandeau h2{font-size:20px}
 .progres{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 .progres i{width:16px;height:16px;border-radius:50%;background:rgba(247,223,192,.25);display:block}
@@ -120,21 +121,24 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @keyframes boude{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
 
 /* réserve de syllabes */
-.reserve{background:var(--nuit-2);border-radius:0 0 18px 18px;padding:14px 12px 16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;min-height:84px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-.tuile{font:700 clamp(24px,4vw,40px)/1 var(--f-lecture);color:var(--encre);background:#fff;border:none;border-radius:14px;padding:.3em .55em .35em;min-width:2.6em;box-shadow:0 5px 0 #c9b49a;touch-action:none;cursor:grab;transition:transform .15s,opacity .2s}
+.barre{container-type:inline-size;background:var(--nuit-2);border-radius:0 0 18px 18px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-height:72px}
+.reserve{flex:1 1 auto;display:flex;justify-content:center;gap:clamp(5px,1.2cqw,12px);flex-wrap:nowrap;min-width:0}
+.tuile{font:700 clamp(16px,3.9cqw,38px)/1 var(--f-lecture);color:var(--encre);background:#fff;border:none;border-radius:.4em;padding:.28em .45em .32em;min-width:2.2em;box-shadow:0 5px 0 #c9b49a;touch-action:none;cursor:grab;transition:transform .15s,opacity .2s}
 .tuile:hover{transform:translateY(-3px)}
 .tuile.posee{visibility:hidden}
 .tuile.fantome{position:fixed;z-index:50;pointer-events:none;transform:translate(-50%,-50%) scale(1.12);box-shadow:0 14px 20px rgba(0,0,0,.35);cursor:grabbing;transition:none}
-.commandes{display:flex;justify-content:center;gap:12px;margin-top:14px;flex-wrap:wrap}
-.lecture{margin-top:10px;text-align:center;color:var(--sable);font-size:clamp(16px,2.4vw,22px);min-height:1.5em}
-.lecture b{font-size:1.25em;color:#fff;letter-spacing:.02em}
+.commandes{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.commandes .btn{font-size:clamp(14px,2.2cqw,20px);padding:.5em .8em;white-space:nowrap}
+.lecture{flex:0 0 15%;margin:0;color:var(--sable);font-size:clamp(12px,1.9cqw,18px);line-height:1.3;min-width:0}
+.lecture b{display:block;font-size:1.35em;color:#fff;letter-spacing:.02em}
 .fin{text-align:center}
 .fin h2{font-size:clamp(28px,5vw,44px);color:var(--mars)}
 .fin .liste{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0}
 .fin .liste figure{margin:0;background:#fdeee3;border:2px solid #f0c9a8;border-radius:12px;padding:6px 10px;font-size:20px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
 .fin .liste figure img{width:64px;height:64px;object-fit:contain}
 .fin .liste figure.aide{border-style:dashed}
-@media (max-width:560px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.reserve{gap:8px}}
+@media (max-height:740px){.wrap{padding-top:6px;padding-bottom:6px}.carte{padding:12px 18px}.entete{margin-bottom:8px}.niveaux{margin-bottom:8px}fieldset{padding:8px 14px}.apercu figure{width:auto;background:#fff;border:1px solid #ecd9c0;border-radius:8px;padding:2px 6px}.apercu figure img{display:none}.niv small{font-size:13px}}
+@media (max-width:640px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.barre{flex-wrap:wrap}.reserve{order:-1;flex-basis:100%;gap:8px}.lecture{flex:1 1 0}}
 @media (prefers-reduced-motion:reduce){.allume .flamme,.vibre,.hublot:empty::after{animation:none}}
 </style>
 </head>
@@ -213,12 +217,14 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
     <div class="cosmo" id="cosmo"><img alt="" draggable="false"></div>
     <canvas id="feux"></canvas>
   </div>
-  <div class="reserve" id="reserve" aria-label="Syllabes à placer"></div>
-  <p class="lecture" id="lecture" aria-live="polite"></p>
-  <div class="commandes">
-    <button class="btn btn-sec" id="ecouter" hidden>🔊 Écouter le mot</button>
-    <button class="btn btn-go" id="decollage" disabled>🚀 Décollage !</button>
-    <button class="btn btn-go" id="suivant" hidden>Mot suivant →</button>
+  <div class="barre">
+    <p class="lecture" id="lecture" aria-live="polite"></p>
+    <div class="reserve" id="reserve" aria-label="Syllabes à placer"></div>
+    <div class="commandes">
+      <button class="btn btn-sec" id="ecouter" hidden>🔊 Écouter</button>
+      <button class="btn btn-go" id="decollage" disabled>🚀 Décollage !</button>
+      <button class="btn btn-go" id="suivant" hidden>Mot suivant →</button>
+    </div>
   </div>
 </section>
 
@@ -389,7 +395,7 @@ async function nouveauTour(){
 
 function majLecture(){
   const t = tour.cases.map(id=> id===null ? "…" : tour.tuiles[id].s);
-  $("lecture").innerHTML = tour.cases.some(c=>c!==null) ? "Je lis : <b>" + t.join(" ") + "</b>" : "&nbsp;";
+  $("lecture").innerHTML = tour.cases.some(c=>c!==null) ? "Je lis : <b>" + t.join(" ") + "</b>" : "Place les syllabes";
 }
 function majProgres(){
   $("progres").innerHTML = partie.mots.map((m,i)=>`<i class="${i<partie.i?"fait":i===partie.i?"encours":""}"></i>`).join("");

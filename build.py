@@ -170,8 +170,10 @@ def embed(src, height, title, lazy=False, large=False):
     if local and os.path.exists(local) and "?" not in src:
         import hashlib
         src += "?v=" + hashlib.md5(open(local, "rb").read()).hexdigest()[:8]
+    # hauteur "ecran" : le jeu prend la hauteur de la fenêtre (sous le menu) et s'y adapte, sans défilement
+    style = "height:calc(100vh - 84px);min-height:460px;max-height:1000px" if str(height) == "ecran" else f"height:{int(height)}px"
     return (f'<div class="embed{" embed-large" if large else ""}"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div>'
-            f'<iframe src="{esc(src)}" style="height:{int(height)}px" title="{esc(title)}"{" loading=\"lazy\"" if lazy else ""} '
+            f'<iframe src="{esc(src)}" style="{style}" title="{esc(title)}"{" loading=\"lazy\"" if lazy else ""} '
             f'allow="microphone; fullscreen" allowfullscreen></iframe></div>{PLEIN_ECRAN_JS}')
 
 
