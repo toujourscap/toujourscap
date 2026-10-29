@@ -212,3 +212,9 @@ body.fond.fond-lac-brume::before { filter: brightness(.78); }
 .comparatif tbody th { font-weight: 600; min-width: 11em; }
 .prose ul.sources { font-size: .92rem; }
 .prose ul.sources li { margin-bottom: 8px; }
+/* Mistigri des attitudes : galerie des paires de cartes */
+.prose .paires { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+.prose figure.paire { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; }
+.prose figure.paire > div { display: flex; gap: 6px; }
+.prose figure.paire img { width: calc(50% - 3px); height: auto; border-radius: 8px; margin: 0; }
+.prose figure.paire figcaption { font-weight: 700; color: var(--accent); margin-top: 8px; }

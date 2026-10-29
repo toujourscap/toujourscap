@@ -1,6 +1,63 @@
 {
- "count": 28,
+ "count": 29,
  "posts": [
+  {
+   "title": "Le Mistigri des attitudes",
+   "slug": "le-mistigri-des-attitudes",
+   "cat": "metacognition",
+   "excerpt": "Un jeu à projeter au tableau : la classe cherche les paires d'attitudes opposées (le hâtif et la détective, le distrait et l'attentif…), puis décide laquelle aide à apprendre. Cartes à imprimer en bonus.",
+   "date": "2026-10-29T09:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "Classe entière",
+    "supports": [
+     "projetable",
+     "ecran",
+     "imprimable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu à projeter au tableau pour parler des attitudes qui aident à apprendre. La classe cherche les paires : une attitude et son contraire. Puis elle décide laquelle aide à apprendre, et pourquoi.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-mistigri-des-attitudes.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "RAW_HTML",
+      "file": "le-mistigri-des-attitudes.html"
+     }
+    ]
+   }
+  },
   {
    "title": "Le secret de la pyramide",
    "slug": "le-secret-de-la-pyramide",
