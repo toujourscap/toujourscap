@@ -1,5 +1,5 @@
 {
- "count": 27,
+ "count": 28,
  "posts": [
   {
    "title": "Le secret de la pyramide",
@@ -9261,6 +9261,22 @@
      "ecran",
      "imprimable",
      "projetable"
+    ]
+   }
+  },
+  {
+   "title": "Synthèse comparative internationale — facteurs pratiques de réussite et d'échec",
+   "slug": "synthese-comparative-internationale-aide-specialisee",
+   "cat": "maitre-e",
+   "excerpt": "Ce qui fait réussir ou échouer une aide pédagogique spécialisée : cinq facteurs pratiques tirés de la recherche internationale (RASED, RTI, Royaume-Uni, pays nordiques, Pays-Bas).",
+   "date": "2026-10-29T08:00:00.000Z",
+   "categoryIds": [],
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "synthese-aide-specialisee.html"
+     }
     ]
    }
   }
