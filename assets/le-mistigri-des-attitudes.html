@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Mistigri des attitudes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+:root{
+  --bg:#FBF7F0; --bg-2:#E3F0EC; --ink:#23302C; --muted:#5E6B66; --accent:#1F6F5C; --accent-2:#2C8A73;
+  --warm:#E8835A; --gold:#F5B935; --ok:#2FA463; --ko:#D2463C; --line:#E2DACB;
+  --f-display:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-read:"Andika","Verdana",system-ui,sans-serif;
+  --cw:160px; --gap:14px;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(180deg,var(--bg-2),var(--bg) 60%);color:var(--ink);font-family:var(--f-read);
+  display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none}
+h1,h2,p{margin:0}
+button{font:inherit;color:inherit}
+
+/* ---- Barre du haut ---- */
+.barre{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 18px;background:#fff;border-bottom:3px solid var(--line)}
+.barre h1{font-family:var(--f-display);font-weight:800;font-size:clamp(20px,2.2vw,32px);color:var(--accent);margin-right:auto;white-space:nowrap}
+.score{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:clamp(18px,1.8vw,26px)}
+.points{display:flex;gap:6px}
+.points i{width:clamp(14px,1.3vw,20px);height:clamp(14px,1.3vw,20px);border-radius:50%;background:var(--line);transition:background .3s,transform .3s}
+.points i.on{background:var(--ok);transform:scale(1.15)}
+.btn{font-family:var(--f-display);font-weight:800;font-size:clamp(15px,1.3vw,20px);border:0;border-radius:14px;padding:10px 18px;cursor:pointer;
+  background:var(--accent);color:#fff;box-shadow:0 4px 0 #134A3D}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #134A3D}
+.btn.clair{background:#fff;color:var(--accent);border:2px solid var(--accent);box-shadow:0 4px 0 #CFE3DC}
+.btn.gros{font-size:clamp(20px,2vw,30px);padding:14px 30px;border-radius:18px}
+.btn:focus-visible,.carte:focus-visible{outline:5px solid var(--gold);outline-offset:4px}
+.modes{display:flex;border:2px solid var(--accent);border-radius:14px;overflow:hidden}
+.modes button{border:0;background:#fff;color:var(--accent);padding:9px 14px;font-family:var(--f-display);font-weight:800;font-size:clamp(14px,1.2vw,18px);cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--accent);color:#fff}
+
+/* ---- Consigne ---- */
+.consigne{text-align:center;font-family:var(--f-display);font-weight:800;font-size:clamp(20px,2.4vw,38px);padding:10px 16px 4px;color:var(--ink)}
+.consigne span{color:var(--warm)}
+
+/* ---- Plateau ---- */
+.plateau{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:10px 16px 16px}
+.grille{display:grid;grid-template-columns:repeat(var(--cols,6),var(--cw));gap:var(--gap);justify-content:center}
+.carte{width:var(--cw);aspect-ratio:375/425;border:0;padding:0;background:none;cursor:pointer;perspective:900px;position:relative;border-radius:14px}
+.carte .in{position:absolute;inset:0;transition:transform .45s;transform-style:preserve-3d}
+.carte.cachee .in{transform:rotateY(180deg)}
+.face,.dos{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;
+  box-shadow:0 3px 0 rgba(35,48,44,.18),0 8px 18px rgba(35,48,44,.14);background:#fff}
+.face img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+.dos{transform:rotateY(180deg);background:var(--accent);display:grid;place-items:center;border:6px solid #fff;
+  background-image:radial-gradient(circle at 30% 30%,rgba(255,255,255,.18) 0 18%,transparent 19%),radial-gradient(circle at 70% 75%,rgba(255,255,255,.12) 0 14%,transparent 15%)}
+.dos b{font-family:var(--f-display);font-weight:800;color:#fff;font-size:calc(var(--cw)*.42)}
+.carte:hover:not(.trouvee) .in{transform:translateY(-4px)}
+.carte.cachee:hover:not(.trouvee) .in{transform:rotateY(180deg) translateY(-4px)}
+.carte.choisie .face{outline:calc(var(--cw)*.045) solid var(--gold);outline-offset:-2px}
+.carte.choisie{z-index:2}
+.carte.choisie .in{transform:scale(1.06)}
+.carte.non .face{outline:calc(var(--cw)*.045) solid var(--ko)}
+.carte.non{animation:secoue .5s}
+.carte.trouvee{cursor:default}
+.carte.trouvee .face{opacity:.28;filter:grayscale(.6)}
+.carte.trouvee::after{content:"✓";position:absolute;inset:auto 0 0 auto;margin:6%;width:34%;aspect-ratio:1;border-radius:50%;background:var(--ok);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:calc(var(--cw)*.22);box-shadow:0 3px 8px rgba(0,0,0,.2)}
+@keyframes secoue{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+
+/* ---- Message bref ---- */
+.toast{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);background:var(--ko);color:#fff;font-family:var(--f-display);font-weight:800;
+  font-size:clamp(20px,2.4vw,36px);padding:12px 28px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:20;text-align:center}
+
+/* ---- Grand écran (paire trouvée, Mistigri, fin) ---- */
+.voile{position:fixed;inset:0;background:rgba(18,34,30,.96);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2vh;padding:2vh 3vw;text-align:center;color:#fff}
+.voile h2{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,3.6vw,58px);color:var(--gold)}
+.voile .question{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,3vw,48px)}
+.voile .aide{font-size:clamp(18px,2vw,30px);min-height:1.4em;color:#FFE1D3}
+.duo{display:flex;gap:4vw;justify-content:center;align-items:center;margin:1vh 0 3vh}
+.grande{height:min(48vh,38vw);aspect-ratio:375/425;border:0;padding:0;border-radius:20px;overflow:hidden;cursor:pointer;background:#fff;position:relative;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .25s,opacity .3s,filter .3s}
+.grande img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+.grande:hover{transform:translateY(-6px)}
+.grande.bonne{outline:10px solid var(--ok);transform:scale(1.05)}
+.grande.bonne::after{content:"✓";position:absolute;right:4%;top:4%;width:22%;aspect-ratio:1;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:min(5vh,4vw);font-weight:700}
+.grande.eteinte{filter:grayscale(.8) brightness(.45)}
+.grande.non{outline:10px solid var(--ko);animation:secoue .5s}
+.grande[disabled]{cursor:default}
+.theme{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.4vw,54px);color:var(--gold)}
+.phrase{font-size:clamp(20px,2.3vw,36px);max-width:40ch}
+.mistigri-img{height:min(46vh,38vw);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.confettis{position:fixed;inset:0;pointer-events:none;z-index:11;overflow:hidden}
+.confettis i{position:absolute;top:-20px;width:14px;height:20px;border-radius:3px;animation:tombe linear forwards}
+@keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:700px){.barre{gap:8px;padding:8px 10px}.barre h1{width:100%}.duo{gap:3vw}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="barre">
+  <h1>Le Mistigri des attitudes</h1>
+  <div class="score" aria-live="polite"><span id="score">0 / 8</span><div class="points" id="points" aria-hidden="true"></div></div>
+  <div class="modes" role="group" aria-label="Mode de jeu">
+    <button type="button" id="mVisibles" aria-pressed="true">Cartes visibles</button>
+    <button type="button" id="mCachees" aria-pressed="false">Cartes cachées</button>
+  </div>
+  <button class="btn clair" type="button" id="son" aria-label="Couper le son">🔊</button>
+  <button class="btn clair" type="button" id="rejouer">↻ Recommencer</button>
+  <button class="btn" type="button" id="ecran">⛶ Plein écran</button>
+</header>
+<p class="consigne" id="consigne">Trouvez une attitude <span>et son contraire</span>&nbsp;!</p>
+<main class="plateau" id="plateau"><div class="grille" id="grille"></div></main>
+
+<div class="voile" id="voile" hidden role="dialog" aria-modal="true" aria-labelledby="vTitre">
+  <h2 id="vTitre"></h2>
+  <div id="vCorps"></div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+<div class="confettis" id="confettis"></div>
+
+<script>
+(function () {
+  var IMG = "/images/mistigri/";
+  // Chaque paire : la bonne attitude, son contraire, ce qu'on apprend, la phrase à retenir
+  var PAIRES = [
+    {bonne: "l-apprenant", contraire: "le-bloque", theme: "Demander de l'aide", phrase: "L'apprenant ose demander de l'aide quand il est bloqué."},
+    {bonne: "la-detective", contraire: "le-hatif", theme: "Vérifier son travail", phrase: "La détective vérifie son travail avant de répondre."},
+    {bonne: "la-methodique", contraire: "le-joueur", theme: "Suivre un plan", phrase: "La méthodique a un plan : lire, comprendre, calculer."},
+    {bonne: "le-sage", contraire: "la-mauvaise-joueuse", theme: "Apprendre de ses erreurs", phrase: "Le sage comprend son erreur : c'est comme ça qu'il apprend."},
+    {bonne: "le-stratege", contraire: "le-rapide", theme: "Réfléchir avant d'agir", phrase: "Le stratège écoute, réfléchit, puis il se lance."},
+    {bonne: "l-equipe", contraire: "la-demunie", theme: "Avoir son matériel", phrase: "L'équipé a tout son matériel : il est prêt à travailler."},
+    {bonne: "le-prevoyant", contraire: "le-retardataire", theme: "S'organiser à l'avance", phrase: "Le prévoyant prépare son cartable la veille."},
+    {bonne: "l-attentif", contraire: "le-distrait", theme: "Écouter la consigne", phrase: "L'attentif écoute la consigne : il sait ce qu'il faut faire."}
+  ];
+  var NOMS = {"l-apprenant": "L'apprenant", "le-bloque": "Le bloqué", "la-detective": "La détective", "le-hatif": "Le hâtif",
+    "la-methodique": "La méthodique", "le-joueur": "Le joueur", "le-sage": "Le sage", "la-mauvaise-joueuse": "La mauvaise joueuse",
+    "le-stratege": "Le stratège", "le-rapide": "Le rapide", "l-equipe": "L'équipé", "la-demunie": "La démunie",
+    "le-prevoyant": "Le prévoyant", "le-retardataire": "Le retardataire", "l-attentif": "L'attentif", "le-distrait": "Le distrait",
+    "le-mistigri": "Le Mistigri"};
+
+  var $ = function (id) { return document.getElementById(id); };
+  var grille = $("grille"), plateau = $("plateau"), voile = $("voile"), toast = $("toast");
+  var cachees = false, choisie = null, bloque = false, trouvees = 0, sonActif = true, minuteToast = null;
+
+  // Précharge les images
+  Object.keys(NOMS).forEach(function (k) { var i = new Image(); i.src = IMG + k + ".jpg"; });
+
+  // ---------- Sons (WebAudio, très discrets) ----------
+  var ctx = null;
+  function note(f, t0, d, type, vol) {
+    if (!sonActif) return;
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      var o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime + t0;
+      o.type = type || "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + d + 0.05);
+    } catch (e) {}
+  }
+  var sons = {
+    clic: function () { note(660, 0, .08, "triangle", .08); },
+    paire: function () { note(523, 0, .15); note(659, .12, .15); note(784, .24, .3); },
+    non: function () { note(220, 0, .25, "square", .06); note(180, .18, .3, "square", .05); },
+    bravo: function () { [523, 659, 784, 1047].forEach(function (f, i) { note(f, i * .12, .35); }); },
+    miaou: function () { note(700, 0, .12, "sawtooth", .05); note(520, .1, .3, "sawtooth", .05); }
+  };
+
+  function melange(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function paireDe(k) { for (var i = 0; i < PAIRES.length; i++) if (PAIRES[i].bonne === k || PAIRES[i].contraire === k) return PAIRES[i]; return null; }
+  function img(k, cls) { return '<img src="' + IMG + k + '.jpg" alt="' + NOMS[k] + '"' + (cls ? ' class="' + cls + '"' : '') + ' draggable="false">'; }
+
+  // ---------- Taille des cartes : la plus grande possible sans défilement ----------
+  function dimensionne() {
+    var n = grille.children.length || 17, W = plateau.clientWidth - 32, H = plateau.clientHeight - 26, ratio = 375 / 425, best = 0, cols = 6;
+    var gap = Math.max(8, Math.min(18, W / 90));
+    for (var c = 3; c <= 9; c++) {
+      var r = Math.ceil(n / c);
+      var w = Math.min((W - (c - 1) * gap) / c, ((H - (r - 1) * gap) / r) * ratio);
+      if (w > best) { best = w; cols = c; }
+    }
+    document.documentElement.style.setProperty("--cw", Math.floor(best) + "px");
+    document.documentElement.style.setProperty("--gap", gap + "px");
+    grille.style.setProperty("--cols", cols);
+  }
+  window.addEventListener("resize", dimensionne);
+
+  function points() {
+    $("score").textContent = trouvees + " / 8";
+    $("points").innerHTML = PAIRES.map(function (_, i) { return '<i class="' + (i < trouvees ? "on" : "") + '"></i>'; }).join("");
+  }
+
+  function nouvellePartie() {
+    choisie = null; bloque = false; trouvees = 0; fermeVoile(); points(); $("confettis").innerHTML = "";
+    var cartes = [];
+    PAIRES.forEach(function (p) { cartes.push(p.bonne, p.contraire); });
+    cartes.push("le-mistigri");
+    grille.innerHTML = melange(cartes).map(function (k) {
+      return '<button class="carte' + (cachees ? " cachee" : "") + '" type="button" data-k="' + k + '" aria-label="' + (cachees ? "Carte cachée" : NOMS[k]) + '">' +
+        '<span class="in"><span class="face">' + img(k) + '</span><span class="dos" aria-hidden="true"><b>?</b></span></span></button>';
+    }).join("");
+    $("consigne").innerHTML = cachees ? 'Retournez deux cartes : trouvez une attitude <span>et son contraire</span>&nbsp;!' : 'Trouvez une attitude <span>et son contraire</span>&nbsp;!';
+    dimensionne();
+  }
+
+  function montreToast(t) {
+    toast.textContent = t; toast.hidden = false;
+    clearTimeout(minuteToast); minuteToast = setTimeout(function () { toast.hidden = true; }, 1800);
+  }
+
+  function retourne(b, visible) {
+    if (!cachees) return;
+    b.classList.toggle("cachee", !visible);
+    b.setAttribute("aria-label", visible ? NOMS[b.dataset.k] : "Carte cachée");
+  }
+
+  grille.addEventListener("click", function (e) {
+    var b = e.target.closest(".carte");
+    if (!b || bloque || b.classList.contains("trouvee") || b === choisie) return;
+    var k = b.dataset.k;
+    sons.clic();
+    retourne(b, true);
+
+    if (k === "le-mistigri") {
+      bloque = true;
+      setTimeout(function () {
+        afficheMistigri(function () {
+          retourne(b, false);
+          if (choisie) { choisie.classList.remove("choisie"); retourne(choisie, false); choisie = null; }
+          bloque = false;
+        });
+      }, cachees ? 450 : 0);
+      return;
+    }
+
+    if (!choisie) { choisie = b; b.classList.add("choisie"); return; }
+
+    var a = choisie, p = paireDe(k);
+    b.classList.add("choisie");
+    bloque = true;
+    if (paireDe(a.dataset.k) === p) {
+      sons.paire();
+      setTimeout(function () { affichePaire(a, b, p); }, cachees ? 600 : 250);
+    } else {
+      setTimeout(function () {
+        sons.non();
+        [a, b].forEach(function (c) { c.classList.remove("choisie"); c.classList.add("non"); });
+        montreToast("Ce n'est pas une paire. Cherchez le contraire !");
+        setTimeout(function () {
+          [a, b].forEach(function (c) { c.classList.remove("non"); retourne(c, false); });
+          choisie = null; bloque = false;
+        }, cachees ? 1500 : 800);
+      }, cachees ? 550 : 0);
+    }
+  });
+
+  // ---------- Grand écran : paire trouvée ----------
+  function affichePaire(a, b, p) {
+    var ordre = [a.dataset.k, b.dataset.k];  // dans l'ordre où la classe les a choisies
+    $("vTitre").textContent = "C'est une paire !";
+    $("vCorps").innerHTML = '<div class="duo">' + ordre.map(function (k) {
+      return '<button class="grande" type="button" data-k="' + k + '">' + img(k) + '</button>';
+    }).join("") + '</div><p class="question" id="vQuestion">Laquelle aide à apprendre&nbsp;?</p><p class="aide" id="vAide"></p>';
+    ouvreVoile();
+    var grandes = voile.querySelectorAll(".grande");
+    grandes.forEach(function (g) {
+      g.addEventListener("click", function () {
+        if (g.dataset.k === p.bonne) {
+          sons.bravo();
+          grandes.forEach(function (x) { x.disabled = true; x.classList.toggle("bonne", x === g); x.classList.toggle("eteinte", x !== g); x.classList.remove("non"); });
+          $("vQuestion").outerHTML = '<p class="theme">' + p.theme + '</p>';
+          $("vAide").outerHTML = '<p class="phrase">' + p.phrase + '</p><p><button class="btn gros" type="button" id="vSuite">Continuer ▶</button></p>';
+          var suite = $("vSuite"); suite.focus();
+          suite.addEventListener("click", function () {
+            [a, b].forEach(function (c) { c.classList.remove("choisie"); c.classList.add("trouvee"); c.disabled = true; retourne(c, true); });
+            choisie = null; bloque = false; trouvees++; points(); fermeVoile();
+            if (trouvees === PAIRES.length) setTimeout(fin, 400);
+          });
+        } else {
+          sons.non();
+          g.classList.remove("non"); void g.offsetWidth; g.classList.add("non");
+          $("vAide").textContent = "Hum… Est-ce que " + NOMS[g.dataset.k].toLowerCase() + " aide vraiment à apprendre ? Regardez l'autre carte.";
+        }
+      });
+    });
+  }
+
+  // ---------- Grand écran : le Mistigri ----------
+  function afficheMistigri(apres) {
+    sons.miaou();
+    $("vTitre").textContent = "Miaou ! C'est le Mistigri !";
+    $("vCorps").innerHTML = img("le-mistigri", "mistigri-img") + '<p class="phrase" style="margin:2vh auto">Ce chat farceur n\'a pas de paire. Il ne vous aidera pas&nbsp;!</p><p><button class="btn gros" type="button" id="vSuite">Continuer ▶</button></p>';
+    ouvreVoile();
+    $("vSuite").focus();
+    $("vSuite").addEventListener("click", function () { fermeVoile(); apres(); });
+  }
+
+  // ---------- Fin de partie ----------
+  function fin() {
+    sons.bravo(); confettis();
+    $("vTitre").textContent = "Bravo ! Les 8 paires sont trouvées !";
+    $("vCorps").innerHTML = img("le-mistigri", "mistigri-img") + '<p class="question" style="margin:2vh auto 1vh">Le Mistigri, lui, n\'a pas de paire…</p><p class="phrase" style="margin:0 auto 2vh">Quel conseil lui donnez-vous pour bien apprendre&nbsp;?</p><p><button class="btn gros" type="button" id="vSuite">↻ Rejouer</button></p>';
+    ouvreVoile();
+    $("vSuite").addEventListener("click", nouvellePartie);
+  }
+
+  function confettis() {
+    var c = $("confettis"), cols = ["#F5B935", "#2FA463", "#E8835A", "#4F86F0", "#E0589A"];
+    c.innerHTML = "";
+    for (var i = 0; i < 80; i++) {
+      var e = document.createElement("i");
+      e.style.left = Math.random() * 100 + "vw"; e.style.background = cols[i % cols.length];
+      e.style.animationDuration = (2 + Math.random() * 2.5) + "s"; e.style.animationDelay = Math.random() * .8 + "s";
+      c.appendChild(e);
+    }
+    setTimeout(function () { c.innerHTML = ""; }, 5500);
+  }
+
+  function ouvreVoile() { voile.hidden = false; toast.hidden = true; }
+  function fermeVoile() { voile.hidden = true; $("vCorps").innerHTML = ""; }
+
+  // ---------- Boutons ----------
+  function mode(c) {
+    cachees = c;
+    $("mVisibles").setAttribute("aria-pressed", !c); $("mCachees").setAttribute("aria-pressed", c);
+    nouvellePartie();
+  }
+  $("mVisibles").addEventListener("click", function () { mode(false); });
+  $("mCachees").addEventListener("click", function () { mode(true); });
+  $("rejouer").addEventListener("click", nouvellePartie);
+  $("son").addEventListener("click", function () {
+    sonActif = !sonActif; this.textContent = sonActif ? "🔊" : "🔇"; this.setAttribute("aria-label", sonActif ? "Couper le son" : "Remettre le son");
+  });
+  $("ecran").addEventListener("click", function () {
+    var d = document, el = d.documentElement;
+    if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+    var req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) { try { var r = req.call(el); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+  });
+  document.addEventListener("fullscreenchange", function () { $("ecran").textContent = document.fullscreenElement ? "✕ Quitter" : "⛶ Plein écran"; setTimeout(dimensionne, 100); });
+
+  // Dans la page du site, le bouton « Plein écran » est déjà au-dessus du jeu
+  if (window.self !== window.top) $("ecran").hidden = true;
+  nouvellePartie();
+})();
+</script>
+</body>
+</html>

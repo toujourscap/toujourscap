@@ -39,6 +39,7 @@ CATS = {
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
+    "metacognition": {"name": "Métacognition", "desc": "Jeux pour aider les élèves à réfléchir à leur façon d'apprendre : nommer les attitudes qui aident, vérifier, demander de l'aide, apprendre de ses erreurs.", "domain": "divers"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -443,6 +444,8 @@ SEO_TITRES = {
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
+    "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : jeu de métacognition à projeter, CP-CE2",
+    "/divers/metacognition/": "Métacognition au cycle 2 : jeux pour apprendre à apprendre",
     "/maths/problemes/": "Résolution de problèmes CP-CE1 : jeux en ligne gratuits",
     "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
@@ -480,7 +483,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
@@ -637,8 +640,8 @@ def main():
   {filtres}
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
-    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e",)]
-    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg"}
+    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e", "metacognition")]
+    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg"}
     dvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/divers/{k}/">
   <div class="card-img"><img src="{DVIGNETTES[k]}" alt="{esc(t)}" loading="lazy"></div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{esc(t)}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -677,7 +680,7 @@ def main():
     domains = [
         ("/francais/", "Lecture · Langage oral", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
         ("/maths/", "Numération · Calcul", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
-        ("/divers/", "Motivation", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
+        ("/divers/", "Motivation · Métacognition", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
     dcards = '<div class="grid">' + "".join(f"""<a class="card" href="{h}">
   <div class="card-img"><img src="{img}" alt="{esc(t)}" loading="lazy"></div>
