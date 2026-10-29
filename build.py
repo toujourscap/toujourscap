@@ -38,6 +38,7 @@ CATS = {
     "comprehension": {"name": "Compréhension", "desc": "Jeux pour comprendre ce qu'on lit au CP et au CE1 : pronoms et substituts, inférences, implicite, états mentaux des personnages, connecteurs.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
+    "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -241,6 +242,8 @@ def render(n, ctx):
         return ""
     if t == "NOTE":  # encadré d'avertissement (ex. navigateur requis)
         return f'<p class="note-nav" role="note">⚠️ {n["html"]}</p>'
+    if t == "RAW_HTML":  # article rédigé directement en HTML (assets/articles/)
+        return open(os.path.join(ROOT, "assets", "articles", n["file"])).read()
     if t == "TOOL_CARDS":
         return '<div class="grid tool-grid">' + "".join(tool_card(k) for k in n["tools"]) + "</div>"
     if t == "BUTTON":
@@ -634,11 +637,24 @@ def main():
   {filtres}
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
-    write("/divers/", page("Divers", """<section class="wrap narrow">
+    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e",)]
+    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg"}
+    dvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/divers/{k}/">
+  <div class="card-img"><img src="{DVIGNETTES[k]}" alt="{esc(t)}" loading="lazy"></div>
+  <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{esc(t)}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
+</a>""" for k, t, d, lst in dsubs) + "</div>"
+    write("/divers/", page("Divers", f"""<section class="wrap">
   <h1>Divers</h1>
   <p class="lead">Des pistes variées pour stimuler la motivation et la métacognition.</p>
-  <div class="empty">Les premières ressources arrivent bientôt.</div>
-</section>""", "/divers/", "Pistes pour stimuler la motivation et la métacognition des élèves du cycle 2.", noindex=True), sitemap=False)
+  {dvignettes}
+</section>""", "/divers/", "Pistes variées pour les enseignants du cycle 2 : aide pédagogique spécialisée (maître E, RASED), motivation et métacognition."))
+    for k, t, d, lst in dsubs:
+        write(f"/divers/{k}/", page(t, f"""<section class="wrap">
+  <nav class="crumbs"><a href="/divers/">Divers</a> › {esc(t)}</nav>
+  <h1>{esc(t)}</h1>
+  <p class="lead">{d}</p>
+  {grid(lst)}
+</section>""", "/divers/", d))
 
     write("/qui-suis-je/", page("Qui suis-je ?", """<section class="wrap narrow prose">
   <h1>Qui suis-je&nbsp;?</h1>
