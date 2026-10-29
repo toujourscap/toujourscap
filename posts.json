@@ -1,6 +1,279 @@
 {
- "count": 31,
+ "count": 32,
  "posts": [
+  {
+   "title": "Les explorateurs du cerveau",
+   "slug": "les-explorateurs-du-cerveau",
+   "cat": "memorisation",
+   "excerpt": "Un jeu à l'écran : l'élève explore 6 lieux de son cerveau et découvre comment mieux apprendre (neurones, attention, participation, mémoire, erreurs, sommeil). Diplôme à imprimer.",
+   "date": "2026-10-29T14:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu pour apprendre à apprendre. L'élève choisit son explorateur ou son exploratrice et entre dans un cerveau géant. Dans chacun des 6 lieux, un petit défi lui fait découvrir un secret pour mieux apprendre. À la fin, il reçoit son diplôme d'explorateur du cerveau, à imprimer.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/les-explorateurs-du-cerveau.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 6 lieux du cerveau",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La forêt des neurones : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "l'élève relie deux neurones en s'entraînant. Le cerveau se muscle : tout le monde peut progresser.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le phare de l'attention : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "trouver les étoiles sans se laisser distraire.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'atelier des idées : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "participer, essayer, poser des questions.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La bibliothèque des souvenirs : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "un vrai jeu de mémoire en deux essais, pour constater qu'on retient mieux en refaisant de mémoire.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le lac miroir des erreurs : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "aider Léo à comprendre son erreur en 4 étapes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le nuage du sommeil : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "à quoi sert de dormir, et combien d'heures.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Chaque consigne peut être écoutée avec le bouton 🔊. Une mauvaise réponse n'est jamais sanctionnée : l'élève réessaie, car se tromper, c'est apprendre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le jeu prolonge le diaporama « Apprendre ! » de la même rubrique, qui donne aussi les référents théoriques.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BUTTON",
+      "buttonData": {
+       "text": "Voir le diaporama « Apprendre ! »",
+       "link": {
+        "url": "/post/apprendre-a-apprendre-diaporama-memoire/",
+        "target": "SELF"
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "Apprendre ! Un diaporama pour expliquer la mémoire aux élèves",
    "slug": "apprendre-a-apprendre-diaporama-memoire",
