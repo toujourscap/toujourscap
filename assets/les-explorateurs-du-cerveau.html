@@ -92,7 +92,8 @@ h1,h2,h3{font-family:"Baloo 2","Andika",sans-serif;line-height:1.1}
 
 /* Phare : grille */
 .grille{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:560px;margin:6px auto}
-.case{aspect-ratio:1;border-radius:14px;border:3px solid #e2dcef;background:#fff;font-size:clamp(24px,4.4vw,40px);display:grid;place-items:center}
+.case{aspect-ratio:1;border-radius:14px;border:3px solid #e2dcef;background:#fff;display:grid;place-items:center;padding:8%}
+.case svg{width:100%;height:100%;display:block}
 .case.trouve{background:#fff3c4;border-color:var(--or);animation:pop .4s}
 .case.distrait{animation:secoue .4s;background:#fde8e7}
 @keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -339,6 +340,21 @@ function finLieu(i){
   if(etat.fait>=LIEUX.length) finale(); else montreCarte();
 }
 
+/* ---------- Formes du phare : l'étoile à 5 branches et des formes qui lui ressemblent ---------- */
+var NOMS_FORMES={"etoile":"étoile","pentagone":"pentagone","fleur":"fleur","soleil":"soleil","asterisque":"astérisque","flocon":"flocon","hexagone":"hexagone","croix":"croix"};
+function pts(n,R,r0,rot){var p=[];for(var i=0;i<n*2;i++){var a=Math.PI*i/n-Math.PI/2+rot,rr=i%2?r0:R;p.push((50+rr*Math.cos(a)).toFixed(1)+","+(50+rr*Math.sin(a)).toFixed(1));}return p.join(" ");}
+function forme(c){
+  var rot=(Math.random()-.5)*0.9, J="#f4b62a", T='stroke="#b9800a" stroke-width="3" stroke-linejoin="round"', o='<svg viewBox="0 0 100 100" aria-hidden="true">', f="</svg>", i, k="";
+  if(c==="etoile") return o+'<polygon points="'+pts(5,44,18,rot)+'" fill="'+J+'" '+T+'/>'+f;
+  if(c==="pentagone"){ var q=[];for(i=0;i<5;i++){var a=2*Math.PI*i/5-Math.PI/2+rot;q.push((50+40*Math.cos(a)).toFixed(1)+","+(50+40*Math.sin(a)).toFixed(1));} return o+'<polygon points="'+q.join(" ")+'" fill="'+J+'" '+T+'/>'+f; }
+  if(c==="fleur"){ for(i=0;i<5;i++) k+='<ellipse cx="50" cy="27" rx="12" ry="21" fill="'+J+'" '+T+' transform="rotate('+(72*i+rot*57)+' 50 50)"/>'; return o+k+'<circle cx="50" cy="50" r="10" fill="#b9800a"/>'+f; }
+  if(c==="soleil"){ for(i=0;i<10;i++) k+='<line x1="50" y1="6" x2="50" y2="20" stroke="#b9800a" stroke-width="5" stroke-linecap="round" transform="rotate('+(36*i+rot*57)+' 50 50)"/>'; return o+k+'<circle cx="50" cy="50" r="24" fill="'+J+'" '+T+'/>'+f; }
+  if(c==="asterisque"){ for(i=0;i<5;i++) k+='<line x1="50" y1="50" x2="50" y2="8" stroke="'+J+'" stroke-width="11" stroke-linecap="round" transform="rotate('+(72*i+rot*57)+' 50 50)"/>'; return o+k+f; }
+  if(c==="flocon"){ for(i=0;i<6;i++) k+='<g transform="rotate('+(60*i+rot*57)+' 50 50)"><line x1="50" y1="50" x2="50" y2="8" stroke="'+J+'" stroke-width="7" stroke-linecap="round"/><path d="M41 22 L50 30 L59 22" fill="none" stroke="'+J+'" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>'; return o+k+f; }
+  if(c==="hexagone"){ var h=[];for(i=0;i<6;i++){var a2=Math.PI*i/3+rot;h.push((50+40*Math.cos(a2)).toFixed(1)+","+(50+40*Math.sin(a2)).toFixed(1));} return o+'<polygon points="'+h.join(" ")+'" fill="'+J+'" '+T+'/>'+f; }
+  if(c==="croix") return o+'<path d="M38 8h24v30h30v24H62v30H38V62H8V38h30z" fill="'+J+'" '+T+' transform="rotate('+(rot*57)+' 50 50)"/>'+f;
+}
+
 /* ---------- Les 6 étapes ---------- */
 var ETAPES={
   /* 1. Plasticité */
@@ -374,16 +390,16 @@ var ETAPES={
   /* 2. Attention */
   phare:function(z,fin){
     texte(z,"Le phare éclaire une seule chose à la fois. Ton attention aussi ! Quand tu regardes partout, ton cerveau apprend moins bien.","",15);
-    texte(z,"Touche seulement les <b>5 étoiles ⭐</b>. Ne te laisse pas distraire !","consigne",16);
-    var cases=melange(["⭐","⭐","⭐","⭐","⭐","🎈","🐶","📱","⚽","🍭","🎮","🦋","🍕","📺","🚗","🎵","🐱","🍦"]);
+    texte(z,"Touche seulement les <b>5 étoiles</b>. Ne te laisse pas distraire !","consigne",16);
+    var cases=melange(["etoile","etoile","etoile","etoile","etoile","pentagone","pentagone","fleur","fleur","soleil","soleil","asterisque","asterisque","flocon","hexagone","hexagone","croix","pentagone"]);
     var gr=el(z,'<div class="grille" role="group" aria-label="Grille de 18 cases"></div>');
     var cpt=el(z,'<p class="compteur" role="status">Étoiles trouvées : 0 / 5</p>');
     var t=0, distractions=0;
     cases.forEach(function(c){
-      var b=document.createElement("button"); b.className="case"; b.textContent=c; b.setAttribute("aria-label",c==="⭐"?"étoile":"distraction");
+      var b=document.createElement("button"); b.className="case"; b.innerHTML=forme(c); b.setAttribute("aria-label",NOMS_FORMES[c]);
       b.onclick=function(){
         if(b.classList.contains("trouve")||t>=5) return;
-        if(c==="⭐"){ b.classList.add("trouve"); t++; cpt.textContent="Étoiles trouvées : "+t+" / 5";
+        if(c==="etoile"){ b.classList.add("trouve"); t++; cpt.textContent="Étoiles trouvées : "+t+" / 5";
           if(t===5){ cpt.textContent="Bravo ! Tu as trouvé les 5 étoiles 🔦";
             parle(cpt.textContent,18);
             question(z,"Pour bien faire attention en classe, je…",
