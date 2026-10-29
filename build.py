@@ -445,6 +445,7 @@ SEO_TITRES = {
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
     "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : jeu de métacognition à projeter, CP-CE2",
+    "/post/apprendre-a-apprendre-diaporama-memoire/": "Apprendre ! Diaporama sur la mémoire et l'erreur pour les élèves, CE1-CE2",
     "/divers/metacognition/": "Métacognition au cycle 2 : jeux pour apprendre à apprendre",
     "/maths/problemes/": "Résolution de problèmes CP-CE1 : jeux en ligne gratuits",
     "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",

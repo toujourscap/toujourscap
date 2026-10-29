@@ -1,6 +1,37 @@
 {
- "count": 30,
+ "count": 31,
  "posts": [
+  {
+   "title": "Apprendre ! Un diaporama pour expliquer la mémoire aux élèves",
+   "slug": "apprendre-a-apprendre-diaporama-memoire",
+   "cat": "metacognition",
+   "excerpt": "Un diaporama à projeter pour montrer aux élèves que tout le monde peut apprendre : le cerveau qui se muscle, les 4 clés, refaire de mémoire, dormir, apprendre de ses erreurs. Avec les référents théoriques.",
+   "date": "2026-10-29T13:15:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "Classe entière",
+    "supports": [
+     "projetable",
+     "imprimable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "apprendre-a-apprendre-diaporama.html"
+     }
+    ]
+   }
+  },
   {
    "title": "Intelligence ordinaire, culture peu scolaire : méthodologie pour le maître E",
    "slug": "intelligence-ordinaire-culture-peu-scolaire-maitre-e",
