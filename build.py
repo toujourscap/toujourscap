@@ -40,6 +40,7 @@ CATS = {
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
     "metacognition": {"name": "Métacognition", "desc": "Jeux pour aider les élèves à réfléchir à leur façon d'apprendre : nommer les attitudes qui aident, vérifier, demander de l'aide, apprendre de ses erreurs.", "domain": "divers"},
+    "memorisation": {"name": "Mémorisation", "desc": "Ressources pour aider les élèves à comprendre comment fonctionne leur mémoire et à apprendre leurs leçons efficacement.", "domain": "divers"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -447,6 +448,7 @@ SEO_TITRES = {
     "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : jeu de métacognition à projeter, CP-CE2",
     "/post/apprendre-a-apprendre-diaporama-memoire/": "Apprendre ! Diaporama sur la mémoire et l'erreur pour les élèves, CE1-CE2",
     "/divers/metacognition/": "Métacognition au cycle 2 : jeux pour apprendre à apprendre",
+    "/divers/memorisation/": "Mémorisation : aider les élèves à apprendre leurs leçons",
     "/maths/problemes/": "Résolution de problèmes CP-CE1 : jeux en ligne gratuits",
     "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
@@ -641,15 +643,15 @@ def main():
   {filtres}
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
-    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e", "metacognition")]
-    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg"}
+    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e", "metacognition", "memorisation")]
+    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg", "memorisation": "/images/domaines/memorisation.jpg"}
     dvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/divers/{k}/">
   <div class="card-img"><img src="{DVIGNETTES[k]}" alt="{esc(t)}" loading="lazy"></div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{esc(t)}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for k, t, d, lst in dsubs) + "</div>"
     write("/divers/", page("Divers", f"""<section class="wrap">
   <h1>Divers</h1>
-  <p class="lead">Des pistes variées pour stimuler la motivation et la métacognition.</p>
+  <p class="lead">Des pistes variées pour stimuler la motivation, la métacognition et la mémorisation.</p>
   {dvignettes}
 </section>""", "/divers/", "Pistes variées pour les enseignants du cycle 2 : aide pédagogique spécialisée (maître E, RASED), motivation et métacognition."))
     for k, t, d, lst in dsubs:
