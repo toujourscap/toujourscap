@@ -433,7 +433,7 @@ var ETAPES={
       },23,24);
   },
 
-  /* 4. Refaire de mémoire */
+  /* 4. Recommencer en essayant de se rappeler */
   biblio:function(z,fin){
     var TOUS=[["🍎","pomme"],["🚲","vélo"],["🐟","poisson"],["⭐","étoile"],["🎩","chapeau"],["🦆","canard"],["🍫","chocolat"],["☂️","parapluie"],["🐘","éléphant"],["🎃","citrouille"],["🦋","papillon"],["🎺","trompette"]];
     var cibles=melange(TOUS).slice(0,6);
@@ -478,7 +478,7 @@ var ETAPES={
         retrouver(1,function(ok){
           var r=el(zoneJeu,'<div></div>');
           el(r,'<div class="scores"><div class="score">1er essai<big>'+ok+' / 6</big></div></div>');
-          texte(r,"Regarde : en vert, les objets que tu as retrouvés ; en jaune, ceux que tu as oubliés. Maintenant, on va <b>refaire de mémoire</b> : tu les revois, puis tu essaies encore de les retrouver.","",33);
+          texte(r,"Regarde : en vert, les objets que tu as retrouvés ; en jaune, ceux que tu as oubliés. Maintenant, on va <b>recommencer en essayant de se rappeler</b> : tu les revois, puis tu essaies encore de les retrouver.","",33);
           bouton(r,"Je refais de mémoire 🔁","violet",function(){
             montrer(7000,function(){
               retrouver(2,function(ok2){
