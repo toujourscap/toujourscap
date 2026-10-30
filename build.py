@@ -646,7 +646,7 @@ def main():
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
     dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e", "metacognition", "memorisation")]
-    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg", "memorisation": "/images/domaines/memorisation.jpg"}
+    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg", "memorisation": "/images/domaines/memorisation-2.jpg"}
     dvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/divers/{k}/">
   <div class="card-img"><img src="{DVIGNETTES[k]}" alt="{esc(t)}" loading="lazy"></div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{esc(t)}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
