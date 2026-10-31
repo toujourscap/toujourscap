@@ -42,6 +42,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .centre{text-align:center}
 .lien-ens{display:block;margin:12px auto 0;background:none;border:0;color:var(--vert);text-decoration:underline;font-size:15px}
 .etapes{margin:12px 0 0;font-size:15px}
+.liste-phrases{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px}
+.phrase-choix{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-align:left;background:#fffdf8;border:2px solid #e7e0d4;border-radius:16px;padding:10px 14px;font-size:clamp(17px,2.2vw,22px);color:var(--stylo)}
+.phrase-choix:hover{border-color:var(--vert)}
+.phrase-choix .n{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--vert);color:#fff;font-weight:700;font-size:17px}
+.phrase-choix .e{font-size:14px;color:#66716d;font-weight:700;white-space:nowrap}
+.phrase-choix.faite{background:var(--vert-c)}
+.phrase-choix.faite .e{color:var(--correc)}
+@media (max-width:640px){.phrase-choix{grid-template-columns:auto 1fr}.phrase-choix .e{grid-column:2;white-space:normal}}
 .etapes summary{cursor:pointer;color:var(--vert);font-weight:700;text-align:center}
 .etapes-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:14px 0 0;padding:0;list-style:none;font-size:14px}
 .etapes-liste li{background:#faf6ee;border-radius:10px;padding:6px 8px}
@@ -227,6 +235,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
         <span id="copieOk" class="aide"></span>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- Choix de la phrase (dictée de la maîtresse) -->
+<section class="ecran" id="choix">
+  <div class="carte">
+    <h1 style="color:var(--vert);font-size:clamp(26px,4vw,38px);text-align:center">Je choisis ma phrase</h1>
+    <p class="sous" id="choixTitre"></p>
+    <div class="liste-phrases" id="listePhrases"></div>
+    <p class="aide centre">Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.</p>
+    <p class="centre boutons-depart"><button class="btn vert" id="versBilan">J'ai fini : mon bilan</button> <button class="btn blanc" id="choixAccueil">Accueil</button></p>
   </div>
 </section>
 
@@ -473,9 +492,11 @@ $("versEnseignant").onclick=function(){montrer("enseignant");
 $("retourAccueil").onclick=function(){montrer("accueil");};
 $("commencer").onclick=function(){demarrer(false);};
 $("libre").onclick=function(){demarrer(true);};
-$("quitter").onclick=function(){montrer("accueil");};
+$("quitter").onclick=function(){if(etat&&!etat.libre)choixPhrase();else montrer("accueil");};
 $("versAccueil").onclick=function(){montrer("accueil");};
-$("refaire").onclick=function(){demarrer(etat&&etat.libre);};
+$("refaire").onclick=function(){if(etat&&!etat.libre){choixPhrase();}else demarrer(true);};
+$("versBilan").onclick=function(){bilan();};
+$("choixAccueil").onclick=function(){montrer("accueil");};
 
 /* ---------- Espace enseignant ---------- */
 $("creerLien").onclick=function(){
@@ -538,8 +559,26 @@ function demarrer(libre){
   $("imgEnfant").src=IMG[perso];
   etat={i:0,resultats:[],libre:!!libre,modeles:[]};
   $("etiquette").textContent=libre?"le modèle":"le modèle de la maîtresse";
+  if(!libre){choixPhrase();return;}
   montrer("travail");
   nouvellePhrase();
+}
+/* Dictée de la maîtresse : l'élève choisit la phrase qu'il travaille */
+function faites(){return lire(cle()+"-"+aujourdhui(),{});}
+function choixPhrase(){
+  var f=faites(),z=$("listePhrases");z.innerHTML="";
+  $("choixTitre").textContent=estExemple?"Dictée d'exemple":dictee.t;
+  dictee.p.forEach(function(ph,i){
+    var b=document.createElement("button");b.type="button";b.className="phrase-choix"+(f[i]!==undefined?" faite":"");
+    var n=document.createElement("span");n.className="n";n.textContent=i+1;b.appendChild(n);
+    var t=document.createElement("span");t.className="t";t.textContent=analyser(ph).texte;b.appendChild(t);
+    var e=document.createElement("span");e.className="e";
+    e.textContent=f[i]===undefined?"À faire":f[i]===0?"★ Juste du 1er coup":"✓ Faite ("+f[i]+" erreur"+(f[i]>1?"s":"")+" au 1er essai)";b.appendChild(e);
+    b.onclick=function(){etat.i=i;montrer("travail");nouvellePhrase();};
+    z.appendChild(b);
+  });
+  $("versBilan").style.display=etat.resultats.length?"":"none";
+  montrer("choix");
 }
 function mod(){return etat.libre?etat.modeles[etat.i]:analyser(dictee.p[etat.i]);}
 function modele(){return mod().texte;}
@@ -547,6 +586,7 @@ function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   etat.essais=[];etat.cats1=null;etat.pieges=[];etat.correction=null;
   $("compteur").textContent=etat.libre?"Phrase "+(etat.i+1):"Phrase "+(etat.i+1)+" sur "+dictee.p.length;
+  $("quitter").textContent=etat.libre?"Accueil":"Mes phrases";
   $("rangees").innerHTML="";$("pieges").innerHTML="";$("pieges").style.display="flex";$("verif").classList.remove("vue");$("explications").innerHTML="";
   rabat(0);
   if(etat.libre&&!etat.modeles[etat.i]){phaseModele();return;}
@@ -687,7 +727,10 @@ function boutonsSuite(){
   if(etat.libre){
     bouton("Écrire une autre phrase","blanc",function(){suivante(true);});
     bouton("J'ai fini : mon bilan","blanc",function(){suivante(false);});
-  }else bouton(etat.i+1<dictee.p.length?"Phrase suivante":"Voir mon bilan","blanc",function(){suivante(true);});
+  }else{
+    bouton("Choisir une autre phrase","blanc",function(){suivante(true);});
+    bouton("J'ai fini : mon bilan","blanc",function(){suivante(false);});
+  }
 }
 function verifier(){
   var essai=normaliser($("saisie").value);
@@ -758,8 +801,9 @@ function verifier(){
 
 function suivante(encore){
   etat.resultats.push({p:modele(),premier:etat.essais[0],cats:etat.cats1||{}});
+  if(!etat.libre){var f=faites();f[etat.i]=etat.essais[0];ecrire(cle()+"-"+aujourdhui(),f);if(encore){choixPhrase();return;}bilan();return;}
   etat.i++;
-  if(etat.libre?encore:etat.i<dictee.p.length){nouvellePhrase();return;}
+  if(encore){nouvellePhrase();return;}
   bilan();
 }
 
