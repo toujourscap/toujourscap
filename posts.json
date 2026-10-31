@@ -1,5 +1,5 @@
 {
- "count": 32,
+ "count": 33,
  "posts": [
   {
    "title": "Les explorateurs du cerveau",
@@ -9653,6 +9653,37 @@
      {
       "type": "RAW_HTML",
       "file": "synthese-aide-specialisee.html"
+     }
+    ]
+   }
+  },
+  {
+   "title": "Apprendre sa dictée : la méthode de la feuille pliée",
+   "slug": "apprendre-sa-dictee-methode-de-la-feuille-pliee",
+   "cat": "methode",
+   "excerpt": "Un mode d'emploi en 5 étapes pour apprendre sa dictée avec une simple feuille : j'écris le modèle, je repère les difficultés, je replie et j'écris de mémoire, je corrige en couleur, je recommence plusieurs jours.",
+   "date": "2026-10-31T08:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 élève",
+    "supports": [
+     "imprimable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "apprendre-sa-dictee.html"
      }
     ]
    }
