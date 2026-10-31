@@ -35,6 +35,7 @@ JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e
 CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage et de compréhension.", "domain": "francais"},
+    "etude-langue": {"name": "Étude de la langue", "desc": "Jeux et outils pour travailler l'orthographe, la grammaire et le vocabulaire au cycle 2 : dictées, mots à retenir.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
@@ -569,10 +570,12 @@ def main():
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
     cc = epingles_d_abord([p for p in fr if p["cat"] == "cercle-conteur"])
     lec = [p for p in fr if p["cat"] == "lecture"]
+    edl = epingles_d_abord([p for p in fr if p["cat"] == "etude-langue"])
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
     subs = [("cercle-conteur", "Langage oral", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
-            ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
+            ("lecture", "Lecture", CATS["lecture"]["desc"], lec),
+            ("etude-langue", "Étude de la langue", CATS["etude-langue"]["desc"], edl)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -683,7 +686,7 @@ def main():
 """ if DON_URL else "") + """</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
 
     domains = [
-        ("/francais/", "Lecture · Langage oral", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
+        ("/francais/", "Lecture · Langage oral · Étude de la langue", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
         ("/maths/", "Numération · Calcul", "Maths", "Des activités stimulantes pour booster la réussite de vos élèves en mathématiques.", "/images/domaines/maths.jpg"),
         ("/divers/", "Motivation · Métacognition", "Divers", "Découvrez des pistes variées pour stimuler la motivation et la métacognition.", "/images/domaines/divers.jpg"),
     ]
