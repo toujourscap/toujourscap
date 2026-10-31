@@ -51,6 +51,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 #enseignant label{display:block;font-weight:700;margin:14px 0 6px}
 #enseignant input,#enseignant textarea{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid #d9d2c4;border-radius:12px;background:#fffdf8}
 #enseignant textarea{min-height:150px;line-height:1.5}
+.cats{border:2px solid #e7e0d4;border-radius:12px;margin:14px 0 0;padding:8px 12px 10px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.cats legend{font-weight:700;padding:0 6px}
+#enseignant .case{display:flex;align-items:center;gap:6px;font-weight:400;margin:0;font-size:16px;cursor:pointer}
+#enseignant .case input{width:20px;height:20px;accent-color:var(--vert)}
+.note-m{display:block;margin-top:6px;background:#fff6d6;border:2px dashed #e0b84a;border-radius:12px;padding:6px 12px;color:#5b4a12;font-size:16px;align-self:flex-start}
 #enseignant ::placeholder{color:#a9a294;font-style:italic}
 .aide{color:#66716d;font-size:15px;margin:6px 0 0}
 .lien-cree{margin-top:16px;background:var(--vert-c);border-radius:14px;padding:14px;display:none}
@@ -203,6 +208,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <label for="ensPhrases">Les phrases (une par ligne, 8 au maximum)</label>
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
     <p class="aide">Écrivez chaque phrase exactement comme l'élève doit l'écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
+    <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
+    <p class="aide">Décochez ce que vous ne voulez pas faire vérifier : ces erreurs-là ne seront pas signalées à l'élève.</p>
+    <label for="ensNote">Mon conseil pour les pièges (facultatif)</label>
+    <input id="ensNote" maxlength="200" placeholder="Exemple : attention aux mots avec « eau » et au pluriel.">
     <div class="rangee">
       <button class="btn vert" id="creerLien">Créer le lien</button>
       <button class="btn blanc" id="retourAccueil">Retour</button>
@@ -295,7 +304,9 @@ function ecrire(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
 /* ---------- Dictée transmise dans le lien ---------- */
 function encoder(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";b.forEach(function(x){s+=String.fromCharCode(x);});return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
-function decoder(s){try{s=s.replace(/-/g,"+").replace(/_/g,"/");var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);var o=JSON.parse(new TextDecoder().decode(b));if(o&&Array.isArray(o.p)&&o.p.length)return {t:String(o.t||"Ma dictée").slice(0,60),p:o.p.map(String).filter(Boolean).slice(0,8)};}catch(e){}return null;}
+function decoder(s){try{s=s.replace(/-/g,"+").replace(/_/g,"/");var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);var o=JSON.parse(new TextDecoder().decode(b));if(o&&Array.isArray(o.p)&&o.p.length){var r={t:String(o.t||"Ma dictée").slice(0,60),p:o.p.map(String).filter(Boolean).slice(0,8)};
+  if(Array.isArray(o.c)){var c=o.c.filter(function(x){return NOMCAT[x]&&!NOMCAT[x].cache;});if(c.length)r.c=c;}
+  if(o.n)r.n=String(o.n).slice(0,200);return r;}}catch(e){}return null;}
 function dicteeDuLien(){var m=location.hash.match(/[#&]d=([^&]+)/);return (m&&decoder(m[1]))||null;}
 var dictee = dicteeDuLien() || EXEMPLE;
 var estExemple = !dicteeDuLien();
@@ -445,6 +456,7 @@ function majTitre(){var t=$("titreDictee"),n=dictee.p.length+" phrase"+(dictee.p
     $("commencer").className="btn blanc";$("commencer").textContent="Essayer la dictée d'exemple";
   }else{
     t.innerHTML="Dictée de la maîtresse : <strong></strong> — "+n;t.querySelector("strong").textContent=dictee.t;
+    if(dictee.n){var q=document.createElement("span");q.className="note-m";q.textContent="📝 La maîtresse : "+dictee.n;t.appendChild(q);}
     $("commencer").className="btn vert";$("commencer").textContent="Commencer la dictée de la maîtresse";
     $("libre").className="btn blanc";$("libre").textContent="J'écris le modèle moi-même";
   }
@@ -452,7 +464,11 @@ function majTitre(){var t=$("titreDictee"),n=dictee.p.length+" phrase"+(dictee.p
 }
 majTitre();
 function montrer(id){document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});window.scrollTo(0,0);}
-$("versEnseignant").onclick=function(){montrer("enseignant");if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");}$("ensTitre").focus();};
+CHOIX.forEach(function(c){var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));$("ensCats").appendChild(l);});
+$("versEnseignant").onclick=function(){montrer("enseignant");
+  if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
+    document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
+  $("ensTitre").focus();};
 $("retourAccueil").onclick=function(){montrer("accueil");};
 $("commencer").onclick=function(){demarrer(false);};
 $("libre").onclick=function(){demarrer(true);};
@@ -467,6 +483,10 @@ $("creerLien").onclick=function(){
   $("ensErreur").textContent="";
   if(p.length>8)p=p.slice(0,8);
   var o={t:($("ensTitre").value.trim()||"Ma dictée").slice(0,60),p:p};
+  var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
+  if(!c.length){$("ensErreur").textContent="Cochez au moins un type d'erreur à vérifier.";return;}
+  if(c.length<CHOIX.length)o.c=c;
+  var n=$("ensNote").value.trim();if(n)o.n=n.slice(0,200);
   $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
   $("lienCree").style.display="block";$("copieOk").textContent="";
   $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
@@ -489,16 +509,18 @@ ACCENTS.forEach(function(c){var b=document.createElement("button");b.type="butto
 
 /* ---------- Ce que je vérifie ---------- */
 var verif=lire("dictee-pliee-verif",null);
-function tous(){return CHOIX.map(function(c){return c.id;});}
+// catégories que l'enseignant a choisies (lien de la maîtresse) ; sinon toutes
+function tous(){var c=(etat&&!etat.libre&&!estExemple&&dictee.c)?dictee.c:null;return CHOIX.map(function(x){return x.id;}).filter(function(id){return !c||c.indexOf(id)>=0;});}
+function actif(cat){return cat==="autre"?tous().length===CHOIX.length:tous().indexOf(cat)>=0;}
 verif=Array.isArray(verif)?verif.filter(function(v){return NOMCAT[v]&&!NOMCAT[v].cache;}):[];
 if(!verif.length)verif=tous();
-function toutCoche(){return verif.length===CHOIX.length;}
-function choisi(cat){return cat==="autre"?toutCoche():verif.indexOf(cat)>=0;}
+function toutCoche(){return verif.length===tous().length;}
+function choisi(cat){return cat==="autre"?toutCoche()&&actif("autre"):verif.indexOf(cat)>=0;}
 function dessinerVerif(){
   var z=$("verif");z.innerHTML='<span class="titre">Je vérifie :</span>';
   var tout=document.createElement("button");tout.type="button";tout.textContent="Tout";tout.setAttribute("aria-pressed",toutCoche()?"true":"false");
   tout.onclick=function(){verif=tous();changerVerif();};z.appendChild(tout);
-  CHOIX.forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
+  CHOIX.filter(function(c){return actif(c.id);}).forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
     b.onclick=function(){
       if(toutCoche())verif=[c.id];
       else{var i=verif.indexOf(c.id);if(i>=0)verif.splice(i,1);else verif.push(c.id);if(!verif.length)verif=tous();}
@@ -596,6 +618,7 @@ function phasePieges(){
     b.setAttribute("aria-label","Lettre "+c);b.onclick=function(){basculerPiege(k);};r.appendChild(b);
   });
   msg("Touche les lettres pièges avec ta loupe 🔍");
+  if(!etat.libre&&!estExemple&&dictee.n){var nm=document.createElement("div");nm.className="note-m";nm.textContent="📝 La maîtresse : "+dictee.n;$("pieges").appendChild(nm);}
   var suite=bouton("J'ai trouvé les pièges : je plie la feuille","vert",function(){
     r.querySelectorAll(".lettre").forEach(function(l){l.disabled=true;l.style.cursor="default";});
     msg("");plier();
@@ -637,7 +660,7 @@ function basculerPiege(k){
     p.g.forEach(function(x,j){var l=r.querySelector('.lettre[data-k="'+x+'"]');if(!l)return;l.classList.add("piege");
       if(p.g.length>1){l.classList.add("pg");if(j===0)l.classList.add("pg-d");if(j===p.g.length-1)l.classList.add("pg-f");}});
   });
-  var z=$("pieges");z.innerHTML="";var vus={};
+  var z=$("pieges");z.querySelectorAll(".piege-bulle").forEach(function(e){e.remove();});var vus={};
   etat.pieges.slice().sort(function(a,b){return a.g[0]-b.g[0];}).forEach(function(p){if(vus[p.ph])return;vus[p.ph]=1;var d=document.createElement("div");d.className="piege-bulle";d.textContent=p.ph;z.appendChild(d);});
   $("actions").firstChild.disabled=!etat.pieges.length;
   msg(etat.pieges.length?"Dis-toi ces pièges dans ta tête. Encore d'autres ?":"Touche les lettres pièges avec ta loupe 🔍");
@@ -671,14 +694,16 @@ function verifier(){
   saisieVisible(false);
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
-  etat.essais.push(err.length);
-  if(!etat.cats1){etat.cats1={};err.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
+  var errA=err.filter(function(x){return actif(x.cat);}); // seulement les erreurs que l'enseignant fait vérifier
+  etat.essais.push(errA.length);
+  if(!etat.cats1){etat.cats1={};errA.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
+  verif=verif.filter(function(v){return actif(v);});if(!verif.length)verif=tous();
   var r=ajouterRangee();
   rabat(0);$("ardoise").classList.remove("cachee");
   etape(etat.essais.length===1?4:6);
-  if(!err.length){
+  if(!errA.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
-    etape(8,"Bravo ! Ma phrase est juste, sans erreur !");
+    etape(8,err.length?"Bravo ! Pour ce que la maîtresse vérifie, ma phrase est juste !":"Bravo ! Ma phrase est juste, sans erreur !");
     msg(etat.essais.length===1?"Zéro erreur du premier coup, super détective !":"Zéro erreur ! Tu as appris en corrigeant.","vert");
     boutonsSuite();$("actions").firstChild.className="btn vert";
     return;
