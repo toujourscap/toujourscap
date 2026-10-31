@@ -134,6 +134,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .ligne-saisie .crayon{font-size:22px}
 .accents{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .accents button{min-width:38px;height:38px;border-radius:9px;border:2px solid #e7e0d4;background:#fff;font-size:19px;font-weight:700;color:var(--stylo)}
+.bulle .ecouter{position:absolute;right:-12px;bottom:-12px;width:34px;height:34px;border-radius:50%;border:3px solid var(--vert);background:#fff;font-size:15px;cursor:pointer;display:grid;place-items:center;padding:0}
 .msg{min-height:28px;margin:10px 0 0;font-size:17px;font-weight:700}
 .msg.rouge{color:var(--rouge)} .msg.vert{color:var(--correc)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -715,7 +716,7 @@ function explication(x,md){
 // Synthèse vocale (voix française de l'appareil)
 function dire(txt){
   try{var sy=window.speechSynthesis;if(!sy)return;sy.cancel();
-    var u=new SpeechSynthesisUtterance(txt.replace(/[«»]/g,"").replace(/\s+/g," "));u.lang="fr-FR";u.rate=0.9;
+    var u=new SpeechSynthesisUtterance(txt.replace(/[«»]/g,"").replace(/[\p{Extended_Pictographic}\uFE0F]/gu,"").replace(/([.!?:])\s*\./g,"$1").replace(/\s+/g," ").trim());u.lang="fr-FR";u.rate=0.9;
     var v=sy.getVoices().filter(function(v){return /^fr/i.test(v.lang);});if(v.length)u.voice=v.find(function(x){return /fr-FR/i.test(x.lang);})||v[0];
     sy.speak(u);}catch(e){}
 }
@@ -910,10 +911,20 @@ function nouvellePhrase(){
 }
 function bulle(num,texte){
   var b=$("bulle");b.innerHTML='<span class="num"></span><span></span>';b.firstChild.textContent=num;b.lastChild.textContent=texte;
+  var ec=document.createElement("button");ec.type="button";ec.className="ecouter";ec.textContent="🔊";ec.setAttribute("aria-label","Écouter la consigne");
+  ec.onclick=function(){lireConsigne(true);};b.appendChild(ec);
   b.classList.remove("anim");void b.offsetWidth;b.classList.add("anim");
+}
+// Consigne lue à voix haute : la pensée de l'étape, puis le message en dessous
+var tConsigne=null;
+function lireConsigne(toujours){
+  var b=$("bulle"),t=b&&b.children[1]?b.children[1].textContent:"",m=$("msg").textContent;
+  if(!toujours&&document.querySelector(".bulle-corr"))return;
+  dire([t,m].filter(Boolean).join(". "));
 }
 function etape(n,texte){
   etat.etape=n;
+  clearTimeout(tConsigne);tConsigne=setTimeout(function(){lireConsigne(false);},120);
   bulle(n>7?"★":n,texte||pensees()[Math.min(n,7)]);
   var p=$("pastilles");p.innerHTML="";
   for(var k=1;k<=7;k++){var d=document.createElement("span");d.className="pastille"+(k<Math.min(n,7)||n>7?" faite":"")+(k===Math.min(n,7)&&n<=7?" ici":"");d.textContent=k;p.appendChild(d);}
