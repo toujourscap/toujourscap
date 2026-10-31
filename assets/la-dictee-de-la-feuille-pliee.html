@@ -406,6 +406,7 @@ function voyelles(texte){
       var gr=GRAPH[g],L=gr.length;
       if(t.slice(i,i+L).join("")!==gr)continue;
       if(/[nm]$/.test(gr)&&/[aeiouyéèêëàâùûîïônmh]/.test(t[i+L]||""))continue;
+      if(/i$/.test(gr)&&t[i+L]==="l"&&(t[i+L+1]==="l"||!/[\p{L}]/u.test(t[i+L+1]||"")))continue;
       trouve=[i,i+L-1];
     }
     if(trouve){res.push(trouve);i=trouve[1]+1;}else i++;
@@ -416,6 +417,46 @@ function sansAccent(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 var ACC=/[éèêëàâùûîïôç]/i;
 function bornesMot(t,k){var d=k,f=k;while(d>0&&/[\p{L}\-]/u.test(t[d-1]))d--;while(f<t.length-1&&/[\p{L}\-]/u.test(t[f+1]))f++;return [d,f];}
 function motPrecedent(t,d){var k=d-1;while(k>=0&&!/[\p{L}']/u.test(t[k]))k--;if(k<0)return "";var f=k;if(t[k]==="'"){k--;}var s=k;while(s>0&&/[\p{L}]/u.test(t[s-1]))s--;return t.slice(s,f+1).join("");}
+// « ill » (fille, feuille, paille) et « il » final après une voyelle (travail, soleil) font le son « y »
+var ILL_EXCEPT=/^(villes?|village|villages|villageois|villageoise|mille|milles|milliers?|millions?|milliards?|millimètres?|tranquilles?|tranquillement|lille|gilles|pupilles?|distiller|osciller|bacilles?)$/i;
+function groupesIll(texte){
+  var t=Array.from(texte.toLowerCase()),res=[];
+  for(var i=0;i<t.length-1;i++){
+    if(t[i]!=="i"||t[i+1]!=="l")continue;
+    var bm=bornesMot(t,i),mot=t.slice(bm[0],bm[1]+1).join("");
+    if(ILL_EXCEPT.test(mot))continue;
+    if(t[i+2]==="l"&&i>bm[0]){res.push([i,i+2]);i+=2;continue;}
+    if(i+1===bm[1]&&/[aeuoœ]/.test(t[i-1]||""))res.push([i,i+1]);
+  }
+  return res;
+}
+function dansIll(texte,lo,hi){var r=groupesIll(texte);for(var i=0;i<r.length;i++)if(r[i][0]<=hi&&r[i][1]>=lo)return r[i];return null;}
+// Accord au féminin : « la feuille pliée », « elle est partie », « la porte est fermée », « une petite fille »
+var DET_FEM=/^(la|une|ma|ta|sa|cette)$/i;
+var ETRE=/^(est|était|sera|serait|fut|reste|devient|semble)$/i;
+var FORME_FEM=/(ée|ie|ïe|ue|te|de|se|ère|ive|nne|lle|ine|ane|une|aine|ente|ante|che|ronde|ure)$/;
+var EPICENE=/^(rapide|triste|vide|solide|timide|humide|malade|stupide|splendide|tiède|juste|chose|rose|douce|propre|faible|énorme|immense|large|jaune|rouge|magique|calme|sage|drôle|simple|utile|inutile|facile|difficile|tranquille|aimable|agréable|possible|impossible|pauvre|riche|libre|même|autre|seule|elle|celle|quelle|une|chaque|quelque|personne|fille|feuille|chose|lune|dune|plume|vie|pluie|rue|vue|amie|fée|idée|année|journée|soirée|matinée|dictée|entrée|cheminée|purée|porte|tarte|carte|forte|route|soupe|tête|fête|bête|robe|maison|classe|tasse|cause|chaise|fraise|église|valise|chemise)$/i;
+var ADJ_AVANT=/^(petite|grande|belle|jolie|bonne|mauvaise|vieille|nouvelle|gentille|longue|haute|grosse|première|dernière|seconde|vraie|fausse|courte|même)$/i;
+function motApres(t,f){var k=f+1;while(k<t.length&&!/[\p{L}]/u.test(t[k]))k++;if(k>=t.length)return "";var e=k;while(e<t.length-1&&/[\p{L}\-]/u.test(t[e+1]))e++;return t.slice(k,e+1).join("");}
+function debutAvant(t,d){var k=d-1;while(k>=0&&!/[\p{L}']/u.test(t[k]))k--;if(k<0)return -1;if(t[k]==="'")k--;while(k>0&&/[\p{L}\-]/u.test(t[k-1]))k--;return k;}
+function accordFeminin(t,bm){
+  var mot=t.slice(bm[0],bm[1]+1).join("").toLowerCase();
+  if(!FORME_FEM.test(mot)||EPICENE.test(mot)||PRONOMS.test(mot))return null;
+  var avant=motPrecedent(t,bm[0]),bas=avant.toLowerCase();
+  if(!avant)return null;
+  if(DET_FEM.test(bas)&&ADJ_AVANT.test(mot)){var n=motApres(t,bm[1]);return n?{nom:bas+" "+mot+" "+n,avec:n}:null;}
+  if(DEVANT_NOM.test(bas))return null; // « la dictée » : le e fait partie du nom
+  var d1=debutAvant(t,bm[0]);if(d1<0)return null;
+  if(ETRE.test(bas)){
+    var suj=motPrecedent(t,d1),sb=suj.toLowerCase();
+    if(sb==="elle")return {nom:"elle",avec:"elle"};
+    var d2=debutAvant(t,d1);if(d2<0)return null;
+    var det=motPrecedent(t,d2);
+    return DET_FEM.test(det)?{nom:det.toLowerCase()+" "+sb,avec:sb}:null;
+  }
+  var det2=motPrecedent(t,d1);
+  return DET_FEM.test(det2)?{nom:det2.toLowerCase()+" "+bas,avec:bas}:null;
+}
 function estMuette(t,lo,hi,lettres){
   if(lettres.length>2||!/^[\p{L}]+$/u.test(lettres))return false;
   var bm=bornesMot(t,Math.min(Math.max(lo,0),t.length-1));
@@ -478,6 +519,8 @@ function explication(x,md){
   var lo=x.fin>x.debut?x.debut:Math.max(0,x.debut-1),k=Math.min(Math.max(lo,0),n-1);
   if(!/[\p{L}]/u.test(t[k])&&k>0)k--;
   var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join(""),avant=motPrecedent(t,bm[0]);
+  var hiE=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut),il=dansIll(md.texte,lo,hiE);
+  if(il&&/^(dbl|voy|autre)$/.test(x.cat))return "Dans "+g(mot)+", le son "+g("y")+" s'écrit "+g(t.slice(il[0],il[1]+1).join("").toLowerCase())+".";
   switch(x.cat){
     case "maj": return x.debut===0?"Une phrase commence toujours par une majuscule.":g(mot)+" s'écrit avec une majuscule.";
     case "pt": return "Une phrase se termine par un point "+g(t[n-1])+".";
@@ -501,6 +544,8 @@ function explication(x,md){
       if(l==="h")return g(mot)+" commence par un "+g("h")+" muet : on ne l'entend pas, mais on l'écrit.";
       var pl=pluriel(t,bm);
       if((l==="s"||l==="x")&&pl)return g(pl+" "+mot)+" : c'est un pluriel, il y en a plusieurs. On écrit un "+g(l)+" muet à la fin.";
+      var af=l==="e"&&x.ajout?accordFeminin(t,bm):null;
+      if(af)return g(mot)+" s'accorde avec "+g(af.nom)+" : c'est au féminin, alors on écrit un "+g("e")+".";
       if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
       return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
     case "conj":
@@ -765,6 +810,9 @@ function piege(k){
   if(/[.!?]/.test(c))return {g:seul,ph:"Je n'oublie pas le point à la fin !"};
   if(c===",")return {g:seul,ph:"Je n'oublie pas la virgule !"};
   if(c==="'")return {g:seul,ph:"Je n'oublie pas l'apostrophe !"};
+  var il=dansIll(modele(),k,k);
+  if(il){var gi=[];for(var w=il[0];w<=il[1];w++)gi.push(w);var sil=t.slice(il[0],il[1]+1).join("").toLowerCase();
+    return {g:gi,ph:"Je n'oublie pas « "+sil+" » qui fait le son « y » dans « "+mot+" » !"};}
   if(/[bcdfghjklmnpqrstvwxz]/i.test(c)){
     if(t[k+1]===c)return {g:[k,k+1],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
     if(t[k-1]===c)return {g:[k-1,k],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
@@ -779,7 +827,9 @@ function piege(k){
   var pl=pluriel(t,bm);
   if(k===bm[1]&&/[sx]/i.test(c)&&sPluriel(t,bm))return {g:seul,ph:"Je n'oublie pas le « "+c+" » du pluriel : « "+(pl?pl+" ":"")+mot+" » !"};
   if(k===bm[1]&&/[tdspxzgc]/i.test(c))return {g:seul,ph:"Je n'oublie pas la lettre muette « "+c+" » de « "+mot+" » !"};
-  if(k===bm[1]&&c==="e"&&bm[1]>bm[0])return {g:seul,ph:"Je n'oublie pas le « e » muet de « "+mot+" » !"};
+  if(k===bm[1]&&c==="e"&&bm[1]>bm[0]){var af=accordFeminin(t,bm);
+    if(af)return {g:seul,ph:"Je n'oublie pas le « e » de « "+mot+" » : « "+af.nom+" », c'est au féminin !"};
+    return {g:seul,ph:"Je n'oublie pas le « e » muet de « "+mot+" » !"};}
   if(k===bm[0]&&/h/i.test(c))return {g:seul,ph:"Je n'oublie pas le « h » muet de « "+mot+" » !"};
   return {g:seul,ph:"Je n'oublie pas le « "+c+" » de « "+mot+" » !"};
 }
