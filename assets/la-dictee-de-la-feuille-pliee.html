@@ -87,6 +87,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .boutons-depart{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .verif{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;background:#fff;border:1px solid #e7e0d4;border-radius:14px;padding:10px}
 .verif.vue{display:flex}
+.explications{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.expl{background:#eef7f2;border-left:5px solid var(--correc);border-radius:10px;padding:7px 12px;font-size:17px;animation:pop .3s ease}
+.expl b{color:var(--correc)}
 .verif .titre{font-weight:700;color:var(--vert);margin-right:4px}
 .verif button{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700;color:#4a5752}
 .verif button[aria-pressed=true]{background:var(--vert);border-color:var(--vert);color:#fff}
@@ -238,6 +241,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
       </div>
       <div class="pieges" id="pieges"></div>
       <div class="verif" id="verif" role="group" aria-label="Ce que je vérifie"></div>
+      <div class="explications" id="explications" aria-live="polite"></div>
       <p class="msg" id="msg" aria-live="polite"></p>
       <div class="bulle2" id="bulle2">C'est en corrigeant mes erreurs que j'apprends&nbsp;!</div>
       <div class="actions" id="actions"></div>
@@ -274,9 +278,10 @@ var CATS = [
   {id:"dbl", nom:"Les doubles consonnes", un:"une double consonne"},
   {id:"pt", nom:"Le point à la fin", un:"le point à la fin"},
   {id:"conj", nom:"La conjugaison des verbes", un:"la conjugaison du verbe"},
-  {id:"autre", nom:"Les autres erreurs", un:"une autre erreur"}
+  {id:"autre", nom:"D'autres lettres", un:"une autre lettre", cache:true}
 ];
 var NOMCAT = {}; CATS.forEach(function(c){NOMCAT[c.id]=c;});
+var CHOIX = CATS.filter(function(c){return !c.cache;}); // boutons « Je vérifie »
 var $ = function(id){return document.getElementById(id);};
 
 function lire(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}}
@@ -347,7 +352,7 @@ function motPrecedent(t,d){var k=d-1;while(k>=0&&!/[\p{L}']/u.test(t[k]))k--;if(
 function estMuette(t,lo,hi,lettres){
   if(lettres.length>2||!/^[\p{L}]+$/u.test(lettres))return false;
   var bm=bornesMot(t,Math.min(Math.max(lo,0),t.length-1));
-  if(/^h+$/i.test(lettres)&&lo<=bm[0]+1)return true;
+  if(/^h+$/i.test(lettres)&&lo===bm[0])return true;
   if(!/^[tdspxzgce]+$/i.test(lettres))return false;
   var finMot=bm[1];if(!/[\p{L}]/u.test(t[finMot]||"")&&finMot>0)finMot--;
   return hi>=finMot-1;
@@ -375,6 +380,50 @@ function classer(x,mod){
   var vs=voyelles(mod.texte);
   for(var v=0;v<vs.length;v++){if(vs[v][0]<=hi&&vs[v][1]>=lo)return "voy";}
   return "autre";
+}
+
+
+/* ---------- Petite explication de chaque faute ---------- */
+var DET_PLURIEL=/^(les|des|ses|mes|tes|ces|nos|vos|leurs|plusieurs|deux|trois|quatre|cinq|six|dix)$/i;
+function g(s){return "« "+s+" »";}
+function explication(x,md){
+  var t=Array.from(md.texte),n=t.length,lettres=x.trop+x.ajout;
+  var lo=x.fin>x.debut?x.debut:Math.max(0,x.debut-1),k=Math.min(Math.max(lo,0),n-1);
+  if(!/[\p{L}]/u.test(t[k])&&k>0)k--;
+  var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join(""),avant=motPrecedent(t,bm[0]);
+  switch(x.cat){
+    case "maj": return x.debut===0?"Une phrase commence toujours par une majuscule.":g(mot)+" s'écrit avec une majuscule.";
+    case "pt": return "Une phrase se termine par un point "+g(t[n-1])+".";
+    case "acc":
+      var ac=Array.from(mot).filter(function(c){return ACC.test(c);});
+      return ac.length?g(mot)+" : on écrit "+g(ac.join(" » et « "))+" avec un accent.":g(mot)+" s'écrit sans accent.";
+    case "dbl":
+      var d=null,m=Array.from(mot);for(var i=0;i<m.length-1;i++)if(m[i]===m[i+1]&&/[bcdfghjklmnpqrstvwxz]/i.test(m[i]))d=m[i];
+      return d?g(mot)+" s'écrit avec 2 "+g(d)+".":g(mot)+" s'écrit avec une seule consonne : "+g(x.trop.charAt(0))+".";
+    case "voy":
+      var vs=voyelles(md.texte),hi=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut);
+      for(var v=0;v<vs.length;v++)if(vs[v][0]<=hi&&vs[v][1]>=lo){var gr=t.slice(vs[v][0],vs[v][1]+1).join("").toLowerCase();
+        return gr===mot.toLowerCase()?"On écrit "+g(gr)+", avec "+Array.from(gr).length+" lettres.":"Dans "+g(mot)+", le son s'écrit "+g(gr)+", avec "+Array.from(gr).length+" lettres.";}
+      return "Dans "+g(mot)+", regarde bien comment s'écrit le son.";
+    case "muet":
+      var l=(x.ajout||x.trop).toLowerCase();
+      if(l==="h")return g(mot)+" commence par un "+g("h")+" muet : on ne l'entend pas, mais on l'écrit.";
+      if(l==="s"&&DET_PLURIEL.test(avant))return g(avant+" "+mot)+" : il y en a plusieurs, on écrit un "+g("s")+" muet à la fin.";
+      if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
+      return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
+    case "conj":
+      var bas=mot.toLowerCase(),fm=bas.match(/(aient|ions|iez|ent|ons|ont|ez|ais|ait|ai|es|as|e|s|t|d|x|a)$/),fin=fm?fm[1]:bas;
+      if(PRONOMS.test(avant))return g(mot)+" : avec "+g(avant.toLowerCase())+", le verbe se termine par "+g(fin)+".";
+      if(fin==="ent")return g(mot)+" : ils sont plusieurs, alors le verbe se termine par "+g("ent")+".";
+      return g(mot)+" : le verbe se termine par "+g(fin)+".";
+    default: return "Regarde bien le modèle : on écrit "+g(mot)+".";
+  }
+}
+function ajouterExplication(x,md){
+  var d=document.createElement("div");d.className="expl";
+  var tag=document.createElement("b");tag.textContent=NOMCAT[x.cat].nom.replace(/^(Les|Le|La) /,"").replace(/^./,function(c){return c.toUpperCase();})+" : ";
+  d.appendChild(tag);d.appendChild(document.createTextNode(explication(x,md)));
+  $("explications").appendChild(d);
 }
 
 /* ---------- Accueil ---------- */
@@ -432,16 +481,19 @@ ACCENTS.forEach(function(c){var b=document.createElement("button");b.type="butto
 
 /* ---------- Ce que je vérifie ---------- */
 var verif=lire("dictee-pliee-verif",null);
-if(!Array.isArray(verif)||!verif.length)verif=CATS.map(function(c){return c.id;});
-function toutCoche(){return verif.length===CATS.length;}
+function tous(){return CHOIX.map(function(c){return c.id;});}
+verif=Array.isArray(verif)?verif.filter(function(v){return NOMCAT[v]&&!NOMCAT[v].cache;}):[];
+if(!verif.length)verif=tous();
+function toutCoche(){return verif.length===CHOIX.length;}
+function choisi(cat){return cat==="autre"?toutCoche():verif.indexOf(cat)>=0;}
 function dessinerVerif(){
   var z=$("verif");z.innerHTML='<span class="titre">Je vérifie :</span>';
   var tout=document.createElement("button");tout.type="button";tout.textContent="Tout";tout.setAttribute("aria-pressed",toutCoche()?"true":"false");
-  tout.onclick=function(){verif=CATS.map(function(c){return c.id;});changerVerif();};z.appendChild(tout);
-  CATS.forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
+  tout.onclick=function(){verif=tous();changerVerif();};z.appendChild(tout);
+  CHOIX.forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
     b.onclick=function(){
       if(toutCoche())verif=[c.id];
-      else{var i=verif.indexOf(c.id);if(i>=0)verif.splice(i,1);else verif.push(c.id);if(!verif.length)verif=CATS.map(function(x){return x.id;});}
+      else{var i=verif.indexOf(c.id);if(i>=0)verif.splice(i,1);else verif.push(c.id);if(!verif.length)verif=tous();}
       changerVerif();};
     z.appendChild(b);});
 }
@@ -464,7 +516,7 @@ function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   etat.essais=[];etat.cats1=null;etat.pieges=[];etat.correction=null;
   $("compteur").textContent=etat.libre?"Phrase "+(etat.i+1):"Phrase "+(etat.i+1)+" sur "+dictee.p.length;
-  $("rangees").innerHTML="";$("pieges").innerHTML="";$("pieges").style.display="flex";$("verif").classList.remove("vue");
+  $("rangees").innerHTML="";$("pieges").innerHTML="";$("pieges").style.display="flex";$("verif").classList.remove("vue");$("explications").innerHTML="";
   rabat(0);
   if(etat.libre&&!etat.modeles[etat.i]){phaseModele();return;}
   $("tableauTexte").textContent=modele();
@@ -583,7 +635,7 @@ function basculerPiege(k){
 /* Étapes 3, 5, 7 : plier et écrire de mémoire */
 function plier(){
   var n=$("rangees").children.length,nEssai=etat.essais.length;
-  etat.correction=null;$("verif").classList.remove("vue");
+  etat.correction=null;$("verif").classList.remove("vue");$("explications").innerHTML="";
   etape(nEssai===0?3:nEssai===1?5:7);
   $("ardoise").classList.add("cachee");
   // à partir de l'étape 3, la phrase copiée redevient une phrase normale (sans les pièges entourés)
@@ -621,6 +673,7 @@ function verifier(){
     return;
   }
   var vues={};
+  $("explications").innerHTML="";
   etat.correction={dessiner:dessiner};
   $("verif").classList.add("vue");dessinerVerif();
   function dessiner(){
@@ -628,9 +681,9 @@ function verifier(){
     var aVoir=0,dansChoix=0;
     m.forEach(function(x,idx){
       if(x.ok!==undefined){var s=document.createElement("span");s.className="ok";s.textContent=x.ok;r.appendChild(s);return;}
-      var choisi=verif.indexOf(x.cat)>=0;
-      if(!choisi&&!vues[idx]){var s2=document.createElement("span");s2.className="ok";s2.textContent=x.trop;r.appendChild(s2);return;}
-      if(choisi)dansChoix++;
+      var estChoisi=choisi(x.cat);
+      if(!estChoisi&&!vues[idx]){var s2=document.createElement("span");s2.className="ok";s2.textContent=x.trop;r.appendChild(s2);return;}
+      if(estChoisi)dansChoix++;
       var f=document.createElement("span");f.className="faute"+(vues[idx]?" vue":"");
       if(!vues[idx]){
         // la faute est cachée sous un cache rouge « ? » : l'enfant cherche lui-même en comparant avec le modèle
@@ -638,7 +691,7 @@ function verifier(){
         var p=document.createElement("button");p.type="button";p.className="point";p.textContent="?";
         p.style.minWidth=(Math.max(Array.from(x.trop).length,1)*0.6+0.5)+"em";
         p.setAttribute("aria-label","Une erreur est cachée ici : compare avec le modèle, puis touche pour voir la correction");
-        p.onclick=function(){vues[idx]=1;dessiner();bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
+        p.onclick=function(){vues[idx]=1;ajouterExplication(x,md);dessiner();bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
         f.appendChild(p);
       }else{
         if(x.trop){var t=document.createElement("span");t.className="trop";t.textContent=x.trop;f.appendChild(t);}
