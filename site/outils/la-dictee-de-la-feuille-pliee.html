@@ -365,7 +365,19 @@ function erreurs(m){return m.filter(function(x){return x.ok===undefined;});}
 
 /* ---------- Classement d'une erreur ---------- */
 var PRONOMS=/^(je|j'|tu|il|elle|on|nous|vous|ils|elles)$/i;
-var FIN_VERBE=/(ent|ons|ez|ait|aient|ais|ai|ont)$/;
+var FIN_VERBE=/(ent|ait|aient)$/;
+// mots qui annoncent un nom (après eux, « wagons », « enfants », « parent » ne sont pas des verbes)
+var DEVANT_NOM=/^(le|la|les|l'|un|une|des|du|de|d'|ce|cet|cette|ces|mon|ma|mes|ton|ta|tes|son|sa|ses|notre|nos|votre|vos|leur|leurs|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|plusieurs|quelques|tous|toutes|au|aux|dans|sur|sous|avec|pour|par|en|chez|vers|devant|derrière|sans|très|trop|petit|petite|petits|petites|grand|grande|grands|grandes|beau|belle|beaux|belles)$/i;
+var PAS_VERBE=/^(souvent|vent|dent|argent|moment|comment|parent|serpent|accident|président|client|talent|cent|content|lent|prudent|différent|présent|absent|intelligent|urgent|jamais|mais|frais|palais|lait|fait|souhait|trait|portrait)$/i;
+// Le mot est-il un verbe ? verbe marqué *entre étoiles*, ou mot après un pronom (il, nous…),
+// ou mot en -ent/-ait/-aient qui ne suit pas un déterminant (les enfants *jouent*, le chat *mangeait*).
+function estVerbe(md,t,bm){
+  for(var q=bm[0];q<=bm[1];q++)if(md.verbes[q])return true;
+  var mot=t.slice(bm[0],bm[1]+1).join("").toLowerCase(),avant=motPrecedent(t,bm[0]);
+  if(PRONOMS.test(avant))return true;
+  if(mot.length<4||PAS_VERBE.test(mot)||/(e|a|e)mment$|ement$/.test(mot))return false;
+  return FIN_VERBE.test(mot)&&!!avant&&!DEVANT_NOM.test(avant);
+}
 // voyelles écrites avec 2 ou 3 lettres (on, an, in… seulement quand elles ne sont pas suivies d'une voyelle ou d'un 2e n/m)
 var GRAPH=["eau","ain","ein","oin","ou","oi","au","ai","ei","eu","œu","on","om","an","am","en","em","in","im","un","um","ym","yn"];
 function voyelles(texte){
@@ -409,8 +421,8 @@ function classer(x,mod){
   // conjugaison : verbe marqué, ou mot après un pronom, ou terminaison verbale
   var k=Math.min(Math.max(lo,0),n-1);if(!/[\p{L}]/u.test(t[k])&&k>0)k--;
   var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join("").toLowerCase();
-  var estVerbe=mod.verbes[k]||mod.verbes[bm[0]]||PRONOMS.test(motPrecedent(t,bm[0]))||(FIN_VERBE.test(mot)&&hi>=bm[1]-3);
-  if(estVerbe&&hi>bm[0])return "conj";
+  var verbe=estVerbe(mod,t,bm);
+  if(verbe&&hi>bm[0])return "conj";
   // lettre muette : lettre finale qu'on n'entend pas, ou h du début
   if(estMuette(t,lo,hi,lettres))return "muet";
   // voyelles à 2 ou 3 lettres
@@ -691,7 +703,7 @@ function piege(k){
     if(t[k+1]===c)return {g:[k,k+1],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
     if(t[k-1]===c)return {g:[k-1,k],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
   }
-  var verbe=mod().verbes[k]||PRONOMS.test(motPrecedent(t,bm[0]))||FIN_VERBE.test(bas);
+  var verbe=estVerbe(mod(),t,bm);
   if(verbe&&k>=bm[1]-3&&bm[1]-bm[0]>1){var d=Math.max(bm[0]+1,bm[1]-(/(aient)$/.test(bas)?4:/(ent|ons|ait|ais|ont)$/.test(bas)?2:/(ez|ai)$/.test(bas)?1:0)),gv=[];for(var q=d;q<=bm[1];q++)gv.push(q);
     return {g:gv,ph:"Je n'oublie pas la fin du verbe : « "+mot+" » !"};}
   if(ACC.test(c))return {g:seul,ph:"Je n'oublie pas l'accent : « "+c+" » dans « "+mot+" » !"};
