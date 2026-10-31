@@ -61,6 +61,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 #enseignant textarea{min-height:150px;line-height:1.5}
 .cats{border:2px solid #e7e0d4;border-radius:12px;margin:14px 0 0;padding:8px 12px 10px;display:flex;flex-wrap:wrap;gap:6px 18px}
 .cats legend{font-weight:700;padding:0 6px}
+.cats .groupe{flex-basis:100%;font-size:13px;font-weight:700;color:#66716d;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.cats .ex{color:#66716d;font-size:13px}
 #enseignant .case{display:flex;align-items:center;gap:6px;font-weight:400;margin:0;font-size:16px;cursor:pointer}
 #enseignant .case input{width:20px;height:20px;accent-color:var(--vert)}
 .note-m{display:block;margin-top:6px;background:#fff6d6;border:2px dashed #e0b84a;border-radius:12px;padding:6px 12px;color:#5b4a12;font-size:16px;align-self:flex-start}
@@ -323,14 +325,19 @@ var IMG = {fille:"/images/chateau-des-detectives/detective-1.png", garcon:"/imag
 var EXEMPLE = {t:"Dictée d'exemple", p:["Il *prend* ses affaires.","Le chat *dort* sur le canapé.","Les enfants *jouent* dans la cour."]};
 var ACCENTS = ["é","è","ê","à","â","ç","ù","û","î","ï","ô","œ","ë","É","È","À","'","-"];
 var CATS = [
-  {id:"maj", nom:"Les majuscules", un:"la majuscule"},
-  {id:"voy", nom:"Les voyelles à 2 ou 3 lettres", un:"une voyelle à 2 ou 3 lettres"},
-  {id:"acc", nom:"Les accents", un:"un accent"},
-  {id:"muet", nom:"Les lettres muettes", un:"une lettre muette"},
-  {id:"plur", nom:"Le pluriel", un:"le pluriel"},
-  {id:"dbl", nom:"Les doubles consonnes", un:"une double consonne"},
-  {id:"pt", nom:"Le point à la fin", un:"le point à la fin"},
-  {id:"conj", nom:"La conjugaison des verbes", un:"la conjugaison du verbe"},
+  {id:"voy", gr:"Sons et lettres", nom:"Les voyelles à 2 ou 3 lettres", ex:"ou, an, eau…", un:"une voyelle à 2 ou 3 lettres"},
+  {id:"cons", gr:"Sons et lettres", nom:"Les consonnes à 2 ou 3 lettres", ex:"ch, gn, ph, qu, ill", un:"une consonne à 2 ou 3 lettres"},
+  {id:"val", gr:"Sons et lettres", nom:"Les lettres qui changent de son", ex:"c/ç, g/ge/gu, s/ss", un:"une lettre qui change de son"},
+  {id:"mbp", gr:"Sons et lettres", nom:"Le m devant m, b, p", un:"le m devant m, b, p"},
+  {id:"acc", gr:"Sons et lettres", nom:"Les accents", un:"un accent"},
+  {id:"dbl", gr:"Sons et lettres", nom:"Les doubles consonnes", un:"une double consonne"},
+  {id:"muet", gr:"Sons et lettres", nom:"Les lettres muettes", un:"une lettre muette"},
+  {id:"maj", gr:"Grammaire", nom:"Les majuscules", un:"la majuscule"},
+  {id:"pt", gr:"Grammaire", nom:"Le point à la fin", un:"le point à la fin"},
+  {id:"fem", gr:"Grammaire", nom:"Le féminin", ex:"la feuille pliée", un:"un accord au féminin"},
+  {id:"plur", gr:"Grammaire", nom:"Le pluriel", un:"le pluriel"},
+  {id:"conj", gr:"Grammaire", nom:"La conjugaison des verbes", un:"la conjugaison du verbe"},
+  {id:"homo", gr:"Grammaire", nom:"Les mots qui se disent pareil", ex:"a/à, et/est, on/ont, son/sont", un:"un mot qui se dit pareil"},
   {id:"autre", nom:"D'autres lettres", un:"une autre lettre", cache:true}
 ];
 var NOMCAT = {}; CATS.forEach(function(c){NOMCAT[c.id]=c;});
@@ -431,6 +438,52 @@ function groupesIll(texte){
   return res;
 }
 function dansIll(texte,lo,hi){var r=groupesIll(texte);for(var i=0;i<r.length;i++)if(r[i][0]<=hi&&r[i][1]>=lo)return r[i];return null;}
+// Consonnes à 2 ou 3 lettres : ch, gn, ph, qu, et « ill » / « il » (son « y »)
+function groupesCons(texte){
+  var t=Array.from(texte.toLowerCase()),res=groupesIll(texte).map(function(r){return {g:[r[0],r[1]],gr:t.slice(r[0],r[1]+1).join("")};});
+  for(var i=0;i<t.length-1;i++){var d=t[i]+t[i+1];
+    if(/^(ch|gn|ph|qu)$/.test(d)&&!res.some(function(r){return r.g[0]<=i+1&&r.g[1]>=i;})){res.push({g:[i,i+1],gr:d});i++;}}
+  return res;
+}
+// Lettres qui changent de son selon leurs voisines
+var VOY="aeiouyéèêëàâîïôûùœ";
+function estVoy(c){return !!c&&VOY.indexOf(c.toLowerCase())>=0;}
+function motifsVal(texte){
+  var t=Array.from(texte),b=t.map(function(c){return c.toLowerCase();}),res=[];
+  for(var p=0;p<b.length;p++){var c=b[p],n1=b[p+1]||"",n2=b[p+2]||"";
+    if(c==="ç")res.push({g:[p],ty:"ç",l:/[cçs]/i});
+    else if(c==="s"&&n1==="s"&&estVoy(b[p-1])&&estVoy(n2)){res.push({g:[p,p+1],ty:"ss",l:/[sz]/i});p++;}
+    else if(c==="s"&&estVoy(b[p-1])&&estVoy(n1))res.push({g:[p],ty:"s",l:/[sz]/i});
+    else if(c==="c"&&/[eiéèêy]/.test(n1))res.push({g:[p],ty:"ce",l:/[cs]/i});
+    else if(c==="g"&&n1==="u"&&/[eiéèêy]/.test(n2)){res.push({g:[p,p+1],ty:"gu",l:/[gu]/i});p++;}
+    else if(c==="g"&&n1==="e"&&/[aoâôu]/.test(n2)){res.push({g:[p,p+1],ty:"gea",l:/[ge]/i});p++;}
+    else if(c==="g"&&/[eiéèêy]/.test(n1))res.push({g:[p],ty:"ge",l:/[gj]/i});
+  }
+  return res;
+}
+function phraseVal(ty,mot,c,n){return {
+  "ç":g(mot)+" : on écrit "+g("ç")+" (un c avec une cédille) pour faire le son "+g("s")+" devant a, o, u.",
+  "ss":g(mot)+" : entre deux voyelles, il faut 2 "+g("s")+" pour faire le son "+g("s")+".",
+  "s":g(mot)+" : entre deux voyelles, un seul "+g("s")+" fait le son "+g("z")+".",
+  "ce":g(mot)+" : "+g("c")+" devant "+g(n)+" fait le son "+g("s")+".",
+  "ge":g(mot)+" : "+g("g")+" devant "+g(n)+" fait le son "+g("j")+".",
+  "gu":g(mot)+" : devant e, i, on écrit "+g("gu")+" pour faire le son "+g("g")+".",
+  "gea":g(mot)+" : devant a, o, on écrit "+g("ge")+" pour faire le son "+g("j")+"."}[ty];}
+function piegeVal(ty,mot,n){return {
+  "ç":"Je n'oublie pas la cédille : « ç » dans « "+mot+" » !",
+  "ss":"Je n'oublie pas les 2 « s » qui font « s » dans « "+mot+" » !",
+  "s":"Je n'oublie pas : un seul « s » fait « z » dans « "+mot+" » !",
+  "ce":"Je n'oublie pas : « c » devant « "+n+" » fait « s » dans « "+mot+" » !",
+  "ge":"Je n'oublie pas : « g » devant « "+n+" » fait « j » dans « "+mot+" » !",
+  "gu":"Je n'oublie pas « gu » qui fait « g » dans « "+mot+" » !",
+  "gea":"Je n'oublie pas « ge » qui fait « j » dans « "+mot+" » !"}[ty];}
+// m devant m, b, p (jambe, pompier, emmener)
+function motifsMbp(texte){var t=Array.from(texte.toLowerCase()),res=[];
+  for(var p=1;p<t.length-1;p++)if(t[p]==="m"&&/[mbp]/.test(t[p+1])&&/[aeiouy]/.test(t[p-1]))res.push({g:[p],n:t[p+1]});return res;}
+// Mots qui se disent pareil, avec le truc pour choisir
+var HOMO={"a":"on peut dire « avait »","à":"on ne peut pas dire « avait »","est":"on peut dire « était »","et":"on peut dire « et puis »",
+  "ont":"on peut dire « avaient »","on":"on peut dire « il »","sont":"on peut dire « étaient »","son":"on peut dire « mon »"};
+function g(s){return "« "+s+" »";}
 // Accord au féminin : « la feuille pliée », « elle est partie », « la porte est fermée », « une petite fille »
 var DET_FEM=/^(la|une|ma|ta|sa|cette)$/i;
 var ETRE=/^(est|était|sera|serait|fut|reste|devient|semble)$/i;
@@ -471,8 +524,17 @@ function classer(x,mod){
   if(/[A-ZÀ-ÖØ-Þ]/.test(x.ajout)||(/[A-ZÀ-ÖØ-Þ]/.test(x.trop)&&x.debut>0))return "maj";
   if(/[.!?]/.test(lettres))return "pt";
   var lo=x.fin>x.debut?x.debut:Math.max(0,x.debut-1), hi=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut);
+  var k0=Math.min(Math.max(lo,0),n-1);if(!/[\p{L}]/u.test(t[k0])&&k0>0)k0--;
+  var bm0=bornesMot(t,k0),mot0=t.slice(bm0[0],bm0[1]+1).join("").toLowerCase();
+  if(HOMO[mot0]&&hi>=bm0[0]&&lo<=bm0[1])return "homo";
+  var mv=motifsVal(mod.texte);
+  for(var q=0;q<mv.length;q++){var gq=mv[q].g;if(gq[0]<=hi&&gq[gq.length-1]>=lo&&mv[q].l.test(lettres))return "val";}
   // accents oubliés, en trop ou mal placés
   if(ACC.test(lettres)||(x.trop&&x.ajout&&sansAccent(x.trop).toLowerCase()===sansAccent(x.ajout).toLowerCase()))return "acc";
+  var mb=motifsMbp(mod.texte);
+  for(var q2=0;q2<mb.length;q2++){if(mb[q2].g[0]>=lo-1&&mb[q2].g[0]<=hi+1&&/[mn]/i.test(lettres))return "mbp";}
+  var gc=groupesCons(mod.texte);
+  for(var q3=0;q3<gc.length;q3++){if(gc[q3].g[0]<=hi&&gc[q3].g[1]>=lo)return "cons";}
   // double consonne
   for(var p=Math.max(0,lo-1);p<=Math.min(n-2,hi);p++){if(t[p]===t[p+1]&&/[bcdfghjklmnpqrstvwxz]/i.test(t[p])&&p+1>=lo&&p<=hi+1)return "dbl";}
   if(/([bcdfghjklmnpqrstvwxz])\1/i.test(x.trop))return "dbl";
@@ -484,7 +546,8 @@ function classer(x,mod){
   if(verbe&&hi>bm[0])return "conj";
   // s (ou x) à la fin du mot : c'est le pluriel, sauf les mots qui s'écrivent toujours avec un s (dans, souris, très…)
   if(/^[sx]$/i.test(lettres)&&hi>=bm[1]-1&&(sPluriel(t,bm)||(x.trop&&!x.ajout&&DET_SINGULIER.test(motPrecedent(t,bm[0])))))return "plur";
-  // lettre muette : lettre finale qu'on n'entend pas, ou h du début
+  // e du féminin (la feuille pliée), puis lettre muette : lettre finale qu'on n'entend pas, ou h du début
+  if(/^e$/i.test(lettres)&&hi>=bm[1]-1&&accordFeminin(t,bm))return "fem";
   if(estMuette(t,lo,hi,lettres))return "muet";
   // voyelles à 2 ou 3 lettres
   var vs=voyelles(mod.texte);
@@ -513,15 +576,25 @@ function pluriel(t,bm){
   if(/[sx]$/i.test(a)){var k=bm[0]-1;while(k>=0&&!/[\p{L}]/u.test(t[k]))k--;var b=bornesMot(t,k),a2=motPrecedent(t,b[0]);if(DET_PLURIEL.test(a2))return a2+" "+a;}
   return "";
 }
-function g(s){return "« "+s+" »";}
 function explication(x,md){
   var t=Array.from(md.texte),n=t.length,lettres=x.trop+x.ajout;
   var lo=x.fin>x.debut?x.debut:Math.max(0,x.debut-1),k=Math.min(Math.max(lo,0),n-1);
   if(!/[\p{L}]/u.test(t[k])&&k>0)k--;
   var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join(""),avant=motPrecedent(t,bm[0]);
-  var hiE=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut),il=dansIll(md.texte,lo,hiE);
-  if(il&&/^(dbl|voy|autre)$/.test(x.cat))return "Dans "+g(mot)+", le son "+g("y")+" s'écrit "+g(t.slice(il[0],il[1]+1).join("").toLowerCase())+".";
+  var hiE=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut);
   switch(x.cat){
+    case "homo": var hm=mot.toLowerCase();return HOMO[hm]?"On écrit "+g(hm)+" : "+HOMO[hm]+".":"Regarde bien le modèle : on écrit "+g(mot)+".";
+    case "val":
+      var mv=motifsVal(md.texte);for(var q=0;q<mv.length;q++){var gq=mv[q].g;if(gq[0]<=hiE&&gq[gq.length-1]>=lo)return phraseVal(mv[q].ty,mot,"",t[gq[gq.length-1]+1]||"");}
+      return "Regarde bien le modèle : on écrit "+g(mot)+".";
+    case "mbp": return g(mot)+" : devant "+g("m")+", "+g("b")+" ou "+g("p")+", on écrit "+g("m")+" et pas "+g("n")+".";
+    case "cons":
+      var gc=groupesCons(md.texte);for(var q=0;q<gc.length;q++)if(gc[q].g[0]<=hiE&&gc[q].g[1]>=lo)
+        return "Dans "+g(mot)+", le son "+(/il/.test(gc[q].gr)?g("y")+" ":"")+"s'écrit "+g(gc[q].gr)+".";
+      return "Regarde bien le modèle : on écrit "+g(mot)+".";
+    case "fem":
+      var af=accordFeminin(t,bm);
+      return af?g(mot)+" s'accorde avec "+g(af.nom)+" : c'est au féminin, alors on écrit un "+g("e")+".":g(mot)+" est au féminin : on écrit un "+g("e")+".";
     case "maj": return x.debut===0?"Une phrase commence toujours par une majuscule.":g(mot)+" s'écrit avec une majuscule.";
     case "pt": return "Une phrase se termine par un point "+g(t[n-1])+".";
     case "acc":
@@ -544,8 +617,6 @@ function explication(x,md){
       if(l==="h")return g(mot)+" commence par un "+g("h")+" muet : on ne l'entend pas, mais on l'écrit.";
       var pl=pluriel(t,bm);
       if((l==="s"||l==="x")&&pl)return g(pl+" "+mot)+" : c'est un pluriel, il y en a plusieurs. On écrit un "+g(l)+" muet à la fin.";
-      var af=l==="e"&&x.ajout?accordFeminin(t,bm):null;
-      if(af)return g(mot)+" s'accorde avec "+g(af.nom)+" : c'est au féminin, alors on écrit un "+g("e")+".";
       if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
       return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
     case "conj":
@@ -584,7 +655,8 @@ function majTitre(){var t=$("titreDictee"),n=dictee.p.length+" phrase"+(dictee.p
 }
 majTitre();
 function montrer(id){document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});window.scrollTo(0,0);}
-CHOIX.forEach(function(c){var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));$("ensCats").appendChild(l);});
+var grVu="";
+CHOIX.forEach(function(c){if(c.gr!==grVu){grVu=c.gr;var h=document.createElement("div");h.className="groupe";h.textContent=c.gr;$("ensCats").appendChild(h);}var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));if(c.ex){var e=document.createElement("small");e.className="ex";e.textContent="("+c.ex+")";l.appendChild(e);}$("ensCats").appendChild(l);});
 // Dans la page du site (jeu intégré), l'espace enseignant s'ouvre en grand dans un nouvel onglet
 function ouvrirEnseignant(){
   if(window.self!==window.top){var a=document.createElement("a");a.href=location.href.split("#")[0].split("?")[0]+"#enseignant"+(estExemple?"":"&"+location.hash.slice(1));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();return;}
@@ -810,9 +882,14 @@ function piege(k){
   if(/[.!?]/.test(c))return {g:seul,ph:"Je n'oublie pas le point à la fin !"};
   if(c===",")return {g:seul,ph:"Je n'oublie pas la virgule !"};
   if(c==="'")return {g:seul,ph:"Je n'oublie pas l'apostrophe !"};
-  var il=dansIll(modele(),k,k);
-  if(il){var gi=[];for(var w=il[0];w<=il[1];w++)gi.push(w);var sil=t.slice(il[0],il[1]+1).join("").toLowerCase();
-    return {g:gi,ph:"Je n'oublie pas « "+sil+" » qui fait le son « y » dans « "+mot+" » !"};}
+  if(HOMO[bas]){var gh=[];for(var w=bm[0];w<=bm[1];w++)gh.push(w);return {g:gh,ph:"J'écris « "+bas+" » : "+HOMO[bas]+" !"};}
+  var mv=motifsVal(modele());
+  for(var q=0;q<mv.length;q++)if(mv[q].g.indexOf(k)>=0){var gl=mv[q].g;return {g:gl,ph:piegeVal(mv[q].ty,mot,t[gl[gl.length-1]+1]||"")};}
+  var mb=motifsMbp(modele());
+  for(var q=0;q<mb.length;q++)if(mb[q].g[0]===k)return {g:[k],ph:"Je n'oublie pas le « m » devant « "+mb[q].n+" » dans « "+mot+" » !"};
+  var gc=groupesCons(modele());
+  for(var q=0;q<gc.length;q++)if(gc[q].g[0]<=k&&gc[q].g[1]>=k){var gi=[];for(var w=gc[q].g[0];w<=gc[q].g[1];w++)gi.push(w);
+    return {g:gi,ph:/il/.test(gc[q].gr)?"Je n'oublie pas « "+gc[q].gr+" » qui fait le son « y » dans « "+mot+" » !":"Je n'oublie pas « "+gc[q].gr+" » dans « "+mot+" » !"};}
   if(/[bcdfghjklmnpqrstvwxz]/i.test(c)){
     if(t[k+1]===c)return {g:[k,k+1],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
     if(t[k-1]===c)return {g:[k-1,k],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
