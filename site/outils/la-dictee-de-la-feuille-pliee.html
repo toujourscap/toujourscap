@@ -433,7 +433,13 @@ function classer(x,mod){
 
 
 /* ---------- Petite explication de chaque faute ---------- */
-var DET_PLURIEL=/^(les|des|ses|mes|tes|ces|nos|vos|leurs|plusieurs|deux|trois|quatre|cinq|six|dix)$/i;
+var DET_PLURIEL=/^(les|des|ses|mes|tes|ces|nos|vos|leurs|aux|plusieurs|quelques|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|vingt|cent|mille)$/i;
+// Le mot est-il au pluriel ? (« les chaises », « trois wagons », « les petits chats »)
+function pluriel(t,bm){
+  var a=motPrecedent(t,bm[0]);if(DET_PLURIEL.test(a))return a;
+  if(/[sx]$/i.test(a)){var k=bm[0]-1;while(k>=0&&!/[\p{L}]/u.test(t[k]))k--;var b=bornesMot(t,k),a2=motPrecedent(t,b[0]);if(DET_PLURIEL.test(a2))return a2+" "+a;}
+  return "";
+}
 function g(s){return "« "+s+" »";}
 function explication(x,md){
   var t=Array.from(md.texte),n=t.length,lettres=x.trop+x.ajout;
@@ -457,7 +463,8 @@ function explication(x,md){
     case "muet":
       var l=(x.ajout||x.trop).toLowerCase();
       if(l==="h")return g(mot)+" commence par un "+g("h")+" muet : on ne l'entend pas, mais on l'écrit.";
-      if(l==="s"&&DET_PLURIEL.test(avant))return g(avant+" "+mot)+" : il y en a plusieurs, on écrit un "+g("s")+" muet à la fin.";
+      var pl=pluriel(t,bm);
+      if((l==="s"||l==="x")&&pl)return g(pl+" "+mot)+" : c'est un pluriel, il y en a plusieurs. On écrit un "+g(l)+" muet à la fin.";
       if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
       return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
     case "conj":
@@ -710,6 +717,8 @@ function piege(k){
   var vs=voyelles(modele());
   for(var v=0;v<vs.length;v++){if(vs[v][0]<=k&&vs[v][1]>=k){var gg=[];for(var w=vs[v][0];w<=vs[v][1];w++)gg.push(w);
     return {g:gg,ph:"Je n'oublie pas « "+t.slice(vs[v][0],vs[v][1]+1).join("").toLowerCase()+" » dans « "+mot+" » !"};}}
+  var pl=pluriel(t,bm);
+  if(k===bm[1]&&/[sx]/i.test(c)&&pl)return {g:seul,ph:"Je n'oublie pas le « "+c+" » du pluriel : « "+pl+" "+mot+" » !"};
   if(k===bm[1]&&/[tdspxzgc]/i.test(c))return {g:seul,ph:"Je n'oublie pas la lettre muette « "+c+" » de « "+mot+" » !"};
   if(k===bm[1]&&c==="e"&&bm[1]>bm[0])return {g:seul,ph:"Je n'oublie pas le « e » muet de « "+mot+" » !"};
   if(k===bm[0]&&/h/i.test(c))return {g:seul,ph:"Je n'oublie pas le « h » muet de « "+mot+" » !"};
