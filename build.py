@@ -406,7 +406,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 
 
 # Précision affichée sous l'introduction de la page Langage oral
-NOTE_CC = """<p class="note-accueil">Normalement, il n'y a pas d'image dans un cercle conteur&nbsp;: se créer une image mentale est essentiel. J'ai pourtant fait le choix des images avec les élèves les plus en difficulté. Je sors donc du cercle conteur traditionnel et me rapproche d'une activité plus classique.</p>"""
+NOTE_CC = ""
 
 
 # Encadré sous l'introduction de la page Lecture
