@@ -310,6 +310,7 @@ var CATS = [
   {id:"voy", nom:"Les voyelles à 2 ou 3 lettres", un:"une voyelle à 2 ou 3 lettres"},
   {id:"acc", nom:"Les accents", un:"un accent"},
   {id:"muet", nom:"Les lettres muettes", un:"une lettre muette"},
+  {id:"plur", nom:"Le pluriel", un:"le pluriel"},
   {id:"dbl", nom:"Les doubles consonnes", un:"une double consonne"},
   {id:"pt", nom:"Le point à la fin", un:"le point à la fin"},
   {id:"conj", nom:"La conjugaison des verbes", un:"la conjugaison du verbe"},
@@ -423,6 +424,8 @@ function classer(x,mod){
   var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join("").toLowerCase();
   var verbe=estVerbe(mod,t,bm);
   if(verbe&&hi>bm[0])return "conj";
+  // s (ou x) à la fin du mot : c'est le pluriel, sauf les mots qui s'écrivent toujours avec un s (dans, souris, très…)
+  if(/^[sx]$/i.test(lettres)&&hi>=bm[1]-1&&(sPluriel(t,bm)||(x.trop&&!x.ajout&&DET_SINGULIER.test(motPrecedent(t,bm[0])))))return "plur";
   // lettre muette : lettre finale qu'on n'entend pas, ou h du début
   if(estMuette(t,lo,hi,lettres))return "muet";
   // voyelles à 2 ou 3 lettres
@@ -434,6 +437,18 @@ function classer(x,mod){
 
 /* ---------- Petite explication de chaque faute ---------- */
 var DET_PLURIEL=/^(les|des|ses|mes|tes|ces|nos|vos|leurs|aux|plusieurs|quelques|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|vingt|cent|mille)$/i;
+// Mots qui finissent toujours par s (ou x) sans être au pluriel
+var SANS_PLURIEL=/^(dans|sans|sous|très|près|après|auprès|pas|plus|moins|puis|depuis|alors|toujours|jamais|mais|vers|envers|travers|parfois|fois|autrefois|temps|printemps|corps|repas|bras|dos|gros|gras|bas|jus|souris|tapis|radis|avis|puits|ours|lis|fils|héros|mois|matelas|cours|secours|velours|colis|permis|bois|pois|dessous|dessus|refus|autobus|bus|virus|cactus|tennis|iris|maïs|ananas|cassis|hélas|anglais|français|frais|palais|mauvais|épais|relais|biais|trois|six|dix|deux|prix|choix|voix|noix|croix|paix|faux|doux|roux|heureux|joyeux|peureux|vieux|creux|jaloux|chez|assez|nez|tous|plusieurs|quelques|ses|les|des|mes|tes|ces|nos|vos|leurs|aux|lors|alors)$/i;
+var DET_SINGULIER=/^(le|la|l'|un|une|ce|cet|cette|mon|ma|ton|ta|son|sa|notre|votre|leur|du|au)$/i;
+// Le s (ou x) final de ce mot est-il la marque du pluriel ?
+function sPluriel(t,bm){
+  var mot=t.slice(bm[0],bm[1]+1).join(""),bas=mot.toLowerCase();
+  if(!/[sx]$/.test(bas))return false;
+  if(bas.slice(-1)==="x")return !!pluriel(t,bm)&&!SANS_PLURIEL.test(bas);
+  if(SANS_PLURIEL.test(bas))return false;
+  if(bm[0]>0&&/[A-ZÀ-ÖØ-Þ]/.test(t[bm[0]]))return false; // prénom, nom de ville
+  return true;
+}
 // Le mot est-il au pluriel ? (« les chaises », « trois wagons », « les petits chats »)
 function pluriel(t,bm){
   var a=motPrecedent(t,bm[0]);if(DET_PLURIEL.test(a))return a;
@@ -460,6 +475,10 @@ function explication(x,md){
       for(var v=0;v<vs.length;v++)if(vs[v][0]<=hi&&vs[v][1]>=lo){var gr=t.slice(vs[v][0],vs[v][1]+1).join("").toLowerCase();
         return gr===mot.toLowerCase()?"On écrit "+g(gr)+", avec "+Array.from(gr).length+" lettres.":"Dans "+g(mot)+", le son s'écrit "+g(gr)+", avec "+Array.from(gr).length+" lettres.";}
       return "Dans "+g(mot)+", regarde bien comment s'écrit le son.";
+    case "plur":
+      var lp=(x.ajout||x.trop).toLowerCase(),pp=pluriel(t,bm);
+      if(x.trop&&!x.ajout)return g(motPrecedent(t,bm[0])+" "+mot)+" : il n'y en a qu'un, pas de "+g(lp)+" à la fin.";
+      return pp?g(pp+" "+mot)+" : c'est un pluriel, il y en a plusieurs. On met un "+g(lp)+" à la fin.":g(mot)+" : c'est un pluriel, il y en a plusieurs. On met un "+g(lp)+" à la fin.";
     case "muet":
       var l=(x.ajout||x.trop).toLowerCase();
       if(l==="h")return g(mot)+" commence par un "+g("h")+" muet : on ne l'entend pas, mais on l'écrit.";
@@ -718,7 +737,7 @@ function piege(k){
   for(var v=0;v<vs.length;v++){if(vs[v][0]<=k&&vs[v][1]>=k){var gg=[];for(var w=vs[v][0];w<=vs[v][1];w++)gg.push(w);
     return {g:gg,ph:"Je n'oublie pas « "+t.slice(vs[v][0],vs[v][1]+1).join("").toLowerCase()+" » dans « "+mot+" » !"};}}
   var pl=pluriel(t,bm);
-  if(k===bm[1]&&/[sx]/i.test(c)&&pl)return {g:seul,ph:"Je n'oublie pas le « "+c+" » du pluriel : « "+pl+" "+mot+" » !"};
+  if(k===bm[1]&&/[sx]/i.test(c)&&sPluriel(t,bm))return {g:seul,ph:"Je n'oublie pas le « "+c+" » du pluriel : « "+(pl?pl+" ":"")+mot+" » !"};
   if(k===bm[1]&&/[tdspxzgc]/i.test(c))return {g:seul,ph:"Je n'oublie pas la lettre muette « "+c+" » de « "+mot+" » !"};
   if(k===bm[1]&&c==="e"&&bm[1]>bm[0])return {g:seul,ph:"Je n'oublie pas le « e » muet de « "+mot+" » !"};
   if(k===bm[0]&&/h/i.test(c))return {g:seul,ph:"Je n'oublie pas le « h » muet de « "+mot+" » !"};
