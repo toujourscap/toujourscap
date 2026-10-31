@@ -126,9 +126,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .faute.vue .ajout{opacity:1;transition:opacity .3s}
 .faute .chapeau{color:var(--correc);font-weight:700;opacity:0;font-size:.8em;vertical-align:-.25em}
 .faute.vue .chapeau{opacity:1}
-.point{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--rouge);color:#fff;border:0;font-size:15px;font-weight:700;vertical-align:middle;margin:0 2px;animation:clign 1.2s ease-in-out infinite}
+.point{display:inline-grid;place-items:center;height:1.2em;border-radius:8px;background:var(--rouge);color:#fff;border:0;font-size:.9em;font-weight:700;vertical-align:-.15em;margin:0 1px;padding:0 3px;line-height:1;animation:clign 1.6s ease-in-out infinite}
 .faute.vue .point{display:none}
-@keyframes clign{50%{transform:scale(1.15)}}
+@keyframes clign{50%{filter:brightness(1.18)}}
 
 /* Bilan */
 #bilan h1{color:var(--vert);font-size:clamp(28px,5vw,44px);text-align:center}
@@ -586,6 +586,8 @@ function plier(){
   etat.correction=null;$("verif").classList.remove("vue");
   etape(nEssai===0?3:nEssai===1?5:7);
   $("ardoise").classList.add("cachee");
+  // à partir de l'étape 3, la phrase copiée redevient une phrase normale (sans les pièges entourés)
+  var r0=$("rangees").firstChild;if(r0&&r0.querySelector(".lettre"))r0.textContent=modele();
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
@@ -630,13 +632,17 @@ function verifier(){
       if(!choisi&&!vues[idx]){var s2=document.createElement("span");s2.className="ok";s2.textContent=x.trop;r.appendChild(s2);return;}
       if(choisi)dansChoix++;
       var f=document.createElement("span");f.className="faute"+(vues[idx]?" vue":"");
-      if(x.trop){var t=document.createElement("span");t.className="trop";t.textContent=x.trop;f.appendChild(t);}
-      if(x.ajout){var ch=document.createElement("span");ch.className="chapeau";ch.textContent="^";var a=document.createElement("span");a.className="ajout";a.textContent=x.ajout;ch.appendChild(a);f.appendChild(ch);}
       if(!vues[idx]){
+        // la faute est cachée sous un cache rouge « ? » : l'enfant cherche lui-même en comparant avec le modèle
         aVoir++;
-        var p=document.createElement("button");p.type="button";p.className="point";p.textContent="?";p.setAttribute("aria-label","Corriger cette erreur");
+        var p=document.createElement("button");p.type="button";p.className="point";p.textContent="?";
+        p.style.minWidth=(Math.max(Array.from(x.trop).length,1)*0.6+0.5)+"em";
+        p.setAttribute("aria-label","Une erreur est cachée ici : compare avec le modèle, puis touche pour voir la correction");
         p.onclick=function(){vues[idx]=1;dessiner();bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
         f.appendChild(p);
+      }else{
+        if(x.trop){var t=document.createElement("span");t.className="trop";t.textContent=x.trop;f.appendChild(t);}
+        if(x.ajout){var ch=document.createElement("span");ch.className="chapeau";ch.textContent="^";var a=document.createElement("span");a.className="ajout";a.textContent=x.ajout;ch.appendChild(a);f.appendChild(ch);}
       }
       r.appendChild(f);
     });
@@ -648,7 +654,7 @@ function verifier(){
     $("actions").innerHTML="";
     if(c.aVoir>0){
       $("bulle2").classList.remove("vue");
-      msg(pre+"Compare avec le modèle et touche chaque point rouge pour corriger en couleur : encore "+c.aVoir+" erreur"+(c.aVoir>1?"s":"")+".","rouge");
+      msg(pre+"Une erreur se cache sous chaque « ? » rouge. Compare avec le modèle, trouve-la, puis touche le « ? » pour corriger en couleur : encore "+c.aVoir+" erreur"+(c.aVoir>1?"s":"")+".","rouge");
       return;
     }
     if(c.dansChoix===0){
