@@ -63,6 +63,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .cats legend{font-weight:700;padding:0 6px}
 .cats .groupe{flex-basis:100%;font-size:13px;font-weight:700;color:#66716d;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
 .cats .ex{color:#66716d;font-size:13px}
+.niveaux{display:flex;align-items:center;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.niveaux span{font-weight:700}
+.niveaux button{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 16px;font-size:16px;font-weight:700;color:#4a5752;cursor:pointer}
+.niveaux button[aria-pressed=true]{background:var(--vert);border-color:var(--vert);color:#fff}
 #enseignant .case{display:flex;align-items:center;gap:6px;font-weight:400;margin:0;font-size:16px;cursor:pointer}
 #enseignant .case input{width:20px;height:20px;accent-color:var(--vert)}
 .note-m{display:block;margin-top:6px;background:#fff6d6;border:2px dashed #e0b84a;border-radius:12px;padding:6px 12px;color:#5b4a12;font-size:16px;align-self:flex-start}
@@ -229,6 +233,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <label for="ensPhrases">Les phrases de la dictée (8 au maximum)</label>
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
     <p class="aide">Collez le texte ou écrivez une phrase par ligne : l'outil sépare les phrases à chaque point. Écrivez-les exactement comme l'élève doit les écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
+    <div class="niveaux" id="ensNiveaux"><span>Niveau&nbsp;:</span><button type="button" data-n="CP">CP</button><button type="button" data-n="CE1">CE1</button><button type="button" data-n="CE2">CE2</button></div>
     <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
     <p class="aide">Les types cochés sont à corriger obligatoirement (« ? » rouge). Les autres erreurs restent signalées à l'élève en orange : il peut les corriger s'il le souhaite.</p>
     <label for="ensNote">Mon conseil pour les pièges (facultatif)</label>
@@ -343,7 +348,8 @@ var CATS = [
   {id:"fem", gr:"Grammaire", nom:"L'accord des adjectifs", ex:"la feuille pliée, des chats noirs", un:"un accord de l'adjectif"},
   {id:"plur", gr:"Grammaire", nom:"Le pluriel", un:"le pluriel"},
   {id:"conj", gr:"Grammaire", nom:"La conjugaison des verbes", un:"la conjugaison du verbe"},
-  {id:"homo", gr:"Grammaire", nom:"Les mots qui se disent pareil", ex:"a/à, et/est, on/ont, son/sont", un:"un mot qui se dit pareil"},
+  {id:"homo", gr:"Grammaire", nom:"Les mots qui se disent pareil", ex:"a/à, et/est, ces/ses, c'est/s'est, ou/où…", un:"un mot qui se dit pareil"},
+  {id:"inv", gr:"Grammaire", nom:"Les mots invariables", ex:"beaucoup, toujours, aujourd'hui…", un:"un mot invariable"},
   {id:"autre", nom:"D'autres lettres", un:"une autre lettre", cache:true}
 ];
 var NOMCAT = {}; CATS.forEach(function(c){NOMCAT[c.id]=c;});
@@ -626,7 +632,25 @@ function motifsMbp(texte){var t=Array.from(texte.toLowerCase()),res=[];
   for(var p=1;p<t.length-1;p++)if(t[p]==="m"&&/[mbp]/.test(t[p+1])&&/[aeiouy]/.test(t[p-1]))res.push({g:[p],n:t[p+1]});return res;}
 // Mots qui se disent pareil, avec le truc pour choisir
 var HOMO={"a":"on peut dire « avait »","à":"on ne peut pas dire « avait »","est":"on peut dire « était »","et":"on peut dire « et puis »",
-  "ont":"on peut dire « avaient »","on":"on peut dire « il »","sont":"on peut dire « étaient »","son":"on peut dire « mon »"};
+  "ont":"on peut dire « avaient »","on":"on peut dire « il »","sont":"on peut dire « étaient »","son":"on peut dire « mon »",
+  "ces":"on peut dire « ceux-là » ou « celles-là »","ses":"on peut dire « les siens » ou « les siennes »",
+  "c'est":"on peut dire « cela est »","s'est":"c'est le verbe qui va avec « se » (il se lave → il s'est lavé)",
+  "ce":"devant un nom, on peut dire « cette »","se":"devant un verbe, on peut dire « me » (je me lave)",
+  "ou":"on peut dire « ou bien »","où":"il indique un lieu, on peut demander « où ? »",
+  "la":"devant un nom, on peut dire « une »","là":"il indique un endroit, on peut dire « ici »","l'a":"on peut dire « l'avait »",
+  "mes":"on peut dire « mon » ou « ma » au singulier","mais":"on peut dire « pourtant »",
+  "leur":"devant un verbe, il veut dire « à eux » et ne prend jamais de « s »","leurs":"devant un nom au pluriel, il prend un « s »"};
+var INVAR=/^(beaucoup|toujours|maintenant|aujourd'hui|longtemps|souvent|jamais|déjà|encore|aussi|assez|trop|très|bien|mal|vite|tard|tôt|hier|demain|ensuite|puis|alors|après|avant|pendant|depuis|devant|derrière|dessous|dessus|dedans|dehors|parfois|quelquefois|autour|loin|près|ici|partout|ailleurs|combien|comment|pourquoi|quand|lorsque|sans|avec|chez|contre|dans|entre|vers|sous|sur|pour|par|donc|car|presque|plutôt|surtout|bientôt|enfin|environ|cependant|pourtant|vraiment|d'abord|peut-être|autrefois|tellement|ensemble|seulement|moins|plus|tant|voici|voilà|hélas|exprès|dès)$/i;
+// Mot entier à travers les apostrophes (c'est, l'a, aujourd'hui) ; « long » pour les mots invariables, « gauche » pour c'est / s'est / l'a
+function motLong(t,bm){var d=bm[0],f=bm[1];
+  while(d>1&&t[d-1]==="'"&&/[\p{L}]/u.test(t[d-2])){d-=2;while(d>0&&/[\p{L}\-]/u.test(t[d-1]))d--;}
+  while(f<t.length-2&&t[f+1]==="'"&&/[\p{L}]/u.test(t[f+2])){f+=2;while(f<t.length-1&&/[\p{L}\-]/u.test(t[f+1]))f++;}
+  return {w:t.slice(d,f+1).join("").toLowerCase(),d:d,f:f};}
+function motGauche(t,bm){var d=bm[0];if(d>1&&t[d-1]==="'"&&/[\p{L}]/u.test(t[d-2])&&(d<3||!/[\p{L}]/u.test(t[d-3])))d-=2;return {w:t.slice(d,bm[1]+1).join("").toLowerCase(),d:d,f:bm[1]};}
+function homoDe(t,bm){var m=motGauche(t,bm);if(HOMO[m.w])return m;
+  if(t[bm[1]+1]==="'"&&/[\p{L}]/u.test(t[bm[1]+2]||"")){var r=bornesMot(t,bm[1]+2),w2=t.slice(bm[0],r[1]+1).join("").toLowerCase();if(HOMO[w2])return {w:w2,d:bm[0],f:r[1]};}var w=t.slice(bm[0],bm[1]+1).join("").toLowerCase();
+  if(HOMO[w]&&!(m.d<bm[0]&&/^(c'|s'|l')$/.test(t.slice(m.d,bm[0]).join("").toLowerCase())))return {w:w,d:bm[0],f:bm[1]};return null;}
+function invarDe(t,bm){var m=motLong(t,bm);if(INVAR.test(m.w))return m;var w=t.slice(bm[0],bm[1]+1).join("").toLowerCase();return INVAR.test(w)?{w:w,d:bm[0],f:bm[1]}:null;}
 function g(s){return "«\u00a0"+s+"\u00a0»";}
 // Accord au féminin : « la feuille pliée », « elle est partie », « la porte est fermée », « une petite fille »
 var DET_FEM=/^(la|une|ma|ta|sa|cette)$/i;
@@ -665,12 +689,14 @@ function estMuette(t,lo,hi,lettres){
 function classer(x,mod){
   var t=Array.from(mod.texte),n=t.length,lettres=x.trop+x.ajout;
   if(x.trop&&x.ajout&&x.trop.toLowerCase()===x.ajout.toLowerCase())return "maj";
-  if(/[A-ZÀ-ÖØ-Þ]/.test(x.ajout)||(/[A-ZÀ-ÖØ-Þ]/.test(x.trop)&&x.debut>0))return "maj";
+  var majL=/[A-ZÀ-ÖØ-Þ]/.test(x.ajout)||(/[A-ZÀ-ÖØ-Þ]/.test(x.trop)&&x.debut>0);
   if(/[.!?]/.test(lettres))return "pt";
   var lo=x.fin>x.debut?x.debut:Math.max(0,x.debut-1), hi=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut);
   var k0=Math.min(Math.max(lo,0),n-1);if(!/[\p{L}]/u.test(t[k0])&&k0>0)k0--;
   var bm0=bornesMot(t,k0),mot0=t.slice(bm0[0],bm0[1]+1).join("").toLowerCase();
-  if(HOMO[mot0]&&hi>=bm0[0]&&lo<=bm0[1])return "homo";
+  var hm0=homoDe(t,bm0);if(hm0&&hi>=hm0.d&&lo<=hm0.f)return "homo";
+  var iv0=invarDe(t,bm0);if(iv0&&hi>=iv0.d&&lo<=iv0.f)return "inv";
+  if(majL)return "maj";
   var aa=accordAdj(t,bm0,mod);if(aa&&hi>=aa.fin-1&&hi>=bm0[0])return "fem";
   var mv=motifsVal(mod.texte);
   for(var q=0;q<mv.length;q++){var gq=mv[q].g;if(gq[0]<=hi&&gq[gq.length-1]>=lo&&mv[q].l.test(lettres))return "val";}
@@ -733,7 +759,8 @@ function explication(x,md){
   var bm=bornesMot(t,k),mot=t.slice(bm[0],bm[1]+1).join(""),avant=motPrecedent(t,bm[0]);
   var hiE=x.fin>x.debut?x.fin-1:Math.min(n-1,x.debut);
   switch(x.cat){
-    case "homo": var hm=mot.toLowerCase();return HOMO[hm]?"On écrit "+g(hm)+" : "+HOMO[hm]+".":"Regarde bien le modèle : on écrit "+g(mot)+".";
+    case "homo": var hm=homoDe(t,bm);return hm?"On écrit "+g(t.slice(hm.d,hm.f+1).join(""))+" : "+HOMO[hm.w]+".":"Regarde bien le modèle : on écrit "+g(mot)+".";
+    case "inv": var mi=invarDe(t,bm),wi=mi?t.slice(mi.d,mi.f+1).join(""):mot;return g(wi)+" est un mot invariable : il s'écrit toujours pareil, je l'apprends par cœur.";
     case "val":
       var mv=motifsVal(md.texte);for(var q=0;q<mv.length;q++){var gq=mv[q].g;if(gq[0]<=hiE&&gq[gq.length-1]>=lo)return phraseVal(mv[q].ty,mot,"",t[gq[gq.length-1]+1]||"");}
       return "Regarde bien le modèle : on écrit "+g(mot)+".";
@@ -771,7 +798,8 @@ function explication(x,md){
       if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
       return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
     case "conj":
-      var rc=regleConj(t,bm,md);
+      var rc=regleConj(t,bm,md),ivx=infoVerbe(md,t,bm);
+      if(ivx&&ivx.type==="pp"&&!ETRE_ATTR.test(ivx.avant)&&x.trop&&/^[es]+$/i.test(x.trop)&&!x.ajout)return g(mot)+" : avec le verbe avoir ("+g(ivx.avant)+"), on n'accorde pas avec le sujet. Pas de "+g(x.trop)+".";
       return "C'est un verbe : "+rc.ph+(/ent$/.test(rc.fin)?" (ils sont plusieurs).":".");
     default: return "Regarde bien le modèle : on écrit "+g(mot)+".";
   }
@@ -826,12 +854,22 @@ majTitre();
 function montrer(id){fermerBulle();document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});window.scrollTo(0,0);}
 var grVu="";
 CHOIX.forEach(function(c){if(c.gr!==grVu){grVu=c.gr;var h=document.createElement("div");h.className="groupe";h.textContent=c.gr;$("ensCats").appendChild(h);}var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));if(c.ex){var e=document.createElement("small");e.className="ex";e.textContent="("+c.ex+")";l.appendChild(e);}$("ensCats").appendChild(l);});
+// Niveau : coche les catégories adaptées (l'enseignant peut ensuite ajuster)
+var NIVEAUX={CP:["voy","cons","acc","muet","maj","pt","plur"],
+  CE1:["voy","cons","val","mbp","acc","dbl","muet","maj","pt","fem","plur","conj","homo"]};
+function majNiveaux(){var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
+  document.querySelectorAll("#ensNiveaux button").forEach(function(b){var l=NIVEAUX[b.dataset.n];
+    b.setAttribute("aria-pressed",String(l?c.length===l.length&&l.every(function(x){return c.indexOf(x)>=0;}):c.length===CHOIX.length));});}
+document.querySelectorAll("#ensNiveaux button").forEach(function(b){b.onclick=function(){var l=NIVEAUX[b.dataset.n];
+  document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!l||l.indexOf(i.value)>=0;});majNiveaux();};});
+$("ensCats").addEventListener("change",majNiveaux);
 // Dans la page du site (jeu intégré), l'espace enseignant s'ouvre en grand dans un nouvel onglet
 function ouvrirEnseignant(){
   if(window.self!==window.top){var a=document.createElement("a");a.href=location.href.split("#")[0].split("?")[0]+"#enseignant"+(estExemple?"":"&"+location.hash.slice(1));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();return;}
   montrer("enseignant");
   if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
     document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
+  majNiveaux();
   $("ensTitre").focus();}
 $("versEnseignant").onclick=ouvrirEnseignant;
 if(/(^#|&)enseignant/.test(location.hash))setTimeout(ouvrirEnseignant,0);
@@ -1062,7 +1100,8 @@ function piege(k){
   if(/[.!?]/.test(c))return {g:seul,ph:"Je n'oublie pas le point à la fin !"};
   if(c===",")return {g:seul,ph:"Je n'oublie pas la virgule !"};
   if(c==="'")return {g:seul,ph:"Je n'oublie pas l'apostrophe !"};
-  if(HOMO[bas]){var gh=[];for(var w=bm[0];w<=bm[1];w++)gh.push(w);return {g:gh,ph:"J'écris « "+bas+" » : "+HOMO[bas]+" !"};}
+  var hm=homoDe(t,bm);if(hm){var gh=[];for(var w=hm.d;w<=hm.f;w++)gh.push(w);return {g:gh,ph:"J'écris « "+t.slice(hm.d,hm.f+1).join("")+" » : "+HOMO[hm.w]+" !"};}
+  var mi=invarDe(t,bm);if(mi){var gi2=[];for(var w=mi.d;w<=mi.f;w++)gi2.push(w);return {g:gi2,ph:"Je n'oublie pas « "+t.slice(mi.d,mi.f+1).join("")+" » : ce mot ne change jamais, je l'apprends par cœur !"};}
   var aa=accordAdj(t,bm,mod());
   if(aa&&k>=aa.fin){var ga=[];for(var w2=aa.fin;w2<=bm[1];w2++)ga.push(w2);
     if(aa.i===0&&/[tdsx]$/.test(bas)&&aa.f[1]!==aa.f[0])return {g:[bm[1]],ph:"Je n'oublie pas le « "+c+" » muet de « "+mot+" » : on l'entend dans « "+aa.f[1]+" » !"};
