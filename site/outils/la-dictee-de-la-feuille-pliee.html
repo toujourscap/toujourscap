@@ -139,6 +139,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .faute.vue .chapeau{opacity:1}
 .point{display:inline-grid;place-items:center;height:1.2em;border-radius:8px;background:var(--rouge);color:#fff;border:0;font-size:.9em;font-weight:700;vertical-align:-.15em;margin:0 1px;padding:0 3px;line-height:1;animation:clign 1.6s ease-in-out infinite}
 .faute.vue .point{display:none}
+.point.secondaire{background:var(--orange);animation:none}
 @keyframes clign{50%{filter:brightness(1.18)}}
 
 /* Bilan */
@@ -209,7 +210,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
     <p class="aide">Écrivez chaque phrase exactement comme l'élève doit l'écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
     <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
-    <p class="aide">Décochez ce que vous ne voulez pas faire vérifier : ces erreurs-là ne seront pas signalées à l'élève.</p>
+    <p class="aide">Les types cochés sont à corriger obligatoirement (« ? » rouge). Les autres erreurs restent signalées à l'élève en orange : il peut les corriger s'il le souhaite.</p>
     <label for="ensNote">Mon conseil pour les pièges (facultatif)</label>
     <input id="ensNote" maxlength="200" placeholder="Exemple : attention aux mots avec « eau » et au pluriel.">
     <div class="rangee">
@@ -694,16 +695,15 @@ function verifier(){
   saisieVisible(false);
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
-  var errA=err.filter(function(x){return actif(x.cat);}); // seulement les erreurs que l'enseignant fait vérifier
-  etat.essais.push(errA.length);
-  if(!etat.cats1){etat.cats1={};errA.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
+  etat.essais.push(err.length);
+  if(!etat.cats1){etat.cats1={};err.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
   verif=verif.filter(function(v){return actif(v);});if(!verif.length)verif=tous();
   var r=ajouterRangee();
   rabat(0);$("ardoise").classList.remove("cachee");
   etape(etat.essais.length===1?4:6);
-  if(!errA.length){
+  if(!err.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
-    etape(8,err.length?"Bravo ! Pour ce que la maîtresse vérifie, ma phrase est juste !":"Bravo ! Ma phrase est juste, sans erreur !");
+    etape(8,"Bravo ! Ma phrase est juste, sans erreur !");
     msg(etat.essais.length===1?"Zéro erreur du premier coup, super détective !":"Zéro erreur ! Tu as appris en corrigeant.","vert");
     boutonsSuite();$("actions").firstChild.className="btn vert";
     return;
@@ -712,19 +712,20 @@ function verifier(){
   $("explications").innerHTML="";
   etat.correction={dessiner:dessiner};
   $("verif").classList.add("vue");dessinerVerif();
+  // Toutes les erreurs sont indiquées par un « ? » :
+  //  - rouge : ce que je vérifie (choisi par l'élève, parmi ce que l'enseignant a coché) — à corriger pour continuer ;
+  //  - orange : les autres erreurs — indiquées aussi, l'élève peut les corriger s'il le souhaite.
   function dessiner(){
     r.innerHTML="";
-    var aVoir=0,dansChoix=0;
+    var aVoir=0,dansChoix=0,autres=0;
     m.forEach(function(x,idx){
       if(x.ok!==undefined){var s=document.createElement("span");s.className="ok";s.textContent=x.ok;r.appendChild(s);return;}
       var estChoisi=choisi(x.cat);
-      if(!estChoisi&&!vues[idx]){var s2=document.createElement("span");s2.className="ok";s2.textContent=x.trop;r.appendChild(s2);return;}
       if(estChoisi)dansChoix++;
       var f=document.createElement("span");f.className="faute"+(vues[idx]?" vue":"");
       if(!vues[idx]){
-        // la faute est cachée sous un cache rouge « ? » : l'enfant cherche lui-même en comparant avec le modèle
-        aVoir++;
-        var p=document.createElement("button");p.type="button";p.className="point";p.textContent="?";
+        if(estChoisi)aVoir++;else autres++;
+        var p=document.createElement("button");p.type="button";p.className="point"+(estChoisi?"":" secondaire");p.textContent="?";
         p.style.minWidth=(Math.max(Array.from(x.trop).length,1)*0.6+0.5)+"em";
         p.setAttribute("aria-label","Une erreur est cachée ici : compare avec le modèle, puis touche pour voir la correction");
         p.onclick=function(){vues[idx]=1;ajouterExplication(x,md);dessiner();bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
@@ -735,23 +736,20 @@ function verifier(){
       }
       r.appendChild(f);
     });
-    etat.correction.aVoir=aVoir;etat.correction.dansChoix=dansChoix;
+    etat.correction.aVoir=aVoir;etat.correction.dansChoix=dansChoix;etat.correction.autres=autres;
     bilanCorrection("");
   }
   function bilanCorrection(avant){
-    var c=etat.correction,pre=avant?avant+" ":"";
+    var c=etat.correction,pre=avant?avant+" ":"",
+        orange=c.autres?" Les « ? » orange sont d'autres erreurs : touche-les aussi si tu veux les corriger.":"";
     $("actions").innerHTML="";
     if(c.aVoir>0){
       $("bulle2").classList.remove("vue");
-      msg(pre+"Une erreur se cache sous chaque « ? » rouge. Compare avec le modèle, trouve-la, puis touche le « ? » pour corriger en couleur : encore "+c.aVoir+" erreur"+(c.aVoir>1?"s":"")+".","rouge");
+      msg(pre+"Une erreur se cache sous chaque « ? » rouge. Compare avec le modèle, trouve-la, puis touche le « ? » pour corriger en couleur : encore "+c.aVoir+" erreur"+(c.aVoir>1?"s":"")+"."+orange,"rouge");
       return;
     }
-    if(c.dansChoix===0){
-      msg(pre+(toutCoche()?"":"Pas d'erreur de ce type : bravo ! ")+"Tu peux continuer, ou vérifier autre chose.","vert");
-    }else{
-      msg(pre+(toutCoche()?"Toutes tes erreurs sont corrigées en vert !":"Tes erreurs de ce type sont corrigées en vert !"),"vert");
-      $("bulle2").classList.add("vue");
-    }
+    if(c.dansChoix===0)msg(pre+"Pas d'erreur de ce que tu vérifies : bravo !"+orange,"vert");
+    else{msg(pre+(c.autres?"Tes erreurs rouges sont corrigées en vert !":"Toutes tes erreurs sont corrigées en vert !")+orange,"vert");$("bulle2").classList.add("vue");}
     bouton(etat.essais.length===1?"Je replie et je réécris":"Je replie encore","vert",plier);
     boutonsSuite();
   }
