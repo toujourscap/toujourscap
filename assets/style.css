@@ -218,3 +218,10 @@ body.fond.fond-lac-brume::before { filter: brightness(.78); }
 .prose figure.paire > div { display: flex; gap: 6px; }
 .prose figure.paire img { width: calc(50% - 3px); height: auto; border-radius: 8px; margin: 0; }
 .prose figure.paire figcaption { font-weight: 700; color: var(--accent); margin-top: 8px; }
+
+/* Article avec un jeu large : le cadre de l'article prend la largeur du jeu (même cadre en haut et en bas),
+   le texte reste en colonne lisible au centre */
+body main > article.wrap.narrow:has(.embed-large) { max-width: 1240px; }
+article:has(.embed-large) .embed-large { width: auto; left: 0; transform: none; }
+article:has(.embed-large) > :not(.prose),
+article:has(.embed-large) .prose > :not(.embed):not(script):not(style) { max-width: 680px; margin-left: auto; margin-right: auto; }
