@@ -670,6 +670,7 @@ def main():
   <p>Si j'ai choisi «&nbsp;Toujours cap&nbsp;!&nbsp;», c'est que je suis profondément convaincu que la première attitude à avoir en tant qu'enseignant, c'est de <strong>croire en nos élèves</strong>&nbsp;! Une attitude très partagée chez les enseignants d'ailleurs… même si parfois ce n'est pas simple&nbsp;!</p>
   <p>Ce site a été construit à l'aide de l'IA. N'ayant pas les compétences en HTML&nbsp;🙂, j'ai enfin pu mettre en images et en textes ce que je souhaitais partager depuis longtemps.</p>
   <p>N'hésitez pas à m'envoyer vos commentaires.</p>
+  <p class="signature">Fabrice</p>
 """ + (KOFI_HTML if KOFI_ACTIF else "") + """  <p><a class="btn" href="/outils-pedagogiques/">Découvrir les outils</a></p>
 """ + (f"""  <aside class="don">
     <span class="don-tasse" aria-hidden="true">☕</span>
