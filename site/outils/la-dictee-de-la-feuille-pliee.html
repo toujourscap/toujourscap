@@ -214,9 +214,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <p class="aide">Tapez les phrases de la dictée : l'outil fabrique un lien à donner aux élèves (ENT, cahier de liaison, QR code…). Les phrases sont rangées dans le lien lui-même : rien n'est enregistré sur un serveur.</p>
     <label for="ensTitre">Titre de la dictée</label>
     <input id="ensTitre" maxlength="60" placeholder="Exemple : Dictée n°3 – le son [f]">
-    <label for="ensPhrases">Les phrases (une par ligne, 8 au maximum)</label>
+    <label for="ensPhrases">Les phrases de la dictée (8 au maximum)</label>
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
-    <p class="aide">Écrivez chaque phrase exactement comme l'élève doit l'écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
+    <p class="aide">Collez le texte ou écrivez une phrase par ligne : l'outil sépare les phrases à chaque point. Écrivez-les exactement comme l'élève doit les écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
     <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
     <p class="aide">Les types cochés sont à corriger obligatoirement (« ? » rouge). Les autres erreurs restent signalées à l'élève en orange : il peut les corriger s'il le souhaite.</p>
     <label for="ensNote">Mon conseil pour les pièges (facultatif)</label>
@@ -485,10 +485,15 @@ function majTitre(){var t=$("titreDictee"),n=dictee.p.length+" phrase"+(dictee.p
 majTitre();
 function montrer(id){document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});window.scrollTo(0,0);}
 CHOIX.forEach(function(c){var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));$("ensCats").appendChild(l);});
-$("versEnseignant").onclick=function(){montrer("enseignant");
+// Dans la page du site (jeu intégré), l'espace enseignant s'ouvre en grand dans un nouvel onglet
+function ouvrirEnseignant(){
+  if(window.self!==window.top){var a=document.createElement("a");a.href=location.href.split("#")[0].split("?")[0]+"#enseignant"+(estExemple?"":"&"+location.hash.slice(1));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();return;}
+  montrer("enseignant");
   if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
     document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
-  $("ensTitre").focus();};
+  $("ensTitre").focus();}
+$("versEnseignant").onclick=ouvrirEnseignant;
+if(/(^#|&)enseignant/.test(location.hash))setTimeout(ouvrirEnseignant,0);
 $("retourAccueil").onclick=function(){montrer("accueil");};
 $("commencer").onclick=function(){demarrer(false);};
 $("libre").onclick=function(){demarrer(true);};
@@ -500,17 +505,21 @@ $("choixAccueil").onclick=function(){montrer("accueil");};
 
 /* ---------- Espace enseignant ---------- */
 $("creerLien").onclick=function(){
-  var p=$("ensPhrases").value.split(/\n+/).map(function(s){return normaliser(s);}).filter(Boolean);
+  // plusieurs phrases sur une même ligne : on les sépare après chaque point (. ! ?)
+  var p=[];$("ensPhrases").value.split(/\n+/).forEach(function(l){l.split(/(?<=[.!?…])\s+(?=\S)/).forEach(function(x){x=normaliser(x);if(x)p.push(x);});});
   if(!p.length){$("ensErreur").textContent="Tapez d'abord les phrases de la dictée dans le grand cadre (une par ligne).";$("ensPhrases").focus();return;}
   $("ensErreur").textContent="";
-  if(p.length>8)p=p.slice(0,8);
+  var trop=p.length>8;if(trop)p=p.slice(0,8);
+  var sansPoint=p.filter(function(x){return !/[.!?…»]$/.test(x);});
+  var avert=(trop?"Seules les 8 premières phrases sont gardées. ":"")+(sansPoint.length?"Attention, pas de point à la fin de : « "+sansPoint.join(" », « ")+" ».":"");
+  $("ensPhrases").value=p.join("\n");
   var o={t:($("ensTitre").value.trim()||"Ma dictée").slice(0,60),p:p};
   var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
   if(!c.length){$("ensErreur").textContent="Cochez au moins un type d'erreur à vérifier.";return;}
   if(c.length<CHOIX.length)o.c=c;
   var n=$("ensNote").value.trim();if(n)o.n=n.slice(0,200);
   $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
-  $("lienCree").style.display="block";$("copieOk").textContent="";
+  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=avert;
   $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
 };
 $("copierLien").onclick=function(){
