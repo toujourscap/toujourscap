@@ -50,7 +50,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 /* Espace enseignant */
 #enseignant label{display:block;font-weight:700;margin:14px 0 6px}
 #enseignant input,#enseignant textarea{width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid #d9d2c4;border-radius:12px;background:#fffdf8}
-#enseignant textarea{min-height:190px;line-height:1.5}
+#enseignant textarea{min-height:150px;line-height:1.5}
+#enseignant ::placeholder{color:#a9a294;font-style:italic}
 .aide{color:#66716d;font-size:15px;margin:6px 0 0}
 .lien-cree{margin-top:16px;background:var(--vert-c);border-radius:14px;padding:14px;display:none}
 .lien-cree input{font-size:14px!important}
@@ -198,14 +199,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <h1 style="color:var(--vert);font-size:clamp(26px,4vw,38px)">Préparer une dictée</h1>
     <p class="aide">Tapez les phrases de la dictée : l'outil fabrique un lien à donner aux élèves (ENT, cahier de liaison, QR code…). Les phrases sont rangées dans le lien lui-même : rien n'est enregistré sur un serveur.</p>
     <label for="ensTitre">Titre de la dictée</label>
-    <input id="ensTitre" maxlength="60" placeholder="Dictée n°3 – le son [f]">
+    <input id="ensTitre" maxlength="60" placeholder="Exemple : Dictée n°3 – le son [f]">
     <label for="ensPhrases">Les phrases (une par ligne, 8 au maximum)</label>
-    <textarea id="ensPhrases" spellcheck="true" placeholder="Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
+    <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
     <p class="aide">Écrivez chaque phrase exactement comme l'élève doit l'écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
     <div class="rangee">
       <button class="btn vert" id="creerLien">Créer le lien</button>
       <button class="btn blanc" id="retourAccueil">Retour</button>
     </div>
+    <p class="msg rouge" id="ensErreur" aria-live="polite"></p>
     <div class="lien-cree" id="lienCree" role="status">
       <strong>Le lien de votre dictée :</strong>
       <div class="rangee"><input id="lienTexte" readonly style="flex:1;min-width:0"></div>
@@ -461,11 +463,13 @@ $("refaire").onclick=function(){demarrer(etat&&etat.libre);};
 /* ---------- Espace enseignant ---------- */
 $("creerLien").onclick=function(){
   var p=$("ensPhrases").value.split(/\n+/).map(function(s){return normaliser(s);}).filter(Boolean);
-  if(!p.length){$("ensPhrases").focus();return;}
+  if(!p.length){$("ensErreur").textContent="Tapez d'abord les phrases de la dictée dans le grand cadre (une par ligne).";$("ensPhrases").focus();return;}
+  $("ensErreur").textContent="";
   if(p.length>8)p=p.slice(0,8);
   var o={t:($("ensTitre").value.trim()||"Ma dictée").slice(0,60),p:p};
-  $("lienTexte").value=location.href.split("#")[0]+"#d="+encoder(o);
+  $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
   $("lienCree").style.display="block";$("copieOk").textContent="";
+  $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
 };
 $("copierLien").onclick=function(){
   var t=$("lienTexte");t.select();
