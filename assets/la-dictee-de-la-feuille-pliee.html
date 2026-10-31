@@ -396,12 +396,57 @@ var DEVANT_NOM=/^(le|la|les|l'|un|une|des|du|de|d'|ce|cet|cette|ces|mon|ma|mes|t
 var PAS_VERBE=/^(souvent|vent|dent|argent|moment|comment|parent|serpent|accident|président|client|talent|cent|content|lent|prudent|différent|présent|absent|intelligent|urgent|jamais|mais|frais|palais|lait|fait|souhait|trait|portrait)$/i;
 // Le mot est-il un verbe ? verbe marqué *entre étoiles*, ou mot après un pronom (il, nous…),
 // ou mot en -ent/-ait/-aient qui ne suit pas un déterminant (les enfants *jouent*, le chat *mangeait*).
+// Sujet du verbe : un pronom (il, nous…, même avec « ne », « le », « se »… entre les deux)
+// ou un groupe nominal juste avant (le chat, les enfants, la petite fille, Paul)
+var DET_SUJET=/^(le|la|l'|les|un|une|des|ce|cet|cette|ces|mon|ma|mes|ton|ta|tes|son|sa|ses|notre|nos|votre|vos|leur|leurs|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|plusieurs|quelques)$/i;
+var ADJ_AVANT_NOM=/^(petit|petite|petits|petites|grand|grande|grands|grandes|gros|grosse|grosses|beau|belle|beaux|belles|vieux|vieil|vieille|vieilles|jeune|jeunes|joli|jolie|jolis|jolies|bon|bonne|bons|bonnes|gentil|gentille|nouveau|nouvelle)$/i;
+var PERS={"je":"je","j'":"je","tu":"tu","il":"il","elle":"elle","on":"on","nous":"nous","vous":"vous","ils":"ils","elles":"elles"};
+function sujetDuVerbe(t,bm){
+  var d=bm[0],mots=[];
+  for(var i=0;i<4;i++){var s0=debutAvant(t,d);if(s0<0)break;mots.push(motPrecedent(t,d));d=s0;}
+  for(i=0;i<mots.length;i++){var w=mots[i].toLowerCase();
+    if(PRONOMS.test(w))return {txt:w,pers:PERS[w]};
+    if(!/^(ne|n'|le|la|les|l'|me|m'|te|t'|se|s'|lui|leur|y|en)$/.test(w))break;}
+  if(!mots.length)return null;
+  var nom=mots[0],nb=nom.toLowerCase();
+  if(DEVANT_NOM.test(nb)||PERS[nb]||/'$/.test(nb))return null;
+  if(/^[A-ZÀ-ÖØ-Þ]/.test(nom))return {txt:nom,pers:"il",nom:true};
+  // groupe nominal : [adjectif après le nom] nom [adjectif avant le nom] déterminant
+  var k=-1,det;
+  for(var a0=0;a0<=1&&k<0;a0++){var j=a0+1;if(mots[j]&&ADJ_AVANT_NOM.test(mots[j]))j++;
+    if(mots[j]&&DET_SUJET.test(mots[j])&&!DEVANT_NOM.test(mots[a0])){k=j;det=mots[j];}}
+  if(k<0)return null;
+  var grp=mots.slice(0,k+1).reverse().join(" ").replace(/' /g,"'").toLowerCase(),
+      plur=DET_PLURIEL.test(det)||/^(leurs)$/i.test(det),fem=DET_FEM.test(det)||(plur&&/^(une|la)$/i.test(det));
+  return {txt:grp,pers:plur?"ils":fem?"elle":"il",nom:true};
+}
+var ADJ_FIN_T=/^(petit|grand|content|chaud|froid|blond|rond|gourmand|haut|bavard|lourd|laid|sourd|fort|droit|plat|court|lent|prudent|méchant|charmant|amusant|brillant|marchand|intelligent|absent|présent|différent|parfait|gourmet|muet|complet|secret|inquiet|violet)$/i;
+var ADJ_FIN_E=/(ique|able|ible|aire|iste|ste|ble|bre|tre|gne)$/;
 function estVerbe(md,t,bm){
   for(var q=bm[0];q<=bm[1];q++)if(md.verbes[q])return true;
   var mot=t.slice(bm[0],bm[1]+1).join("").toLowerCase(),avant=motPrecedent(t,bm[0]);
+  var sj=sujetDuVerbe(t,bm);
+  if(sj&&!sj.nom)return true;
   if(PRONOMS.test(avant))return true;
-  if(mot.length<4||PAS_VERBE.test(mot)||/(e|a|e)mment$|ement$/.test(mot))return false;
-  return FIN_VERBE.test(mot)&&!!avant&&!DEVANT_NOM.test(avant);
+  if(mot.length<2||PAS_VERBE.test(mot)||/(e|a|e)mment$|ement$/.test(mot))return false;
+  if(FIN_VERBE.test(mot)&&mot.length>=4&&!!avant&&!DEVANT_NOM.test(avant))return true;
+  if(!sj)return false;
+  // sujet nom : on reconnaît la fin d'un verbe, en écartant les adjectifs (le chat noir, la feuille pliée)
+  if(EPICENE.test(mot))return false;
+  if(sj.pers==="ils")return /(ent|ont)$/.test(mot);
+  if(/(é|ée|és|ées|i|is|u|us|ant)$/.test(mot))return false;
+  if(/(t|d)$/.test(mot))return !ADJ_FIN_T.test(mot);
+  if(/e$/.test(mot)){if(ADJ_FIN_E.test(mot))return false;if(sj.pers==="elle"&&FORME_FEM.test(mot)&&!/oue$/.test(mot))return false;return true;}
+  return /^(a|va|fait|dit|peut|veut|sait|voit)$/.test(mot);
+}
+// Règle de conjugaison à dire à l'élève : avec « le chat » (il), « dort » se termine par « t »
+var FINS=/(aient|ions|iez|ent|ons|ont|ez|ais|ait|ai|es|as|e|s|t|d|x|a)$/;
+function regleConj(t,bm){
+  var mot=t.slice(bm[0],bm[1]+1).join(""),bas=mot.toLowerCase(),fm=bas.match(FINS),fin=fm?fm[1]:bas,sj=sujetDuVerbe(t,bm);
+  if(sj&&sj.pers==="tu"&&/s$/.test(fin)&&fin!=="as")fin="s";
+  if(fin.length>=bas.length)fin=bas;
+  var qui=sj?(sj.nom?"« "+sj.txt+" » ("+sj.pers+")":"« "+sj.txt+" »"):"";
+  return {fin:fin,ph:(qui?"avec "+qui+", ":"")+"« "+mot+" » se termine par « "+fin+" »"};
 }
 // voyelles écrites avec 2 ou 3 lettres (on, an, in… seulement quand elles ne sont pas suivies d'une voyelle ou d'un 2e n/m)
 var GRAPH=["eau","ain","ein","oin","ou","oi","au","ai","ei","eu","œu","on","om","an","am","en","em","in","im","un","um","ym","yn"];
@@ -620,10 +665,8 @@ function explication(x,md){
       if(x.trop&&!x.ajout)return g(mot)+" ne prend pas de "+g(x.trop)+" à la fin.";
       return g(mot)+" : on n'entend pas le "+g(l)+" à la fin, mais on l'écrit.";
     case "conj":
-      var bas=mot.toLowerCase(),fm=bas.match(/(aient|ions|iez|ent|ons|ont|ez|ais|ait|ai|es|as|e|s|t|d|x|a)$/),fin=fm?fm[1]:bas;
-      if(PRONOMS.test(avant))return g(mot)+" : avec "+g(avant.toLowerCase())+", le verbe se termine par "+g(fin)+".";
-      if(fin==="ent")return g(mot)+" : ils sont plusieurs, alors le verbe se termine par "+g("ent")+".";
-      return g(mot)+" : le verbe se termine par "+g(fin)+".";
+      var rc=regleConj(t,bm);
+      return "C'est un verbe : "+rc.ph+(/ent$/.test(rc.fin)?" (ils sont plusieurs).":".");
     default: return "Regarde bien le modèle : on écrit "+g(mot)+".";
   }
 }
@@ -895,8 +938,8 @@ function piege(k){
     if(t[k-1]===c)return {g:[k-1,k],ph:"Je n'oublie pas les 2 « "+c+" » de « "+mot+" » !"};
   }
   var verbe=estVerbe(mod(),t,bm);
-  if(verbe&&k>=bm[1]-3&&bm[1]-bm[0]>1){var d=Math.max(bm[0]+1,bm[1]-(/(aient)$/.test(bas)?4:/(ent|ons|ait|ais|ont)$/.test(bas)?2:/(ez|ai)$/.test(bas)?1:0)),gv=[];for(var q=d;q<=bm[1];q++)gv.push(q);
-    return {g:gv,ph:"Je n'oublie pas la fin du verbe : « "+mot+" » !"};}
+  if(verbe){var rc=regleConj(t,bm),d=bm[1]-Array.from(rc.fin).length+1;
+    if(k>=d){var gv=[];for(var q=d;q<=bm[1];q++)gv.push(q);return {g:gv,ph:"Je pense à la conjugaison : "+rc.ph+" !"};}}
   if(ACC.test(c))return {g:seul,ph:"Je n'oublie pas l'accent : « "+c+" » dans « "+mot+" » !"};
   var vs=voyelles(modele());
   for(var v=0;v<vs.length;v++){if(vs[v][0]<=k&&vs[v][1]>=k){var gg=[];for(var w=vs[v][0];w<=vs[v][1];w++)gg.push(w);
