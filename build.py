@@ -34,8 +34,7 @@ JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e
 
 CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
-    "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage.", "domain": "francais"},
-    "comprehension": {"name": "Compréhension", "desc": "Jeux pour comprendre ce qu'on lit au CP et au CE1 : pronoms et substituts, inférences, implicite, états mentaux des personnages, connecteurs.", "domain": "francais"},
+    "lecture": {"name": "Lecture", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage et de compréhension.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
@@ -51,6 +50,7 @@ COMPETENCES = {
     "sons-syllabes": "Lecture de syllabes",
     "mots": "Lecture de mots",
     "phrases-textes": "Lecture de phrases",
+    "comprehension": "Compréhension",
     "fluence": "Fluence",
     # Jeux de calcul (onglets de la page Calcul)
     "addition": "Addition",
@@ -441,7 +441,6 @@ SEO_TITRES = {
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
-    "/francais/comprehension/": "Jeux de compréhension de texte en ligne gratuits pour le CP et le CE1",
     "/post/le-chateau-des-detectives/": "Le Château des Détectives : jeu de compréhension de texte CP-CE1",
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
@@ -570,12 +569,10 @@ def main():
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
     cc = epingles_d_abord([p for p in fr if p["cat"] == "cercle-conteur"])
     lec = [p for p in fr if p["cat"] == "lecture"]
-    comp = epingles_d_abord([p for p in fr if p["cat"] == "comprehension"])
     def cover_of(lst):
         return next((q["cover"] for q in lst if q["cover"]), "")
     subs = [("cercle-conteur", "Langage oral", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
-            ("lecture", "Lecture", CATS["lecture"]["desc"], lec),
-            ("comprehension", "Compréhension", CATS["comprehension"]["desc"], comp)]
+            ("lecture", "Lecture", CATS["lecture"]["desc"], lec)]
     vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -751,6 +748,8 @@ def main():
         if p["slug"] != ascii_slug(p["slug"]):
             from urllib.parse import quote
             redirects.append(f"/post/{quote(p['slug'])} /post/{ascii_slug(p['slug'])}/ 301")
+    # ancienne rubrique Compréhension : ses jeux sont maintenant dans Lecture
+    redirects += ["/francais/comprehension/ /francais/lecture/ 301", "/blog/comprehension/ /blog/lecture/ 301"]
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
     with open(os.path.join(OUT, "titres.json"), "w") as f:  # titres des pages, pour /admin/stats

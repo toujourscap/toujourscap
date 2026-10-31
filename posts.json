@@ -9238,7 +9238,7 @@
    "slug": "le-chateau-des-detectives",
    "excerpt": "Lire les messages cachés sur les portes d'un château pour trouver la pièce secrète au trésor : pronoms, inférences, implicite, états mentaux et connecteurs pour le CP et le CE1.",
    "date": "2026-10-27T15:00:00.000Z",
-   "cat": "comprehension",
+   "cat": "lecture",
    "categoryIds": [],
    "richContent": {
     "nodes": [
@@ -9629,6 +9629,7 @@
     ]
    },
    "jeu": {
+    "competence": "comprehension",
     "niveaux": [
      "CP",
      "CE1"
