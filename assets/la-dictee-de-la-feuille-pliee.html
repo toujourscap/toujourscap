@@ -146,6 +146,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 /* Lettres cliquables (pièges) */
 .lettre{display:inline;cursor:pointer;border-radius:50%;padding:0 1px;position:relative;background:none;border:0;font:inherit;color:inherit}
 .lettre.piege{outline:3px solid var(--rouge);outline-offset:1px;border-radius:12px}
+.tableau .lettre.piege{outline-color:#ffd166}
+.tableau .lettre.pg{border-color:#ffd166}
+.tableau .lettre:focus-visible{outline:2px dashed #ffd166}
 .lettre.pg{outline:0;border-top:3px solid var(--rouge);border-bottom:3px solid var(--rouge);border-radius:0;padding:0}
 .lettre.pg-d{border-left:3px solid var(--rouge);border-radius:12px 0 0 12px;padding-left:2px}
 .lettre.pg-f{border-right:3px solid var(--rouge);border-radius:0 12px 12px 0;padding-right:2px}
@@ -208,15 +211,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
       <button class="perso" data-p="garcon" aria-pressed="false"><img alt="" id="imgGarcon">Le détective</button>
     </div>
     <p class="centre boutons-depart"><button class="btn vert" id="commencer">Commencer ma dictée</button> <button class="btn blanc" id="libre">J'écris le modèle moi-même</button></p>
-    <details class="etapes"><summary>Les 7 étapes de la méthode</summary>
+    <details class="etapes"><summary>Les 6 étapes de la méthode</summary>
     <ol class="etapes-liste" aria-label="Les étapes de la méthode">
-      <li><b>1</b> Je copie ma phrase avec le modèle.</li>
-      <li><b>2</b> Je me pose des questions.</li>
-      <li><b>3</b> Je plie et je réécris ma phrase.</li>
-      <li><b>4</b> Je regarde le modèle et je corrige mes erreurs.</li>
-      <li><b>5</b> Je replie et je réécris.</li>
-      <li><b>6</b> Je regarde le modèle et corrige mes erreurs.</li>
-      <li><b>7</b> Si besoin, je replie encore.</li>
+      <li><b>1</b> J'observe le modèle et je me pose des questions.</li>
+      <li><b>2</b> Je plie et j'écris ma phrase.</li>
+      <li><b>3</b> Je regarde le modèle et je corrige mes erreurs.</li>
+      <li><b>4</b> Je replie et je réécris.</li>
+      <li><b>5</b> Je regarde le modèle et corrige mes erreurs.</li>
+      <li><b>6</b> Si besoin, je replie encore.</li>
     </ol>
     </details>
     <button class="lien-ens" id="versEnseignant">Espace enseignant : préparer une dictée pour ma classe</button>
@@ -230,9 +232,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <p class="aide">Tapez les phrases de la dictée : l'outil fabrique un lien à donner aux élèves (ENT, cahier de liaison, QR code…). Les phrases sont rangées dans le lien lui-même : rien n'est enregistré sur un serveur.</p>
     <label for="ensTitre">Titre de la dictée</label>
     <input id="ensTitre" maxlength="60" placeholder="Exemple : Dictée n°3 – le son [f]">
-    <label for="ensPhrases">Les phrases de la dictée (8 au maximum)</label>
+    <div class="niveaux" id="ensType" role="radiogroup" aria-label="Type de dictée"><span>Type&nbsp;:</span><button type="button" data-m="0" aria-pressed="true">Des phrases</button><button type="button" data-m="1" aria-pressed="false">Une liste de mots (CP)</button></div>
+    <label for="ensPhrases" id="ensPhrasesLabel">Les phrases de la dictée (8 au maximum)</label>
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
-    <p class="aide">Collez le texte ou écrivez une phrase par ligne : l'outil sépare les phrases à chaque point. Écrivez-les exactement comme l'élève doit les écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
+    <p class="aide" id="ensAidePhrases">Collez le texte ou écrivez une phrase par ligne : l'outil sépare les phrases à chaque point. Écrivez-les exactement comme l'élève doit les écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
     <div class="niveaux" id="ensNiveaux"><span>Niveau&nbsp;:</span><button type="button" data-n="CP">CP</button><button type="button" data-n="CE1">CE1</button><button type="button" data-n="CE2">CE2</button></div>
     <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
     <p class="aide">Les types cochés sont à corriger obligatoirement (« ? » rouge). Les autres erreurs restent signalées à l'élève en orange : il peut les corriger s'il le souhaite.</p>
@@ -267,10 +270,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 <!-- Choix de la phrase (dictée de la maîtresse) -->
 <section class="ecran" id="choix">
   <div class="carte">
-    <h1 style="color:var(--vert);font-size:clamp(26px,4vw,38px);text-align:center">Je choisis ma phrase</h1>
+    <h1 style="color:var(--vert);font-size:clamp(26px,4vw,38px);text-align:center" id="choixH1">Je choisis ma phrase</h1>
     <p class="sous" id="choixTitre"></p>
     <div class="liste-phrases" id="listePhrases"></div>
-    <p class="aide centre">Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.</p>
+    <p class="aide centre" id="choixAide">Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.</p>
     <p class="centre boutons-depart"><button class="btn vert" id="versBilan">J'ai fini : mon bilan</button> <button class="btn blanc" id="choixAccueil">Accueil</button></p>
   </div>
 </section>
@@ -363,7 +366,7 @@ function ecrire(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 function encoder(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";b.forEach(function(x){s+=String.fromCharCode(x);});return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
 function decoder(s){try{s=s.replace(/-/g,"+").replace(/_/g,"/");var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);var o=JSON.parse(new TextDecoder().decode(b));if(o&&Array.isArray(o.p)&&o.p.length){var r={t:String(o.t||"Ma dictée").slice(0,60),p:o.p.map(String).filter(Boolean).slice(0,8)};
   if(Array.isArray(o.c)){var c=o.c.filter(function(x){return NOMCAT[x]&&!NOMCAT[x].cache;});if(c.length)r.c=c;}
-  if(o.n)r.n=String(o.n).slice(0,200);return r;}}catch(e){}return null;}
+  if(o.n)r.n=String(o.n).slice(0,200);if(o.m)r.m=1;return r;}}catch(e){}return null;}
 function dicteeDuLien(){var m=location.hash.match(/[#&]d=([^&]+)/);return (m&&decoder(m[1]))||null;}
 var dictee = dicteeDuLien() || EXEMPLE;
 var estExemple = !dicteeDuLien();
@@ -428,8 +431,11 @@ function infoVerbe(md,t,bm){
   var conj=m&63;
   if(conj&&sj&&(conj&BIT[sj.pers]))return {type:"conj",sujet:sj};
   if((m&128)&&av&&((LEX[av]||0)&63)&&/^(ai|as|a|avons|avez|ont|avais|avait|avions|aviez|avaient|aurai|auras|aura|aurons|aurez|auront|suis|es|est|sommes|êtes|sont|étais|était|étions|étiez|étaient|serai|seras|sera|serons|serez|seront)$/.test(av))return {type:"pp",avant:av};
-  if((m&64)&&av&&(PREP_INF.test(av)||((LEX[av]||0)&63)))return {type:"inf",avant:av};
+  var detAvant=avant&&(DEVANT_NOM.test(avant)||DET_ADJ.test(avant))&&!(/^(le|la|les|l')$/.test(avant)&&/^(vais|vas|va|allons|allez|vont|allait|allaient|peux|peut|pouvons|pouvez|peuvent|veux|veut|voulons|voulez|veulent|dois|doit|devons|devez|doivent|sais|sait|savons|savez|savent|faut)$/.test(av));
+  if((m&64)&&av&&!detAvant&&(PREP_INF.test(av)||((LEX[av]||0)&63)))return {type:"inf",avant:av};
   if(etoile)return {type:"conj",sujet:sj};
+  // infinitif seul (liste de mots : « envoyer », « partir »), sauf après un déterminant (le dîner, le goûter)
+  if((m&64)&&!conj&&!detAvant)return {type:"inf",avant:""};
   if(conj&&!sj&&avant&&!DEVANT_NOM.test(avant)&&!PREP_INF.test(avant)&&FIN_VERBE.test(mot))return {type:"conj",sujet:null};
   if(!m&&estVerbeDevine(md,t,bm))return {type:"conj",sujet:sj};
   return null;
@@ -544,7 +550,7 @@ var FINS=/(aient|ions|iez|ent|ons|ont|ez|ais|ait|ai|es|as|e|s|t|d|x|a)$/;
 function regleConj(t,bm,md){
   var mot=t.slice(bm[0],bm[1]+1).join(""),bas=mot.toLowerCase(),iv=md?infoVerbe(md,t,bm):null;
   if(iv&&iv.type==="inf"){var fi=(bas.match(/(er|ir|re|oir)$/)||[bas])[0];
-    return {fin:fi,ph:"après « "+iv.avant+" », le verbe est à l'infinitif : « "+mot+" » se termine par « "+fi+" »"+(fi==="er"?" (on peut dire « mordre »)":"")};}
+    return {fin:fi,ph:(iv.avant?"après « "+iv.avant+" », le verbe est à l'infinitif : ":"c'est un verbe à l'infinitif : ")+"« "+mot+" » se termine par « "+fi+" »"+(fi==="er"&&iv.avant?" (on peut dire « mordre »)":"")};}
   if(iv&&iv.type==="pp"){var fp=(bas.match(/(ées|ée|és|é|ies|ie|is|i|ues|ue|us|u|ites|ite|its|it|tes|te|ts|t|ses|se|s)$/)||[bas])[0];
     return {fin:fp,ph:"après « "+iv.avant+" », « "+mot+" » se termine par « "+fp+" »"+(/^é/.test(fp)?" (on peut dire « mordu »)":"")};}
   var fm=bas.match(FINS),fin=fm?fm[1]:bas,sj=iv&&iv.sujet!==undefined?iv.sujet:sujetDuVerbe(t,bm);
@@ -800,7 +806,7 @@ function explication(x,md){
     case "conj":
       var rc=regleConj(t,bm,md),ivx=infoVerbe(md,t,bm);
       if(ivx&&ivx.type==="pp"&&!ETRE_ATTR.test(ivx.avant)&&x.trop&&/^[es]+$/i.test(x.trop)&&!x.ajout)return g(mot)+" : avec le verbe avoir ("+g(ivx.avant)+"), on n'accorde pas avec le sujet. Pas de "+g(x.trop)+".";
-      return "C'est un verbe : "+rc.ph+(/ent$/.test(rc.fin)?" (ils sont plusieurs).":".");
+      return (/^c'est/.test(rc.ph)?"C"+rc.ph.slice(1):"C'est un verbe : "+rc.ph)+(/ent$/.test(rc.fin)?" (ils sont plusieurs).":".");
     default: return "Regarde bien le modèle : on écrit "+g(mot)+".";
   }
 }
@@ -837,7 +843,7 @@ $("imgFille").src=IMG.fille; $("imgGarcon").src=IMG.garcon;
 function majPerso(){document.querySelectorAll(".perso").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.p===perso?"true":"false");});}
 document.querySelectorAll(".perso").forEach(function(b){b.onclick=function(){perso=b.dataset.p;ecrire("dictee-pliee-perso",perso);majPerso();};});
 majPerso();
-function majTitre(){var t=$("titreDictee"),n=dictee.p.length+" phrase"+(dictee.p.length>1?"s":"");
+function majTitre(){var t=$("titreDictee"),n=dictee.p.length+(dictee.m?" liste":" phrase")+(dictee.p.length>1?"s":"")+(dictee.m?" de mots":"");
   if(estExemple){
     t.textContent="Avec un adulte, écris toi-même la phrase modèle sur l'ardoise verte, ou essaie la dictée d'exemple.";
     $("libre").className="btn vert";$("libre").textContent="J'écris le modèle moi-même";
@@ -854,14 +860,29 @@ majTitre();
 function montrer(id){fermerBulle();document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});window.scrollTo(0,0);}
 var grVu="";
 CHOIX.forEach(function(c){if(c.gr!==grVu){grVu=c.gr;var h=document.createElement("div");h.className="groupe";h.textContent=c.gr;$("ensCats").appendChild(h);}var l=document.createElement("label");l.className="case";var i=document.createElement("input");i.type="checkbox";i.value=c.id;i.checked=true;i.id="cat-"+c.id;l.appendChild(i);l.appendChild(document.createTextNode(" "+c.nom));if(c.ex){var e=document.createElement("small");e.className="ex";e.textContent="("+c.ex+")";l.appendChild(e);}$("ensCats").appendChild(l);});
+// Type de dictée : phrases ou liste de mots (CP : pas de majuscule ni de point)
+var ensMots=false,AIDE_PH=null;
+function majType(){
+  document.querySelectorAll("#ensType button").forEach(function(b){b.setAttribute("aria-pressed",String((b.dataset.m==="1")===ensMots));});
+  if(AIDE_PH===null)AIDE_PH=$("ensAidePhrases").innerHTML;
+  $("ensPhrasesLabel").textContent=ensMots?"Les mots de la dictée":"Les phrases de la dictée (8 au maximum)";
+  $("ensPhrases").placeholder=ensMots?"Exemple :\nchien vache cochon\ntomate envoyer partir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
+  if(ensMots)$("ensAidePhrases").textContent="Écrivez les mots en minuscules, séparés par des espaces ou un par ligne. Chaque ligne forme une liste à travailler (5 mots au plus, 8 listes au maximum). Pas de majuscule ni de point.";
+  else $("ensAidePhrases").innerHTML=AIDE_PH;
+  ["maj","pt"].forEach(function(id){var i=$("cat-"+id);if(i&&ensMots)i.checked=false;});majNiveaux();
+}
+document.querySelectorAll("#ensType button").forEach(function(b){b.onclick=function(){ensMots=b.dataset.m==="1";majType();};});
 // Niveau : coche les catégories adaptées (l'enseignant peut ensuite ajuster)
 var NIVEAUX={CP:["voy","cons","acc","muet","maj","pt","plur"],
   CE1:["voy","cons","val","mbp","acc","dbl","muet","maj","pt","fem","plur","conj","homo"]};
+// liste de mots : ni majuscule ni point, et les verbes à l'infinitif (conjugaison) dès le CP
+function listeNiveau(n){var l=NIVEAUX[n]||CHOIX.map(function(c){return c.id;});
+  if(typeof ensMots!=="undefined"&&ensMots){l=l.filter(function(x){return x!=="maj"&&x!=="pt";});if(l.indexOf("conj")<0)l=l.concat("conj");}return l;}
 function majNiveaux(){var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
-  document.querySelectorAll("#ensNiveaux button").forEach(function(b){var l=NIVEAUX[b.dataset.n];
-    b.setAttribute("aria-pressed",String(l?c.length===l.length&&l.every(function(x){return c.indexOf(x)>=0;}):c.length===CHOIX.length));});}
-document.querySelectorAll("#ensNiveaux button").forEach(function(b){b.onclick=function(){var l=NIVEAUX[b.dataset.n];
-  document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!l||l.indexOf(i.value)>=0;});majNiveaux();};});
+  document.querySelectorAll("#ensNiveaux button").forEach(function(b){var l=listeNiveau(b.dataset.n);
+    b.setAttribute("aria-pressed",String(c.length===l.length&&l.every(function(x){return c.indexOf(x)>=0;})));});}
+document.querySelectorAll("#ensNiveaux button").forEach(function(b){b.onclick=function(){var l=listeNiveau(b.dataset.n);
+  document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=l.indexOf(i.value)>=0;});majNiveaux();};});
 $("ensCats").addEventListener("change",majNiveaux);
 // Dans la page du site (jeu intégré), l'espace enseignant s'ouvre en grand dans un nouvel onglet
 function ouvrirEnseignant(){
@@ -869,7 +890,7 @@ function ouvrirEnseignant(){
   montrer("enseignant");
   if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
     document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
-  majNiveaux();
+  ensMots=!estExemple&&!!dictee.m;majType();
   $("ensTitre").focus();}
 $("versEnseignant").onclick=ouvrirEnseignant;
 if(/(^#|&)enseignant/.test(location.hash))setTimeout(ouvrirEnseignant,0);
@@ -887,6 +908,7 @@ $("creerLien").onclick=function(){
   // plusieurs phrases sur une même ligne : on les sépare après chaque point (. ! ?)
   // Texte copié d'un PDF : les retours à la ligne peuvent couper une phrase (« Trois / wagons… »).
   // Une ligne qui ne finit pas par un point et dont la suivante commence par une minuscule est recollée.
+  if(ensMots)return creerLienMots();
   var lignes=$("ensPhrases").value.split(/\n+/).map(function(l){return l.trim();}).filter(Boolean),blocs=[];
   lignes.forEach(function(l){var prec=blocs[blocs.length-1];
     if(prec!==undefined&&!/[.!?…»]$/.test(prec)&&/^[a-zà-ÿœ«"(]/.test(l))blocs[blocs.length-1]=prec+" "+l;else blocs.push(l);});
@@ -907,6 +929,25 @@ $("creerLien").onclick=function(){
   dessinerQR($("lienTexte").value,o.t);
   $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
 };
+// Liste de mots : par paquets de 5 au plus (un mot par ligne, ou séparés par des espaces / virgules)
+function creerLienMots(){
+  // chaque ligne forme une liste (coupée par paquets de 5 mots si elle est plus longue)
+  var p=[];$("ensPhrases").value.replace(/[’‘]/g,"'").split(/\n+/).forEach(function(l){
+    var mots=l.split(/[\s,;.!?]+/).map(function(w){return w.trim();}).filter(Boolean);
+    for(var i=0;i<mots.length;i+=5)p.push(mots.slice(i,i+5).join(" "));});
+  if(!p.length){$("ensErreur").textContent="Tapez d'abord les mots de la dictée dans le grand cadre.";$("ensPhrases").focus();return;}
+  var trop=p.length>8;if(trop)p=p.slice(0,8);
+  $("ensPhrases").value=p.join("\n");
+  var o={t:($("ensTitre").value.trim()||"Mes mots").slice(0,60),p:p,m:1};
+  var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
+  if(!c.length){$("ensErreur").textContent="Cochez au moins un type d'erreur à vérifier.";return;}
+  if(c.length<CHOIX.length)o.c=c;
+  var n=$("ensNote").value.trim();if(n)o.n=n.slice(0,200);
+  $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
+  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=trop?"Seuls les 40 premiers mots sont gardés.":"";
+  dessinerQR($("lienTexte").value,o.t);
+  $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
+}
 $("copierLien").onclick=function(){
   var t=$("lienTexte");t.select();
   var ok=function(){$("copieOk").textContent="Lien copié !";};
@@ -969,11 +1010,14 @@ function changerVerif(){ecrire("dictee-pliee-verif",verif);dessinerVerif();if(et
 
 /* ---------- La méthode, phrase par phrase ---------- */
 var etat;
-function pensees(){return {1:etat.libre?"Je copie ma phrase avec le modèle.":"Je copie ma phrase avec le modèle donné par la maîtresse.",2:"Je me pose des questions !",3:"Je plie et je réécris ma phrase.",4:"Je regarde le modèle et je corrige mes erreurs.",5:"Je replie et je réécris.",6:"Je regarde le modèle et corrige mes erreurs.",7:"Si besoin, je replie encore."};}
+// Mode « liste de mots » (CP) : pas de phrase, ni majuscule ni point
+function enMots(){return etat&&etat.libre?!!etat.mots:!!(dictee&&dictee.m);}
+function PH(phr,mots){return enMots()?mots:phr;}
+function pensees(){return {2:etat.libre?"J'observe le modèle et je me pose des questions !":"J'observe le modèle de la maîtresse et je me pose des questions !",3:PH("Je plie et j'écris ma phrase.","Je plie et j'écris mes mots."),4:"Je regarde le modèle et je corrige mes erreurs.",5:"Je replie et je réécris.",6:"Je regarde le modèle et corrige mes erreurs.",7:"Si besoin, je replie encore."};}
 
 function demarrer(libre){
   $("imgEnfant").src=IMG[perso];
-  etat={i:0,resultats:[],libre:!!libre,modeles:[]};
+  etat={i:0,resultats:[],libre:!!libre,modeles:[],mots:!!lire("dictee-pliee-mots",false)};
   $("etiquette").textContent=libre?"le modèle":"le modèle de la maîtresse";
   if(!libre){choixPhrase();return;}
   montrer("travail");
@@ -984,6 +1028,8 @@ function faites(){return lire(cle()+"-"+aujourdhui(),{});}
 function choixPhrase(){
   var f=faites(),z=$("listePhrases");z.innerHTML="";
   $("choixTitre").textContent=estExemple?"Dictée d'exemple":dictee.t;
+  $("choixH1").textContent=PH("Je choisis ma phrase","Je choisis ma liste de mots");
+  $("choixAide").textContent=PH("Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.","Une liste à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.");
   dictee.p.forEach(function(ph,i){
     var b=document.createElement("button");b.type="button";b.className="phrase-choix"+(f[i]!==undefined?" faite":"");
     var n=document.createElement("span");n.className="n";n.textContent=i+1;b.appendChild(n);
@@ -1002,8 +1048,9 @@ function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   fermerBulle();
   etat.essais=[];etat.cats1=null;etat.pieges=[];etat.correction=null;
-  $("compteur").textContent=etat.libre?"Phrase "+(etat.i+1):"Phrase "+(etat.i+1)+" sur "+dictee.p.length;
-  $("quitter").textContent=etat.libre?"Accueil":"Mes phrases";
+  $("compteur").textContent=PH("Phrase ","Liste ")+(etat.i+1)+(etat.libre?"":" sur "+dictee.p.length);
+  $("quitter").textContent=etat.libre?"Accueil":PH("Mes phrases","Mes listes");
+  $("saisie").setAttribute("aria-label",PH("J'écris ma phrase ici","J'écris mes mots ici"));
   $("rangees").innerHTML="";$("pieges").innerHTML="";$("pieges").style.display="flex";$("verif").classList.remove("vue");$("explications").innerHTML="";
   rabat(0);
   if(etat.libre&&!etat.modeles[etat.i]){phaseModele();return;}
@@ -1024,13 +1071,14 @@ function lireConsigne(toujours){
   dire([t,m].filter(Boolean).join(". "));
 }
 function etape(n,texte){
+  if(n===1)n=2; // plus de copie : on commence par observer le modèle
   etat.etape=n;
   clearTimeout(tConsigne);tConsigne=setTimeout(function(){lireConsigne(false);},120);
-  bulle(n>7?"★":n,texte||pensees()[Math.min(n,7)]);
+  bulle(n>7?"★":n-1,texte||pensees()[Math.min(n,7)]);
   var p=$("pastilles");p.innerHTML="";
-  for(var k=1;k<=7;k++){var d=document.createElement("span");d.className="pastille"+(k<Math.min(n,7)||n>7?" faite":"")+(k===Math.min(n,7)&&n<=7?" ici":"");d.textContent=k;p.appendChild(d);}
+  for(var k=2;k<=7;k++){var d=document.createElement("span");d.className="pastille"+(k<Math.min(n,7)||n>7?" faite":"")+(k===Math.min(n,7)&&n<=7?" ici":"");d.textContent=k-1;p.appendChild(d);}
   $("bulle2").classList.remove("vue");msg("");$("actions").innerHTML="";
-  if(n===1){$("ardoise").classList.remove("cachee");phaseCopie();}
+  if(n===2){$("ardoise").classList.remove("cachee");saisieVisible(false);phasePieges();}
 }
 function msg(t,c){var m=$("msg");m.textContent=t;m.className="msg"+(c?" "+c:"");}
 function bouton(txt,cls,fn){var b=document.createElement("button");b.className="btn "+(cls||"");b.textContent=txt;b.onclick=fn;$("actions").appendChild(b);montrerActions();return b;}
@@ -1051,7 +1099,8 @@ function phaseModele(){
   var tb=$("tableau");tb.classList.add("edition");
   $("ligneSaisie").style.display="none";accents(true);
   var m=$("modeleSaisie");m.value="";setTimeout(function(){m.focus();},60);
-  msg("Écris la phrase sans faute, avec la majuscule et le point. Fais-la vérifier par un adulte.");
+  function consigneModele(){msg(etat.mots?"Écris les mots sans faute, séparés par un espace. Fais-les vérifier par un adulte.":"Écris la phrase sans faute, avec la majuscule et le point. Fais-la vérifier par un adulte.");}
+  consigneModele();
   function valider(){
     var v=normaliser(m.value);
     if(!v){m.focus();return;}
@@ -1060,16 +1109,18 @@ function phaseModele(){
     etape(1);
   }
   bouton("Le modèle est prêt","vert",valider);
+  var bm=bouton(etat.mots?"✓ Des mots (sans phrase)":"Des mots, pas une phrase ?","blanc",function(){
+    etat.mots=!etat.mots;ecrire("dictee-pliee-mots",etat.mots);bm.textContent=etat.mots?"✓ Des mots (sans phrase)":"Des mots, pas une phrase ?";consigneModele();m.focus();});
   m.onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();valider();}};
 }
 
 /* Étape 1 : copier */
 function phaseCopie(){
   saisieVisible(true);
-  bouton("J'ai copié ma phrase","vert",function(){
+  bouton(PH("J'ai copié ma phrase","J'ai copié mes mots"),"vert",function(){
     var essai=normaliser($("saisie").value);
     if(!essai){$("saisie").focus();return;}
-    if(erreurs(comparer(modele(),essai)).length){msg("Regarde bien le modèle : ta copie n'est pas encore exactement pareille. Corrige-la.","rouge");$("saisie").focus();return;}
+    // la copie n'a pas besoin d'être identique : à l'étape 2, l'élève cherche les pièges sur le modèle
     saisieVisible(false);
     ajouterRangee().textContent=essai;
     etape(2);phasePieges();
@@ -1078,14 +1129,15 @@ function phaseCopie(){
 }
 
 /* Étape 2 : repérer les pièges */
+function zonePieges(){return $("tableauTexte");}
 function phasePieges(){
-  var r=$("rangees").firstChild,txt=Array.from(modele());r.innerHTML="";
+  var r=zonePieges(),txt=Array.from(modele());r.innerHTML="";
   txt.forEach(function(c,k){
     if(c===" "){r.appendChild(document.createTextNode(" "));return;}
     var b=document.createElement("button");b.type="button";b.className="lettre";b.textContent=c;b.dataset.k=k;
     b.setAttribute("aria-label","Lettre "+c);b.onclick=function(){basculerPiege(k);};r.appendChild(b);
   });
-  msg("Touche les lettres pièges avec ta loupe 🔍");
+  msg("Touche les lettres pièges sur le modèle.");
   if(!etat.libre&&!estExemple&&dictee.n){var nm=document.createElement("div");nm.className="note-m";nm.textContent="📝 La maîtresse : "+dictee.n;$("pieges").appendChild(nm);}
   var suite=bouton("J'ai trouvé les pièges : je plie la feuille","vert",function(){
     r.querySelectorAll(".lettre").forEach(function(l){l.disabled=true;l.style.cursor="default";});
@@ -1121,7 +1173,7 @@ function piege(k){
   if(verbe&&k===bm[1]&&c==="e"){var iv0=infoVerbe(mod(),t,bm),af0=iv0&&iv0.type==="pp"?accordFeminin(t,bm):null;
     if(af0)return {g:seul,ph:"Je n'oublie pas le « e » de « "+mot+" » : « "+af0.nom+" », c'est au féminin !"};}
   if(verbe){var rc=regleConj(t,bm,mod()),d=bm[1]-Array.from(rc.fin).length+1;
-    if(k>=d){var gv=[];for(var q=d;q<=bm[1];q++)gv.push(q);return {g:gv,ph:"Je pense à la conjugaison : "+rc.ph+" !"};}}
+    if(k>=d){var gv=[];for(var q=d;q<=bm[1];q++)gv.push(q);return {g:gv,ph:(/^c'est/.test(rc.ph)?"Je n'oublie pas : "+rc.ph.replace(/^c'est un verbe à l'infinitif : (« [^»]+ ») se termine/,"$1 est un verbe à l'infinitif, il se termine"):"Je pense à la conjugaison : "+rc.ph)+" !"};}}
   if(ACC.test(c))return {g:seul,ph:"Je n'oublie pas l'accent : « "+c+" » dans « "+mot+" » !"};
   var vs=voyelles(modele());
   for(var v=0;v<vs.length;v++){if(vs[v][0]<=k&&vs[v][1]>=k){var gg=[];for(var w=vs[v][0];w<=vs[v][1];w++)gg.push(w);
@@ -1141,7 +1193,7 @@ function basculerPiege(k){
   if(i>=0)etat.pieges.splice(i,1);
   else{var nv=piege(k);etat.pieges=etat.pieges.filter(function(p){return !p.g.some(function(x){return nv.g.indexOf(x)>=0;});});etat.pieges.push(nv);}
   // dessin : un seul cadre autour des lettres d'un même piège
-  var r=$("rangees").firstChild;
+  var r=zonePieges();
   r.querySelectorAll(".lettre").forEach(function(l){l.classList.remove("piege","pg","pg-d","pg-f");});
   etat.pieges.forEach(function(p){
     p.g.forEach(function(x,j){var l=r.querySelector('.lettre[data-k="'+x+'"]');if(!l)return;l.classList.add("piege");
@@ -1150,7 +1202,7 @@ function basculerPiege(k){
   var z=$("pieges");z.querySelectorAll(".piege-bulle").forEach(function(e){e.remove();});var vus={};
   etat.pieges.slice().sort(function(a,b){return a.g[0]-b.g[0];}).forEach(function(p){if(vus[p.ph])return;vus[p.ph]=1;var d=document.createElement("div");d.className="piege-bulle";d.textContent=p.ph;z.appendChild(d);});
   $("actions").firstChild.disabled=!etat.pieges.length;
-  msg(etat.pieges.length?"Dis-toi ces pièges dans ta tête. Encore d'autres ?":"Touche les lettres pièges avec ta loupe 🔍");
+  msg(etat.pieges.length?"Dis-toi ces pièges dans ta tête. Encore d'autres ?":"Touche les lettres pièges sur le modèle.");
 }
 
 /* Étapes 3, 5, 7 : plier et écrire de mémoire */
@@ -1160,22 +1212,22 @@ function plier(){
   etat.correction=null;$("verif").classList.remove("vue");$("explications").innerHTML="";
   etape(nEssai===0?3:nEssai===1?5:7);
   $("ardoise").classList.add("cachee");
-  // à partir de l'étape 3, la phrase copiée redevient une phrase normale (sans les pièges entourés)
-  var r0=$("rangees").firstChild;if(r0&&r0.querySelector(".lettre"))r0.textContent=modele();
+  // le modèle redevient un texte normal (sans les pièges entourés)
+  if(zonePieges().querySelector(".lettre"))zonePieges().textContent=modele();
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
-  bouton("J'ai écrit ma phrase","vert",verifier);
+  bouton(PH("J'ai écrit ma phrase","J'ai écrit mes mots"),"vert",verifier);
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
 }
 
 /* Étapes 4, 6 : déplier, comparer, corriger en couleur */
 function boutonsSuite(){
   if(etat.libre){
-    bouton("Écrire une autre phrase","blanc",function(){suivante(true);});
+    bouton(PH("Écrire une autre phrase","Écrire d'autres mots"),"blanc",function(){suivante(true);});
     bouton("J'ai fini : mon bilan","blanc",function(){suivante(false);});
   }else{
-    bouton("Choisir une autre phrase","blanc",function(){suivante(true);});
+    bouton(PH("Choisir une autre phrase","Choisir une autre liste"),"blanc",function(){suivante(true);});
     bouton("J'ai fini : mon bilan","blanc",function(){suivante(false);});
   }
 }
@@ -1193,7 +1245,7 @@ function verifier(){
   etape(etat.essais.length===1?4:6);
   if(!err.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
-    etape(8,"Bravo ! Ma phrase est juste, sans erreur !");
+    etape(8,PH("Bravo ! Ma phrase est juste, sans erreur !","Bravo ! Mes mots sont justes, sans erreur !"));
     msg(etat.essais.length===1?"Zéro erreur du premier coup, super détective !":"Zéro erreur ! Tu as appris en corrigeant.","vert");
     boutonsSuite();$("actions").firstChild.className="btn vert";
     return;
