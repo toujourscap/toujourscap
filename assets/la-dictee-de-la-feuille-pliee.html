@@ -31,16 +31,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .carte{background:#fff;border-radius:22px;box-shadow:var(--ombre);border:1px solid #e7e0d4;padding:clamp(16px,3vw,28px);width:min(820px,100%);margin:0 auto}
 
 /* Accueil */
-#accueil h1{color:var(--vert);font-size:clamp(30px,5.6vw,50px);text-align:center}
-.sous{text-align:center;font-size:clamp(16px,2.2vw,20px);margin:6px 0 14px}
-.titre-dictee{text-align:center;background:var(--vert-c);border-radius:14px;padding:10px 14px;font-size:18px;margin:0 auto 16px;max-width:560px}
+#accueil h1{color:var(--vert);font-size:clamp(26px,min(5.6vw,7vh),50px);text-align:center}
+.sous{text-align:center;font-size:clamp(16px,2.2vw,20px);margin:4px 0 10px}
+.titre-dictee{text-align:center;background:var(--vert-c);border-radius:14px;padding:8px 14px;font-size:17px;margin:0 auto 10px;max-width:560px}
 .titre-dictee strong{color:var(--vert)}
-.persos{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px 0 16px}
+.persos{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:6px 0 12px}
 .perso{background:#fff;border:5px solid #eee;border-radius:20px;padding:8px 8px 10px;width:min(170px,40vw);font-size:18px;font-weight:700}
-.perso img{width:100%;height:min(210px,28vh);object-fit:contain;display:block}
+.perso img{width:100%;height:min(200px,24vh);object-fit:contain;display:block}
 .perso[aria-pressed=true]{border-color:var(--or);background:#fff6dc}
 .centre{text-align:center}
-.lien-ens{display:block;margin:18px auto 0;background:none;border:0;color:var(--vert);text-decoration:underline;font-size:15px}
+.lien-ens{display:block;margin:12px auto 0;background:none;border:0;color:var(--vert);text-decoration:underline;font-size:15px}
+.etapes{margin:12px 0 0;font-size:15px}
+.etapes summary{cursor:pointer;color:var(--vert);font-weight:700;text-align:center}
 .etapes-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:14px 0 0;padding:0;list-style:none;font-size:14px}
 .etapes-liste li{background:#faf6ee;border-radius:10px;padding:6px 8px}
 .etapes-liste b{color:var(--vert)}
@@ -72,7 +74,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .bulle.anim{animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.85)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
 .num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--vert);color:#fff;font-family:"Baloo 2",sans-serif;font-size:21px;margin-right:8px;flex:none}
-.enfant img{width:100%;max-height:52vh;object-fit:contain}
+.enfant img{width:100%;max-height:42vh;object-fit:contain}
 .bulle2{background:#fff;border:3px solid var(--vert);border-radius:22px;padding:10px 14px;font-weight:700;color:var(--vert);font-size:18px;text-align:center;margin:12px auto 0;max-width:460px;display:none}
 .bulle2.vue{display:block;animation:pop .35s ease}
 
@@ -97,7 +99,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .ardoise.cachee .tableau::after{content:"modèle caché";position:absolute;inset:0;display:grid;place-items:center;color:#cfd8d4;font-size:17px}
 
 .feuille{position:relative;background:#fff;border:1px solid #d9d2c4;border-radius:8px;box-shadow:6px 8px 0 rgba(0,0,0,.06);padding:8px 14px 18px 64px;
-  background-image:linear-gradient(to right,transparent 50px,var(--marge) 50px,var(--marge) 52px,transparent 52px),repeating-linear-gradient(#fff 0 53px,var(--ligne) 53px 55px);background-color:#fff;min-height:330px;overflow:hidden}
+  background-image:linear-gradient(to right,transparent 50px,var(--marge) 50px,var(--marge) 52px,transparent 52px),repeating-linear-gradient(#fff 0 53px,var(--ligne) 53px 55px);background-color:#fff;min-height:min(330px,34vh);overflow:hidden}
 .rangee-f{position:relative;min-height:55px;padding-top:22px;font-size:clamp(20px,2.7vw,27px);color:var(--stylo);white-space:pre-wrap;word-break:break-word}
 .rangee-f .vu{position:absolute;left:-40px;top:22px;color:var(--correc);font-weight:700}
 .rabat{position:absolute;left:0;right:0;top:0;height:0;background:var(--rabat);border-bottom:3px solid #a89e8a;box-shadow:0 8px 12px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;color:#8a806c;font-size:18px;transition:height .7s cubic-bezier(.5,0,.3,1);overflow:hidden;z-index:2}
@@ -175,6 +177,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
       <button class="perso" data-p="garcon" aria-pressed="false"><img alt="" id="imgGarcon">Le détective</button>
     </div>
     <p class="centre boutons-depart"><button class="btn vert" id="commencer">Commencer ma dictée</button> <button class="btn blanc" id="libre">J'écris le modèle moi-même</button></p>
+    <details class="etapes"><summary>Les 7 étapes de la méthode</summary>
     <ol class="etapes-liste" aria-label="Les étapes de la méthode">
       <li><b>1</b> Je copie ma phrase avec le modèle.</li>
       <li><b>2</b> Je me pose des questions.</li>
@@ -184,6 +187,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
       <li><b>6</b> Je regarde le modèle et corrige mes erreurs.</li>
       <li><b>7</b> Si besoin, je replie encore.</li>
     </ol>
+    </details>
     <button class="lien-ens" id="versEnseignant">Espace enseignant : préparer une dictée pour ma classe</button>
   </div>
 </section>
@@ -535,11 +539,14 @@ function etape(n,texte){
   if(n===1){$("ardoise").classList.remove("cachee");phaseCopie();}
 }
 function msg(t,c){var m=$("msg");m.textContent=t;m.className="msg"+(c?" "+c:"");}
-function bouton(txt,cls,fn){var b=document.createElement("button");b.className="btn "+(cls||"");b.textContent=txt;b.onclick=fn;$("actions").appendChild(b);return b;}
+function bouton(txt,cls,fn){var b=document.createElement("button");b.className="btn "+(cls||"");b.textContent=txt;b.onclick=fn;$("actions").appendChild(b);montrerActions();return b;}
+// si le jeu est plus haut que l'écran (petit écran, jeu intégré à la page), on fait défiler juste ce qu'il faut pour voir les boutons
+var tAct=null;
+function montrerActions(){clearTimeout(tAct);tAct=setTimeout(function(){var a=$("actions");if(!a||!a.firstChild)return;var r=a.getBoundingClientRect();if(r.bottom>window.innerHeight-8||r.top<0)a.scrollIntoView({block:"end",behavior:"smooth"});},350);}
 function accents(v){$("zoneSaisie").style.display=v?"block":"none";}
 function saisieVisible(v){accents(v);$("ligneSaisie").style.display=v?"flex":"none";if(v){$("saisie").value="";setTimeout(function(){$("saisie").focus();},60);}}
 function hauteurRangees(nb){var r=$("rangees").children,h=0;for(var k=0;k<nb&&k<r.length;k++)h+=r[k].offsetHeight;return h+14;}
-function rabat(nb,texte){var e=$("rabat");e.textContent=texte||"";e.style.height=nb?hauteurRangees(nb)+"px":"0";}
+function rabat(nb,texte){var e=$("rabat");e.textContent=texte||"";e.style.height=nb?hauteurRangees(nb)+"px":"0";e.style.borderBottomWidth=nb?"3px":"0";e.style.boxShadow=nb?"":"none";}
 function ajouterRangee(){var d=document.createElement("div");d.className="rangee-f";$("rangees").appendChild(d);return d;}
 
 /* Avant tout : l'élève ou les parents écrivent le modèle sur l'ardoise */
