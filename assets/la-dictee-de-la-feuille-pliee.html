@@ -506,7 +506,12 @@ $("choixAccueil").onclick=function(){montrer("accueil");};
 /* ---------- Espace enseignant ---------- */
 $("creerLien").onclick=function(){
   // plusieurs phrases sur une même ligne : on les sépare après chaque point (. ! ?)
-  var p=[];$("ensPhrases").value.split(/\n+/).forEach(function(l){l.split(/(?<=[.!?…])\s+(?=\S)/).forEach(function(x){x=normaliser(x);if(x)p.push(x);});});
+  // Texte copié d'un PDF : les retours à la ligne peuvent couper une phrase (« Trois / wagons… »).
+  // Une ligne qui ne finit pas par un point et dont la suivante commence par une minuscule est recollée.
+  var lignes=$("ensPhrases").value.split(/\n+/).map(function(l){return l.trim();}).filter(Boolean),blocs=[];
+  lignes.forEach(function(l){var prec=blocs[blocs.length-1];
+    if(prec!==undefined&&!/[.!?…»]$/.test(prec)&&/^[a-zà-ÿœ«"(]/.test(l))blocs[blocs.length-1]=prec+" "+l;else blocs.push(l);});
+  var p=[];blocs.forEach(function(l){l.split(/(?<=[.!?…])\s+(?=\S)/).forEach(function(x){x=normaliser(x);if(x)p.push(x);});});
   if(!p.length){$("ensErreur").textContent="Tapez d'abord les phrases de la dictée dans le grand cadre (une par ligne).";$("ensPhrases").focus();return;}
   $("ensErreur").textContent="";
   var trop=p.length>8;if(trop)p=p.slice(0,8);
