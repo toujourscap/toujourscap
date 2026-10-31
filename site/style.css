@@ -225,3 +225,6 @@ body main > article.wrap.narrow:has(.embed-large) { max-width: 1240px; }
 article:has(.embed-large) .embed-large { width: auto; left: 0; transform: none; }
 article:has(.embed-large) > :not(.prose),
 article:has(.embed-large) .prose > :not(.embed):not(script):not(style) { max-width: 680px; margin-left: auto; margin-right: auto; }
+
+/* Signature de la page Qui suis-je ? */
+.signature { font-family: "Fraunces", Georgia, serif; font-style: italic; font-size: 1.5rem; color: var(--accent); text-align: right; margin-top: 8px; }
