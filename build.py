@@ -8,7 +8,9 @@ OUT = os.path.join(ROOT, "site")
 WIX = "https://static.wixstatic.com/media/"
 SITE = "https://toujourscap.com"
 SITE_NAME = "Toujours cap !"
-DEFAULT_IMAGE = WIX + "5e2b25_c155231f9ab94725964005e45ffe27e2~mv2.jpg"
+DEFAULT_IMAGE = "/images/accueil/saut-toujours-cap-titre.jpg"
+# Auteur affiché à Google (prénom seulement)
+AUTEUR = {"@type": "Person", "name": "Fabrice", "jobTitle": "Enseignant spécialisé", "url": "https://toujourscap.com/qui-suis-je/"}
 SITEMAP = []  # (chemin, date de modification)
 TITRES = {}  # chemin → titre de la page
 # Logo en bandeau, intégré directement dans la page pour profiter de la police Fraunces.
@@ -279,8 +281,6 @@ NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/f
 
 
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
-         "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99 en jouant, CP-CE1",
-    "/post/le-puzzle-du-chateau-des-nombres/": "Puzzle du tableau des nombres 0-99 en ligne et à imprimer, CP-CE1",
     "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
 
 
@@ -311,6 +311,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 <meta property="og:image" content="{esc(og_image)}">
 <meta name="twitter:card" content="summary_large_image">
 {ld}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -420,8 +421,12 @@ def grid(posts):
 
 # Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
 SEO_TITRES = {
+    "/post/synthese-comparative-internationale-aide-specialisee/": "Aide spécialisée : synthèse internationale des facteurs de réussite",
+    "/post/intelligence-ordinaire-culture-peu-scolaire-maitre-e/": "Intelligence ordinaire, culture peu scolaire : pistes pour le maître E",
+    "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99 en jouant, CP-CE1",
+    "/post/le-puzzle-du-chateau-des-nombres/": "Puzzle du tableau des nombres 0-99 en ligne et à imprimer, CP-CE1",
     "/post/le-cercle-conteur/": "Le cercle conteur (Suzy Platiel) : déroulé et règles en GS-CP",
-    "/post/le-nourrissage-culturel/": "Le nourrissage culturel de Serge Boimare : nourrir avant d'apprendre, GS-CP",
+    "/post/le-nourrissage-culturel/": "Le nourrissage culturel (Serge Boimare) en GS et CP",
     "/post/les-formules-du-sorcier/": "Les Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
     "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour le cercle conteur GS-CP",
     "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires pour la GS et le CP",
@@ -435,9 +440,9 @@ SEO_TITRES = {
     "/post/lecture-rapide-de-mots-avec-le-tachitoscope/": "Lecture rapide et fluence : tachistoscope et téléprompteurs en ligne",
     "/post/la-maison-de-briques/": "La maison de briques : jeu sur les dizaines et les unités au CP",
     "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes CP-CE1",
-    "/post/la-minute-des-syllabes/": "La minute des syllabes : lire des syllabes en 1 minute, avec micro, CP-CE1",
+    "/post/la-minute-des-syllabes/": "La minute des syllabes : jeu de fluence en 1 minute, CP-CE1",
     "/post/les-fusees-des-syllabes/": "Les fusées des syllabes : jeu de combinatoire syllabique GS-CP-CE1",
-    "/post/le-chemin-des-sons/": "Le chemin des sons : jeu de lecture de mots ou, an, in, eu, on, ei au CP",
+    "/post/le-chemin-des-sons/": "Le chemin des sons : lire des mots avec ou, an, in, eu au CP",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
@@ -447,7 +452,7 @@ SEO_TITRES = {
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
     "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
     "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : jeu de métacognition à projeter, CP-CE2",
-    "/post/apprendre-a-apprendre-diaporama-memoire/": "Apprendre ! Diaporama sur la mémoire et l'erreur pour les élèves, CE1-CE2",
+    "/post/apprendre-a-apprendre-diaporama-memoire/": "Apprendre ! Diaporama sur la mémoire et l'erreur, CE1-CE2",
     "/divers/metacognition/": "Métacognition au cycle 2 : jeux pour apprendre à apprendre",
     "/post/les-explorateurs-du-cerveau/": "Les explorateurs du cerveau : jeu pour apprendre à apprendre, CE1-CE2",
     "/divers/memorisation/": "Mémorisation : aider les élèves à apprendre leurs leçons",
@@ -455,9 +460,35 @@ SEO_TITRES = {
     "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",
     "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
     "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : additions et soustractions en calcul mental, CP-CE2",
-    "/post/la-course-des-multiplications/": "La Course des Multiplications : jeu de tables de multiplication CE1-CE2",
+    "/post/la-course-des-multiplications/": "Course des Multiplications : jeu de tables de multiplication CE1",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
 }
+
+
+_DIMS = {}
+
+
+def dimensions(content):
+    """Ajoute width/height aux images hébergées sur le site, pour que la page ne saute pas au chargement."""
+    from PIL import Image
+    def f(m):
+        tag = m.group(0)
+        if " width=" in tag:
+            return tag
+        src = re.search(r'src="(/[^"?#]+)', tag)
+        if not src:
+            return tag
+        fic = os.path.join(OUT, src.group(1).lstrip("/"))
+        if fic not in _DIMS:
+            try:
+                _DIMS[fic] = Image.open(fic).size
+            except Exception:
+                _DIMS[fic] = None
+        if not _DIMS[fic]:
+            return tag
+        w, h = _DIMS[fic]
+        return tag[:-1].rstrip("/").rstrip() + f' width="{w}" height="{h}">'
+    return re.sub(r"<img\b[^>]*>", f, content)
 
 
 def write(path, content, canonical=None, lastmod=None, sitemap=True):
@@ -468,10 +499,12 @@ def write(path, content, canonical=None, lastmod=None, sitemap=True):
     m = re.search(r"<title>(.*?)</title>", content)
     if m and not path.endswith(".html"):
         TITRES[path] = html.unescape(m.group(1)).replace(" | Toujours cap !", "")
-    if path in SEO_TITRES:
-        t = esc(SEO_TITRES[path] + " | Toujours cap !")
+    base = SEO_TITRES.get(path) or (TITRES.get(path) if m and " | Toujours cap !" in m.group(1) else None)
+    if base:
+        t = esc(base + " | Toujours cap !" if len(base) <= 47 else base)
         content = re.sub(r"<title>.*?</title>", f"<title>{t}</title>", content, count=1)
         content = re.sub(r'(<meta property="og:title" content=")[^"]*', lambda m: m.group(1) + t, content, count=1)
+    content = dimensions(content)
     full = os.path.join(OUT, path.strip("/"), "index.html") if not path.endswith(".html") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w") as f:
@@ -485,6 +518,7 @@ def main():
     shutil.copy(os.path.join(ROOT, "assets", "style.css"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "favicon.svg"), OUT)
     shutil.copy(os.path.join(ROOT, "assets", "logo.svg"), OUT)
+    shutil.copy(os.path.join(ROOT, "assets", "logo.png"), OUT)  # logo pour Google et les écrans d'accueil
     shutil.copy(os.path.join(ROOT, "assets", "commentaires.js"), OUT)
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
@@ -539,8 +573,11 @@ def main():
                "description": p["excerpt"], "datePublished": p["date"], "inLanguage": "fr-FR",
                "mainEntityOfPage": url, "url": url, "articleSection": cat["name"],
                **({"image": SITE + p["cover"] if p["cover"].startswith("/") else p["cover"]} if p["cover"] else {}),
-               "author": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"},
-               "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"}},
+               "dateModified": p.get("updated") or p["date"], "isAccessibleForFree": True,
+               "audience": {"@type": "EducationalAudience", "educationalRole": "teacher"},
+               **({"educationalLevel": (p.get("jeu") or {}).get("niveaux")} if (p.get("jeu") or {}).get("niveaux") else {}),
+               "author": AUTEUR,
+               "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}},
               {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
                   {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
         write(f"/post/{p['slug']}/", page(p["title"], body, "/blog/", p["excerpt"], p["cover"], "article", ld),
@@ -722,7 +759,7 @@ def main():
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
          "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1) : lecture, contes du cercle conteur, numération."},
-        {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/favicon.svg"}]),
+        {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}]),
         lastmod=max(p["date"] for p in posts)[:10])
 
     # Outils autonomes (affichés en iframe) : description et page de référence pour Google
