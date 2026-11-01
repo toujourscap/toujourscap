@@ -67,17 +67,19 @@ export async function onRequestPost({ request, env }) {
       headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: env.IA_MODELE || MODELE,
-        max_tokens: 400,
+        max_tokens: 1200,
         system: consigne(jeu, el),
         messages: [{ role: "user", content: `<eleve>${texte.replace(/[<>]/g, " ")}</eleve>` }],
       }),
     });
     if (!r.ok) { console.log("Anthropic", r.status, (await r.text()).slice(0, 300)); throw new Error("API"); }
     const data = await r.json();
-    const rep = lireReponse((data.content || []).map((c) => c.text || "").join(""), el.idees.length);
-    if (!rep) throw new Error("Réponse illisible");
+    const brut = (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("");
+    const rep = lireReponse(brut, el.idees.length);
+    if (!rep) { console.log("Réponse illisible", data.stop_reason, JSON.stringify(data.content || []).slice(0, 800)); throw new Error("illisible"); }
     return json({ ...rep, idees: el.idees });
   } catch (e) {
+    console.log("Erreur IA", e.message);
     return json({ erreur: "Le professeur Zigzag fait la sieste. Réessaie dans un moment !" }, 502);
   }
 }
