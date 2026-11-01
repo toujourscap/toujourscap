@@ -415,6 +415,66 @@ NOTE_CC = ""
 NOTE_LECTURE = """<p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante.</p>"""
 
 
+# Arborescence de la page Outils pédagogiques : tri des articles par niveau ou par catégorie
+NIVEAUX_ARBRE = ["GS", "CP", "CE1", "CE2", "CM1", "CM2"]
+DOMAINES = [("francais", "Français"), ("maths", "Maths"), ("divers", "Divers")]
+
+
+def niveaux_de(p):
+    """Niveaux d'un article : ceux du jeu, sinon ceux de sa rubrique (contes : GS-CP ; Maître E : enseignants)."""
+    n = (p.get("jeu") or {}).get("niveaux")
+    if n:
+        return n
+    return {"cercle-conteur": ["GS", "CP"], "maitre-e": ["Enseignants"]}.get(p["cat"], ["CP", "CE1"])
+
+
+def arbre(posts):
+    def lien(p, badges=True):
+        niv = "".join(f'<span class="niv">{esc(n)}</span>' for n in niveaux_de(p)) if badges else ""
+        return f'<li><a href="/post/{p["slug"]}/">{esc(p["title"])}</a>{f" <span class=\"arbre-niv\">{niv}</span>" if niv else ""}</li>'
+
+    def branches(lst, badges, ouvert=False):
+        h = ""
+        for d, dn in DOMAINES:
+            cats = [(k, v) for k, v in CATS.items() if v["domain"] == d]
+            sous = ""
+            nd = 0
+            for k, v in cats:
+                q = sorted([p for p in lst if p["cat"] == k], key=lambda p: p["title"].lower())
+                if q:
+                    nd += len(q)
+                    sous += f'<details><summary>{esc(v["name"])} <span class="compte">{len(q)}</span></summary><ul>{"".join(lien(p, badges) for p in q)}</ul></details>'
+            if nd:
+                h += f'<details{" open" if ouvert else ""}><summary>{dn} <span class="compte">{nd}</span></summary><div class="arbre-sous">{sous}</div></details>'
+        return h
+
+    par_niveau = ""
+    for n in NIVEAUX_ARBRE + ["Enseignants"]:
+        lst = [p for p in posts if n in niveaux_de(p)]
+        if lst:
+            nom = "Pour les enseignants" if n == "Enseignants" else n
+            par_niveau += f'<details><summary>{nom} <span class="compte">{len(lst)}</span></summary><div class="arbre-sous">{branches(lst, False, True)}</div></details>'
+    return f"""<section class="wrap arbre" id="tri">
+  <h2>Trouver un article</h2>
+  <div class="chips arbre-choix" role="group" aria-label="Trier les articles">
+    <button class="chip active" type="button" aria-pressed="true" data-arbre="niveau">Par niveau</button>
+    <button class="chip" type="button" aria-pressed="false" data-arbre="categorie">Par catégorie</button>
+  </div>
+  <div class="arbre-liste" data-vue="niveau">{par_niveau}</div>
+  <div class="arbre-liste" data-vue="categorie" hidden>{branches(posts, True, True)}</div>
+</section>
+<script>
+document.querySelectorAll('.arbre-choix button').forEach(function (b) {{
+  b.addEventListener('click', function () {{
+    document.querySelectorAll('.arbre-choix button').forEach(function (x) {{
+      x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
+    }});
+    document.querySelectorAll('.arbre-liste').forEach(function (l) {{ l.hidden = l.dataset.vue !== b.dataset.arbre; }});
+  }});
+}});
+</script>"""
+
+
 def grid(posts):
     return '<div class="grid">' + "".join(card(p) for p in posts) + "</div>"
 
@@ -736,15 +796,16 @@ def main():
   <h1>Notre catalogue d'outils</h1>
   <p class="lead">Des ressources prêtes à l'emploi pour votre classe, à destination de tous mais particulièrement des élèves à besoin éducatif particulier.</p>
   {dcards}
-</section>""", "/outils-pedagogiques/", "Catalogue d'outils pédagogiques gratuits pour le cycle 2 et l'enseignement spécialisé : lecture, contes, numération, prêts à utiliser en classe."))
+</section>
+{arbre(posts)}""", "/outils-pedagogiques/", "Catalogue d'outils pédagogiques gratuits pour le cycle 2 et l'enseignement spécialisé : lecture, contes, numération, prêts à utiliser en classe."))
 
     # Accueil
     write("/", page("Toujours cap !", f"""<section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <p class="eyebrow">GS · CP · CE1</p>
+      <p class="eyebrow">Cycles 2 et 3</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
-      <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et de l'enseignement spécialisé.</p>
+      <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2, quelques exercices pour le cycle 3 et de l'enseignement spécialisé.</p>
       <p class="note-accueil">Vous trouverez ici des <strong>contes à raconter</strong>, des <strong>jeux</strong> et des <strong>outils de lecture et de numération</strong>. Tous ont été <strong>testés avec des élèves par un enseignant spécialisé</strong>. Certains s'impriment pour jouer sur table, d'autres peuvent être <strong>projetés en classe pour jouer avec tous les élèves</strong>.<br><strong>Apprendre, c'est s'élancer, sauter, oser, changer notre point de vue&nbsp;!</strong></p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
