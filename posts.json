@@ -9735,6 +9735,52 @@
      }
     ]
    }
+  },
+  {
+   "title": "Redis la règle d'orthographe avec tes mots",
+   "slug": "redis-la-regle",
+   "cat": "etude-langue",
+   "excerpt": "Un jeu pour mémoriser les règles d'orthographe du cycle 2 (m devant m, b, p ; c/ç ; g/gu ; s/ss ; et/est ; a/à ; son/sont ; pluriel). L'élève lit la règle, retourne la feuille, la redit avec ses mots, à l'écrit ou au micro, puis trouve quels élèves loufoques l'ont bien redite.",
+   "date": "2026-11-01T15:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 élève",
+    "supports": [
+     "ecran"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "redis-la-regle.html"
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/redis-la-regle.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "RAW_HTML",
+      "file": "redis-la-regle-suite.html"
+     }
+    ]
+   }
   }
  ]
 }
