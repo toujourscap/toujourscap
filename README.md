@@ -26,6 +26,7 @@ Les visites faites depuis un appareil où l'admin a été ouvert ne sont pas com
 ## Correction par IA (professeur Zigzag)
 
 `functions/api/zigzag.js` + `lib/zigzag.js` : correction des phrases d'élèves par Claude (Anthropic), partagée par tous les jeux.
+Jeux branchés : Redis la règle (redire la règle), Le secret de la pyramide (redire le problème, étape 2 facultative), Le Château des Détectives (expliquer comment on a trouvé, facultatif).
 Les consignes et les contenus de chaque jeu sont dans `lib/zigzag.js` (la page n'envoie que le nom du jeu, l'élément et la phrase).
 Réglages du projet Pages : secret `ANTHROPIC_API_KEY` (sans lui, la correction reste masquée et les jeux fonctionnent sans IA),
 liaison D1 `DB` (déjà utilisée par les commentaires, pour les quotas).
