@@ -20,7 +20,7 @@ body {
   color: var(--ink);
   font: 400 17px/1.65 "Nunito", system-ui, sans-serif;
 }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 a { color: var(--accent); }
 h1, h2, h3, h4 { font-family: "Fraunces", Georgia, serif; line-height: 1.2; margin: 0 0 .5em; }
 h1 { font-size: clamp(2rem, 5vw, 3rem); }
