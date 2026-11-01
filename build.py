@@ -29,7 +29,7 @@ JS_V = _version("commentaires.js")
 # Lien de paiement pour l'encart « Offrir un café » (page Qui suis-je ?). Vide = encart masqué.
 DON_URL = ""
 # Bouton Ko-fi sur la page Qui suis-je ? (mettre True pour le réafficher)
-KOFI_ACTIF = False
+KOFI_ACTIF = True
 KOFI_HTML = """  <div class="kofi"><script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Offrir un café ☕', '#72a4f2', 'Z5K629G818');kofiwidget2.draw();</script></div>
 """
 JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e2b25_648fdee2fa523d3b1c131a04e3d6b955.html"
@@ -454,15 +454,15 @@ def arbre(posts):
         if lst:
             nom = "Pour les enseignants" if n == "Enseignants" else n
             par_niveau += f'<details><summary>{nom} <span class="compte">{len(lst)}</span></summary><div class="arbre-sous">{branches(lst, False, True)}</div></details>'
-    return f"""<section class="wrap arbre" id="tri">
-  <h2>Trouver un article</h2>
+    return f"""<details class="arbre" id="tri">
+  <summary class="arbre-titre">🔎 Trouver un article <span class="muted">par niveau ou par catégorie</span></summary>
   <div class="chips arbre-choix" role="group" aria-label="Trier les articles">
     <button class="chip active" type="button" aria-pressed="true" data-arbre="niveau">Par niveau</button>
     <button class="chip" type="button" aria-pressed="false" data-arbre="categorie">Par catégorie</button>
   </div>
   <div class="arbre-liste" data-vue="niveau">{par_niveau}</div>
   <div class="arbre-liste" data-vue="categorie" hidden>{branches(posts, True, True)}</div>
-</section>
+</details>
 <script>
 document.querySelectorAll('.arbre-choix button').forEach(function (b) {{
   b.addEventListener('click', function () {{
@@ -795,9 +795,9 @@ def main():
     write("/outils-pedagogiques/", page("Outils pédagogiques", f"""<section class="wrap sur-fond">
   <h1>Notre catalogue d'outils</h1>
   <p class="lead">Des ressources prêtes à l'emploi pour votre classe, à destination de tous mais particulièrement des élèves à besoin éducatif particulier.</p>
+  {arbre(posts)}
   {dcards}
-</section>
-{arbre(posts)}""", "/outils-pedagogiques/", "Catalogue d'outils pédagogiques gratuits pour le cycle 2 et l'enseignement spécialisé : lecture, contes, numération, prêts à utiliser en classe."))
+</section>""", "/outils-pedagogiques/", "Catalogue d'outils pédagogiques gratuits pour le cycle 2 et l'enseignement spécialisé : lecture, contes, numération, prêts à utiliser en classe."))
 
     # Accueil
     write("/", page("Toujours cap !", f"""<section class="hero">
