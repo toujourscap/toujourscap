@@ -98,6 +98,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
 .heard{color:var(--muted);font-size:.95rem;margin:0;min-height:1.2em}
 .seg button:disabled{opacity:.4;cursor:default}
 .note{color:var(--muted);font-size:.8rem;margin:0}
+.cell.playable{box-shadow:inset 0 0 0 5px var(--yel)}
 </style>
 </head>
 <body>
@@ -176,7 +177,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
   </div>
 
   <p class="rules"><b>Règle.</b> Chaque joueur lâche un jeton dans une colonne et lit la syllabe sur laquelle il atterrit. Lecture juste : le jeton reste. Lecture à revoir : le jeton est retiré et c'est au tour de l'autre. Le premier qui aligne 4 jetons (horizontal, vertical ou diagonale) gagne. Chaque nouvelle partie tire un nouveau plateau.<br>
-  <b>Au micro.</b> L'enfant appuie sur « Je lis » (ou la barre d'espace) et lit la syllabe : le jeu vérifie seul. Deux essais, puis le jeton est retiré. L'adulte peut toujours valider avec « Bien lu » ou « À revoir ».</p>
+  <b>Au micro.</b> On ne peut jouer que sur une syllabe entourée en jaune (le bas de chaque colonne). L'enfant appuie sur « Je lis » (ou la barre d'espace) et lit la syllabe où il veut poser son jeton : si elle est bien lue, le jeton tombe dessus. Si le micro ne comprend pas, l'adulte peut cliquer sur la colonne pour valider.</p>
 </div>
 
 <script>
@@ -187,7 +188,7 @@ const L2=["cou","mou","sou","lou","pou","tou","fou","rou","chou","mon","ton","so
 const L3=["bra","bri","bro","tra","tri","tro","pla","pli","plu","cla","cli","clo","gra","gri","gro","fra","fri","fro","dra","dri","bla","blo","cra","cri","cru","pra","pri","pro","gla","glo","flu","fla","vra","vri","al","ar","il","ir","or","ol","ur","ul","es","ab","ac","ip"];
 const LISTS={1:L1,2:L2,3:L3};
 
-let level=1, mode=2, check=0, tries=0, listening=false, board, syl, turn, pending=null, over=false, score={r:0,y:0}, timers=[];
+let level=1, mode=2, check=0, listening=false, board, syl, turn, pending=null, over=false, score={r:0,y:0}, timers=[];
 const $=id=>document.getElementById(id);
 const grid=$("grid"), arrows=$("arrows");
 
@@ -225,24 +226,32 @@ function render(){
       k.addEventListener("animationend",()=>{k.classList.remove("drop");k.classList.add("pending")},{once:true});
       d.appendChild(k);
     }
+    if(micOn()&&humanTurn()&&lowest(c)===r)d.classList.add("playable");
     d.onclick=()=>{if(!arrows.children[c].disabled)play(c)};
     d.onmouseenter=()=>hl(c,true);d.onmouseleave=()=>hl(c,false);
     grid.appendChild(d);
   }
 }
+function micOn(){return check===1&&!!rec}
+function humanTurn(){return !over&&!pending&&!(mode===1&&turn==="y")}
 function hl(c,on){if(over||pending)on=false;grid.querySelectorAll('.cell[data-c="'+c+'"]').forEach(e=>e.classList.toggle("col-hover",on))}
 function lowest(c){for(let r=ROWS-1;r>=0;r--)if(!board[r][c]&&!(pending&&pending.r===r&&pending.c===c))return r;return -1}
 
 function setStatus(txt){
   $("stTok").style.background=turn==="r"?"var(--red)":"var(--yel)";
-  $("stTxt").textContent=txt||(turn==="r"?"Rouge : choisis une colonne":(mode===1?"L'ordinateur joue…":"Jaune : choisis une colonne"));
+  const qui=turn==="r"?"Rouge":"Jaune", act=micOn()?" : lis une syllabe entourée":" : choisis une colonne";
+  $("stTxt").textContent=txt||(turn==="y"&&mode===1?"L'ordinateur joue…":qui+act);
   $("scR").textContent=score.r;$("scY").textContent=score.y;
 }
 function resetReader(){
   $("reader").classList.remove("live");
   $("rHint").textContent=over?"Partie terminée.":"Clique sur une colonne pour lâcher ton jeton.";
-  $("rSyl").textContent="";$("rAct").hidden=true;$("rBar").hidden=true;$("bMic").hidden=true;$("rHeard").textContent="";
+  $("rSyl").textContent="";$("rAct").hidden=true;$("rBar").hidden=true;$("bMic").hidden=true;
   stopMic();
+  if(micOn()&&humanTurn()){
+    $("bMic").hidden=false;
+    $("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", appuie sur « Je lis » et lis la syllabe entourée où tu veux poser ton jeton.";
+  }
 }
 
 function speak(t){
@@ -259,14 +268,19 @@ function play(c){
   $("reader").classList.add("live");
   $("rSyl").textContent=s;$("rSyl").style.color=turn==="r"?"var(--red)":"var(--ink)";
   if(mode===1&&turn==="y"){
-    $("rHint").textContent="L'ordinateur lit :";$("rAct").hidden=true;$("rBar").hidden=true;
+    $("rHint").textContent="L'ordinateur lit :";$("rAct").hidden=true;$("rBar").hidden=true;$("bMic").hidden=true;$("rHeard").textContent="";
     timers.push(setTimeout(()=>speak(s),600));
     timers.push(setTimeout(()=>validate(true),2200));
     return;
   }
+  if(micOn()){
+    stopMic();$("bMic").hidden=true;$("rAct").hidden=true;$("rBar").hidden=true;
+    $("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+" joue :";
+    timers.push(setTimeout(()=>validate(true),900));
+    return;
+  }
   $("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", lis cette syllabe :";
-  $("rAct").hidden=false; tries=0; $("rHeard").textContent="";
-  if(check===1&&rec){$("bMic").hidden=false;$("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", appuie sur « Je lis » et lis :"}
+  $("rAct").hidden=false; $("rHeard").textContent="";
   if($("autoRead").checked){
     const secs=+$("delay").value, t0=Date.now();$("rBar").hidden=false;$("rBarI").style.width="0";
     const iv=setInterval(()=>{const p=Math.min(1,(Date.now()-t0)/(secs*1000));$("rBarI").style.width=(p*100)+"%";if(p>=1){clearInterval(iv);speak(s)}},100);
@@ -345,23 +359,29 @@ function lectures(txt){
   out.add(phonMot(mots.join("")));
   return [...out];
 }
-function bienLu(alts,cible){
-  const k=phonMot(cible);
-  for(const a of alts) for(const e of lectures(a)){if(e===k||(k.length>1&&e.endsWith(k)))return true}
-  return false;
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+/* Parmi les syllabes entourées, celle que l'enfant a lue (ou null) */
+function trouver(alts){
+  const cand=[...Array(COLS).keys()].filter(c=>lowest(c)>=0).map(c=>({c,k:phonMot(syl[lowest(c)][c])}));
+  const lus=alts.flatMap(lectures);
+  for(const x of cand) if(lus.some(e=>e===x.k)) return x.c;
+  for(const x of cand) if(x.k.length>1&&lus.some(e=>e.endsWith(x.k))) return x.c;
+  // à une lettre près, seulement si une seule syllabe entourée est aussi proche
+  let best=null,bd=99,nb=0;
+  for(const x of cand){const d=Math.min(...lus.map(e=>lev(e,x.k)));if(d<bd){bd=d;best=x;nb=1}else if(d===bd)nb++}
+  return best&&bd<=1&&nb===1&&best.k.length>1?best.c:null;
 }
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let rec=null;
 if(SR){
   rec=new SR();rec.lang="fr-FR";rec.interimResults=false;rec.maxAlternatives=5;rec.continuous=false;
   rec.onresult=ev=>{
-    if(!pending)return;
+    if(!micOn()||!humanTurn())return;
     const alts=[...ev.results[0]].map(a=>a.transcript.trim());
-    $("rHeard").textContent="J'ai entendu : « "+alts[0]+" »";
-    if(bienLu(alts,syl[pending.r][pending.c])){validate(true);$("rHeard").textContent="✓ Bien lu ! (j'ai entendu « "+alts[0]+" »)";return}
-    tries++;
-    if(tries>=2){validate(false)}
-    else{$("rHint").textContent="Pas tout à fait… Réessaie !"}
+    const c=trouver(alts);
+    if(c===null){$("rHeard").textContent="J'ai entendu « "+alts[0]+" » : ce n'est pas une syllabe entourée. Recommence !";return}
+    $("rHeard").textContent="✓ Bien lu ! (j'ai entendu « "+alts[0]+" »)";
+    play(c);
   };
   rec.onerror=e=>{
     if(e.error==="not-allowed"||e.error==="service-not-allowed")$("rHeard").textContent="Le micro est bloqué : autorise-le (icône à gauche de l'adresse).";
@@ -373,7 +393,7 @@ if(SR){
 function majMic(){const b=$("bMic");b.classList.toggle("listening",listening);b.textContent=listening?"👂 J'écoute…":"🎤 Je lis"}
 function stopMic(){if(listening){try{rec.abort()}catch(e){}listening=false;majMic()}}
 function ecouter(){
-  if(!rec||!pending||$("bMic").hidden||listening)return;
+  if(!rec||!humanTurn()||$("bMic").hidden||listening)return;
   clearTimers();$("rBar").hidden=true;try{speechSynthesis.cancel()}catch(e){}
   $("rHeard").textContent="";listening=true;majMic();
   try{rec.start()}catch(e){listening=false;majMic()}
