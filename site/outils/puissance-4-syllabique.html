@@ -320,7 +320,7 @@ function aiChoose(){
 function phonMot(w){
   w=w.replace(/[âàä]/g,"a").replace(/[îï]/g,"i").replace(/[ôö]/g,"o").replace(/[ûüù]/g,"u").replace(/ç/g,"s").replace(/y/g,"i");
   w=w.replace(/^(l|m|t|s|d|c|s)es$/,"$1é");
-  w=w.replace(/ch/g,"S").replace(/c(?=[eiéèêë])/g,"s").replace(/c/g,"k").replace(/g(?=[eiéèêë])/g,"j").replace(/gn/g,"N");
+  w=w.replace(/ch/g,"S").replace(/c(?=[eiéèêë])/g,"s").replace(/c/g,"k").replace(/g(?=[eiéèêë])/g,"j").replace(/gn/g,"N").replace(/ni(?=[aoué])/g,"N");
   w=w.replace(/(er|ez|et)$/,"é");
   w=w.replace(/eau|au/g,"o").replace(/ou/g,"U").replace(/oin/g,"W1").replace(/oi/g,"W").replace(/œu|oeu|eu/g,"e");
   w=w.replace(/(ain|ein|aim|in|im|un|um)(?![aeiouéèêU])/g,"1");
@@ -333,11 +333,21 @@ function phonMot(w){
   w=w.replace(/(.)\1+/g,"$1");
   return w;
 }
-function phon(s){return s.toLowerCase().replace(/[’']/g," ").replace(/[^a-zàâäéèêëîïôöùûüçœ ]/g," ").split(/\s+/).filter(Boolean).map(phonMot)}
+const CHIFFRES={"1":"un","2":"deux","3":"trois","4":"quatre","5":"cinq","6":"six","7":"sept","8":"huit","9":"neuf","10":"dix","100":"cent","1000":"mille"};
+const LETTRES={b:"bé",c:"cé",d:"dé",f:"èf",g:"jé",j:"ji",k:"ka",l:"èl",m:"èm",n:"èn",p:"pé",q:"ku",r:"èr",s:"ès",t:"té",v:"vé",x:"ix",z:"zèd"};
+/* Toutes les façons de comprendre ce que le micro a écrit */
+function lectures(txt){
+  let t=txt.toLowerCase().replace(/\d+/g,n=>" "+(CHIFFRES[n]||"")+" ").replace(/[’'\-]/g," ").replace(/[^a-zàâäéèêëîïôöùûüçœ ]/g," ").trim();
+  const mots=t.split(/\s+/).filter(Boolean); if(!mots.length) return [];
+  const out=new Set();
+  if(mots.length===1&&LETTRES[mots[0]]) out.add(phonMot(LETTRES[mots[0]]));
+  mots.forEach(m=>out.add(phonMot(m)));
+  out.add(phonMot(mots.join("")));
+  return [...out];
+}
 function bienLu(alts,cible){
   const k=phonMot(cible);
-  for(const a of alts){const m=phon(a);if(!m.length)continue;
-    for(const e of [...m,m.join("")]){if(e===k||(k.length>1&&e.endsWith(k)))return true}}
+  for(const a of alts) for(const e of lectures(a)){if(e===k||(k.length>1&&e.endsWith(k)))return true}
   return false;
 }
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -348,7 +358,7 @@ if(SR){
     if(!pending)return;
     const alts=[...ev.results[0]].map(a=>a.transcript.trim());
     $("rHeard").textContent="J'ai entendu : « "+alts[0]+" »";
-    if(bienLu(alts,syl[pending.r][pending.c])){validate(true);return}
+    if(bienLu(alts,syl[pending.r][pending.c])){validate(true);$("rHeard").textContent="✓ Bien lu ! (j'ai entendu « "+alts[0]+" »)";return}
     tries++;
     if(tries>=2){validate(false)}
     else{$("rHint").textContent="Pas tout à fait… Réessaie !"}
