@@ -75,6 +75,10 @@ button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px soli
 .ctl output{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;accent-color:var(--accent)}
 
+.levels{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.levels .lbl{font-size:13px;color:var(--muted);margin-right:2px}
+.levels button{font-size:15px;min-height:40px;padding:8px 14px}
+.levels button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .editbox{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:12px;background:var(--field);padding:14px}
 textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--text);font-size:18px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
 .hint{font-size:13px;color:var(--muted);margin:0}
@@ -89,6 +93,15 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   </div>
 
   <p class="navwarn" id="navwarn" hidden>⚠️ Ce navigateur ne permet pas la reconnaissance vocale. Ouvrez cette page avec Google Chrome ou Microsoft Edge. En attendant, faites avancer le texte avec la barre d'espace ou « Mot ▶ ».</p>
+
+  <div class="levels" role="group" aria-label="Choisir un texte">
+    <span class="lbl">Texte :</span>
+    <button type="button" data-lv="1" aria-pressed="false">Niveau 1 · CP sons simples</button>
+    <button type="button" data-lv="2" aria-pressed="false">Niveau 2 · CP sons complexes</button>
+    <button type="button" data-lv="3" aria-pressed="false">Niveau 3 · CE1</button>
+    <button type="button" data-lv="4" aria-pressed="false">Niveau 4 · CE2-CM1</button>
+    <button type="button" data-lv="perso" aria-pressed="false">✎ Mon texte</button>
+  </div>
 
   <div class="stage" id="stage" aria-label="Texte à lire">
     <div class="scroller" id="scroller"></div>
@@ -112,7 +125,6 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
       <button id="restart" type="button">↺ Recommencer</button>
       <button id="prev" type="button" aria-label="Mot précédent">◀ Mot</button>
       <button id="next" type="button" aria-label="Mot suivant">Mot ▶</button>
-      <button id="editBtn" type="button">✎ Changer le texte</button>
       <button id="full" type="button">⛶ Plein écran</button>
     </div>
     <label class="hint" for="duree">Durée
@@ -129,27 +141,43 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   </div>
 
   <div class="editbox" id="editbox" hidden>
-    <label for="txt" class="hint">Collez ou tapez le texte. Un retour à la ligne = une nouvelle ligne à l'écran.</label>
+    <label for="txt" class="hint">Votre texte : collez ou tapez le texte à lire (un retour à la ligne = une nouvelle ligne à l'écran). Il reste enregistré sur cet ordinateur.</label>
     <textarea id="txt"></textarea>
     <div class="btns">
-      <button class="primary" id="apply" type="button">Utiliser ce texte</button>
+      <button class="primary" id="apply" type="button">Lire ce texte</button>
       <button id="cancel" type="button">Annuler</button>
     </div>
   </div>
 
-  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
+  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Choisissez un texte par niveau, ou « Mon texte » pour coller le vôtre. Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
 </div>
 
 <script>
 (function(){
-  const SAMPLE = "Le petit hérisson se réveille au fond du jardin.\nIl a faim. Il cherche des vers sous les feuilles.\nUn merle passe et lui dit bonjour.\nOù vas-tu si tôt ? demande le merle.\nJe vais au potager, répond le hérisson.\nLes fraises sont mûres !";
+  // Niveau 1 : sans son complexe (ni ou, on, an, in, oi, ai, au, eu…). Niveau 2 : quelques sons complexes fréquents.
+  // Niveau 3 : CE1 (graphies variées, dialogue, passé composé). Niveau 4 : CE2-CM1 (texte long, passé simple).
+  // Textes assez longs pour une minute de lecture.
+  const TEXTS = {
+    1: "Le vélo de Rémi\nRémi a le vélo de Papi. Il pédale vite sur la piste.\nLili file à côté de lui. Tito, le petit chat, va sur le mur.\nIl a vu la pie. Tito a raté la pie !\nIl a mal à la patte. Lili le cajole sur le sofa.\nRémi a fini la piste : il a gagné !\nPapi a une tarte à la tomate. Lili a du sirop de kiwi.\nTito a sa pâtée. Rémi a une idée : il va à la mare avec Lili.\nIl y a une petite tortue sur la rive. Elle a une jolie tête.\nLili a ri. Rémi a filmé la tortue.\nPuis la tortue a filé sous le sable.",
+    2: "À la rivière\nLou et son papa vont à la rivière.\nIls ont un panier avec du pain et une tomate.\nLou court sur le sable. Elle trouve une jolie pierre plate.\nSon papa lance la pierre sur l'eau : elle fait trois ricochets !\nPuis ils mangent au bord de l'eau.\nUn poisson saute hors de l'eau. Plouf !\nLou rit : « Quelle belle journée, papa ! »\nLe soir, ils rentrent à la maison avec le panier vide.\nLou montre sa pierre à maman.\nMaman la pose sur la table du salon.\nDemain, Lou ira encore à la rivière avec son ami Tom.\nTom a un bateau rouge.\nIls feront une course de bateaux sur l'eau !",
+    3: "Le secret de la cabane\nCe matin-là, un épais brouillard recouvrait la forêt.\nNoé et sa sœur Inès avaient décidé de rejoindre leur cabane, cachée près du vieux chêne.\nEn chemin, ils ont entendu un drôle de bruit derrière les buissons.\n« Tu crois que c'est un loup ? » a chuchoté Inès, un peu inquiète.\nNoé s'est approché doucement et il a écarté les branches.\nUn jeune écureuil les regardait, une noisette entre les pattes !\nLes enfants ont éclaté de rire.\nArrivés à la cabane, ils ont découvert une surprise : quelqu'un avait déposé un panier rempli de champignons.\nQui pouvait bien connaître leur cachette ?\nLe lendemain, ils sont partis très tôt.\nPrès de la cabane, ils ont trouvé des traces de bottes dans la boue.\nIls les ont suivies jusqu'à une petite maison.\nLeur grand-père était assis devant la porte, un panier à la main.\n« C'était donc toi ! » ont crié les enfants.\nPapi a souri : « Je voulais vous faire une surprise. »",
+    4: "Le phare de l'île aux Mouettes\nDepuis la fenêtre de sa chambre, Maëlle apercevait le vieux phare qui se dressait au bout de la jetée. Chaque soir, sa lumière balayait la mer et guidait les bateaux des pêcheurs jusqu'au port.\nUn jour de tempête, le vent soufflait si fort que les vagues s'écrasaient contre les rochers dans un fracas assourdissant. Soudain, la lumière du phare s'éteignit.\nMaëlle comprit immédiatement le danger : sans lumière, les marins ne pourraient pas retrouver leur chemin. Elle enfila son ciré jaune, attrapa une lampe de poche et courut chez monsieur Le Goff, le gardien.\nLe vieil homme s'était tordu la cheville en tombant dans l'escalier. « L'ampoule a grillé, expliqua-t-il en grimaçant. Une ampoule neuve se trouve dans la boîte en fer, sur l'étagère. »\nMaëlle grimpa les cent dix-huit marches en serrant la boîte contre elle. Tout en haut, le vent hurlait contre les vitres. Ses doigts tremblaient, mais elle réussit à changer l'ampoule.\nQuelques secondes plus tard, le faisceau lumineux traversa de nouveau la nuit. Au loin, un petit chalutier changea de cap et rentra lentement vers le port.\nLe lendemain, tout le village vint remercier la jeune fille. Monsieur Le Goff lui confia alors une mission : désormais, elle serait son assistante."
+  };
   const $ = id => document.getElementById(id);
   const stage=$("stage"), scroller=$("scroller"), size=$("size"), listenBtn=$("listen"), dureeSel=$("duree");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const LOOK = 15;   // jusqu'où le texte peut « rattraper » un enfant qui a pris de l'avance
 
-  let text = SAMPLE;
-  try { const s = localStorage.getItem("tpe-text"); if (s) text = s; } catch(e){}
+  let text = TEXTS[1], level = "1", perso = "";
+  try {
+    perso = localStorage.getItem("tpe-text") || "";
+    const lv = localStorage.getItem("tpe-level") || (perso ? "perso" : "1");
+    if (lv === "perso" && perso){ text = perso; level = "perso"; }
+    else if (TEXTS[lv]){ text = TEXTS[lv]; level = lv; }
+  } catch(e){}
+  const lvBtns = document.querySelectorAll(".levels button");
+  const markLevel = () => lvBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lv === level)));
+  markLevel();
   try { const d = localStorage.getItem("tpe-duree"); if (d!==null) dureeSel.value = d; } catch(e){}
 
   let words = [], spans = [], stamps = [], startT = 0, timer = 0, fini = false, bilanOn = false;
@@ -429,11 +457,18 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   $("prev").addEventListener("click", ()=>{ if (fini) return; const s=clone(shown); s.p=Math.max(0,s.p-1); s.skips.delete(s.p); s.frags=[]; st=s; shown=s; finalsDone=lastResults; paint(); });
   dureeSel.addEventListener("change", ()=>{ try{ localStorage.setItem("tpe-duree", dureeSel.value); }catch(e){} reset(); });
   size.addEventListener("input", layout);
-  $("editBtn").addEventListener("click", ()=>{ $("txt").value=text; $("editbox").hidden=false; $("txt").focus(); });
+  lvBtns.forEach(b => b.addEventListener("click", ()=>{
+    const lv = b.dataset.lv;
+    if (lv === "perso"){ $("txt").value = perso || ""; $("editbox").hidden=false; $("txt").focus(); return; }
+    $("editbox").hidden = true;
+    level = lv; text = TEXTS[lv]; markLevel(); render();
+    try{ localStorage.setItem("tpe-level", lv); }catch(e){}
+  }));
   $("cancel").addEventListener("click", ()=>{ $("editbox").hidden=true; });
   $("apply").addEventListener("click", ()=>{
     const v=$("txt").value.trim(); if(!v) return;
-    text=v; try{ localStorage.setItem("tpe-text", v); }catch(e){}
+    text=v; perso=v; level="perso"; markLevel();
+    try{ localStorage.setItem("tpe-text", v); localStorage.setItem("tpe-level", "perso"); }catch(e){}
     render(); $("editbox").hidden=true;
   });
   $("full").addEventListener("click", ()=>{ try{ document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen().catch(()=>{}); }catch(e){} });
