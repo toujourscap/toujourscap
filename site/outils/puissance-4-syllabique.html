@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Puissance 4 syllabique</title><link rel="canonical" href="https://toujourscap.com/post/puissance-4-syllabiques/"><meta name="description" content="Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l&#x27;écran, à deux ou contre l&#x27;ordinateur, ou sur papier avec des…">
+<title>Puissance 4 syllabique</title><link rel="canonical" href="https://toujourscap.com/post/puissance-4-syllabiques/"><meta name="description" content="Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l&#x27;écran, à deux ou contre l&#x27;ordinateur, avec vérification au micro…">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&family=Playwrite+FR+Moderne&display=swap">
 <style>
 /* Layout : un plateau bleu de Puissance 4 au centre, réglages au-dessus, zone de lecture en dessous. */
 :root{
@@ -15,6 +15,7 @@
   --ok:#1f9d55; --ko:#c2410c;
   --f-display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
   --f-read:"Andika", "Comic Sans MS", system-ui, sans-serif;
+  --f-cursive:"Playwrite FR Moderne", "Segoe Script", cursive;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0f1526; --ink:#e8edf9; --muted:#9aa6c4; --panel:#18213a; --line:#2a3658;
@@ -90,6 +91,13 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
 .fs{font-family:var(--f-display);font-weight:600;font-size:.95rem;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:7px 14px;cursor:pointer;white-space:nowrap}
 .fs:hover{border-color:var(--board)}
 :fullscreen body{overflow:auto}
+.cursive .cell .syl,.cursive .disc{font-family:var(--f-cursive);font-weight:400;font-size:clamp(.6rem,2.7vw,1rem)}
+.cursive .big{font-family:var(--f-cursive);font-weight:400;font-size:clamp(2rem,9vw,3.2rem);line-height:1.5}
+.btn.mic{background:var(--yel);color:var(--yel-ink);font-size:1.2rem;padding:12px 22px;box-shadow:0 4px 0 #c99a00}
+.btn.mic.listening{background:var(--ok);color:#fff;box-shadow:0 4px 0 #157a40;animation:pulse 1s infinite}
+.heard{color:var(--muted);font-size:.95rem;margin:0;min-height:1.2em}
+.seg button:disabled{opacity:.4;cursor:default}
+.note{color:var(--muted);font-size:.8rem;margin:0}
 </style>
 </head>
 <body>
@@ -119,6 +127,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
     <p class="hint" id="rHint">Choisis une colonne pour lâcher ton jeton.</p>
     <div class="big" id="rSyl"></div>
     <div class="bar" id="rBar" hidden><i id="rBarI"></i></div>
+    <button class="btn mic" id="bMic" hidden>🎤 Je lis</button>
+    <p class="heard" id="rHeard"></p>
     <div class="actions" id="rAct" hidden>
       <button class="btn ghost" id="bListen">🔊 Écouter</button>
       <button class="btn ok" id="bOk">Bien lu ✓</button>
@@ -141,6 +151,21 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
         <button id="m1" data-m="1" aria-pressed="false">L'ordinateur</button>
       </div>
     </div>
+    <div class="group">
+      <span class="lbl" id="chk-l">Qui vérifie la lecture</span>
+      <div class="seg" role="group" aria-labelledby="chk-l" id="checks">
+        <button id="k0" data-k="0" aria-pressed="true">L'adulte</button>
+        <button id="k1" data-k="1" aria-pressed="false">Le micro</button>
+      </div>
+      <p class="note" id="micNote">Micro : Chrome ou Edge, avec internet.</p>
+    </div>
+    <div class="group">
+      <span class="lbl" id="ecr-l">Écriture</span>
+      <div class="seg" role="group" aria-labelledby="ecr-l" id="writings">
+        <button id="w0" data-w="0" aria-pressed="true">Script</button>
+        <button id="w1" data-w="1" aria-pressed="false">Cursive</button>
+      </div>
+    </div>
     <button class="btn" id="newgame">Nouvelle partie</button>
     <label class="opts"><input type="checkbox" id="autoRead" checked> L'ordinateur lit la syllabe après
       <select id="delay"><option value="3">3 s</option><option value="5" selected>5 s</option><option value="8">8 s</option></select></label>
@@ -150,7 +175,8 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
   </aside>
   </div>
 
-  <p class="rules"><b>Règle.</b> Chaque joueur lâche un jeton dans une colonne et lit la syllabe sur laquelle il atterrit. Lecture juste : le jeton reste. Lecture à revoir : le jeton est retiré et c'est au tour de l'autre. Le premier qui aligne 4 jetons (horizontal, vertical ou diagonale) gagne. Chaque nouvelle partie tire un nouveau plateau.</p>
+  <p class="rules"><b>Règle.</b> Chaque joueur lâche un jeton dans une colonne et lit la syllabe sur laquelle il atterrit. Lecture juste : le jeton reste. Lecture à revoir : le jeton est retiré et c'est au tour de l'autre. Le premier qui aligne 4 jetons (horizontal, vertical ou diagonale) gagne. Chaque nouvelle partie tire un nouveau plateau.<br>
+  <b>Au micro.</b> L'enfant appuie sur « Je lis » (ou la barre d'espace) et lit la syllabe : le jeu vérifie seul. Deux essais, puis le jeton est retiré. L'adulte peut toujours valider avec « Bien lu » ou « À revoir ».</p>
 </div>
 
 <script>
@@ -161,7 +187,7 @@ const L2=["cou","mou","sou","lou","pou","tou","fou","rou","chou","mon","ton","so
 const L3=["bra","bri","bro","tra","tri","tro","pla","pli","plu","cla","cli","clo","gra","gri","gro","fra","fri","fro","dra","dri","bla","blo","cra","cri","cru","pra","pri","pro","gla","glo","flu","fla","vra","vri","al","ar","il","ir","or","ol","ur","ul","es","ab","ac","ip"];
 const LISTS={1:L1,2:L2,3:L3};
 
-let level=1, mode=2, board, syl, turn, pending=null, over=false, score={r:0,y:0}, timers=[];
+let level=1, mode=2, check=0, tries=0, listening=false, board, syl, turn, pending=null, over=false, score={r:0,y:0}, timers=[];
 const $=id=>document.getElementById(id);
 const grid=$("grid"), arrows=$("arrows");
 
@@ -215,7 +241,8 @@ function setStatus(txt){
 function resetReader(){
   $("reader").classList.remove("live");
   $("rHint").textContent=over?"Partie terminée.":"Clique sur une colonne pour lâcher ton jeton.";
-  $("rSyl").textContent="";$("rAct").hidden=true;$("rBar").hidden=true;
+  $("rSyl").textContent="";$("rAct").hidden=true;$("rBar").hidden=true;$("bMic").hidden=true;$("rHeard").textContent="";
+  stopMic();
 }
 
 function speak(t){
@@ -238,7 +265,8 @@ function play(c){
     return;
   }
   $("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", lis cette syllabe :";
-  $("rAct").hidden=false;
+  $("rAct").hidden=false; tries=0; $("rHeard").textContent="";
+  if(check===1&&rec){$("bMic").hidden=false;$("rHint").textContent=(turn==="r"?"Rouge":"Jaune")+", appuie sur « Je lis » et lis :"}
   if($("autoRead").checked){
     const secs=+$("delay").value, t0=Date.now();$("rBar").hidden=false;$("rBarI").style.width="0";
     const iv=setInterval(()=>{const p=Math.min(1,(Date.now()-t0)/(secs*1000));$("rBarI").style.width=(p*100)+"%";if(p>=1){clearInterval(iv);speak(s)}},100);
@@ -248,7 +276,7 @@ function play(c){
 
 function validate(ok){
   if(!pending)return;
-  clearTimers();
+  clearTimers(); stopMic(); $("bMic").hidden=true;
   const {r,c,p}=pending;
   if(ok){
     board[r][c]=p;pending=null;
@@ -288,10 +316,68 @@ function aiChoose(){
   const w=pool.map(c=>({c,s:4-Math.abs(3-c)+Math.random()*2.5}));w.sort((a,b)=>b.s-a.s);return w[0].c;
 }
 
+/* ---------- Lecture au micro : phonétique simplifiée du français ---------- */
+function phonMot(w){
+  w=w.replace(/[âàä]/g,"a").replace(/[îï]/g,"i").replace(/[ôö]/g,"o").replace(/[ûüù]/g,"u").replace(/ç/g,"s").replace(/y/g,"i");
+  w=w.replace(/^(l|m|t|s|d|c|s)es$/,"$1é");
+  w=w.replace(/ch/g,"S").replace(/c(?=[eiéèêë])/g,"s").replace(/c/g,"k").replace(/g(?=[eiéèêë])/g,"j").replace(/gn/g,"N");
+  w=w.replace(/(er|ez|et)$/,"é");
+  w=w.replace(/eau|au/g,"o").replace(/ou/g,"U").replace(/oin/g,"W1").replace(/oi/g,"W").replace(/œu|oeu|eu/g,"e");
+  w=w.replace(/(ain|ein|aim|in|im|un|um)(?![aeiouéèêU])/g,"1");
+  w=w.replace(/(an|am|en|em)(?![aeiouéèêU])/g,"2");
+  w=w.replace(/(on|om)(?![aeiouéèêU])/g,"3");
+  w=w.replace(/[éèêë]|ai|ei/g,"E");
+  w=w.replace(/ph/g,"f").replace(/qu/g,"k").replace(/h/g,"");
+  if(w.length>2) w=w.replace(/e$/,"");
+  if(w.length>1) w=w.replace(/[stxdpgz]+$/,"");
+  w=w.replace(/(.)\1+/g,"$1");
+  return w;
+}
+function phon(s){return s.toLowerCase().replace(/[’']/g," ").replace(/[^a-zàâäéèêëîïôöùûüçœ ]/g," ").split(/\s+/).filter(Boolean).map(phonMot)}
+function bienLu(alts,cible){
+  const k=phonMot(cible);
+  for(const a of alts){const m=phon(a);if(!m.length)continue;
+    for(const e of [...m,m.join("")]){if(e===k||(k.length>1&&e.endsWith(k)))return true}}
+  return false;
+}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null;
+if(SR){
+  rec=new SR();rec.lang="fr-FR";rec.interimResults=false;rec.maxAlternatives=5;rec.continuous=false;
+  rec.onresult=ev=>{
+    if(!pending)return;
+    const alts=[...ev.results[0]].map(a=>a.transcript.trim());
+    $("rHeard").textContent="J'ai entendu : « "+alts[0]+" »";
+    if(bienLu(alts,syl[pending.r][pending.c])){validate(true);return}
+    tries++;
+    if(tries>=2){validate(false)}
+    else{$("rHint").textContent="Pas tout à fait… Réessaie !"}
+  };
+  rec.onerror=e=>{
+    if(e.error==="not-allowed"||e.error==="service-not-allowed")$("rHeard").textContent="Le micro est bloqué : autorise-le (icône à gauche de l'adresse).";
+    else if(e.error==="no-speech")$("rHeard").textContent="Je n'ai rien entendu. Appuie et lis plus fort.";
+    else if(e.error==="network")$("rHeard").textContent="Le micro a besoin d'internet.";
+  };
+  rec.onend=()=>{listening=false;majMic()};
+}
+function majMic(){const b=$("bMic");b.classList.toggle("listening",listening);b.textContent=listening?"👂 J'écoute…":"🎤 Je lis"}
+function stopMic(){if(listening){try{rec.abort()}catch(e){}listening=false;majMic()}}
+function ecouter(){
+  if(!rec||!pending||$("bMic").hidden||listening)return;
+  clearTimers();$("rBar").hidden=true;try{speechSynthesis.cancel()}catch(e){}
+  $("rHeard").textContent="";listening=true;majMic();
+  try{rec.start()}catch(e){listening=false;majMic()}
+}
+$("bMic").onclick=ecouter;
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&!$("bMic").hidden&&e.target.tagName!=="SELECT"&&e.target.tagName!=="INPUT"){e.preventDefault();ecouter()}});
+if(!rec){$("k1").disabled=true;$("micNote").textContent="Micro indisponible dans ce navigateur : ouvre la page dans Chrome ou Edge."}
+
 function bindSeg(id,attr,set){$(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
   $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));set(+b.dataset[attr]);newGame()})}
 bindSeg("levels","lv",v=>level=v);
 bindSeg("modes","m",v=>mode=v);
+bindSeg("checks","k",v=>check=v);
+bindSeg("writings","w",v=>document.body.classList.toggle("cursive",v===1));
 $("newgame").onclick=newGame;
 $("bOk").onclick=()=>validate(true);
 $("bKo").onclick=()=>validate(false);

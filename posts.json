@@ -8553,7 +8553,7 @@
   {
    "title": "Puissance 4 syllabique",
    "slug": "puissance-4-syllabiques",
-   "excerpt": "Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l'écran, à deux ou contre l'ordinateur, ou sur papier avec des jetons de deux couleurs.",
+   "excerpt": "Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l'écran, à deux ou contre l'ordinateur, avec vérification au micro, ou sur papier avec des jetons de deux couleurs.",
    "date": "2026-04-27T11:47:49.161Z",
    "categoryIds": [],
    "media": {
@@ -8577,7 +8577,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un Puissance 4 qui fait lire : chaque jeton lâché atterrit sur une syllabe que l'élève doit lire. Le jeu se pratique à l'écran, à deux ou contre l'ordinateur, et peut être projeté pour toute la classe. Une version papier est proposée plus bas.",
+         "text": "Un Puissance 4 qui fait lire : chaque jeton lâché atterrit sur une syllabe que l'élève doit lire, et le micro peut vérifier la lecture. Le jeu se pratique à l'écran, à deux ou contre l'ordinateur, et peut être projeté pour toute la classe. Une version papier est proposée plus bas.",
          "decorations": []
         }
        }
@@ -8733,6 +8733,40 @@
             "type": "TEXT",
             "textData": {
              "text": "L'ordinateur peut lire la syllabe à voix haute après 3, 5 ou 8 secondes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Qui vérifie la lecture : l'adulte (boutons « Bien lu » / « À revoir ») ou le micro. Au micro, l'enfant appuie sur « Je lis » (ou la barre d'espace) et lit la syllabe : le jeu vérifie seul, avec deux essais. Micro : Google Chrome ou Microsoft Edge, avec internet.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écriture script ou cursive.",
              "decorations": []
             }
            }
