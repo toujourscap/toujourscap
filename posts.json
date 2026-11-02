@@ -8339,7 +8339,7 @@
    "cat": "lecture",
    "title": "Texte de fluence à vitesse automatique",
    "slug": "teleprompteur-a-l-ecoute",
-   "excerpt": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne avec Chrome ou Edge.",
+   "excerpt": "L'élève lit à voix haute : le texte suit sa lecture, même s'il va vite. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs. Avec Chrome ou Edge.",
    "date": "2026-05-21T11:09:13Z",
    "jeu": {
     "competence": "phrases-textes",
@@ -8360,9 +8360,82 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute.",
+         "text": "L'élève lit à voix haute et le texte suit sa lecture. S'il va plus vite que la reconnaissance vocale, le texte le rattrape dès qu'il reconnaît un mot plus loin.",
          "decorations": []
         }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la durée : 1 minute, 2 minutes ou sans limite. Le chronomètre démarre au premier mot lu.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, le bilan affiche les mots lus, les erreurs (mots sautés ou mal lus, barrés en orange) et les mots justes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Si le micro s'est trompé, l'adulte clique sur un mot pour le compter juste ou faux : le bilan se met à jour.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Placer le micro près de l'enfant, dans une pièce calme : la reconnaissance est meilleure.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
        }
       ]
      },
