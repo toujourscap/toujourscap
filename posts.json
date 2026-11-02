@@ -9562,21 +9562,65 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Validation automatique (facultative)",
+         "text": "Deux modes de validation",
          "decorations": []
         }
        }
       ]
      },
      {
-      "type": "PARAGRAPH",
+      "type": "BULLETED_LIST",
       "nodes": [
        {
-        "type": "TEXT",
-        "textData": {
-         "text": "En cochant « Validation automatique », le jeu écoute l'élève : quand le mot est reconnu, le Chaperon avance tout seul. L'adulte garde la main avec les boutons « Bien lu » et « Erreur ».",
-         "decorations": []
-        }
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Par l'adulte : il valide chaque mot avec les boutons « Bien lu » et « Erreur » (ou au clavier).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Automatique : il n'y a pas de bouton de validation. Le jeu écoute l'élève et le Chaperon avance dès que le mot est reconnu. Si le mot n'est pas reconnu, l'élève réessaie.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Dans les deux modes, cliquer sur « Entendre le mot » affiche « ⚠️ Attention ! » et le loup avance d'une case (une seule fois par mot). Dans le bilan, le mot est noté « Lu après écoute » et proposé dans « Retravailler les mots ratés ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
        }
       ]
      },
