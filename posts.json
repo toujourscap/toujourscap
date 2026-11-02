@@ -9597,7 +9597,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Automatique : il n'y a pas de bouton de validation. Le jeu écoute l'élève et le Chaperon avance dès que le mot est reconnu. Si le mot n'est pas reconnu, l'élève réessaie.",
+             "text": "Automatique : il n'y a pas de bouton de validation. Le jeu écoute l'élève : le Chaperon avance dès que le mot est reconnu ; si l'élève lit un autre mot, c'est une erreur et le loup avance d'une case. Le bilan indique le mot entendu. Un début de mot (lecture syllabe par syllabe) n'est pas compté comme une erreur.",
              "decorations": []
             }
            }

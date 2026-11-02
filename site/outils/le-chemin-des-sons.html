@@ -188,7 +188,7 @@ td a{font-size:13px;color:var(--bois)}
         <label class="coche"><input type="radio" name="mode" id="mode-adulte" value="adulte" checked> Par l'adulte : boutons « Bien lu » et « Erreur »</label>
         <label class="coche" id="ligne-auto"><input type="radio" name="mode" id="auto" value="auto"> Automatique : le micro reconnaît le mot, sans bouton</label>
       </div>
-      <p class="note" id="note-auto">En mode automatique, le Chaperon avance tout seul quand le mot est reconnu. Si l'élève clique sur « Entendre le mot », le loup avance d'une case. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
+      <p class="note" id="note-auto">En mode automatique, le Chaperon avance tout seul quand le mot est reconnu. S'il se trompe, ou s'il clique sur « Entendre le mot », le loup avance d'une case. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
       <div class="micro-test">
         <button type="button" class="btn-petit" id="b-micro">Tester le micro</button>
         <div class="jauge" aria-hidden="true"><i id="jauge"></i></div>
@@ -410,6 +410,15 @@ function nouvelleReco(){
     for(let i=e.resultIndex;i<e.results.length;i++){
       const res=e.results[i];
       for(let j=0;j<res.length;j++){ if(reconnu(res[j].transcript,mot)){ indicEcoute("Mot reconnu !",true); arreterEcoute(); repondre(true,true); return; } }
+      // Mode automatique : un mot entendu en entier mais différent = erreur, le loup avance.
+      // Un début de mot (« la… » pour « lapin ») n'est pas une erreur : l'élève est en train de lire.
+      if(res.isFinal && cfg.auto && !recoBloquee){
+        const toks=normaliser(res[0].transcript).trim().split(" ").filter(Boolean), dernier=toks[toks.length-1]||"";
+        const cible=normaliser(mot).trim();
+        if(dernier && !(cible.startsWith(dernier) && dernier.length<cible.length)){
+          indicEcoute("J'ai entendu « "+toks.slice(-3).join(" ")+" »",false); arreterEcoute(); repondre(false,true,toks.slice(-3).join(" ")); return;
+        }
+      }
       const vu=res[0].transcript.trim(); if(vu) indicEcoute("J'entends : « "+vu.split(/\s+/).slice(-3).join(" ")+" »"+(cfg.auto&&!recoBloquee?"  —  essaie encore !":"  —  à l'adulte de valider si besoin"),false);
     }
   };
@@ -553,12 +562,12 @@ function arreterRec(garder){
   });
 }
 
-async function repondre(ok,auto){
+async function repondre(ok,auto,entendu){
   if(occupe||!jeu||jeu.fini) return;
   occupe=true; boutons(false); arreterEcoute();
   const m=jeu.mots[jeu.i];
   const blob=await arreterRec(true);
-  jeu.res.push({...m, ok, auto:!!auto, aide:!!jeu.aide, blob, url: blob?URL.createObjectURL(blob):null});
+  jeu.res.push({...m, ok, auto:!!auto, aide:!!jeu.aide, entendu:entendu||"", blob, url: blob?URL.createObjectURL(blob):null});
   $("consigne").classList.remove("attention");
   etatPancarte(jeu.i+1, ok?"ok":"err");
   const pos=jeu.i+1;
@@ -635,7 +644,7 @@ async function finir(gagne){
   $("fin-lignes").innerHTML=jeu.res.map((r,i)=>{
     const ext=(r.blob&&r.blob.type.includes("mp4"))?"m4a":"webm";
     r.fichier=`${nomF}_${date}_${String(i+1).padStart(2,"0")}_${r.w}_${r.ok?"juste":"erreur"}.${ext}`;
-    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?(r.aide?"aide":r.auto?"auto":"ok"):"err"}">${r.ok?(r.aide?"Lu après écoute":r.auto?"Reconnu":"Bien lu"):(r.aide?"Écouté":"Erreur")}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
+    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?(r.aide?"aide":r.auto?"auto":"ok"):"err"}">${r.ok?(r.aide?"Lu après écoute":r.auto?"Reconnu":"Bien lu"):(r.aide?"Écouté":"Erreur")}</span>${!r.ok&&r.entendu?`<br><span class="note">entendu : « ${r.entendu.replace(/[<>&]/g,"")} »</span>`:""}</td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
   }).join("");
   $("b-rates").hidden=!jeu.res.some(r=>!r.ok);
   $("b-tout").hidden=!jeu.res.some(r=>r.url);
