@@ -8429,6 +8429,23 @@
            {
             "type": "TEXT",
             "textData": {
+             "text": "Choisir l'élève (ou ajouter un prénom) : chaque bilan est enregistré à son nom et le bouton « Résultats » montre ses progrès. Plusieurs élèves peuvent utiliser le même ordinateur. Les résultats restent sur ce navigateur, sans compte ni envoi sur internet.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
              "text": "Si le micro s'est trompé, l'adulte clique sur un mot pour le compter juste ou faux : le bilan se met à jour.",
              "decorations": []
             }
@@ -8466,7 +8483,7 @@
        "url": "/outils/teleprompteur-a-l-ecoute.html",
        "containerData": {
         "height": {
-         "custom": "860"
+         "custom": "1150"
         }
        }
       }
