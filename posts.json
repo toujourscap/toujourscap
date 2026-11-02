@@ -8395,7 +8395,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir la durée : 1 minute, 2 minutes ou sans limite. Le chronomètre démarre au premier mot lu.",
+             "text": "Durée : 2 minutes pour les textes de CP, 1 minute pour les autres. Elle se change dans « Durée » (de 30 secondes à 3 minutes, ou sans limite), et le choix est retenu pour chaque texte. Le chronomètre démarre au premier mot lu.",
              "decorations": []
             }
            }
