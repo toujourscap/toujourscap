@@ -8715,7 +8715,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le jaune est joué par un deuxième enfant ou par l'ordinateur.",
+             "text": "Le jaune est joué par l'ordinateur (une fois l'élève, une fois l'ordinateur) ou par un deuxième enfant.",
              "decorations": []
             }
            }
@@ -8749,7 +8749,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Qui vérifie la lecture : l'adulte (boutons « Bien lu » / « À revoir ») ou le micro. Au micro, les syllabes jouables sont entourées en jaune (le bas de chaque colonne) : l'enfant appuie sur « Je lis » (ou la barre d'espace) et lit celle où il veut poser son jeton. Bien lue, le jeton tombe dessus. Micro : Google Chrome ou Microsoft Edge, avec internet.",
+             "text": "Qui vérifie la lecture : l'adulte (boutons « Bien lu » / « À revoir ») ou le micro. Au micro, les syllabes jouables sont entourées (le bas de chaque colonne), en rouge ou en jaune selon le joueur : l'enfant appuie sur « Je lis » (ou la barre d'espace) et lit celle où il veut poser son jeton. Bien lue, le jeton tombe dessus. Micro : Google Chrome ou Microsoft Edge, avec internet.",
              "decorations": []
             }
            }
