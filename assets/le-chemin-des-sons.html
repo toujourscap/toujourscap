@@ -68,6 +68,11 @@ input[type=text],select{font:inherit;font-size:18px;padding:8px 10px;border:2px 
 .ecoute{font-size:15px;color:var(--ok);font-weight:700;width:100%}
 .ecoute.ko{color:var(--gris);font-weight:400}
 .pill.auto{background:#4f7a3a}
+.pill.aide{background:#c27a1a}
+.modes{display:flex;flex-direction:column;gap:2px;margin:8px 0 4px}
+.modes .titre{font-weight:700;font-size:15px;margin:4px 0}
+.consigne.attention{color:#ffd166;font-weight:700}
+.jeu.auto #b-ok,.jeu.auto #b-err,.jeu.auto .raccourcis{display:none}
 
 /* ---------- Jeu ---------- */
 .jeu{display:flex;flex-direction:column;gap:14px}
@@ -178,8 +183,12 @@ td a{font-size:13px;color:var(--bois)}
       <div class="mots-apercu" id="apercu"></div>
       <label class="coche"><input type="checkbox" id="colorier" checked> Colorier le son dans le mot</label>
       <label class="coche"><input type="checkbox" id="enregistrer" checked> Enregistrer la lecture de l'élève</label>
-      <label class="coche" id="ligne-auto"><input type="checkbox" id="auto"> Validation automatique (reconnaissance vocale)</label>
-      <p class="note" id="note-auto">Le Chaperon avance tout seul quand le mot est reconnu ; l'adulte peut toujours corriger avec les boutons. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
+      <div class="modes" role="radiogroup" aria-label="Validation">
+        <span class="titre">Validation</span>
+        <label class="coche"><input type="radio" name="mode" id="mode-adulte" value="adulte" checked> Par l'adulte : boutons « Bien lu » et « Erreur »</label>
+        <label class="coche" id="ligne-auto"><input type="radio" name="mode" id="auto" value="auto"> Automatique : le micro reconnaît le mot, sans bouton</label>
+      </div>
+      <p class="note" id="note-auto">En mode automatique, le Chaperon avance tout seul quand le mot est reconnu. Si l'élève clique sur « Entendre le mot », le loup avance d'une case. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
       <div class="micro-test">
         <button type="button" class="btn-petit" id="b-micro">Tester le micro</button>
         <div class="jauge" aria-hidden="true"><i id="jauge"></i></div>
@@ -307,8 +316,9 @@ const sonsSauves = (store.get("pcr-sons")||"ou,an,in,eu,on,ei").split(",");
 $("sons").innerHTML = Object.keys(MOTS).map(s=>
   `<label class="son-chip"><input type="checkbox" value="${s}" id="son-${s}" ${sonsSauves.includes(s)?"checked":""}><span>${LIBELLE[s]}</span></label>`).join("");
 ["nb","erreurs"].forEach(id=>{const v=store.get("pcr-"+id); if(v) $(id).value=v;});
-if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome ou Edge."; }
-["colorier","enregistrer","auto"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
+if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("mode-adulte").checked=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome ou Edge."; }
+["colorier","enregistrer"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
+if(store.get("pcr-auto")==="1" && !$("auto").disabled) $("auto").checked=true;
 
 function sonsChoisis(){return [...document.querySelectorAll("#sons input:checked")].map(i=>i.value)}
 function majApercu(){
@@ -400,7 +410,7 @@ function nouvelleReco(){
     for(let i=e.resultIndex;i<e.results.length;i++){
       const res=e.results[i];
       for(let j=0;j<res.length;j++){ if(reconnu(res[j].transcript,mot)){ indicEcoute("Mot reconnu !",true); arreterEcoute(); repondre(true,true); return; } }
-      const vu=res[0].transcript.trim(); if(vu) indicEcoute("J'entends : « "+vu.split(/\s+/).slice(-3).join(" ")+" »  —  à l'adulte de valider si besoin",false);
+      const vu=res[0].transcript.trim(); if(vu) indicEcoute("J'entends : « "+vu.split(/\s+/).slice(-3).join(" ")+" »"+(cfg.auto&&!recoBloquee?"  —  essaie encore !":"  —  à l'adulte de valider si besoin"),false);
     }
   };
   r.onerror=e=>{
@@ -409,7 +419,7 @@ function nouvelleReco(){
       "service-not-allowed":"Reconnaissance vocale refusée par le navigateur : validez avec les boutons.",
       "network":"Pas de connexion Internet pour la reconnaissance vocale : validez avec les boutons.",
       "audio-capture":"Aucun micro trouvé : validez avec les boutons." }[e.error];
-    if(msg){ recoBloquee=true; ecouteActive=false; indicEcoute(msg,false); }
+    if(msg){ recoBloquee=true; ecouteActive=false; $("ecran-jeu").classList.remove("auto"); indicEcoute(msg,false); }
   };
   r.onend=()=>{ if(reco===r&&ecouteActive) setTimeout(nouvelleReco,60); };
   try{ r.start(); }catch(e){ setTimeout(nouvelleReco,300); }
@@ -481,7 +491,7 @@ async function demarrer(mots){
   cfg={prenom:$("prenom").value.trim(), n:+$("nb").value, gap:+$("erreurs").value+1, colorer:$("colorier").checked, rec:$("enregistrer").checked, auto:$("auto").checked&&!$("auto").disabled, sons};
   store.set("pcr-sons",sons.join(",")); store.set("pcr-nb",$("nb").value); store.set("pcr-erreurs",$("erreurs").value);
   store.set("pcr-colorier",cfg.colorer?"1":"0"); store.set("pcr-enregistrer",cfg.rec?"1":"0"); store.set("pcr-auto",cfg.auto?"1":"0");
-  recoBloquee=false; $("ecoute").hidden=!cfg.auto; if(cfg.auto) indicEcoute("Validation automatique active",true);
+  recoBloquee=false; $("ecran-jeu").classList.toggle("auto", cfg.auto); $("ecoute").hidden=!cfg.auto; if(cfg.auto) indicEcoute("Validation automatique active",true);
   const liste = mots || tirerMots(sons,cfg.n);
   N=liste.length; G=cfg.gap;
   jeu={mots:liste,i:0,gap:cfg.gap,res:[],fini:false,debut:new Date()};
@@ -511,7 +521,8 @@ function majDistance(){
   $("pas").innerHTML=s;
 }
 function afficherMot(){
-  const m=jeu.mots[jeu.i];
+  const m=jeu.mots[jeu.i]; jeu.aide=false;
+  $("consigne").classList.remove("attention");
   $("mot").innerHTML=motHTML(m,cfg.colorer);
   $("num").textContent=`Pancarte ${jeu.i+1} / ${N}`;
   const p=$("pancarte"); p.classList.remove("apparait"); void p.offsetWidth; p.classList.add("apparait");
@@ -547,7 +558,8 @@ async function repondre(ok,auto){
   occupe=true; boutons(false); arreterEcoute();
   const m=jeu.mots[jeu.i];
   const blob=await arreterRec(true);
-  jeu.res.push({...m, ok, auto:!!auto, blob, url: blob?URL.createObjectURL(blob):null});
+  jeu.res.push({...m, ok, auto:!!auto, aide:!!jeu.aide, blob, url: blob?URL.createObjectURL(blob):null});
+  $("consigne").classList.remove("attention");
   etatPancarte(jeu.i+1, ok?"ok":"err");
   const pos=jeu.i+1;
   if(!ok) jeu.gap--;
@@ -568,14 +580,35 @@ async function annuler(){
   if(occupe||!jeu||jeu.fini||!jeu.res.length) return;
   occupe=true; arreterEcoute();
   await arreterRec(false);
+  if(jeu.aide){ jeu.gap++; jeu.aide=false; }   // pénalité « Entendre le mot » sur le mot en cours
   const r=jeu.res.pop(); if(r.url) URL.revokeObjectURL(r.url);
   if(!r.ok) jeu.gap++;
+  if(r.aide) jeu.gap++;
   jeu.i=jeu.res.length;
   placer("sp-chaperon",X(jeu.i)); placer("sp-loup",X(jeu.i-jeu.gap));
   majDistance(); occupe=false; afficherMot();
 }
 
-function ecouter(){
+async function ecouter(){
+  if(!jeu||jeu.fini||occupe) return;
+  dire();
+  if(jeu.aide) return;             // une seule pénalité par mot
+  jeu.aide=true; jeu.gap--;
+  const c=$("consigne");
+  c.textContent="⚠️ Attention ! Tu as écouté le mot : le loup avance d'une case.";
+  c.classList.add("attention");
+  majDistance();
+  bouger("sp-loup",X(jeu.i-jeu.gap));
+  bip("loup"); $("sp-loup").classList.add("grogne"); setTimeout(()=>$("sp-loup").classList.remove("grogne"),800);
+  if(jeu.gap<=0){
+    occupe=true; boutons(false); arreterEcoute();
+    const blob=await arreterRec(true);
+    jeu.res.push({...jeu.mots[jeu.i], ok:false, auto:false, aide:true, blob, url: blob?URL.createObjectURL(blob):null});
+    etatPancarte(jeu.i+1,"err");
+    await pause(1400); return finir(false);
+  }
+}
+function dire(){
   try{
     const u=new SpeechSynthesisUtterance(jeu.mots[jeu.i].w);
     u.lang="fr-FR"; u.rate=.8;
@@ -593,16 +626,16 @@ async function finir(gagne){
   $("fin-titre").className="fin-titre "+(gagne?"gagne":"perdu");
   $("fin-img").innerHTML = rendrePerso(gagne?"mamie":"loup");
   $("fin-h1").textContent = gagne ? (cfg.prenom?`Bravo ${cfg.prenom} ! `:"Bravo ! ")+"Le Petit Chaperon rouge est arrivé chez Mère-Grand." : `Le loup a rattrapé ${nom}… On recommence ?`;
-  const bons=jeu.res.filter(r=>r.ok).length;
+  const bons=jeu.res.filter(r=>r.ok&&!r.aide).length;
   $("fin-score").textContent = `${bons} mot${bons>1?"s":""} bien lu${bons>1?"s":""} sur ${jeu.res.length} lu${jeu.res.length>1?"s":""} (${N} pancartes sur le chemin).`;
-  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok)parSon[r.son][0]++;});
+  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok&&!r.aide)parSon[r.son][0]++;});
   $("fin-parson").innerHTML=Object.entries(parSon).map(([s,[a,b]])=>`<span><b>${LIBELLE[s]}</b> ${a}/${b}</span>`).join("");
   const nomF=(cfg.prenom||"eleve").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]/g,"");
   const date=jeu.debut.toISOString().slice(0,10);
   $("fin-lignes").innerHTML=jeu.res.map((r,i)=>{
     const ext=(r.blob&&r.blob.type.includes("mp4"))?"m4a":"webm";
     r.fichier=`${nomF}_${date}_${String(i+1).padStart(2,"0")}_${r.w}_${r.ok?"juste":"erreur"}.${ext}`;
-    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?(r.auto?"auto":"ok"):"err"}">${r.ok?(r.auto?"Reconnu":"Bien lu"):"Erreur"}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
+    return `<tr><td>${i+1}</td><td class="mot">${motHTMLsimple(r)}</td><td>${LIBELLE[r.son]}</td><td><span class="pill ${r.ok?(r.aide?"aide":r.auto?"auto":"ok"):"err"}">${r.ok?(r.aide?"Lu après écoute":r.auto?"Reconnu":"Bien lu"):(r.aide?"Écouté":"Erreur")}</span></td><td>${r.url?`<audio controls src="${r.url}"></audio><br><a href="${r.url}" download="${r.fichier}">Télécharger</a>`:`<span class="note">—</span>`}</td></tr>`;
   }).join("");
   $("b-rates").hidden=!jeu.res.some(r=>!r.ok);
   $("b-tout").hidden=!jeu.res.some(r=>r.url);
@@ -611,9 +644,9 @@ async function finir(gagne){
 }
 function bilanTexte(){
   const d=jeu.debut.toLocaleDateString("fr-FR");
-  const bons=jeu.res.filter(r=>r.ok).length;
-  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok)parSon[r.son][0]++;});
-  const erreurs=jeu.res.filter(r=>!r.ok).map(r=>r.w);
+  const bons=jeu.res.filter(r=>r.ok&&!r.aide).length;
+  const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok&&!r.aide)parSon[r.son][0]++;});
+  const erreurs=jeu.res.filter(r=>!r.ok||r.aide).map(r=>r.w);
   return `${cfg.prenom||"Élève"} – ${d} – Chemin des sons\n${bons}/${jeu.res.length} mots bien lus (${jeu.res.length<N?"rattrapé par le loup":"arrivé chez Mère-Grand"})\n`+
     Object.entries(parSon).map(([s,[a,b]])=>`${LIBELLE[s]} : ${a}/${b}`).join(" · ")+
     `\nErreurs : ${erreurs.length?erreurs.join(", "):"aucune"}`;
@@ -627,7 +660,7 @@ $("b-tout").onclick=async()=>{
   for(const r of jeu.res){ if(!r.url) continue; const a=document.createElement("a"); a.href=r.url; a.download=r.fichier; document.body.appendChild(a); a.click(); a.remove(); await pause(450); }
   $("msg-fin").textContent="Enregistrements envoyés dans le dossier Téléchargements.";
 };
-$("b-rates").onclick=()=>demarrer(melanger(jeu.res.filter(r=>!r.ok).map(r=>({w:r.w,g:r.g,son:r.son}))));
+$("b-rates").onclick=()=>demarrer(melanger(jeu.res.filter(r=>!r.ok||r.aide).map(r=>({w:r.w,g:r.g,son:r.son}))));
 $("b-rejouer").onclick=()=>demarrer();
 $("b-reglages").onclick=()=>{fermerMicro();montrer("ecran-reglages");};
 
@@ -643,6 +676,8 @@ $("b-quitter").onclick=async()=>{arreterEcoute();await arreterRec(false);jeu.fin
 document.addEventListener("keydown",e=>{
   if($("ecran-jeu").hidden||e.target.tagName==="INPUT") return;
   const k=e.key.toLowerCase();
+  const auto=$("ecran-jeu").classList.contains("auto");
+  if(auto&&(k==="arrowright"||k==="v"||k==="arrowleft"||k==="x")) return;
   if(k==="arrowright"||k==="v"){e.preventDefault();repondre(true,false);}
   else if(k==="arrowleft"||k==="x"){e.preventDefault();repondre(false);}
   else if(k==="z"){e.preventDefault();annuler();}
