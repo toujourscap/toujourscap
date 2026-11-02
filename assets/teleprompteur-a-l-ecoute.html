@@ -146,8 +146,11 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
     <label class="hint" for="duree">Durée
       <select id="duree">
+        <option value="30">30 secondes</option>
         <option value="60" selected>1 minute</option>
+        <option value="90">1 min 30</option>
         <option value="120">2 minutes</option>
+        <option value="180">3 minutes</option>
         <option value="0">Sans limite</option>
       </select>
     </label>
@@ -174,7 +177,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
   </div>
 
-  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Choisissez un élève : chaque bilan est enregistré à son prénom, sur ce navigateur seulement (plusieurs élèves possibles). Choisissez un texte par niveau, ou « Mon texte » pour coller le vôtre. Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
+  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Choisissez un élève : chaque bilan est enregistré à son prénom, sur ce navigateur seulement (plusieurs élèves possibles). Choisissez un texte par niveau, ou « Mon texte » pour coller le vôtre. Durée conseillée : 2 minutes pour les textes de CP, 1 minute pour les autres ; elle se change dans « Durée ». Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
 </div>
 
 <script>
@@ -203,7 +206,13 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   const lvBtns = document.querySelectorAll(".levels button");
   const markLevel = () => lvBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lv === level)));
   markLevel();
-  try { const d = localStorage.getItem("tpe-duree"); if (d!==null) dureeSel.value = d; } catch(e){}
+  // Durée conseillée : 2 minutes pour les textes de CP, 1 minute pour les autres. Un autre choix est retenu pour ce texte.
+  const dureeConseillee = lv => (lv==="1" || lv==="2") ? "120" : "60";
+  function dureePour(lv){
+    let v = null; try { v = localStorage.getItem("tpe-duree-"+lv); } catch(e){}
+    dureeSel.value = v!==null && [...dureeSel.options].some(o=>o.value===v) ? v : dureeConseillee(lv);
+  }
+  dureePour(level);
 
   let words = [], spans = [], stamps = [], startT = 0, timer = 0, fini = false, bilanOn = false;
   // État du suivi : position, mots sautés, morceaux de syllabes, dernier mot entendu
@@ -558,19 +567,22 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   $("restart").addEventListener("click", reset);
   $("next").addEventListener("click", ()=>avancer(1));
   $("prev").addEventListener("click", ()=>{ if (fini) return; const s=clone(shown); s.p=Math.max(0,s.p-1); s.skips.delete(s.p); s.frags=[]; st=s; shown=s; finalsDone=lastResults; paint(); });
-  dureeSel.addEventListener("change", ()=>{ try{ localStorage.setItem("tpe-duree", dureeSel.value); }catch(e){} reset(); });
+  dureeSel.addEventListener("change", ()=>{
+    try{ if (dureeSel.value===dureeConseillee(level)) localStorage.removeItem("tpe-duree-"+level); else localStorage.setItem("tpe-duree-"+level, dureeSel.value); }catch(e){}
+    reset();
+  });
   size.addEventListener("input", layout);
   lvBtns.forEach(b => b.addEventListener("click", ()=>{
     const lv = b.dataset.lv;
     if (lv === "perso"){ $("txt").value = perso || ""; $("editbox").hidden=false; $("txt").focus(); return; }
     $("editbox").hidden = true;
-    level = lv; text = TEXTS[lv]; markLevel(); render();
+    level = lv; text = TEXTS[lv]; markLevel(); dureePour(lv); render();
     try{ localStorage.setItem("tpe-level", lv); }catch(e){}
   }));
   $("cancel").addEventListener("click", ()=>{ $("editbox").hidden=true; });
   $("apply").addEventListener("click", ()=>{
     const v=$("txt").value.trim(); if(!v) return;
-    text=v; perso=v; level="perso"; markLevel();
+    text=v; perso=v; level="perso"; markLevel(); dureePour("perso");
     try{ localStorage.setItem("tpe-text", v); localStorage.setItem("tpe-level", "perso"); }catch(e){}
     render(); $("editbox").hidden=true;
   });
