@@ -309,10 +309,16 @@
     try{ r.start(); }catch(e){ conclure(null, "Micro indisponible. Validez avec les boutons."); }
   }
 
+  function ecouterAide(){
+    if(etat.phase !== "lecture") return;
+    stopMicro(); etat.aide = true; dire(etat.n); boutonsLecture();
+    ecoute("⚠️ Attention ! Tu as écouté l'ordinateur : ce nombre ne rapporte pas de point.", "ko");
+  }
+
   function boutonsLecture(enCours=false){
     const l = [];
     if(etat.micro) l.push([enCours ? "🎤 J'écoute…" : "🎤 Je lis", "btn-micro", ecouterLecture]);
-    l.push(["🔊 Écouter", "btn-gris", () => { stopMicro(); dire(etat.n); boutonsLecture(); }],
+    l.push(["🔊 Écouter", "btn-gris", ecouterAide],
            ["✓ Bien lu", "btn-ok", () => valider(true)],
            ["✗ À revoir", "btn-ko", () => valider(false)]);
     boutons(l);
@@ -350,7 +356,7 @@
 
   /* ---------- Réglages ---------- */
   const DESC = {
-    lire: "Un nombre sort du château : l'élève le lit à voix haute, l'écoute pour vérifier, puis valide (Bien lu / À revoir). Avec le micro, le jeu écoute l'élève et lui dit s'il s'est trompé.",
+    lire: "Un nombre sort du château : l'élève le lit à voix haute, l'écoute pour vérifier, puis valide (Bien lu / À revoir). Écouter l'ordinateur fait perdre le point. Avec le micro, le jeu écoute l'élève et lui dit s'il s'est trompé.",
     trouver: "L'ordinateur dit un nombre à l'oral : l'élève le retrouve et clique dessus dans le château."
   };
   const majDesc = () => {
@@ -413,7 +419,7 @@
   /* ---------- Déroulé ---------- */
   function suivant(){
     if(etat.i >= etat.liste.length) return fin();
-    etat.n = etat.liste[etat.i]; etat.i++; etat.essais = 0;
+    etat.n = etat.liste[etat.i]; etat.i++; etat.essais = 0; etat.aide = false;
     majHaut();
     const c = cases[etat.n];
     if(etat.mode === "lire"){
@@ -434,11 +440,17 @@
 
   function valider(ok, message, delai=650){
     if(etat.phase !== "lecture") return;
-    etat.phase = "pause"; if(!message){ stopMicro(); ecoute(""); }
+    etat.phase = "pause"; if(!message){ stopMicro(); if(!etat.aide) ecoute(""); }
     const c = cases[etat.n];
     c.classList.remove("sort"); $("grille").classList.remove("focus");
+    if(ok && etat.aide){
+      ok = false; etat.aRevoir.push(etat.n); bip(260,.2,"triangle");
+      message = "⚠️ Juste, mais tu as écouté\u00a0: pas de point."; delai = Math.max(delai, 1800);
+      ecoute("⚠️ Attention ! Lis-le tout seul la prochaine fois.", "ko");
+    }
+    else if(ok){ etat.bons++; sonOk(); }
+    else { etat.aRevoir.push(etat.n); bip(260,.2,"triangle"); }
     c.classList.add(ok ? "lu-ok" : "lu-ko");
-    if(ok){ etat.bons++; sonOk(); } else { etat.aRevoir.push(etat.n); bip(260,.2,"triangle"); }
     majHaut(); boutons([]); $("consigne").textContent = message || (ok ? "Bravo\u00a0!" : "On le reverra.");
     setTimeout(() => { ecoute(""); suivant(); }, delai);
   }
@@ -509,7 +521,7 @@
     else if(etat.phase === "lecture"){
       if(e.key === "ArrowRight" || e.key === "Enter"){ e.preventDefault(); valider(true); }
       else if(e.key === "ArrowLeft" || e.key === "Backspace"){ e.preventDefault(); valider(false); }
-      else if(e.key === " "){ e.preventDefault(); dire(etat.n); }
+      else if(e.key === " "){ e.preventDefault(); ecouterAide(); }
       else if((e.key === "m" || e.key === "M") && etat.micro){ e.preventDefault(); ecouterLecture(); }
     }
   });

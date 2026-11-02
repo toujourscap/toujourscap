@@ -83,55 +83,6 @@ def img_url(ref):
     return LOCAL_IMAGES.get(key) or (ref if ref.startswith("http") else WIX + ref)
 
 
-# Outils de lecture rapide : chacun a sa page /francais/lecture/<clé>/ et une vignette dans l'article.
-TOOLS = {
-    "tachistoscope": {
-        "title": "Lecture rapide de mots",
-        "desc": "Les mots apparaissent un par un : l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.",
-        "seo": "Tachistoscope en ligne gratuit : lecture rapide de mots CP-CE1",
-        "niveaux": ["CP", "CE1"], "maj": "2026-10-23",
-        "src": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html", "height": 1210,
-        "img": "/images/outils/tachistoscope.jpg"},
-    "teleprompteur-de-lecture": {
-        "title": "Fluence sur 3 niveaux de texte du CP au CE1",
-        "desc": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
-        "seo": "Téléprompteur de lecture en ligne : fluence CP-CE1",
-        "niveaux": ["CP", "CE1"], "maj": "2026-10-24",
-        "src": "/outils/teleprompteur-de-lecture.html", "height": 860,
-        "img": "/images/outils/teleprompteur-de-lecture.jpg"},
-    "teleprompteur-a-l-ecoute": {
-        "title": "Fluence qui s'adapte automatiquement au rythme de l'enfant",
-        "desc": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne uniquement avec Chrome ou Edge.",
-        "note": "<strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace.",
-        "seo": "Fluence CP-CE1 avec reconnaissance vocale : lecture à voix haute",
-        "niveaux": ["CP", "CE1"], "maj": "2026-10-24",
-        "src": "/outils/teleprompteur-a-l-ecoute.html", "height": 860,
-        "img": "/images/outils/teleprompteur-a-l-ecoute.jpg"},
-}
-
-
-def tool_ld(k, t):
-    """Données structurées d'une page d'outil : ressource pédagogique + fil d'Ariane."""
-    url = f"{SITE}/francais/lecture/{k}/"
-    crumbs = [("Français", "/francais/"), ("Lecture", "/francais/lecture/"), (t["title"], f"/francais/lecture/{k}/")]
-    return [{"@context": "https://schema.org", "@type": "LearningResource", "name": t["title"],
-             "description": t["desc"], "url": url, "inLanguage": "fr-FR", "image": SITE + t["img"],
-             "learningResourceType": "Outil interactif", "educationalLevel": t.get("niveaux", []),
-             "audience": {"@type": "EducationalAudience", "educationalRole": "teacher"},
-             "teaches": "Lecture", "isAccessibleForFree": True, **({"dateModified": t["maj"]} if t.get("maj") else {}),
-             "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/"}},
-            {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-                {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
-
-
-def tool_card(k):
-    t = TOOLS[k]
-    return f"""<a class="card" href="/francais/lecture/{k}/">
-  <div class="card-img"><img src="{t['img']}" alt="{esc(t['title'])}" loading="lazy"></div>
-  <div class="card-body"><h3>{esc(t['title'])}</h3><p>{esc(t['desc'])}</p><span class="link">Ouvrir l'outil →</span></div>
-</a>"""
-
-
 MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 
 
@@ -250,8 +201,6 @@ def render(n, ctx):
         return f'<p class="note-nav" role="note">⚠️ {n["html"]}</p>'
     if t == "RAW_HTML":  # article rédigé directement en HTML (assets/articles/)
         return open(os.path.join(ROOT, "assets", "articles", n["file"])).read()
-    if t == "TOOL_CARDS":
-        return '<div class="grid tool-grid">' + "".join(tool_card(k) for k in n["tools"]) + "</div>"
     if t == "BUTTON":
         b = n.get("buttonData", {})
         url = b.get("link", {}).get("url", "#")
@@ -497,7 +446,9 @@ SEO_TITRES = {
     "/post/rafara/": "Rafara : conte malgache pour le cercle conteur en GS et CP",
     "/post/la-petite-poule-et-le-grain-de-mil/": "La petite poule et le grain de mil : conte en randonnée GS-CP",
     "/post/lecture-rapide-de-nombres/": "Lecture rapide de nombres : flash nombres en ligne, cycle 2",
-    "/post/lecture-rapide-de-mots-avec-le-tachitoscope/": "Lecture rapide et fluence : tachistoscope et téléprompteurs en ligne",
+    "/post/lecture-rapide-de-mots-tachistoscope/": "Tachistoscope en ligne gratuit : lecture rapide de mots CP-CE1",
+    "/post/teleprompteur-de-lecture/": "Téléprompteur de lecture en ligne : fluence CP-CE1",
+    "/post/teleprompteur-a-l-ecoute/": "Fluence CP-CE1 avec reconnaissance vocale : lecture à voix haute",
     "/post/la-maison-de-briques/": "La maison de briques : jeu sur les dizaines et les unités au CP",
     "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes CP-CE1",
     "/post/la-minute-des-syllabes/": "La minute des syllabes : jeu de fluence en 1 minute, CP-CE1",
@@ -703,16 +654,6 @@ def main():
   {filtres}
   {grid(lst)}
 </section>""", "/francais/", d))
-    article = next(p for p in posts if "tachitoscope" in p["slug"])
-    for k, t in TOOLS.items():
-        write(f"/francais/lecture/{k}/", page(t.get("seo", t["title"]), f"""<section class="wrap narrow">
-  <nav class="crumbs"><a href="/francais/">Français</a> › <a href="/francais/lecture/">Lecture</a> › <a href="/post/{article['slug']}/">Lecture rapide</a></nav>
-  <h1>{esc(t['title'])}</h1>
-  <p class="lead">{esc(t['desc'])}</p>
-  {'<p class="note-nav" role="note">⚠️ ' + t['note'] + '</p>' if t.get('note') else ''}
-  {embed(t['src'], t['height'], t['title'])}
-  <p><a href="/post/{article['slug']}/">← Les autres outils de lecture rapide</a></p>
-</section>""", "/francais/", t["desc"], t["img"], jsonld=tool_ld(k, t)), lastmod=t.get("maj"))
     msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul", "problemes")]
     # Image choisie pour une vignette de sous-rubrique (sinon : couverture du premier article)
     VIGNETTES = {"calcul": "/images/domaines/calcul.jpg", "problemes": "/images/domaines/problemes.jpg"}
@@ -825,8 +766,6 @@ def main():
         lastmod=max(p["date"] for p in posts)[:10])
 
     # Outils autonomes (affichés en iframe) : description et page de référence pour Google
-    for k, t in TOOLS.items():
-        TOOL_CANON[t["src"]] = (f"/francais/lecture/{k}/", t["desc"])
     for src, (canon, d) in TOOL_CANON.items():
         path = os.path.join(OUT, src.strip("/"))
         if not src.startswith("/outils/") or not os.path.exists(path):
@@ -854,6 +793,11 @@ def main():
             redirects.append(f"/post/{quote(p['slug'])} /post/{ascii_slug(p['slug'])}/ 301")
     # ancienne rubrique Compréhension : ses jeux sont maintenant dans Lecture
     redirects += ["/francais/comprehension/ /francais/lecture/ 301", "/blog/comprehension/ /blog/lecture/ 301"]
+    # ancien article « Lecture rapide, fluence » : ses trois outils sont devenus des articles
+    redirects += ["/post/lecture-rapide-de-mots-avec-le-tachitoscope/ /francais/lecture/ 301",
+                  "/francais/lecture/tachistoscope/ /post/lecture-rapide-de-mots-tachistoscope/ 301",
+                  "/francais/lecture/teleprompteur-de-lecture/ /post/teleprompteur-de-lecture/ 301",
+                  "/francais/lecture/teleprompteur-a-l-ecoute/ /post/teleprompteur-a-l-ecoute/ 301"]
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
     with open(os.path.join(OUT, "titres.json"), "w") as f:  # titres des pages, pour /admin/stats

@@ -1,5 +1,5 @@
 {
- "count": 34,
+ "count": 37,
  "posts": [
   {
    "title": "Les explorateurs du cerveau",
@@ -1904,7 +1904,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le bouton « Écouter » fait dire le nombre par l'ordinateur : l'élève vérifie sa lecture.",
+             "text": "Le bouton « Écouter » fait dire le nombre par l'ordinateur. Attention : s'il écoute, l'élève ne gagne pas le point (message ⚠️ Attention !) et le nombre est mis à revoir.",
              "decorations": []
             }
            }
@@ -8085,14 +8085,26 @@
    }
   },
   {
-   "title": "Lecture rapide, fluence",
-   "slug": "lecture-rapide-de-mots-avec-le-tachitoscope",
-   "excerpt": "Trois outils pour lire plus vite : le tachistoscope pour les mots, un téléprompteur qui fait défiler un texte, et un téléprompteur qui suit la voix de l'élève.",
-   "date": "2026-05-21T11:09:13Z",
    "categoryIds": [],
    "media": {
     "displayed": true,
     "custom": false
+   },
+   "cat": "lecture",
+   "title": "Lecture rapide de mots",
+   "slug": "lecture-rapide-de-mots-tachistoscope",
+   "excerpt": "Un tachistoscope en ligne : les mots apparaissent un par un et l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.",
+   "date": "2026-05-21T11:09:15Z",
+   "jeu": {
+    "competence": "mots",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
    },
    "richContent": {
     "nodes": [
@@ -8102,28 +8114,86 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Trois outils pour entraîner la lecture rapide, des mots isolés jusqu'au texte lu à voix haute. Cliquez sur une vignette pour ouvrir l'outil.",
+         "text": "Les mots apparaissent un par un : l'élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes. Un entraînement court pour automatiser la reconnaissance des mots.",
          "decorations": []
         }
        }
       ]
      },
      {
-      "type": "TOOL_CARDS",
-      "tools": [
-       "tachistoscope",
-       "teleprompteur-de-lecture",
-       "teleprompteur-a-l-ecoute"
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html",
+       "containerData": {
+        "height": {
+         "custom": "1210"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Voir aussi : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Fluence sur 3 niveaux de texte",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/teleprompteur-de-lecture/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " et ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Texte de fluence à vitesse automatique",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/teleprompteur-a-l-ecoute/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
       ]
      },
      {
       "type": "PARAGRAPH",
-      "id": "ncic6308",
       "nodes": [
        {
         "type": "TEXT",
-        "id": "",
-        "nodes": [],
         "textData": {
          "text": "Pour aller plus loin, un autre tachistoscope en ligne : ",
          "decorations": []
@@ -8131,8 +8201,6 @@
        },
        {
         "type": "TEXT",
-        "id": "",
-        "nodes": [],
         "textData": {
          "text": "https://lecturerapideblog.com/outils/tachistoscope/",
          "decorations": [
@@ -8140,30 +8208,30 @@
            "type": "LINK",
            "linkData": {
             "link": {
-             "url": "https://lecturerapideblog.com/outils/tachistoscope/",
-             "target": "BLANK",
-             "rel": {
-              "noreferrer": true
-             }
+             "url": "https://lecturerapideblog.com/outils/tachistoscope/"
             }
            }
-          },
-          {
-           "type": "UNDERLINE"
           }
          ]
         }
        }
-      ],
-      "paragraphData": {
-       "textStyle": {
-        "textAlignment": "AUTO"
-       }
-      }
+      ]
      }
     ],
     "documentStyle": {}
+   }
+  },
+  {
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
    },
+   "cat": "lecture",
+   "title": "Fluence sur 3 niveaux de texte du CP au CE1",
+   "slug": "teleprompteur-de-lecture",
+   "excerpt": "Un téléprompteur de lecture : le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute.",
+   "date": "2026-05-21T11:09:14Z",
    "jeu": {
     "competence": "phrases-textes",
     "niveaux": [
@@ -8174,6 +8242,205 @@
      "ecran",
      "projetable"
     ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/teleprompteur-de-lecture.html",
+       "containerData": {
+        "height": {
+         "custom": "860"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Voir aussi : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Lecture rapide de mots",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/lecture-rapide-de-mots-tachistoscope/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " et ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Texte de fluence à vitesse automatique",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/teleprompteur-a-l-ecoute/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ],
+    "documentStyle": {}
+   }
+  },
+  {
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "cat": "lecture",
+   "title": "Texte de fluence à vitesse automatique",
+   "slug": "teleprompteur-a-l-ecoute",
+   "excerpt": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne avec Chrome ou Edge.",
+   "date": "2026-05-21T11:09:13Z",
+   "jeu": {
+    "competence": "phrases-textes",
+    "niveaux": [
+     "CP",
+     "CE1"
+    ],
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "NOTE",
+      "html": "<strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace."
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/teleprompteur-a-l-ecoute.html",
+       "containerData": {
+        "height": {
+         "custom": "860"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Voir aussi : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Lecture rapide de mots",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/lecture-rapide-de-mots-tachistoscope/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": " et ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Fluence sur 3 niveaux de texte",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/teleprompteur-de-lecture/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ],
+    "documentStyle": {}
    }
   },
   {
