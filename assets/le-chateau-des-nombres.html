@@ -90,6 +90,12 @@
   .etoiles{color:var(--ok)}
   .consigne{text-align:center;font-size:1.2rem;min-height:1.6em;margin:10px 0 6px;font-weight:700}
   .commandes{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;min-height:58px}
+  .ecoute{text-align:center;min-height:1.5em;margin:0 0 8px;font-size:1.1rem}
+  .ecoute.actif{color:#3a86ff;font-weight:700;animation:pulse 1s ease-in-out infinite alternate}
+  .ecoute.ok{color:var(--ok);font-weight:700}
+  .ecoute.ko{color:var(--ko);font-weight:700}
+  @keyframes pulse{to{opacity:.45}}
+  .btn-micro{background:#8b5cf6;color:#fff}
   .secondaires{display:flex;justify-content:center;gap:10px;margin-top:10px}
 
   /* ---------- Fin ---------- */
@@ -135,6 +141,8 @@
     </div>
     <div class="ligne">
       <label class="coche"><input type="checkbox" id="cacher"> Cacher les autres nombres du château (plus difficile)</label>
+      <label class="coche"><input type="checkbox" id="micro" checked> 🎤 L'élève lit au micro : le jeu dit s'il s'est trompé</label>
+      <p class="mode-desc" id="infoMicro"></p>
       <label class="coche"><input type="checkbox" id="sons" checked> Sons</label>
     </div>
     <p class="erreur-reglage" id="erreur"></p>
@@ -163,6 +171,7 @@
     </div>
   </div>
   <p class="consigne" id="consigne"></p>
+  <p class="ecoute" id="ecoute"></p>
   <div class="commandes" id="commandes"></div>
   <div class="secondaires">
     <button class="btn btn-gris" id="btnReglages">⚙️ Réglages</button>
@@ -188,7 +197,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const etat = { mode:"lire", min:0, max:99, tours:10, cacher:false, sons:true,
-                 liste:[], i:0, bons:0, aRevoir:[], n:null, essais:0, phase:"pret", forces:null };
+                 liste:[], i:0, bons:0, aRevoir:[], n:null, essais:0, phase:"pret", forces:null, micro:false, reco:null, jeton:0 };
 
   /* ---------- Sons et voix ---------- */
   let actx = null;
@@ -215,6 +224,100 @@
     speechSynthesis.speak(u);
   }
   if("speechSynthesis" in window) speechSynthesis.getVoices();
+
+  /* ---------- Micro : reconnaissance vocale ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    $("micro").checked = false; $("micro").disabled = true;
+    $("infoMicro").textContent = "Micro non disponible sur ce navigateur : utilisez Google Chrome ou Microsoft Edge.";
+  } else {
+    $("infoMicro").textContent = "Chrome ou Edge, connexion internet nécessaire. Le micro est demandé au premier nombre.";
+  }
+  const MOTS = {zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,
+    treize:13,quatorze:14,quinze:15,seize:16,vingt:20,vingts:20,trente:30,quarante:40,cinquante:50,soixante:60,
+    septante:70,huitante:80,octante:80,nonante:90};
+  function motsVersNombre(t){
+    const mots = t.normalize("NFD").replace(/[̀-ͯ]/g,"").split(/[\s\-',.!?]+/);
+    let n = 0, vu = false;
+    for(const m of mots){
+      if(m in MOTS){ const v = MOTS[m]; n += (v === 20 && n === 4) ? 76 : v; vu = true; }
+      else if(m === "cent" || m === "cents"){ n = (n || 1) * 100; vu = true; }
+    }
+    return vu ? n : null;
+  }
+  function nombresDans(t){
+    t = t.toLowerCase();
+    const res = (t.match(/\d+/g) || []).map(Number);
+    const v = motsVersNombre(t); if(v !== null) res.push(v);
+    return res;
+  }
+  const ecoute = (txt, cls="") => { $("ecoute").textContent = txt; $("ecoute").className = "ecoute " + cls; };
+  function stopMicro(){ etat.jeton++; if(etat.reco){ try{ etat.reco.abort(); }catch(e){} etat.reco = null; } }
+
+  function ecouterLecture(){
+    if(etat.phase !== "lecture" || etat.reco) return;
+    speechSynthesis?.cancel();
+    const jeton = ++etat.jeton, n = etat.n;
+    let fini = false, entendu = "";
+    const r = new SR();
+    r.lang = "fr-FR"; r.interimResults = true; r.maxAlternatives = 5; r.continuous = false;
+    etat.reco = r;
+    ecoute("🎤 J'écoute… lis le nombre !", "actif");
+    boutonsLecture(true);
+    const conclure = (ok, message) => {
+      if(fini || jeton !== etat.jeton) return;
+      fini = true; clearTimeout(limite);
+      try{ r.abort(); }catch(e){}
+      etat.reco = null;
+      if(ok === null){ ecoute(message); boutonsLecture(); return; }
+      const dit = entendu ? `« ${entendu} »` : "autre chose";
+      if(ok){
+        ecoute(`J'ai entendu ${dit} : c'est juste !`, "ok");
+        valider(true, "Bravo, c'est bien " + n + " !", 1300);
+      } else if(etat.essais === 0){
+        etat.essais++; sonKo();
+        ecoute(`J'ai entendu ${dit}. Ce n'est pas ça… Essaie encore !`, "ko");
+        boutonsLecture();
+      } else {
+        ecoute(`J'ai entendu ${dit}.`, "ko");
+        valider(false, "Ce nombre se lit : " + n + ".", 2200);
+        setTimeout(() => dire(n), 350);
+      }
+    };
+    r.onresult = e => {
+      let final = false;
+      for(let i = e.resultIndex; i < e.results.length; i++){
+        const res = e.results[i];
+        for(let j = 0; j < res.length; j++){
+          const t = res[j].transcript;
+          if(j === 0) entendu = t.trim();
+          if(nombresDans(t).includes(n)){ entendu = t.trim(); conclure(true); return; }
+        }
+        if(res.isFinal) final = true;
+      }
+      if(final) conclure(false);
+    };
+    r.onerror = e => {
+      if(e.error === "aborted") return;
+      if(e.error === "not-allowed" || e.error === "service-not-allowed")
+        conclure(null, "🎤 Micro refusé : autorisez-le dans le navigateur, ou validez avec les boutons.");
+      else if(e.error === "no-speech") conclure(null, "Je n'ai rien entendu… Appuie sur 🎤 et lis plus fort.");
+      else conclure(null, "Micro indisponible. Validez avec les boutons.");
+    };
+    r.onend = () => conclure(null, "Je n'ai rien entendu… Appuie sur 🎤 et lis plus fort.");
+    const limite = setTimeout(() => conclure(null, "Je n'ai rien entendu… Appuie sur 🎤 et lis plus fort."), 8000);
+    try{ r.start(); }catch(e){ conclure(null, "Micro indisponible. Validez avec les boutons."); }
+  }
+
+  function boutonsLecture(enCours=false){
+    const l = [];
+    if(etat.micro) l.push([enCours ? "🎤 J'écoute…" : "🎤 Je lis", "btn-micro", ecouterLecture]);
+    l.push(["🔊 Écouter", "btn-gris", () => { stopMicro(); dire(etat.n); boutonsLecture(); }],
+           ["✓ Bien lu", "btn-ok", () => valider(true)],
+           ["✗ À revoir", "btn-ko", () => valider(false)]);
+    boutons(l);
+    if(enCours) $("commandes").firstChild.disabled = true;
+  }
 
   /* ---------- Grille ---------- */
   const cases = [];
@@ -247,10 +350,14 @@
 
   /* ---------- Réglages ---------- */
   const DESC = {
-    lire: "Un nombre sort du château : l'élève le lit à voix haute, l'écoute pour vérifier, puis valide (Bien lu / À revoir).",
+    lire: "Un nombre sort du château : l'élève le lit à voix haute, l'écoute pour vérifier, puis valide (Bien lu / À revoir). Avec le micro, le jeu écoute l'élève et lui dit s'il s'est trompé.",
     trouver: "L'ordinateur dit un nombre à l'oral : l'élève le retrouve et clique dessus dans le château."
   };
-  const majDesc = () => { $("modeDesc").textContent = DESC[document.querySelector("input[name=mode]:checked").value]; };
+  const majDesc = () => {
+    const m = document.querySelector("input[name=mode]:checked").value;
+    $("modeDesc").textContent = DESC[m];
+    $("micro").closest("label").style.display = $("infoMicro").style.display = m === "lire" ? "" : "none";
+  };
   document.querySelectorAll("input[name=mode]").forEach(r => r.addEventListener("change", majDesc)); majDesc();
 
   function lireReglages(){
@@ -262,7 +369,7 @@
     $("erreur").textContent = "";
     Object.assign(etat, { min, max, mode: document.querySelector("input[name=mode]:checked").value,
       tours: +document.querySelector("input[name=tours]:checked").value,
-      cacher: $("cacher").checked, sons: $("sons").checked });
+      cacher: $("cacher").checked, sons: $("sons").checked, micro: !!SR && $("micro").checked });
     return true;
   }
 
@@ -278,6 +385,7 @@
   function montrer(id){ document.querySelectorAll(".ecran").forEach(e => e.classList.toggle("actif", e.id === id)); }
 
   function nouvellePartie(){
+    stopMicro(); ecoute("");
     etat.liste = tirage(); etat.i = 0; etat.bons = 0; etat.aRevoir = []; etat.n = null;
     $("fin").classList.remove("actif"); $("chateau").classList.remove("victoire");
     $("grille").classList.toggle("cacher", etat.cacher);
@@ -312,10 +420,9 @@
       etat.phase = "lecture";
       $("grille").classList.add("focus");
       c.classList.add("sort"); sonSortie();
-      $("consigne").textContent = "Lis le nombre qui sort du château\u00a0!";
-      boutons([["🔊 Écouter", "btn-gris", () => dire(etat.n)],
-               ["✓ Bien lu", "btn-ok", () => valider(true)],
-               ["✗ À revoir", "btn-ko", () => valider(false)]]);
+      $("consigne").textContent = etat.micro ? "Lis le nombre au micro\u00a0!" : "Lis le nombre qui sort du château\u00a0!";
+      ecoute(etat.micro ? "Appuie sur 🎤 puis lis le nombre." : "");
+      boutonsLecture();
     } else {
       etat.phase = "cherche";
       $("grille").classList.add("clic");
@@ -325,15 +432,15 @@
     }
   }
 
-  function valider(ok){
+  function valider(ok, message, delai=650){
     if(etat.phase !== "lecture") return;
-    etat.phase = "pause";
+    etat.phase = "pause"; if(!message){ stopMicro(); ecoute(""); }
     const c = cases[etat.n];
     c.classList.remove("sort"); $("grille").classList.remove("focus");
     c.classList.add(ok ? "lu-ok" : "lu-ko");
     if(ok){ etat.bons++; sonOk(); } else { etat.aRevoir.push(etat.n); bip(260,.2,"triangle"); }
-    majHaut(); boutons([]); $("consigne").textContent = ok ? "Bravo\u00a0!" : "On le reverra.";
-    setTimeout(suivant, 650);
+    majHaut(); boutons([]); $("consigne").textContent = message || (ok ? "Bravo\u00a0!" : "On le reverra.");
+    setTimeout(() => { ecoute(""); suivant(); }, delai);
   }
 
   function cliquer(k){
@@ -392,7 +499,7 @@
 
   /* ---------- Boutons ---------- */
   $("go").addEventListener("click", () => { if(lireReglages()){ etat.forces = null; nouvellePartie(); } });
-  $("btnReglages").addEventListener("click", () => { speechSynthesis?.cancel(); montrer("ecranReglages"); });
+  $("btnReglages").addEventListener("click", () => { stopMicro(); speechSynthesis?.cancel(); montrer("ecranReglages"); });
   $("btnRecommencer").addEventListener("click", nouvellePartie);
   $("finRejouer").addEventListener("click", () => { etat.forces = null; nouvellePartie(); });
   $("finReglages").addEventListener("click", () => { $("fin").classList.remove("actif"); montrer("ecranReglages"); });
@@ -403,6 +510,7 @@
       if(e.key === "ArrowRight" || e.key === "Enter"){ e.preventDefault(); valider(true); }
       else if(e.key === "ArrowLeft" || e.key === "Backspace"){ e.preventDefault(); valider(false); }
       else if(e.key === " "){ e.preventDefault(); dire(etat.n); }
+      else if((e.key === "m" || e.key === "M") && etat.micro){ e.preventDefault(); ecouterLecture(); }
     }
   });
 })();
