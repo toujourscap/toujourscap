@@ -147,6 +147,10 @@ summary{cursor:pointer}
     <button class="b sec" id="ecouter">🔊 Écouter</button>
     <button class="b" id="cacher">🔄 Je l'ai dans la tête : je retourne la feuille</button>
   </div>
+  <div class="btns" id="choix-suite" hidden>
+    <button class="b" id="choix-ecrit">✍️ Je redis la règle avec mes mots</button>
+    <button class="b sec" id="choix-defi">🧐 Je trouve qui l'a bien redite</button>
+  </div>
   <div id="zone-ia" hidden>
     <p class="consigne">Redis la règle <b>avec tes mots</b> : écris-la, ou appuie sur 🎤 et dis-la.</p>
     <div class="saisie">
@@ -306,6 +310,7 @@ const DIT = {
   cachee:['Mes élèves ont essayé de redire la règle… mais certains se sont emmêlé les crayons ! Trouve les <b>2</b> qui ont raison.','Abracadabra, la règle a disparu ! Qui l\'a bien redite ? Attention, il y a des pièges !'],
   coup:['Chut… je n\'ai rien vu ! 🙈'],
   ia:['Abracadabra, la règle a disparu ! Redis-la-moi avec <b>tes</b> mots. Tu peux l\'écrire… ou me la dire dans le micro 🎤 !','Feuille retournée ! Je t\'écoute : comment tu l\'expliquerais à un copain ?'],
+  choix:['Feuille retournée ! Tu préfères me redire la règle <b>avec tes mots</b>, ou trouver les élèves qui l\'ont bien redite ?'],
   attente:['Hmm… je lis… je réfléchis… mon crayon chauffe ! 🤔'],
   bravo:['Sapristi ! Tu as trouvé les deux ! Mon nœud papillon en tourne tout seul !','Saperlipopette ! Tu as l\'œil d\'un détective de l\'orthographe !'],
   presque:['Aïe aïe aïe, un piège t\'a attrapé ! Lis mes explications, puis rejoue.','Pas tout à fait ! Regarde pourquoi en rouge, et retente ta chance.'],
@@ -354,7 +359,7 @@ function ouvrir(i){
   $('#regle').innerHTML=cur.regle;
   $('#ex').innerHTML=cur.exemples.map(x=>`<li>${x}</li>`).join('');
   $('#feuille').classList.remove('tournee');
-  $('#btns-lire').hidden=false; $('#zone').hidden=true; $('#zone-ia').hidden=true; arreterMicro();
+  $('#btns-lire').hidden=false; $('#zone').hidden=true; $('#zone-ia').hidden=true; $('#choix-suite').hidden=true; arreterMicro();
   show('jeu'); dit('lire');
 }
 
@@ -370,10 +375,23 @@ $('#cacher').onclick = () => {
   if('speechSynthesis' in window) speechSynthesis.cancel();
   $('#feuille').classList.add('tournee');
   $('#btns-lire').hidden=true;
-  $('#verso-sous').textContent = IA.actif ? 'Redis-la avec tes mots !' : 'Qui l\'a bien redite ?';
-  if(IA.actif){ ouvrirIA(); setTimeout(()=>{ $('#zone-ia').hidden=false; $('#texte').focus(); }, 700); dit('ia'); }
-  else { preparer(); setTimeout(()=>{ $('#zone').hidden=false; }, 700); dit('cachee'); }
+  // Selon la classe : CP → directement les propositions ; CE1 → au choix ; CE2 et plus → la règle redite par écrit d'abord
+  const c=classe(), mode = !IA.actif || c==='CP' ? 'defi' : c==='CE1' ? 'choix' : 'ecrit';
+  if(mode==='choix'){ $('#verso-sous').textContent='Que veux-tu faire ?'; setTimeout(()=>{ $('#choix-suite').hidden=false; }, 700); dit('choix'); }
+  else if(mode==='ecrit') versEcrit(false);
+  else versDefiDirect();
 };
+function versEcrit(passer){
+  $('#choix-suite').hidden=true; $('#verso-sous').textContent='Redis-la avec tes mots !';
+  ouvrirIA(); $('#passer').hidden=!passer;
+  setTimeout(()=>{ $('#zone-ia').hidden=false; $('#texte').focus(); }, 700); dit('ia');
+}
+function versDefiDirect(){
+  $('#choix-suite').hidden=true; $('#verso-sous').textContent='Qui l\'a bien redite ?';
+  preparer(); setTimeout(()=>{ $('#zone').hidden=false; }, 700); dit('cachee');
+}
+$('#choix-ecrit').onclick = () => versEcrit(true);
+$('#choix-defi').onclick = versDefiDirect;
 
 function preparer(){
   const el=melange(ELEVES);
