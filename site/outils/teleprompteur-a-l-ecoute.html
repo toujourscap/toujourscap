@@ -79,6 +79,23 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .levels .lbl{font-size:13px;color:var(--muted);margin-right:2px}
 .levels button{font-size:15px;min-height:40px;padding:8px 14px}
 .levels button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.eleves{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.eleves .lbl{font-size:14px;color:var(--muted)}
+.eleves input{font-family:var(--ui);font-size:15px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);padding:8px 10px;min-height:46px;box-sizing:border-box;width:11em;max-width:100%}
+.resultats{border:1px solid var(--line);border-radius:12px;background:var(--field);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.resultats h2{font-size:17px;margin:0}
+.tabwrap{overflow-x:auto}
+.resultats table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.resultats th,.resultats td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.resultats th{font-size:12px;color:var(--muted);font-weight:600}
+.resultats td.n{text-align:right} .resultats th.n{text-align:right}
+.resultats td.err{color:var(--warn)} .resultats td.ok{color:var(--ok);font-weight:600}
+.resultats .suppr{min-height:30px;padding:2px 10px;font-size:13px;font-weight:400}
+.resultats .vide{color:var(--muted);margin:0}
+.bilan .save{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:8px}
+.bilan .save input{font-family:var(--ui);font-size:14px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);padding:6px 8px;min-height:36px;box-sizing:border-box;width:10em}
+.bilan .save button{margin-top:0}
+.bilan .saved{color:var(--ok);font-weight:600;font-size:14px;margin:8px 0 0}
 .editbox{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:12px;background:var(--field);padding:14px}
 textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--text);font-size:18px;line-height:1.5;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical}
 .hint{font-size:13px;color:var(--muted);margin:0}
@@ -140,6 +157,14 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
   </div>
 
+  <div class="eleves">
+    <label class="lbl" for="eleve">Élève</label>
+    <select id="eleve"></select>
+    <span id="ajoutBox" hidden><input id="nouveau" maxlength="30" placeholder="Prénom" autocomplete="off"> <button type="button" id="ajoutOk">Ajouter</button></span>
+    <button type="button" id="voirRes">📋 Résultats</button>
+  </div>
+  <div class="resultats" id="resultats" hidden></div>
+
   <div class="editbox" id="editbox" hidden>
     <label for="txt" class="hint">Votre texte : collez ou tapez le texte à lire (un retour à la ligne = une nouvelle ligne à l'écran). Il reste enregistré sur cet ordinateur.</label>
     <textarea id="txt"></textarea>
@@ -149,7 +174,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
   </div>
 
-  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Choisissez un texte par niveau, ou « Mon texte » pour coller le vôtre. Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
+  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Choisissez un élève : chaque bilan est enregistré à son prénom, sur ce navigateur seulement (plusieurs élèves possibles). Choisissez un texte par niveau, ou « Mon texte » pour coller le vôtre. Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
 </div>
 
 <script>
@@ -367,11 +392,89 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
         ${(toutLu || arrete || d!==60) ? `<span><b>${parMin}</b>mots justes / min</span>` : ""}
       </div>
       <p>Mots barrés en orange = erreurs (sautés ou mal lus). Le micro s'est trompé ? Cliquez sur un mot pour le compter juste ou faux.</p>
+      ${enregistrementHtml()}
       <button type="button" id="bilanFermer">Masquer le bilan</button>`;
+    sauver(lus, err, justes, sec);
     $("bilan").hidden = false; bilanOn = true; stage.classList.add("bilan-on"); $("done").hidden = true;
     $("bilanFermer").addEventListener("click", ()=>{ $("bilan").hidden=true; bilanOn=false; follow(); });
+    const bs = $("bilanSave");
+    if (bs) bs.addEventListener("click", ()=>{ const n=($("bilanPrenom").value||"").trim(); if(!n) { $("bilanPrenom").focus(); return; } choisirEleve(n); bilan(toutLu, sec); });
     paint();
   }
+
+  // ---------- Résultats par élève (enregistrés sur ce navigateur) ----------
+  const KEY = "tpe-resultats";
+  let eleve = "", entreeId = 0;
+  function lire(){ try{ const d = JSON.parse(localStorage.getItem(KEY)||"{}"); return d && typeof d==="object" && d.eleves ? d : {eleves:{}}; }catch(e){ return {eleves:{}}; } }
+  function ecrire(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); return true; }catch(e){ return false; } }
+  const noms = () => Object.keys(lire().eleves).sort((a,b)=>a.localeCompare(b,"fr"));
+  const echap = t => String(t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function nomTexte(){
+    if (level==="perso") return "Mon texte : " + (text.split("\n")[0]||"").slice(0,30);
+    const b = document.querySelector(`.levels button[data-lv="${level}"]`); return b ? b.textContent : "";
+  }
+  function remplirEleves(){
+    const sel = $("eleve"), l = noms();
+    sel.innerHTML = `<option value="">— Aucun —</option>` + l.map(n=>`<option value="${echap(n)}">${echap(n)}</option>`).join("") + `<option value="__ajout">+ Ajouter un élève…</option>`;
+    sel.value = l.includes(eleve) ? eleve : "";
+    if (!l.includes(eleve)) eleve = "";
+  }
+  function choisirEleve(n){
+    const d = lire(); if (!d.eleves[n]) d.eleves[n] = []; ecrire(d);
+    eleve = n; try{ localStorage.setItem("tpe-eleve", n); }catch(e){}
+    remplirEleves(); if (!$("resultats").hidden) afficherResultats();
+  }
+  function enregistrementHtml(){
+    if (eleve) return `<p class="saved">✓ Enregistré dans les résultats de ${echap(eleve)}</p>`;
+    return `<div class="save"><input id="bilanPrenom" list="listeEleves" maxlength="30" placeholder="Prénom de l'élève" autocomplete="off">
+      <datalist id="listeEleves">${noms().map(n=>`<option value="${echap(n)}">`).join("")}</datalist>
+      <button type="button" id="bilanSave">💾 Enregistrer</button></div>`;
+  }
+  // Enregistre le bilan (ou le met à jour après une correction de l'adulte)
+  function sauver(lus, err, justes, sec){
+    if (!eleve) return;
+    const d = lire(); const l = d.eleves[eleve] || (d.eleves[eleve] = []);
+    if (!entreeId) entreeId = Date.now();
+    const e = {id:entreeId, date:new Date(entreeId).toISOString(), texte:nomTexte(), duree:sec, lus, erreurs:err, justes, parMin:Math.round(justes*60/Math.max(1,sec))};
+    const i = l.findIndex(x=>x.id===entreeId); if (i>=0) l[i]=e; else l.push(e);
+    ecrire(d); if (!$("resultats").hidden) afficherResultats();
+  }
+  function afficherResultats(){
+    const box = $("resultats");
+    if (!eleve){ box.innerHTML = `<p class="vide">Choisissez ou ajoutez un élève pour voir ses résultats.</p>`; return; }
+    const l = (lire().eleves[eleve]||[]).slice().sort((a,b)=>b.id-a.id);
+    const ligne = e => { const dt = new Date(e.date);
+      return `<tr><td>${dt.toLocaleDateString("fr-FR")} ${dt.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</td><td>${echap(e.texte)}</td><td class="n">${fmt(e.duree)}</td><td class="n">${e.lus}</td><td class="n err">${e.erreurs}</td><td class="n ok">${e.justes}</td><td class="n">${e.parMin}</td><td><button type="button" class="suppr" data-id="${e.id}" aria-label="Supprimer ce résultat">✕</button></td></tr>`; };
+    box.innerHTML = `<h2>Résultats de ${echap(eleve)}</h2>` + (l.length ? `<div class="tabwrap"><table>
+      <thead><tr><th>Date</th><th>Texte</th><th class="n">Durée</th><th class="n">Mots lus</th><th class="n">Erreurs</th><th class="n">Mots justes</th><th class="n">Justes / min</th><th></th></tr></thead>
+      <tbody>${l.map(ligne).join("")}</tbody></table></div>` : `<p class="vide">Aucun bilan enregistré pour l'instant.</p>`)
+      + `<div class="btns"><button type="button" id="supprEleve">Supprimer l'élève et ses résultats</button></div>`;
+    box.querySelectorAll(".suppr").forEach(b=>b.addEventListener("click", ()=>{
+      const d = lire(); d.eleves[eleve] = (d.eleves[eleve]||[]).filter(x=>String(x.id)!==b.dataset.id); ecrire(d);
+      if (String(entreeId)===b.dataset.id) entreeId = 0;
+      afficherResultats();
+    }));
+    const se = $("supprEleve");
+    se.addEventListener("click", ()=>{
+      if (se.dataset.sur!=="1"){ se.dataset.sur="1"; se.textContent=`Confirmer : supprimer ${eleve} ?`; return; }
+      const d = lire(); delete d.eleves[eleve]; ecrire(d); eleve=""; entreeId=0;
+      try{ localStorage.removeItem("tpe-eleve"); }catch(e){}
+      remplirEleves(); afficherResultats();
+    });
+  }
+  $("eleve").addEventListener("change", e=>{
+    const v = e.target.value;
+    if (v==="__ajout"){ $("ajoutBox").hidden=false; $("nouveau").value=""; $("nouveau").focus(); e.target.value = eleve; return; }
+    $("ajoutBox").hidden = true;
+    eleve = v; entreeId = 0; try{ localStorage.setItem("tpe-eleve", v); }catch(_){}
+    if (!$("resultats").hidden) afficherResultats();
+  });
+  const ajouter = ()=>{ const n = $("nouveau").value.trim(); if(!n){ $("nouveau").focus(); return; } $("ajoutBox").hidden=true; entreeId=0; choisirEleve(n); };
+  $("ajoutOk").addEventListener("click", ajouter);
+  $("nouveau").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); ajouter(); } });
+  $("voirRes").addEventListener("click", ()=>{ const r=$("resultats"); r.hidden=!r.hidden; if(!r.hidden) afficherResultats(); });
+  try{ eleve = localStorage.getItem("tpe-eleve") || ""; }catch(e){}
+  remplirEleves();
 
   function clicMot(i){
     if (fini){   // correction par l'adulte
@@ -439,7 +542,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   function ui(){ listenBtn.textContent = listening ? "■ Arrêter" : "🎤 Écouter"; listenBtn.classList.toggle("live", listening); }
   function reset(){
     if (listening){ listening=false; try{ rec && rec.abort(); }catch(_){} ui(); status("Micro arrêté"); }
-    st=fresh(); shown=st; stamps=[]; startT=0; fini=false; bilanOn=false; corrections=new Map(); dernierBilan=null; stopTimer();
+    st=fresh(); shown=st; stamps=[]; startT=0; fini=false; bilanOn=false; corrections=new Map(); dernierBilan=null; entreeId=0; stopTimer();
     stage.classList.remove("bilan-on"); $("bilan").hidden=true; $("done").hidden=true;
     $("time").textContent = duree() ? fmt(duree()) : "0:00"; $("timeLbl").textContent = duree() ? "restant" : "temps";
     $("wpm").textContent="–"; $("heard").textContent=""; paint();
@@ -475,7 +578,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   document.addEventListener("fullscreenchange", ()=>setTimeout(layout,60));
   window.addEventListener("resize", layout);
   document.addEventListener("keydown", e=>{
-    if (e.target.tagName==="TEXTAREA" || e.target.tagName==="SELECT") return;
+    if (e.target.tagName==="TEXTAREA" || e.target.tagName==="SELECT" || e.target.tagName==="INPUT") return;
     if (e.code==="Space"){ e.preventDefault(); avancer(1); }
     else if (e.key==="ArrowLeft"){ e.preventDefault(); $("prev").click(); }
     else if (e.key==="ArrowRight"){ e.preventDefault(); avancer(1); }
