@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Téléprompteur à l'écoute</title><link rel="canonical" href="https://toujourscap.com/post/teleprompteur-a-l-ecoute/"><meta name="description" content="L&#x27;élève lit à voix haute et le texte avance au rythme de sa lecture, avec sa vitesse en mots par minute. Fonctionne avec Chrome ou Edge."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Téléprompteur à l'écoute</title><link rel="canonical" href="https://toujourscap.com/post/teleprompteur-a-l-ecoute/"><meta name="description" content="L&#x27;élève lit à voix haute : le texte suit sa lecture, même s&#x27;il va vite. À la fin de la minute, le bilan donne le nombre de mots lus et d&#x27;erreurs. Avec Chrome…"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Lexend:wght@400;600&display=swap">
@@ -40,6 +40,9 @@ h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
 .w{border-radius:.2em;padding:0 .08em;cursor:pointer}
 .w.read{color:var(--read)}
 .w.skip{color:var(--read);text-decoration:underline dotted}
+.bilan-on .w.skip{color:#ffb070;text-decoration:line-through;text-decoration-thickness:2px}
+.bilan-on .w{cursor:pointer}
+.w.fin{box-shadow:.18em 0 0 0 var(--band)}
 .w.cur{background:var(--band);color:var(--band-ink)}
 .w.cur.partial{box-shadow:0 .12em 0 0 var(--accent);animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{filter:brightness(1.12)}}
@@ -48,6 +51,15 @@ h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
 .fade.bottom{bottom:0;height:22%;background:linear-gradient(transparent,var(--board))}
 .heard{position:absolute;left:12px;right:12px;bottom:10px;font-size:13px;color:var(--read);text-align:center;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .done{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:600;color:var(--band-ink);background:var(--band);padding:10px 18px;border-radius:999px;text-align:center}
+.bilan{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(92%,560px);box-sizing:border-box;background:var(--field);color:var(--ink);border-radius:14px;padding:12px 16px;box-shadow:0 6px 24px rgba(0,0,0,.35);text-align:center;font-size:15px}
+.bilan h2{margin:0 0 6px;font-size:18px}
+.bilan .chiffres{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 22px;margin:4px 0}
+.bilan .chiffres b{display:block;font-size:28px;font-variant-numeric:tabular-nums}
+.bilan .chiffres .err b{color:var(--warn)}
+.bilan .chiffres .mclm b{color:var(--ok)}
+.bilan p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.bilan button{min-height:36px;padding:6px 12px;font-size:14px;margin-top:8px}
+select{font-family:var(--ui);font-size:15px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);padding:8px 10px;min-height:46px}
 
 .stats{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--muted)}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums;font-size:18px;margin-right:4px}
@@ -84,12 +96,14 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     <div class="fade bottom"></div>
     <div class="heard" id="heard"></div>
     <div class="done" id="done" hidden>Bravo, tu as tout lu !</div>
+    <div class="bilan" id="bilan" hidden></div>
   </div>
 
   <div class="stats" aria-live="polite">
-    <span><b id="wpm">–</b>mots/min</span>
     <span><b id="prog">0/0</b>mots lus</span>
-    <span><b id="time">0:00</b>temps</span>
+    <span><b id="errs">0</b>erreurs</span>
+    <span><b id="wpm">–</b>mots/min</span>
+    <span><b id="time">0:00</b><span id="timeLbl">temps</span></span>
   </div>
 
   <div class="controls">
@@ -101,6 +115,13 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
       <button id="editBtn" type="button">✎ Changer le texte</button>
       <button id="full" type="button">⛶ Plein écran</button>
     </div>
+    <label class="hint" for="duree">Durée
+      <select id="duree">
+        <option value="60" selected>1 minute</option>
+        <option value="120">2 minutes</option>
+        <option value="0">Sans limite</option>
+      </select>
+    </label>
     <div class="ctl">
       <label for="size">Taille du texte <output id="sizeOut">40 px</output></label>
       <input id="size" type="range" min="24" max="80" step="2" value="40">
@@ -116,25 +137,44 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     </div>
   </div>
 
-  <p class="hint" id="help">L'enfant lit à voix haute : le texte avance au rythme de sa lecture. Il peut lire syllabe par syllabe : le mot avance dès qu'il est reconnu. Cliquez sur un mot pour repartir de là. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
+  <p class="hint" id="help">L'enfant lit à voix haute : le texte suit sa lecture, même s'il va vite. Le chronomètre démarre au premier mot lu. À la fin de la minute, le bilan donne le nombre de mots lus et d'erreurs (mots sautés ou mal lus, barrés en orange). Si le micro s'est trompé, cliquez sur un mot barré pour le compter juste (ou sur un mot pour le compter faux). Placer le micro près de l'enfant. Sans micro : barre d'espace ou « Mot ▶ » pour avancer.</p>
 </div>
 
 <script>
 (function(){
   const SAMPLE = "Le petit hérisson se réveille au fond du jardin.\nIl a faim. Il cherche des vers sous les feuilles.\nUn merle passe et lui dit bonjour.\nOù vas-tu si tôt ? demande le merle.\nJe vais au potager, répond le hérisson.\nLes fraises sont mûres !";
   const $ = id => document.getElementById(id);
-  const stage=$("stage"), scroller=$("scroller"), size=$("size"), listenBtn=$("listen");
+  const stage=$("stage"), scroller=$("scroller"), size=$("size"), listenBtn=$("listen"), dureeSel=$("duree");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const LOOK = 15;   // jusqu'où le texte peut « rattraper » un enfant qui a pris de l'avance
 
   let text = SAMPLE;
   try { const s = localStorage.getItem("tpe-text"); if (s) text = s; } catch(e){}
+  try { const d = localStorage.getItem("tpe-duree"); if (d!==null) dureeSel.value = d; } catch(e){}
 
-  let words = [], spans = [], pos = 0, stamps = [], startT = 0, timer = 0;
-  let rec = null, listening = false, lastIdx = -1, consumed = 0, frags = [];
+  let words = [], spans = [], stamps = [], startT = 0, timer = 0, fini = false, bilanOn = false;
+  // État du suivi : position, mots sautés, morceaux de syllabes, dernier mot entendu
+  let st = fresh(), shown = st;
+  let rec = null, listening = false, finalsDone = 0, corrections = new Map();
+
+  function fresh(){ return {p:0, skips:new Set(), frags:[], last:""}; }
+  function clone(s){ return {p:s.p, skips:new Set(s.skips), frags:s.frags.slice(), last:s.last}; }
 
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
                      .replace(/[’`]/g,"'").replace(/[^a-z0-9']/g,"");
   const bare = s => s.replace(/'/g,"");
+  // Clé phonétique approximative : les mots qui se prononcent pareil se retrouvent (« vers » / « verre », « tôt » / « tau »)
+  function ph(w){
+    let s = bare(w);
+    if (s.length<2) return s;
+    s = s.replace(/^h/,"").replace(/ph/g,"f").replace(/gu(?=[eiy])/g,"g").replace(/g(?=[eiy])/g,"j")
+         .replace(/qu/g,"k").replace(/c(?=[eiy])/g,"s").replace(/ck|c/g,"k").replace(/(?<=[aeiouy])s(?=[aeiouy])/g,"z")
+         .replace(/eaux?|aux?|au/g,"o").replace(/[ae]i[nm](?![aeiouyn])/g,"I").replace(/ai|ei/g,"e").replace(/(er|ez|et|es)$/,"e")
+         .replace(/oi/g,"W").replace(/ou/g,"U").replace(/[ae][nm](?![aeiouyn])/g,"A").replace(/o[nm](?![aeiouyn])/g,"O")
+         .replace(/(ai|ei|i|u)[nm](?![aeiouyn])/g,"I").replace(/y/g,"i").replace(/h/g,"").replace(/(.)\1+/g,"$1");
+    s = s.replace(/(ent|e|s|t|x|d|p)$/,"").replace(/(s|t|x|d)$/,"");
+    return s || w;
+  }
 
   function lev(a,b){
     if (Math.abs(a.length-b.length)>2) return 9;
@@ -145,15 +185,50 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   }
   function same(heard, target){
     if (!heard || !target) return false;
-    if (heard===target || bare(heard)===bare(target)) return true;
     const h=bare(heard), t=bare(target);
+    if (h===t) return true;
     if (t.length>=4 && lev(h,t)<=1) return true;
     if (t.length>=7 && lev(h,t)<=2) return true;
-    // "l'arbre" entendu "arbre", ou l'inverse
-    if (t.includes("'") && h===t.split("'").pop()) return true;
-    if (h.includes("'") && t===h.split("'").pop()) return true;
+    if (target.includes("'") && heard===target.split("'").pop()) return true;   // « l'arbre » entendu « arbre »
+    if (heard.includes("'") && target===heard.split("'").pop()) return true;
+    const ph1=ph(heard), ph2=ph(target);
+    if (ph1===ph2) return true;
+    if (ph2.length>=4 && ph1.length===ph2.length && lev(ph1,ph2)<=1) return true;
     return false;
   }
+  const fort = t => bare(t).length>=5;   // un mot long entendu suffit pour rattraper le texte
+
+  // Fait avancer l'état avec une liste de mots entendus.
+  function apply(s, toks){
+    for (let i=0;i<toks.length && s.p<words.length;i++){
+      const t = toks[i];
+      if (same(t, words[s.p])){ s.p++; s.frags=[]; s.last=t; continue; }
+      // L'enfant est plus loin : on cherche le mot entendu dans la suite du texte.
+      // Pour un petit mot (« le », « il »), il faut une confirmation : le mot entendu juste avant ou juste après colle aussi.
+      let j = -1;
+      for (let k=1;k<=LOOK && s.p+k<words.length;k++){
+        if (!same(t, words[s.p+k])) continue;
+        if (fort(t) || (toks[i+1] && same(toks[i+1], words[s.p+k+1])) || same(s.last, words[s.p+k-1])){ j=k; break; }
+      }
+      if (j>0){ for (let k=s.p;k<s.p+j;k++) s.skips.add(k); s.p+=j+1; s.frags=[]; s.last=t; continue; }
+      // Lecture syllabée (« pe… tit… hé… ris… son ») : on assemble les morceaux.
+      s.frags.push(t); if (s.frags.length>8) s.frags.shift();
+      let ok=false;
+      for (let n=Math.min(s.frags.length,8); n>=2 && !ok; n--){
+        const joined = s.frags.slice(-n).join("");
+        for (let k=0;k<2 && s.p+k<words.length;k++){
+          const w = bare(words[s.p+k]);
+          if (same(joined, words[s.p+k]) || (k===0 && w.length>=5 && lev(bare(joined), w)<=2)){
+            if (k>0) s.skips.add(s.p);
+            s.p+=k+1; s.frags=[]; ok=true; break;
+          }
+        }
+      }
+      s.last=t;
+    }
+    return s;
+  }
+  const score = s => s.p - 0.6*s.skips.size;
 
   function render(){
     scroller.innerHTML=""; words=[]; spans=[];
@@ -165,27 +240,44 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
         if (!n){ p.appendChild(document.createTextNode(tok)); return; }
         const s=document.createElement("span"); s.className="w"; s.textContent=tok;
         const i = words.length; s.dataset.i=i;
-        s.addEventListener("click",()=>{ setPos(i); stamps=[]; });
+        s.addEventListener("click",()=>clicMot(i));
         words.push(n); spans.push(s); p.appendChild(s);
       });
       scroller.appendChild(p);
     });
-    pos=0; stamps=[]; $("done").hidden=true; paint(); layout();
+    reset();
   }
 
+  function erreurs(s){ let n=0; s.skips.forEach(k=>{ if(k<s.p && corrections.get(k)!==false) n++; }); corrections.forEach((v,k)=>{ if(v===true && k<s.p && !s.skips.has(k)) n++; }); return n; }
+  function estErreur(s,k){ const c=corrections.get(k); return c===undefined ? s.skips.has(k) : c; }
+
   function paint(){
-    spans.forEach((s,i)=>{
-      s.classList.toggle("cur", i===pos); s.classList.remove("partial");
-      if (i<pos){ if(!s.classList.contains("skip")) s.classList.add("read"); }
-      else s.classList.remove("read","skip");
+    const s = shown;
+    spans.forEach((sp,i)=>{
+      sp.classList.toggle("cur", i===s.p && !fini); sp.classList.remove("partial");
+      sp.classList.toggle("read", i<s.p && !estErreur(s,i));
+      sp.classList.toggle("skip", i<s.p && estErreur(s,i));
+      sp.classList.toggle("fin", fini && i===s.p-1);
     });
-    $("prog").textContent = Math.min(pos,words.length)+"/"+words.length;
+    $("prog").textContent = Math.min(s.p,words.length)+"/"+words.length;
+    $("errs").textContent = erreurs(s);
+    if (!fini){
+      const sp = spans[Math.min(s.p, spans.length-1)];
+      if (sp && s.p<words.length){
+        const t = bare(words[s.p]), tail = bare(s.frags.slice(-3).join(""));
+        sp.classList.toggle("partial", tail && t.length>tail.length && heardStart(tail, t));
+      }
+    }
     follow();
   }
+  function heardStart(h, t){
+    for (let n=Math.max(1,h.length-1); n<=Math.min(t.length,h.length+1); n++) if (lev(h, t.slice(0,n))<=1) return true;
+    return false;
+  }
   function follow(){
-    const s = spans[Math.min(pos, spans.length-1)]; if(!s) return;
-    const target = stage.clientHeight*0.35;
-    const y = Math.max(0, s.offsetTop - target);
+    const sp = spans[Math.min(fini ? Math.max(0,shown.p-1) : shown.p, spans.length-1)]; if(!sp) return;
+    const target = stage.clientHeight*(bilanOn ? 0.55 : 0.35);
+    const y = Math.max(0, sp.offsetTop - target);
     scroller.style.transform = "translateY("+(-y)+"px)";
   }
   function layout(){
@@ -196,14 +288,15 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     follow();
   }
 
-  function setPos(i, skipped){
-    const old = pos; frags = [];
-    pos = Math.max(0, Math.min(words.length, i));
-    if (skipped) for (let k=old;k<pos-1;k++) spans[k].classList.add("skip");
-    if (pos>old){ const now=performance.now(); for(let k=old;k<pos;k++) stamps.push(now); if(!startT) startTimer(); }
+  // Nouvelle position affichée (après un mot entendu ou un appui sur une touche)
+  function montrer(s){
+    if (fini) return;
+    const old = shown.p;
+    shown = s;
+    if (s.p>old){ const now=performance.now(); for(let k=old;k<s.p;k++) stamps.push(now); if(!startT) startTimer(); }
     if (stamps.length>40) stamps = stamps.slice(-40);
     paint(); speed();
-    if (pos>=words.length){ $("done").hidden=false; stopTimer(); if(listening) stop(); }
+    if (s.p>=words.length) terminer(true);
   }
   function speed(){
     const recent = stamps.slice(-12);
@@ -211,56 +304,90 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     const dt = (recent[recent.length-1]-recent[0])/60000;
     $("wpm").textContent = dt>0 ? Math.round((recent.length-1)/dt) : "–";
   }
-  function startTimer(){ startT=performance.now(); clearInterval(timer);
-    timer=setInterval(()=>{ const s=Math.floor((performance.now()-startT)/1000); $("time").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); },500); }
+  const duree = () => +dureeSel.value;
+  const fmt = sec => Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");
+  function tick(){
+    const el = (performance.now()-startT)/1000, d = duree();
+    if (d){ $("time").textContent = fmt(Math.max(0, Math.ceil(d-el))); $("timeLbl").textContent = "restant"; if (el>=d) terminer(false); }
+    else { $("time").textContent = fmt(Math.floor(el)); $("timeLbl").textContent = "temps"; }
+  }
+  function startTimer(){ startT=performance.now(); clearInterval(timer); timer=setInterval(tick,250); tick(); }
   function stopTimer(){ clearInterval(timer); timer=0; }
 
-  // Fait avancer le curseur avec un mot entendu : on cherche dans les 4 mots suivants.
-  // Lecture syllabée (« pe… tit… hé… ris… son ») : la reconnaissance renvoie des morceaux ;
-  // on les garde et on essaie leurs assemblages successifs sur le mot attendu.
-  function hear(token){
-    if (pos>=words.length) return;
-    for (let k=0;k<4 && pos+k<words.length;k++){
-      // Un petit morceau (« le », « pe ») ne doit pas faire sauter des mots.
-      // Sauter des mots (mot non reconnu) : seulement sur un mot long, ou si le mot entendu
-      // juste avant correspond aussi (« au… fond » rattrape le texte, pas « daim » → « faim »).
-      if (k>0 && !(bare(token).length>=5 || same(frags[frags.length-1], words[pos+k-1]))) continue;
-      if (same(token, words[pos+k])){ frags=[]; setPos(pos+k+1, k>0); return; }
-    }
-    frags.push(token); if (frags.length>8) frags.shift();
-    for (let n=Math.min(frags.length,8); n>=2; n--){
-      const joined = frags.slice(-n).join("");
-      for (let k=0;k<2 && pos+k<words.length;k++){
-        const t = bare(words[pos+k]);
-        if (same(joined, words[pos+k]) || (k===0 && t.length>=5 && lev(bare(joined), t)<=2)){ frags=[]; setPos(pos+k+1, k>0); return; }
-      }
-    }
-    // Indice visuel : les syllabes entendues commencent bien le mot attendu.
-    const t = bare(words[pos]||""), tail = bare(frags.slice(-3).join(""));
-    if (spans[pos]) spans[pos].classList.toggle("partial", t.length>tail.length && heardStart(tail, t));
+  // Fin de la minute ou du texte : bilan
+  function terminer(toutLu){
+    if (fini) return;
+    st = shown;               // on garde ce qui a été entendu jusqu'ici
+    fini = true; stopTimer();
+    if (listening) stop(true);
+    const sec = Math.max(1, Math.round((performance.now()-startT)/1000));
+    bilan(toutLu, sec);
   }
-  function heardStart(h, t){
-    for (let n=Math.max(1,h.length-1); n<=Math.min(t.length,h.length+1); n++) if (lev(h, t.slice(0,n))<=1) return true;
-    return false;
+  let dernierBilan = null;
+  function bilan(toutLu, sec){
+    dernierBilan = {toutLu, sec};
+    const lus = shown.p, err = erreurs(shown), justes = Math.max(0, lus-err);
+    const d = duree();
+    const parMin = Math.round(justes*60/sec);
+    const arrete = !toutLu && (!d || sec < d - 1);
+    const titre = toutLu ? `Bravo, tout le texte est lu en ${fmt(sec)} !` : arrete ? `Lecture arrêtée au bout de ${fmt(sec)}` : `Fin du temps : ${d===60 ? "1 minute" : fmt(d)}`;
+    $("bilan").innerHTML = `<h2>${titre}</h2>
+      <div class="chiffres">
+        <span><b>${lus}</b>mots lus</span>
+        <span class="err"><b>${err}</b>erreur${err>1?"s":""}</span>
+        <span class="mclm"><b>${justes}</b>mots justes</span>
+        ${(toutLu || arrete || d!==60) ? `<span><b>${parMin}</b>mots justes / min</span>` : ""}
+      </div>
+      <p>Mots barrés en orange = erreurs (sautés ou mal lus). Le micro s'est trompé ? Cliquez sur un mot pour le compter juste ou faux.</p>
+      <button type="button" id="bilanFermer">Masquer le bilan</button>`;
+    $("bilan").hidden = false; bilanOn = true; stage.classList.add("bilan-on"); $("done").hidden = true;
+    $("bilanFermer").addEventListener("click", ()=>{ $("bilan").hidden=true; bilanOn=false; follow(); });
+    paint();
+  }
+
+  function clicMot(i){
+    if (fini){   // correction par l'adulte
+      if (i>=shown.p) return;
+      corrections.set(i, !estErreur(shown,i));
+      paint(); if (dernierBilan) bilan(dernierBilan.toutLu, dernierBilan.sec);
+      return;
+    }
+    // pendant la lecture : repartir de ce mot
+    const s = clone(st); s.p=i; s.frags=[]; s.last=""; for (const k of [...s.skips]) if (k>=i) s.skips.delete(k);
+    st = s; shown = st; stamps=[]; finalsDone = lastResults; paint();
   }
 
   function status(txt, cls){ $("statusTxt").textContent=txt; $("status").className="status"+(cls?" "+cls:""); }
 
+  let lastResults = 0;
   function start(){
     if (!SR){ status("Navigateur non compatible : ouvrez la page avec Chrome ou Edge.","err"); return; }
-    if (pos>=words.length) restart();
-    rec = new SR(); rec.lang="fr-FR"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=1;
-    lastIdx=-1; consumed=0;
+    if (fini || shown.p>=words.length) reset();
+    rec = new SR(); rec.lang="fr-FR"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=4;
+    finalsDone=0; lastResults=0;
     rec.onresult = e=>{
-      for (let r=e.resultIndex; r<e.results.length; r++){
-        if (r!==lastIdx){ lastIdx=r; consumed=0; }
-        const toks = e.results[r][0].transcript.split(/\s+/).map(norm).filter(Boolean);
-        $("heard").textContent = "J'entends : " + e.results[r][0].transcript;
-        // Les résultats provisoires s'allongent : on ne traite que les nouveaux mots (le dernier reste en attente s'il n'est pas final).
-        const ready = e.results[r].isFinal ? toks.length : Math.max(consumed, toks.length-1);
-        for (let k=consumed;k<ready;k++) hear(toks[k]);
-        consumed = ready;
+      if (fini) return;
+      lastResults = e.results.length;
+      // Résultats définitifs : on les intègre pour de bon, en gardant la variante qui colle le mieux au texte.
+      while (finalsDone<e.results.length && e.results[finalsDone].isFinal){
+        const r = e.results[finalsDone]; let best=null;
+        for (let a=0;a<r.length;a++){
+          const toks = r[a].transcript.split(/\s+/).map(norm).filter(Boolean);
+          const c = apply(clone(st), toks);
+          if (!best || score(c)>score(best)) best=c;
+        }
+        if (best && best.p>=shown.p - 1) st = best;
+        else if (best) st = shown;   // ne jamais reculer à cause d'une variante moins bonne
+        finalsDone++;
       }
+      // Résultats provisoires (encore en cours de reconnaissance) : position provisoire, recalculée à chaque fois.
+      let interim = "";
+      for (let r=finalsDone; r<e.results.length; r++) interim += " " + e.results[r][0].transcript;
+      const toks = interim.split(/\s+/).map(norm).filter(Boolean);
+      const tent = apply(clone(st), toks);
+      const last = e.results[e.results.length-1][0].transcript;
+      $("heard").textContent = "J'entends : " + last;
+      montrer(tent.p>=st.p ? tent : st);
     };
     rec.onerror = e=>{
       if (e.error==="not-allowed"||e.error==="service-not-allowed"){ status("Micro refusé par le navigateur ou par le site. Utilisez la barre d'espace.","err"); listening=false; ui(); }
@@ -268,40 +395,62 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
       else if (e.error==="audio-capture"){ status("Aucun micro trouvé.","err"); listening=false; ui(); }
       else if (e.error==="network"){ status("Pas de connexion : la reconnaissance vocale a besoin d'internet.","err"); listening=false; ui(); }
     };
-    rec.onend = ()=>{ if (listening){ lastIdx=-1; consumed=0; try{ rec.start(); }catch(_){} } };
-    try { rec.start(); listening=true; status("J'écoute…","on"); }
+    // La reconnaissance s'arrête parfois toute seule : on garde ce qui a été entendu et on relance aussitôt.
+    rec.onend = ()=>{ st = shown; if (listening && !fini){ finalsDone=0; lastResults=0; try{ rec.start(); }catch(_){} } };
+    try { rec.start(); listening=true; status("J'écoute… Le chrono démarre au premier mot.","on"); }
     catch(err){ status("Impossible de démarrer le micro.","err"); listening=false; }
     ui();
   }
-  function stop(){ listening=false; try{ rec && rec.stop(); }catch(_){} status("Micro arrêté"); $("heard").textContent=""; stopTimer(); ui(); }
+  function stop(auto){
+    listening=false; st = shown;
+    try{ rec && rec.abort(); }catch(_){}
+    status(auto ? "Terminé" : "Micro arrêté"); $("heard").textContent="";
+    if (!auto && startT && !fini) terminer(false);
+    ui();
+  }
   function ui(){ listenBtn.textContent = listening ? "■ Arrêter" : "🎤 Écouter"; listenBtn.classList.toggle("live", listening); }
-  function restart(){ if(listening) stop(); spans.forEach(s=>s.classList.remove("read","skip")); pos=0; stamps=[]; startT=0; stopTimer();
-    $("time").textContent="0:00"; $("wpm").textContent="–"; $("done").hidden=true; paint(); }
+  function reset(){
+    if (listening){ listening=false; try{ rec && rec.abort(); }catch(_){} ui(); status("Micro arrêté"); }
+    st=fresh(); shown=st; stamps=[]; startT=0; fini=false; bilanOn=false; corrections=new Map(); dernierBilan=null; stopTimer();
+    stage.classList.remove("bilan-on"); $("bilan").hidden=true; $("done").hidden=true;
+    $("time").textContent = duree() ? fmt(duree()) : "0:00"; $("timeLbl").textContent = duree() ? "restant" : "temps";
+    $("wpm").textContent="–"; $("heard").textContent=""; paint();
+  }
+  function avancer(n){
+    if (fini) return;
+    const s = clone(shown); s.p = Math.max(0, Math.min(words.length, s.p+n)); s.frags=[];
+    if (n<0) s.skips.delete(s.p);
+    st = s; finalsDone = lastResults; montrer(s);
+  }
 
-  listenBtn.addEventListener("click", ()=> listening ? stop() : start());
-  $("restart").addEventListener("click", restart);
-  $("next").addEventListener("click", ()=>setPos(pos+1));
-  $("prev").addEventListener("click", ()=>{ setPos(pos-1); if(spans[pos]) spans[pos].classList.remove("read","skip"); paint(); });
+  listenBtn.addEventListener("click", ()=> listening ? stop(false) : start());
+  $("restart").addEventListener("click", reset);
+  $("next").addEventListener("click", ()=>avancer(1));
+  $("prev").addEventListener("click", ()=>{ if (fini) return; const s=clone(shown); s.p=Math.max(0,s.p-1); s.skips.delete(s.p); s.frags=[]; st=s; shown=s; finalsDone=lastResults; paint(); });
+  dureeSel.addEventListener("change", ()=>{ try{ localStorage.setItem("tpe-duree", dureeSel.value); }catch(e){} reset(); });
   size.addEventListener("input", layout);
   $("editBtn").addEventListener("click", ()=>{ $("txt").value=text; $("editbox").hidden=false; $("txt").focus(); });
   $("cancel").addEventListener("click", ()=>{ $("editbox").hidden=true; });
   $("apply").addEventListener("click", ()=>{
     const v=$("txt").value.trim(); if(!v) return;
     text=v; try{ localStorage.setItem("tpe-text", v); }catch(e){}
-    restart(); render(); $("editbox").hidden=true;
+    render(); $("editbox").hidden=true;
   });
   $("full").addEventListener("click", ()=>{ try{ document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen().catch(()=>{}); }catch(e){} });
   document.addEventListener("fullscreenchange", ()=>setTimeout(layout,60));
   window.addEventListener("resize", layout);
   document.addEventListener("keydown", e=>{
-    if (e.target.tagName==="TEXTAREA") return;
-    if (e.code==="Space"){ e.preventDefault(); setPos(pos+1); }
+    if (e.target.tagName==="TEXTAREA" || e.target.tagName==="SELECT") return;
+    if (e.code==="Space"){ e.preventDefault(); avancer(1); }
     else if (e.key==="ArrowLeft"){ e.preventDefault(); $("prev").click(); }
-    else if (e.key==="ArrowRight"){ e.preventDefault(); setPos(pos+1); }
+    else if (e.key==="ArrowRight"){ e.preventDefault(); avancer(1); }
   });
   if (!SR){ $("navwarn").hidden = false; status("Navigateur non compatible : Chrome ou Edge requis.","err"); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   render();
+
+  // Pour les essais (console) : window.__tpe.simuler("le petit hérisson ...")
+  window.__tpe = { simuler: t => montrer(st = apply(clone(st), t.split(/\s+/).map(norm).filter(Boolean))), etat: () => shown, ph, same };
 })();
 </script>
 
