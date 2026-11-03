@@ -215,13 +215,18 @@
   const sonOk = () => { bip(523,.12,"triangle"); bip(784,.2,"triangle",.1); };
   const sonKo = () => { bip(300,.2,"sawtooth",0,.12); bip(210,.3,"sawtooth",.16,.12); };
   const sonVictoire = () => [523,659,784,1047,784,1047].forEach((f,i)=>bip(f,.22,"square",i*.13,.1));
-  function dire(n){
+  /* Android : cancel() suivi tout de suite de speak() perd souvent la phrase,
+     et la voix peut rester « en pause » après le micro : on relance et on réessaie une fois. */
+  function dire(n, essai=0){
     if(!("speechSynthesis" in window)) return;
-    speechSynthesis.cancel();
+    const ss = speechSynthesis;
     const u = new SpeechSynthesisUtterance(String(n)); u.lang = "fr-FR"; u.rate = .85;
-    const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith("fr"));
+    const v = ss.getVoices().find(v => v.lang && v.lang.startsWith("fr"));
     if(v) u.voice = v;
-    speechSynthesis.speak(u);
+    let parti = false; u.onstart = () => { parti = true; };
+    const lancer = () => { try{ ss.resume(); }catch(e){} ss.speak(u);
+      if(essai === 0) setTimeout(() => { if(!parti && !ss.speaking) dire(n, 1); }, 1500); };
+    if(ss.speaking || ss.pending){ ss.cancel(); setTimeout(lancer, 120); } else lancer();
   }
   if("speechSynthesis" in window) speechSynthesis.getVoices();
 
@@ -280,8 +285,7 @@
         boutonsLecture();
       } else {
         ecoute(`J'ai entendu ${dit}.`, "ko");
-        valider(false, "Ce nombre se lit : " + n + ".", 2200);
-        setTimeout(() => dire(n), 350);
+        solutionLecture(n);
       }
     };
     r.onresult = e => {
@@ -307,6 +311,19 @@
     r.onend = () => conclure(null, "Je n'ai rien entendu… Appuie sur 🎤 et lis plus fort.");
     const limite = setTimeout(() => conclure(null, "Je n'ai rien entendu… Appuie sur 🎤 et lis plus fort."), 8000);
     try{ r.start(); }catch(e){ conclure(null, "Micro indisponible. Validez avec les boutons."); }
+  }
+
+  /* 2e erreur au micro : on montre et on dit la solution, sans passer tout seul au suivant
+     (sur tablette, la voix ne part qu'une fois le micro libéré ; le bouton permet de réécouter). */
+  function solutionLecture(n){
+    etat.phase = "pause";
+    const c = cases[n];
+    c.classList.remove("sort"); $("grille").classList.remove("focus");
+    c.classList.add("lu-ko"); etat.aRevoir.push(n); bip(260,.2,"triangle"); majHaut();
+    $("consigne").textContent = "Ce nombre se lit : " + n + ".";
+    boutons([["🔊 Réécouter", "btn-gris", () => dire(n)],
+             ["Nombre suivant ▶", "btn-bleu", () => { speechSynthesis?.cancel(); ecoute(""); suivant(); }]]);
+    setTimeout(() => dire(n), 900);
   }
 
   function ecouterAide(){
@@ -475,8 +492,10 @@
         etat.aRevoir.push(etat.n);
         const b = cases[etat.n];
         $("consigne").textContent = "Le nombre " + etat.n + " était ici.";
-        setTimeout(() => { b.classList.add("sort", "montre"); dire(etat.n); }, 450);
-        boutons([["Nombre suivant ▶", "btn-bleu", () => { b.classList.remove("sort", "montre"); b.classList.add("lu-ko"); suivant(); }]]);
+        const n = etat.n; dire(n);
+        setTimeout(() => b.classList.add("sort", "montre"), 450);
+        boutons([["🔊 Réécouter", "btn-gris", () => dire(n)],
+                 ["Nombre suivant ▶", "btn-bleu", () => { speechSynthesis?.cancel(); b.classList.remove("sort", "montre"); b.classList.add("lu-ko"); suivant(); }]]);
       } else {
         $("consigne").textContent = "Ce n'est pas " + k + ". Essaie encore\u00a0!";
         dire(etat.n);
