@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Le chemin des sons</title><link rel="canonical" href="https://toujourscap.com/post/le-chemin-des-sons/"><meta name="description" content="Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Des mots simples avec un son complexe (ou, an/en, in, eu…">
+<title>Le chemin des sons</title><link rel="canonical" href="https://toujourscap.com/post/le-chemin-des-sons/"><meta name="description" content="Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Cinq niveaux de mots, des sons simples aux mots longs, pour…">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
 <style>
@@ -181,6 +181,10 @@ td a{font-size:13px;color:var(--bois)}
 
     <fieldset>
       <legend>Les sons travaillés</legend>
+      <div class="champ">
+        <label for="niveau">Niveau</label>
+        <select id="niveau"></select>
+      </div>
       <div class="sons" id="sons"></div>
       <div class="mots-apercu" id="apercu"></div>
       <label class="coche"><input type="checkbox" id="colorier" checked> Colorier le son dans le mot</label>
@@ -271,16 +275,35 @@ td a{font-size:13px;color:var(--bois)}
 </div>
 
 <script>
-/* ---------- Données : mots CP, une seule voyelle complexe ---------- */
+/* ---------- Données : 5 niveaux. [mot, graphies à colorier séparées par | ] ---------- */
 const MOTS = {
+  simple:[["moto",""],["lune",""],["vélo",""],["tomate",""],["salade",""],["domino",""],["pirate",""],["mule",""],["lama",""],["robe",""],["café",""],["limace",""],["farine",""],["numéro",""],["cabane",""]],
   ou:[["loup","ou"],["chou","ou"],["roue","ou"],["cou","ou"],["joue","ou"],["poule","ou"],["route","ou"],["soupe","ou"],["moule","ou"],["four","ou"],["tour","ou"],["jour","ou"],["louve","ou"]],
+  on:[["savon","on"],["melon","on"],["salon","on"],["ballon","on"],["bonbon","on|on"],["pont","on"],["rond","on"],["long","on"],["lion","on"],["monde","on"]],
   an:[["maman","an"],["tante","an"],["plante","an"],["danse","an"],["gant","an"],["dans","an"],["dent","en"],["vent","en"],["pente","en"],["tente","en"],["lent","en"]],
+  oi:[["roi","oi"],["toit","oi"],["poire","oi"],["voiture","oi"],["étoile","oi"],["oie","oi"],["soif","oi"],["noir","oi"],["moi","oi"],["foire","oi"]],
+  ch:[["chat","ch"],["niche","ch"],["cheval","ch"],["vache","ch"],["chemise","ch"],["ruche","ch"],["biche","ch"],["tache","ch"]],
   in:[["lapin","in"],["sapin","in"],["matin","in"],["lutin","in"],["patin","in"],["jardin","in"],["chemin","in"],["pin","in"],["vin","in"],["linge","in"]],
   eu:[["feu","eu"],["jeu","eu"],["bleu","eu"],["peu","eu"],["peur","eu"],["fleur","eu"],["neuf","eu"],["seul","eu"],["meule","eu"]],
-  on:[["savon","on"],["melon","on"],["salon","on"],["ballon","on"],["bonbon","on"],["pont","on"],["rond","on"],["long","on"],["lion","on"],["monde","on"]],
-  ei:[["neige","ei"],["reine","ei"],["peine","ei"],["baleine","ei"],["seize","ei"],["treize","ei"],["beige","ei"],["veine","ei"]]
+  ei:[["neige","ei"],["reine","ei"],["peine","ei"],["baleine","ei"],["seize","ei"],["treize","ei"],["beige","ei"],["lait","ai"],["laine","ai"],["aile","ai"],["semaine","ai"],["balai","ai"]],
+  au:[["auto","au"],["sauce","au"],["taupe","au"],["jaune","au"],["saule","au"],["bateau","eau"],["gâteau","eau"],["cadeau","eau"],["seau","eau"],["peau","eau"],["rideau","eau"]],
+  gn:[["ligne","gn"],["signe","gn"],["vigne","gn"],["agneau","gn"],["peigne","gn"],["montagne","gn"],["gagne","gn"]],
+  e:[["mère","è"],["père","è"],["zèbre","è"],["lèvre","è"],["rêve","ê"],["fête","ê"],["tête","ê"],["bête","ê"],["forêt","ê"]],
+  r:[["train","tr"],["prune","pr"],["crabe","cr"],["grand","gr"],["fruit","fr"],["drapeau","dr"],["trompe","tr"],["brique","br"],["frite","fr"],["cravate","cr"]],
+  l:[["blouse","bl"],["plante","pl"],["flûte","fl"],["clé","cl"],["glace","gl"],["plume","pl"],["bleu","bl"],["fleur","fl"],["classe","cl"],["globe","gl"]],
+  deux:[["mouton","ou|on"],["bouton","ou|on"],["cochon","ch|on"],["moulin","ou|in"],["raisin","ai|in"],["maison","ai|on"],["chameau","ch|eau"],["pantalon","an|on"]],
+  cg:[["citron","c"],["cerise","c"],["cinéma","c"],["garçon","ç"],["girafe","g"],["bougie","g"],["gilet","g"],["cage","g"],["page","g"]],
+  ss:[["rose","s"],["vase","s"],["valise","s"],["cuisine","s"],["cousin","s"],["tasse","ss"],["poisson","ss"],["chausson","ss"],["dessin","ss"],["brosse","ss"]],
+  ill:[["fille","ill"],["bille","ill"],["chenille","ill"],["papillon","ill"],["grenouille","ill"],["abeille","ill"],["bouteille","ill"],["feuille","ill"],["oreille","ill"]]
 };
-const LIBELLE = {ou:"ou",an:"an / en",in:"in",eu:"eu",on:"on",ei:"ei"};
+const LIBELLE = {simple:"sons simples",ou:"ou",on:"on",an:"an / en",oi:"oi",ch:"ch",in:"in",eu:"eu",ei:"ei / ai",au:"au / eau",gn:"gn",e:"è / ê",r:"tr, pr, cr…",l:"bl, pl, fl…",deux:"2 sons",cg:"c / g",ss:"s / ss",ill:"ill"};
+const NIVEAUX = [
+  {nom:"Niveau 1 – Sons simples", sons:["simple"]},
+  {nom:"Niveau 2 – ou, on, an, oi, ch", sons:["ou","on","an","oi","ch"]},
+  {nom:"Niveau 3 – in, eu, ei/ai, au/eau, gn, è", sons:["in","eu","ei","au","gn","e"]},
+  {nom:"Niveau 4 – Groupes de consonnes", sons:["r","l"]},
+  {nom:"Niveau 5 – Mots longs", sons:["deux","cg","ss","ill"]}
+];
 
 /* ---------- Personnages par défaut ---------- */
 const SVG = {
@@ -314,9 +337,17 @@ function appliquerSprite(el,k){
 const $ = id => document.getElementById(id);
 $("logo").innerHTML = `<img src="${CANVA.chaperon}" alt="" style="width:100%">`;
 
-const sonsSauves = (store.get("pcr-sons")||"ou,an,in,eu,on,ei").split(",");
-$("sons").innerHTML = Object.keys(MOTS).map(s=>
-  `<label class="son-chip"><input type="checkbox" value="${s}" id="son-${s}" ${sonsSauves.includes(s)?"checked":""}><span>${LIBELLE[s]}</span></label>`).join("");
+$("niveau").innerHTML = NIVEAUX.map((n,k)=>`<option value="${k}">${n.nom}</option>`).join("");
+$("niveau").value = Math.min(4,Math.max(0,+(store.get("pcr-niveau")||1)));
+function majSons(sauves){
+  const liste=NIVEAUX[+$("niveau").value].sons;
+  if(!sauves || !liste.some(x=>sauves.includes(x))) sauves=liste;
+  $("sons").innerHTML = liste.map(s=>
+    `<label class="son-chip"><input type="checkbox" value="${s}" id="son-${s}" ${sauves.includes(s)?"checked":""}><span>${LIBELLE[s]}</span></label>`).join("");
+  $("sons").style.display = liste.length<2 ? "none" : "";
+}
+majSons((store.get("pcr-sons")||"").split(","));
+$("niveau").addEventListener("change",()=>{ majSons(null); majApercu(); });
 ["nb","erreurs"].forEach(id=>{const v=store.get("pcr-"+id); if(v) $(id).value=v;});
 if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("mode-adulte").checked=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome ou Edge."; }
 ["colorier","enregistrer"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
@@ -489,18 +520,22 @@ function tirerMots(sons,n){
   while(out.length<n){const p=paquets[i%paquets.length]; if(p.length) out.push(p.shift()); i++; if(paquets.every(x=>!x.length)) break;}
   return melanger(out);
 }
-function motHTML(m,colorer){
-  const i=m.w.indexOf(m.g);
-  if(!colorer||i<0) return m.w;
-  return m.w.slice(0,i)+`<span class="son souligne">${m.w.slice(i,i+m.g.length)}</span>`+m.w.slice(i+m.g.length);
+function colorie(w,g,cls){
+  let out="",pos=0;
+  for(const x of (g||"").split("|").filter(Boolean)){
+    const i=w.indexOf(x,pos); if(i<0) continue;
+    out+=w.slice(pos,i)+`<span class="${cls}">${w.slice(i,i+x.length)}</span>`; pos=i+x.length;
+  }
+  return out+w.slice(pos);
 }
-function motHTMLsimple(m){const i=m.w.indexOf(m.g);return m.w.slice(0,i)+`<span class="son">${m.w.slice(i,i+m.g.length)}</span>`+m.w.slice(i+m.g.length);}
+function motHTML(m,colorer){ return colorer ? colorie(m.w,m.g,"son souligne") : m.w; }
+function motHTMLsimple(m){ return colorie(m.w,m.g,"son"); }
 
 async function demarrer(mots){
   const sons=sonsChoisis();
   if(!mots && !sons.length){$("msg-reglages").textContent="Choisissez au moins un son.";return;}
   cfg={prenom:$("prenom").value.trim(), n:+$("nb").value, gap:+$("erreurs").value+1, colorer:$("colorier").checked, rec:$("enregistrer").checked, auto:$("auto").checked&&!$("auto").disabled, sons};
-  store.set("pcr-sons",sons.join(",")); store.set("pcr-nb",$("nb").value); store.set("pcr-erreurs",$("erreurs").value);
+  store.set("pcr-sons",sons.join(",")); store.set("pcr-niveau",$("niveau").value); store.set("pcr-nb",$("nb").value); store.set("pcr-erreurs",$("erreurs").value);
   store.set("pcr-colorier",cfg.colorer?"1":"0"); store.set("pcr-enregistrer",cfg.rec?"1":"0"); store.set("pcr-auto",cfg.auto?"1":"0");
   recoBloquee=false; $("ecran-jeu").classList.toggle("auto", cfg.auto); $("ecoute").hidden=!cfg.auto; if(cfg.auto) indicEcoute("Validation automatique active",true);
   const liste = mots || tirerMots(sons,cfg.n);
