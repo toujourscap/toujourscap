@@ -9361,7 +9361,7 @@
   {
    "title": "Le chemin des sons",
    "slug": "le-chemin-des-sons",
-   "excerpt": "Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Des mots simples avec un son complexe (ou, an/en, in, eu, on, ei) pour le CP, et la lecture de l'élève est enregistrée.",
+   "excerpt": "Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Cinq niveaux de mots, des sons simples aux mots longs, pour le CP, et la lecture de l'élève est enregistrée.",
    "date": "2026-10-27T08:30:00.000Z",
    "cat": "lecture",
    "jeu": {
@@ -9498,7 +9498,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "ou, an / en, in, eu, on, ei. Chaque mot ne contient qu'un seul son complexe, et le son peut être colorié dans le mot pour aider l'élève (chou, tente, lapin, fleur, savon, reine…).",
+         "text": "Cinq niveaux, du plus simple au plus difficile : 1. sons simples (moto, lune, tomate) ; 2. ou, on, an/en, oi, ch (loup, savon, dent, roi, chat) ; 3. in, eu, ei/ai, au/eau, gn, è/ê (lapin, fleur, lait, bateau, ligne, fête) ; 4. groupes de consonnes (train, prune, blouse, flûte) ; 5. mots longs : deux sons complexes, c/g, s/ss, ill (mouton, citron, poisson, grenouille). Dans chaque niveau, on peut ne garder que certains sons, et le son peut être colorié dans le mot pour aider l'élève.",
          "decorations": []
         }
        }
