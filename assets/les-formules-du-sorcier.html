@@ -54,7 +54,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .side{gap:10px}
 .side .panel{padding:10px 12px;border-radius:16px}
 .side .pl{padding:4px 8px;font-size:14px;gap:6px}
-.side .monster svg.m{width:44px;height:44px}
+.side .monster svg.m,.side .monster img.m{width:44px;height:44px}
+.monster img.m{width:64px;height:64px;flex:none;object-fit:contain}
+.vraide{display:grid;grid-template-columns:repeat(3,auto);gap:10px;justify-content:center}
+.vraide button{background:none;border:0;padding:0;cursor:pointer;border-radius:14px}
+.vraide button:focus-visible{outline:3px solid var(--spell,#c58cf5);outline-offset:3px}
 .side .fioles svg{width:16px;height:22px}
 .side .mtxt{font-size:13px}
 .side .act{min-height:240px;gap:10px}
@@ -141,7 +145,7 @@ body.classe .boardwrap{width:100%;max-width:calc((100vh - 96px) * 1.414);margin:
 body.classe .top h1{font-size:clamp(22px,2.4vw,32px)}
 body.classe .side .pl{font-size:20px;padding:6px 10px}
 body.classe .side .mtxt{font-size:17px}
-body.classe .side .monster svg.m{width:60px;height:60px}
+body.classe .side .monster svg.m,body.classe .side .monster img.m{width:60px;height:60px}
 body.classe .side .fioles svg{width:20px;height:28px}
 body.classe .side .turn{font-size:26px}
 body.classe .side .btn{padding:14px 20px;font-size:22px}
@@ -178,7 +182,7 @@ const store = {
   set(k,v){try{localStorage.setItem("fm2_"+k,JSON.stringify(v))}catch(e){}}
 };
 const S = {
-  delai: store.get("delai",5), police: store.get("police","script"), maxFioles: 10,
+  delai: store.get("delai",5), deMode: store.get("deMode","ecran"), auto:null, police: store.get("police","script"), maxFioles: 10,
   nbJ: store.get("nbJ",4), mode: store.get("mode","groupe"), lecteur:"",
   joueurs: store.get("joueurs",[0,1,2,3].map(k=>({nom:"Joueur "+(k+1),niv:0}))),
   cur:0, fioles:0, de:0, mot:"", pools:[[],[],[]], timer:null, phase:"roll"
@@ -206,10 +210,12 @@ function tirerMot(niv){ if(!S.pools[niv].length) S.pools[niv]=melanger(NIVEAUX[n
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 function de(n,cls=""){return `<div class="die ${cls}" aria-label="Dé : ${n}">${[...Array(9)].map((_,k)=>`<i class="${PIPS[n]&&PIPS[n].includes(k)?"on":""}"></i>`).join("")}</div>`}
 function fiole(plein){return `<svg viewBox="0 0 22 30"><path d="M8 2h6v8l6 12a4 4 0 0 1-3.6 6H5.6A4 4 0 0 1 2 22l6-12z" fill="${plein?"#c58cf5":"none"}" stroke="${plein?"#c58cf5":"#3a4580"}" stroke-width="2"/></svg>`}
-const MONSTRE=`<svg class="m" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 58c-4-20 4-46 24-46s28 26 24 46l-6-5-6 5-6-5-6 5-6-5-6 5z" fill="#8fbf4a"/><path d="M18 14l-4-10 10 7zM46 14l4-10-10 7z" fill="#6d9634"/><circle cx="24" cy="28" r="7" fill="#fff"/><circle cx="40" cy="28" r="7" fill="#fff"/><circle cx="25" cy="29" r="3.5" fill="#141a3a"/><circle cx="39" cy="29" r="3.5" fill="#141a3a"/><path d="M22 42q10 8 20 0" stroke="#141a3a" stroke-width="3" fill="none"/><path d="M26 44l2 4 2-3 2 3 2-4" fill="#fff"/></svg>`;
+const TROLL_SRC="/images/jeux/troll.png";
+const MONSTRE_SVG=`<svg class="m" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 58c-4-20 4-46 24-46s28 26 24 46l-6-5-6 5-6-5-6 5-6-5-6 5z" fill="#8fbf4a"/><path d="M18 14l-4-10 10 7zM46 14l4-10-10 7z" fill="#6d9634"/><circle cx="24" cy="28" r="7" fill="#fff"/><circle cx="40" cy="28" r="7" fill="#fff"/><circle cx="25" cy="29" r="3.5" fill="#141a3a"/><circle cx="39" cy="29" r="3.5" fill="#141a3a"/><path d="M22 42q10 8 20 0" stroke="#141a3a" stroke-width="3" fill="none"/><path d="M26 44l2 4 2-3 2 3 2-4" fill="#fff"/></svg>`;
 const GRENOUILLE=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="6" rx="16" ry="11" fill="#5fae4a"/><circle cx="-8" cy="-4" r="6" fill="#5fae4a"/><circle cx="8" cy="-4" r="6" fill="#5fae4a"/><circle cx="-8" cy="-5" r="3" fill="#fff"/><circle cx="8" cy="-5" r="3" fill="#fff"/><circle cx="-8" cy="-5" r="1.5" fill="#141a3a"/><circle cx="8" cy="-5" r="1.5" fill="#141a3a"/><path d="M-6 9q6 4 12 0" stroke="#2d5a22" stroke-width="2" fill="none"/><path d="M-7 -12l3 -7 4 5 4 -5 3 7z" fill="#f5c451"/></g>`;
 const PRINCESSE=`<svg viewBox="0 0 120 160" aria-hidden="true"><path d="M60 60L20 150h80z" fill="#c58cf5"/><circle cx="60" cy="42" r="20" fill="#f6d2b8"/><path d="M40 40q20-30 40 0q-4-18-20-20q-16 2-20 20z" fill="#8a5a2b"/><path d="M45 26l5-14 10 9 10-9 5 14z" fill="#f5c451"/><circle cx="53" cy="44" r="2.5" fill="#141a3a"/><circle cx="67" cy="44" r="2.5" fill="#141a3a"/><path d="M54 52q6 5 12 0" stroke="#b5554a" stroke-width="2.5" fill="none"/></svg>`;
 
+const MONSTRE=`<img class="m" src="${TROLL_SRC}" alt="Le troll">`;
 /* Image du plateau */
 const PLATEAU_SRC="/images/jeux/les-formules-du-sorcier.jpg";
 const CASES=[[190,855],[333,812],[493,812],[650,812],[810,812],[968,812],[972,660],[806,660],[638,660],[474,660],[305,660],[273,513],[443,513],[610,513],[775,513],[933,513],[933,362],[773,362],[610,362],[444,362],[278,362]];
@@ -218,6 +224,7 @@ const FIOLES_XY=[[1160,215],[1290,215],[1160,358],[1290,358],[1160,500],[1290,50
 function caseXY(n){ return n>NB_CASES ? CHATEAU : CASES[Math.max(0,n)]; }
 function plateau(){
   let s=`<svg viewBox="0 0 1400 990" role="img" aria-label="Chemin de ${NB_CASES} cases vers le château"><image href="${PLATEAU_SRC}" x="0" y="0" width="1400" height="990"/>`;
+  s+=`<image href="${TROLL_SRC}" x="992" y="835" width="152" height="152"/>`;
   // potion dans les fioles gagnées par le troll
   FIOLES_XY.slice(0,S.fioles).forEach(([x,y])=>{
     s+=`<g><circle cx="${x}" cy="${y+12}" r="36" fill="#a35bf0" opacity=".85"/><circle cx="${x-12}" cy="${y}" r="9" fill="#e9d4ff" opacity=".8"/></g>`;
@@ -239,7 +246,7 @@ function nomsParDefaut(){
     j.nom = S.mode!=="classe" ? "Joueur "+(k+1) : (S.nbJ===1&&k===0 ? "La classe" : "Équipe "+(k+1)); });
 }
 function accueil(){
-  clearInterval(S.timer); if("speechSynthesis" in window) speechSynthesis.cancel();
+  clearInterval(S.timer); clearTimeout(S.auto); if("speechSynthesis" in window) speechSynthesis.cancel();
   const C=S.mode==="classe"; document.body.classList.toggle("classe",C); nomsParDefaut();
   app.innerHTML=`
     <h1>Les Formules du Sorcier</h1>
@@ -260,10 +267,11 @@ function accueil(){
         <div class="panel opts">
           ${seg("Temps pour lire",[[3,"3 s"],[5,"5 s"],[8,"8 s"],[12,"12 s"]],S.delai,"delai")}
           ${seg("Écriture",[["script","script"],["cursive","cursive"]],S.police,"police")}
+          ${seg("Le dé",[["ecran","à l'écran"],["reel","vrai dé de la classe"]],S.deMode,"deMode")}
         </div>
         <div class="panel">
           <ol class="rules">
-            <li>Lance le dé.</li>
+            <li>Lance le dé${S.deMode==="reel"?" (le vrai dé), puis touche le nombre obtenu":""}.</li>
             <li>Sur <b>2</b> ou <b>5</b>, le troll gagne une fiole de potion.</li>
             <li>Sinon, lis la formule magique, puis écoute-la.</li>
             <li>Bien lue ? Avance du nombre de cases du dé.</li>
@@ -276,7 +284,7 @@ function accueil(){
     ${"speechSynthesis" in window?"":`<p class="hint" style="text-align:center">Ce navigateur ne sait pas lire à voix haute : les formules s'afficheront sans le son.</p>`}`;
   const lire=()=>S.joueurs.slice(0,S.nbJ).forEach((j,k)=>{j.nom=document.getElementById("nom"+k).value.replace(/[<>"]/g,"").trim()||("Joueur "+(k+1)); j.niv=+document.getElementById("niv"+k).value;
     const el=document.getElementById("el"+k); if(el){ j.eleves=el.value.replace(/[<>"]/g,""); j.tirage=[]; }});
-  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{lire(); const k=b.dataset.k; S[k]=(k==="police"||k==="mode")?b.dataset.v:+b.dataset.v; store.set(k,S[k]); accueil(); store.set("joueurs",S.joueurs);});
+  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{lire(); const k=b.dataset.k; S[k]=(k==="police"||k==="mode"||k==="deMode")?b.dataset.v:+b.dataset.v; store.set(k,S[k]); accueil(); store.set("joueurs",S.joueurs);});
   document.getElementById("go").onclick=()=>{lire(); store.set("joueurs",S.joueurs); nouvellePartie();};
 }
 
@@ -293,6 +301,7 @@ function tirerLecteur(){
   S.lecteur=j.tirage.pop(); j.dernier=S.lecteur;
 }
 function nouvellePartie(){
+  clearTimeout(S.auto);
   S.joueurs.forEach(j=>j.pos=0); S.cur=0; S.fioles=0; S.phase="roll"; tirerLecteur();
   if("speechSynthesis" in window){const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u);}
   rendu();
@@ -307,7 +316,7 @@ function rendu(){
         <div class="panel players">${J.map((j,k)=>`<div class="pl ${k===S.cur?"cur":""}"><span class="dot" style="background:${COULEURS[k]};width:16px;height:16px;flex:none"></span><span class="n">${j.nom}</span><small>${j.pos}/${NB_CASES}</small></div>`).join("")}</div>
         <div class="panel monster">${MONSTRE}<div class="col" style="gap:6px"><span class="mtxt">Le troll : ${S.fioles} / ${S.maxFioles} fioles</span><div class="fioles">${[...Array(S.maxFioles)].map((_,i)=>fiole(i<S.fioles)).join("")}</div></div></div>
         <div class="panel act" id="act"></div>
-        ${S.mode==="classe"?`<div class="touches">Clavier ou télécommande : <kbd>Espace</kbd> ou <kbd>→</kbd> continuer · <kbd>←</kbd> pas encore · <kbd>R</kbd> réécouter · <kbd>F</kbd> plein écran</div>`:""}
+        ${S.mode==="classe"?`<div class="touches">Clavier ou télécommande : <kbd>Espace</kbd> ou <kbd>→</kbd> continuer · <kbd>←</kbd> pas encore · <kbd>R</kbd> réécouter · <kbd>1</kbd>…<kbd>6</kbd> résultat du vrai dé · <kbd>F</kbd> plein écran</div>`:""}
       </div>
     </div>`;
   document.getElementById("home").onclick=accueil;
@@ -328,8 +337,14 @@ const entete=()=>{
 function phase(){
   const a=act();
   if(S.phase==="roll"){
-    a.innerHTML=`${entete()}${de(0)}<button type="button" class="btn main" id="roll">Lancer le dé</button>`;
-    document.getElementById("roll").onclick=lancer; document.getElementById("roll").focus();
+    if(S.deMode==="reel"){
+      a.innerHTML=`${entete()}<div class="hint">Lance le dé, puis touche le nombre obtenu :</div><div class="vraide">${[1,2,3,4,5,6].map(n=>`<button type="button" data-de="${n}" aria-label="${n}">${de(n,"small")}</button>`).join("")}</div>`;
+      a.querySelectorAll("[data-de]").forEach(b=>b.onclick=()=>resultat(+b.dataset.de));
+      a.querySelector("[data-de]").focus();
+    }else{
+      a.innerHTML=`${entete()}${de(0)}<button type="button" class="btn main" id="roll">Lancer le dé</button>`;
+      document.getElementById("roll").onclick=lancer; document.getElementById("roll").focus();
+    }
   }
 }
 function lancer(){
@@ -343,8 +358,8 @@ function resultat(n){
     S.fioles++;
     rendu(); // met à jour les fioles
     const b=act(); const perdu=S.fioles>=S.maxFioles;
-    b.innerHTML=`${entete()}${de(n)}<div class="turn">Oh non ! Le troll gagne une fiole.</div><button type="button" class="btn main" id="nx">${perdu?"Voir la fin":"Joueur suivant"}</button>`;
-    document.getElementById("nx").onclick=perdu?()=>finPartie(false):suivant; document.getElementById("nx").focus();
+    b.innerHTML=`${entete()}${de(n)}<div class="turn">Oh non ! Le troll gagne une fiole.</div>`;
+    plusTard(perdu?()=>finPartie(false):suivant,2200);
     return;
   }
   S.mot=tirerMot(J().niv);
@@ -384,17 +399,18 @@ function reussi(){
     J().pos++; pas--; majPlateau();
     if(J().pos>NB_CASES){clearInterval(iv); setTimeout(()=>finPartie(true),600); return;}
     if(pas<=0){clearInterval(iv);
-      btns.innerHTML=`<span class="turn">${J().nom} est sur la case ${J().pos}.</span><button type="button" class="btn main" id="nx">Joueur suivant</button>`;
-      document.getElementById("nx").onclick=suivant; document.getElementById("nx").focus();}
+      btns.innerHTML=`<span class="turn">${J().nom} est sur la case ${J().pos}.</span>`;
+      plusTard(suivant,1500);}
   },380);
 }
 function rate(){
   cacherFormule(0);
   const btns=document.getElementById("btns");
-  btns.innerHTML=`<span class="turn">La formule n'a pas marché : ${J().nom} reste sur place.</span><button type="button" class="btn main" id="nx">Joueur suivant</button>`;
-  document.getElementById("nx").onclick=suivant; document.getElementById("nx").focus();
+  btns.innerHTML=`<span class="turn">La formule n'a pas marché : ${J().nom} reste sur place.</span>`;
+  plusTard(suivant,2000);
 }
 function cacherFormule(ms){ setTimeout(()=>{const fo=document.getElementById("formule"); if(fo){fo.hidden=true; fo.innerHTML="";}},ms); }
+function plusTard(f,ms){ clearTimeout(S.auto); S.auto=setTimeout(f,ms); }
 function suivant(){ S.cur=(S.cur+1)%S.nbJ; S.phase="roll"; tirerLecteur(); rendu(); }
 
 const SCENE_VICTOIRE=`<svg class="scene" viewBox="0 0 640 400" role="img" aria-label="La princesse devant son château, sous un arc-en-ciel">
@@ -460,14 +476,14 @@ const SCENE_VICTOIRE=`<svg class="scene" viewBox="0 0 640 400" role="img" aria-l
 </svg>`;
 
 function finPartie(gagne){
-  S.phase="fin"; clearInterval(S.timer);
+  S.phase="fin"; clearInterval(S.timer); clearTimeout(S.auto);
   app.innerHTML= gagne ? `
     <h1>${J().nom} a sauvé la princesse !</h1>
     <div class="end">${SCENE_VICTOIRE}
       <p class="lead">La dernière formule a brisé le sort : la grenouille redevient princesse. Bravo à toute l'équipe de sorciers !</p>
       <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>` : `
     <h1>Le troll a rempli ses fioles…</h1>
-    <div class="end">${MONSTRE.replace('class="m"','class="m" style="width:140px;height:140px"')}
+    <div class="end">${MONSTRE.replace('class="m"','class="m" style="width:220px;height:220px;object-fit:contain"')}
       <p class="lead">La princesse reste une grenouille pour l'instant. Retentez votre chance : les formules magiques vous attendent !</p>
       <div class="btns"><button type="button" class="btn main" id="again">Rejouer</button><button type="button" class="btn" id="home">Changer les joueurs</button></div></div>`;
   document.getElementById("again").onclick=nouvellePartie;
@@ -488,6 +504,7 @@ document.addEventListener("keydown",e=>{
   else if([" ","Enter","ArrowRight","PageDown"].includes(e.key)) clic(["roll","skip","oui","nx","again","go"]);
   else if(["ArrowLeft","PageUp","n","N"].includes(e.key)) clic(["non"]);
   else if(e.key==="r"||e.key==="R") clic(["re"]);
+  else if(/^[1-6]$/.test(e.key)){ const b=document.querySelector(`[data-de="${e.key}"]`); if(b){ e.preventDefault(); b.click(); } }
 });
 
 accueil();
