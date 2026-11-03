@@ -127,8 +127,8 @@ kbd{background:#efe5d2;border-radius:4px;padding:1px 5px;font-family:inherit}
 .fin-titre h1{font-size:clamp(26px,5vw,40px)}
 #fin-img{flex:0 0 auto}
 #fin-img img,#fin-img svg{width:100%;height:auto;display:block}
-#fin-img.scene{width:min(460px,100%)!important}
-#fin-img.scene img{border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+#fin-img.fin-scene{width:min(460px,100%)!important}
+#fin-img.fin-scene img{border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
 .fin-titre.gagne h1{color:var(--ok)}
 .fin-titre.perdu h1{color:var(--err)}
 .score{font-size:18px;margin:0 0 16px}
@@ -670,7 +670,7 @@ async function finir(gagne){
   await pause(gagne?700:300);
   const nom="le Petit Chaperon rouge";
   $("fin-titre").className="fin-titre "+(gagne?"gagne":"perdu");
-  $("fin-img").classList.add("scene");
+  $("fin-img").classList.add("fin-scene");
   $("fin-img").innerHTML = `<img src="${gagne?CANVA.gagne:CANVA.perdu}" alt="${gagne?"Le Petit Chaperon rouge fait un câlin à sa grand-mère":"Le loup attrape le Petit Chaperon rouge"}">`;
   $("fin-h1").textContent = gagne ? (cfg.prenom?`Bravo ${cfg.prenom} ! `:"Bravo ! ")+"Le Petit Chaperon rouge est arrivé chez Mère-Grand." : `Le loup a rattrapé ${nom}… On recommence ?`;
   const bons=jeu.res.filter(r=>r.ok&&!r.aide).length;
