@@ -127,6 +127,8 @@ kbd{background:#efe5d2;border-radius:4px;padding:1px 5px;font-family:inherit}
 .fin-titre h1{font-size:clamp(26px,5vw,40px)}
 #fin-img{flex:0 0 auto}
 #fin-img img,#fin-img svg{width:100%;height:auto;display:block}
+#fin-img.scene{width:min(460px,100%)!important}
+#fin-img.scene img{border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
 .fin-titre.gagne h1{color:var(--ok)}
 .fin-titre.perdu h1{color:var(--err)}
 .score{font-size:18px;margin:0 0 16px}
@@ -286,7 +288,7 @@ chaperon:`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg"><rect x=
 loup:`<svg viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg"><path d="M26 52Q0 44 6 20Q14 40 32 46Z" fill="#646b75"/><rect x="34" y="68" width="9" height="28" rx="3" fill="#646b75"/><rect x="52" y="70" width="9" height="26" rx="3" fill="#5a616a"/><rect x="72" y="70" width="9" height="26" rx="3" fill="#5a616a"/><rect x="88" y="68" width="9" height="28" rx="3" fill="#646b75"/><ellipse cx="63" cy="57" rx="38" ry="21" fill="#7d8590"/><ellipse cx="63" cy="64" rx="26" ry="10" fill="#9aa1aa"/><path d="M88 28L91 6L103 24Z" fill="#5d646d"/><path d="M104 26L111 6L115 30Z" fill="#5d646d"/><circle cx="101" cy="40" r="17" fill="#7d8590"/><path d="M110 32L135 43L112 55Z" fill="#7d8590"/><circle cx="134" cy="43" r="3.2" fill="#222"/><circle cx="105" cy="36" r="3" fill="#f5d33b"/><circle cx="106" cy="36" r="1.3" fill="#222"/><path d="M98 31l12 2" stroke="#3b4048" stroke-width="2.5" stroke-linecap="round"/><path d="M113 52l3 5 3-4 3 5 3-5" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>`,
 mamie:`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg"><path d="M30 62L16 134H84L70 62Z" fill="#8c6fb0"/><path d="M24 104h52" stroke="#a98fc9" stroke-width="5"/><path d="M30 62h40l2 14H28z" fill="#f1ece4"/><circle cx="50" cy="42" r="18" fill="#f3d2b3"/><path d="M32 40Q34 20 50 20Q66 20 68 40Q62 28 50 28Q38 28 32 40Z" fill="#e8e6e2"/><circle cx="50" cy="17" r="8" fill="#e8e6e2"/><circle cx="43" cy="43" r="5" fill="#fff" fill-opacity=".4" stroke="#3a2a20" stroke-width="1.8"/><circle cx="57" cy="43" r="5" fill="#fff" fill-opacity=".4" stroke="#3a2a20" stroke-width="1.8"/><path d="M48 43h4" stroke="#3a2a20" stroke-width="1.8"/><path d="M44 52Q50 57 56 52" stroke="#3a2a20" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`
 };
-const CANVA = {"fond": "/images/chemin-des-sons/fond.jpg", "chaperon": "/images/chemin-des-sons/chaperon.png", "loup": "/images/chemin-des-sons/loup.png", "mamie": "/images/chemin-des-sons/mamie.png"};
+const CANVA = {"fond": "/images/chemin-des-sons/fond.jpg", "chaperon": "/images/chemin-des-sons/chaperon.png", "loup": "/images/chemin-des-sons/loup.png", "mamie": "/images/chemin-des-sons/mamie.png", "gagne": "/images/chemin-des-sons/fin-calin.jpg", "perdu": "/images/chemin-des-sons/fin-loup.jpg"};
 const PERSOS = [["chaperon","Chaperon"],["loup","Loup"],["mamie","Mère-Grand et sa maison"]];
 const SLOTS = PERSOS;
 
@@ -633,7 +635,8 @@ async function finir(gagne){
   await pause(gagne?700:300);
   const nom="le Petit Chaperon rouge";
   $("fin-titre").className="fin-titre "+(gagne?"gagne":"perdu");
-  $("fin-img").innerHTML = rendrePerso(gagne?"mamie":"loup");
+  $("fin-img").classList.add("scene");
+  $("fin-img").innerHTML = `<img src="${gagne?CANVA.gagne:CANVA.perdu}" alt="${gagne?"Le Petit Chaperon rouge fait un câlin à sa grand-mère":"Le loup attrape le Petit Chaperon rouge"}">`;
   $("fin-h1").textContent = gagne ? (cfg.prenom?`Bravo ${cfg.prenom} ! `:"Bravo ! ")+"Le Petit Chaperon rouge est arrivé chez Mère-Grand." : `Le loup a rattrapé ${nom}… On recommence ?`;
   const bons=jeu.res.filter(r=>r.ok&&!r.aide).length;
   $("fin-score").textContent = `${bons} mot${bons>1?"s":""} bien lu${bons>1?"s":""} sur ${jeu.res.length} lu${jeu.res.length>1?"s":""} (${N} pancartes sur le chemin).`;

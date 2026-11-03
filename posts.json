@@ -4548,7 +4548,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Écriture script ou cursive.",
+             "text": "Écriture script ou cursive. Dé à l'écran ou vrai dé de la classe : on touche simplement le nombre obtenu.",
              "decorations": []
             }
            }
