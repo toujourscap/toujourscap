@@ -86,11 +86,10 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .scene.decor-image .decor{display:none}
 /* Avec le décor Canva : le magicien reste visible au centre, le tableau à gauche, la roue à droite, le mot devant la scène. */
 .scene.decor-image .panneau{top:auto;bottom:2%}
-.scene.decor-image .tableau{left:5%;top:22%;width:21%}
-.scene.decor-image .ecouter{left:5%;top:12%}
+.scene.decor-image .chapeau-zone{left:6%;top:13%;width:20%}
+.scene.decor-image .ecouter{left:4%;top:4%}
 .scene.decor-image .roue-zone{left:65%;top:15%;width:29%}
-.scene.decor-image .bulle{left:5%;bottom:auto;top:62%;transform:none;white-space:normal;max-width:30%;text-align:center}
-.scene.decor-image .tableau.vide{display:none}
+.scene.decor-image .bulle{left:4%;bottom:auto;top:65%;transform:none;white-space:normal;max-width:30%;text-align:center}
 /* Décor dessiné (remplacé par l'image Canva si elle est présente) */
 .decor{position:absolute;inset:0;pointer-events:none}
 .rideau{position:absolute;top:0;bottom:12%;width:13%;
@@ -124,12 +123,19 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .mot .trou.rempli.aide{color:var(--err)}
 @keyframes pulse{50%{box-shadow:0 0 0 .8cqw rgba(242,193,78,.35)}}
 
-/* Le tableau (image du mot) */
-.tableau{position:absolute;left:14%;top:38%;width:23%;aspect-ratio:1;background:#fff;border:.8cqw solid var(--or);border-radius:1.5cqw;
-  box-shadow:0 1cqw 0 rgba(0,0,0,.3),inset 0 0 0 .3cqw var(--or-fonce);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.tableau img{width:92%;height:92%;object-fit:contain}
-.tableau .chapeau{width:80%}
-.tableau.apparait{animation:apparait .6s cubic-bezier(.3,1.5,.5,1)}
+/* Le chapeau magique : l'image du mot reste cachée dedans et sort quand le mot est réussi. */
+.chapeau-zone{position:absolute;left:14%;top:30%;width:20%;aspect-ratio:20/28;pointer-events:none}
+.chapeau-zone svg{position:absolute;left:0;bottom:0;width:100%;filter:drop-shadow(0 .8cqw .3cqw rgba(0,0,0,.4))}
+.sortie{position:absolute;left:17%;width:66%;top:0;height:53%;overflow:hidden}
+.surprise{position:absolute;left:0;right:0;bottom:0;aspect-ratio:1;background:#fff;border:.6cqw solid var(--or);border-radius:1.4cqw;
+  display:flex;align-items:center;justify-content:center;transform:translateY(105%);box-shadow:0 .5cqw 0 rgba(0,0,0,.25)}
+.surprise img{width:90%;height:90%;object-fit:contain}
+.surprise .mot-surprise{font-size:3.2cqw;color:var(--violet);padding:0 .4cqw;text-align:center;word-break:break-word}
+.chapeau-zone.sort .surprise{animation:sortir 1s cubic-bezier(.25,1.4,.5,1) forwards}
+@keyframes sortir{0%{transform:translateY(105%)}100%{transform:translateY(0)}}
+.chapeau-zone.sort svg{animation:sautille .5s ease 2}
+@keyframes sautille{50%{transform:translateY(-4%) rotate(-3deg)}}
+.chapeau-zone.apparait{animation:apparait .6s cubic-bezier(.3,1.5,.5,1)}
 @keyframes apparait{from{transform:scale(.3) rotate(-12deg);opacity:0}}
 .ecouter{position:absolute;left:14%;top:30%;
   background:var(--violet);color:#fff;border:none;border-radius:999px;font-size:1.7cqw;padding:.6cqw 1.4cqw;font-weight:700;box-shadow:0 .4cqw 0 var(--violet-fonce)}
@@ -227,7 +233,7 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
     </fieldset>
     <fieldset>
       <legend>Aides</legend>
-      <label class="coche"><input type="checkbox" id="opt-image" checked><span>Montrer l'image du mot (quand il en a une)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-image" checked><span>Faire sortir l'image du chapeau quand le mot est réussi</span></label>
       <label class="coche"><input type="checkbox" id="opt-modele" checked><span>Écrire le mot en modèle au-dessus (l'élève recopie la bonne lettre)</span></label>
       <label class="coche"><input type="checkbox" id="opt-voix" checked><span>Dire le mot quand il apparaît</span></label>
       <label class="coche"><input type="checkbox" id="opt-son" checked><span>Bruitages</span></label>
@@ -264,7 +270,17 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
       <div class="mot" id="mot"></div>
     </div>
 
-    <div class="tableau" id="tableau"></div>
+    <div class="chapeau-zone" id="chapeau-zone">
+      <div class="sortie"><div class="surprise" id="surprise"></div></div>
+      <svg viewBox="0 0 120 100" aria-hidden="true">
+        <ellipse cx="60" cy="86" rx="56" ry="12" fill="#1b0f29"/>
+        <path d="M22 26 L98 26 L94 84 Q60 92 26 84 Z" fill="#2a1840"/>
+        <path d="M24 64 L96 64 L95 76 Q60 83 25 76 Z" fill="#b3243b"/>
+        <ellipse cx="60" cy="26" rx="38" ry="8" fill="#120a1d" stroke="#46246f" stroke-width="2.5"/>
+        <path d="M30 34 Q33 55 31 78" stroke="rgba(255,255,255,.14)" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <text x="72" y="56" font-size="14" fill="#f2c14e">✦</text><text x="40" y="50" font-size="9" fill="#f2c14e">✧</text>
+      </svg>
+    </div>
     <button class="ecouter" id="ecouter" type="button">🔊 Écouter</button>
 
     <div class="roue-zone" id="roue-zone">
@@ -432,22 +448,13 @@ function motSuivant(){
   trous = cibles(o.m, lettres); tIdx = 0;
   $("modele").textContent = o.m;
   $("mot").innerHTML = [...o.m].map((c,k) => trous.includes(k) ? `<span class="trou" data-k="${k}"></span>` : `<span class="l">${c === " " ? "&nbsp;" : c}</span>`).join("");
-  const t = $("tableau");
+  // L'image (ou le mot écrit) attend cachée dans le chapeau
   const avecImage = !!(o.i && $("opt-image").checked);
-  t.innerHTML = avecImage ? `<img src="${IMG}${o.i}.jpg" alt="${o.m}">` : chapeau();
-  t.classList.toggle("vide", !avecImage);
-  t.classList.remove("apparait"); void t.offsetWidth; t.classList.add("apparait");
+  $("surprise").innerHTML = avecImage ? `<img src="${IMG}${o.i}.jpg" alt="${o.m}">` : `<span class="mot-surprise">${o.m}</span>`;
+  const z = $("chapeau-zone"); z.classList.remove("sort","apparait"); void z.offsetWidth; z.classList.add("apparait");
   stats.mots.push({ m:o.m, i:o.i, erreurs:0 });
   if($("opt-voix").checked) setTimeout(()=>dire(o.m), 350);
   trouSuivant();
-}
-
-function chapeau(){
-  return `<svg class="chapeau" viewBox="0 0 120 110" aria-hidden="true">
-    <ellipse cx="60" cy="92" rx="54" ry="12" fill="#24162e"/><rect x="28" y="22" width="64" height="70" rx="6" fill="#2e1a4d"/>
-    <rect x="28" y="66" width="64" height="12" fill="#b3243b"/><ellipse cx="60" cy="22" rx="32" ry="7" fill="#46246f"/>
-    <line x1="88" y1="60" x2="114" y2="18" stroke="#24162e" stroke-width="6" stroke-linecap="round"/><line x1="108" y1="28" x2="114" y2="18" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-    <text x="104" y="12" font-size="14" fill="#f2c14e">✦</text></svg>`;
 }
 
 function trouSuivant(){
@@ -530,8 +537,10 @@ function finMot(){
   const o = partie[idx];
   son("mot"); bulle(`Abracadabra… ${o.m} !`, "ok");
   if($("opt-voix").checked) setTimeout(()=>dire(o.m), 250);
-  paillettes($("mot"), 22); paillettes($("tableau"), 14);
-  setTimeout(()=>{ idx++; if(idx < partie.length) motSuivant(); else finPartie(); }, 2300);
+  paillettes($("mot"), 22);
+  const z = $("chapeau-zone"); z.classList.remove("apparait"); z.classList.add("sort");
+  setTimeout(()=>paillettes($("surprise"), 18), 700);
+  setTimeout(()=>{ idx++; if(idx < partie.length) motSuivant(); else finPartie(); }, 3400);
 }
 
 function finPartie(){

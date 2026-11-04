@@ -82,7 +82,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Un mot apparaît devant la scène, avec une case vide à la place de chaque b, d, p ou q. L'image du mot s'affiche quand il en a une, et le mot est dit à voix haute.",
+             "text": "Un mot apparaît devant la scène, avec une case vide à la place de chaque b, d, p ou q, et il est dit à voix haute. L'image du mot reste cachée dans le chapeau du magicien.",
              "decorations": []
             }
            }
@@ -116,7 +116,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Il appuie sur « Abracadabra ! » : si la lettre est bonne, elle s'envole dans le mot. Sinon, la roue tremble. Après deux erreurs, la bonne lettre apparaît en gris dans la case.",
+             "text": "Il appuie sur « Abracadabra ! » : si la lettre est bonne, elle s'envole dans le mot. Sinon, la roue tremble. Après deux erreurs, la bonne lettre apparaît en gris dans la case. Quand le mot est complet, son image sort du chapeau.",
              "decorations": []
             }
            }
@@ -275,7 +275,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Montrer ou cacher l'image, dire le mot à voix haute, bruitages.",
+             "text": "Faire sortir ou non l'image du chapeau (sinon, c'est le mot écrit qui en sort), dire le mot à voix haute, bruitages.",
              "decorations": []
             }
            }
