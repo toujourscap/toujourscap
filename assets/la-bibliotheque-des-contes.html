@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Bibliothèque des contes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* Bibliothèque chaleureuse : bois, papier, étagères. Un seul thème clair (lecture longue sur papier). */
+:root{
+  --wood:#6B3F22; --wood-2:#8A5530; --shelf:#4A2A16; --paper:#FFF9EC; --paper-2:#F6EBD2; --edge:#E2CFA6;
+  --ink:#2B2118; --muted:#7A6A57; --gold:#E9A82A; --gold-d:#A8740F; --hl:#FFE066;
+  --ok:#2F9E5E; --ok-bg:#E2F4E8; --ko:#C8433A; --ko-bg:#FBE4E0;
+  --c-exp:#3B78D8; --c-pro:#8A63D2; --c-voc:#16A08F; --c-inf:#E0861A; --c-ord:#4E9A2F; --c-per:#D14E8A;
+  --f-display:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-read:"Andika","Verdana",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+html{background:var(--wood)}
+body{margin:0;min-height:100vh;background:var(--wood);color:var(--ink);font-family:var(--f-read);font-size:17px;line-height:1.45;
+  background-image:repeating-linear-gradient(90deg,#0000 0 120px,#0000001a 120px 122px),linear-gradient(#ffffff0d,#0000001a)}
+.wrap{max-width:1280px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;text-wrap:balance}
+.card{background:var(--paper);border-radius:18px;box-shadow:0 6px 0 var(--shelf),0 14px 30px #0005;padding:20px 22px}
+.btn{font:inherit;font-family:var(--f-display);font-weight:800;font-size:19px;border:0;border-radius:14px;padding:12px 22px;cursor:pointer;
+  background:var(--gold);color:#2A1D05;box-shadow:0 4px 0 var(--gold-d)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--gold-d)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--edge);box-shadow:none}
+.btn.small{font-size:16px;padding:8px 14px}
+button:focus-visible{outline:3px solid var(--c-exp);outline-offset:3px}
+
+/* Accueil */
+.home{display:grid;gap:18px}
+.home header{text-align:center;color:#FFF3DC;display:grid;gap:6px;justify-items:center;padding:6px 0 4px}
+.home header h1{font-size:clamp(30px,5.5vw,52px);color:var(--gold);text-shadow:0 3px 0 var(--shelf)}
+.home header p{margin:0;max-width:62ch;font-size:18px;opacity:.92}
+.step-t{font-family:var(--f-display);font-weight:800;font-size:20px;margin:0 0 12px;display:flex;gap:10px;align-items:center}
+.step-t i{font-style:normal;background:var(--wood);color:#FFF3DC;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px}
+.books{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.book{font:inherit;color:var(--ink);cursor:pointer;text-align:left;border:3px solid var(--edge);border-radius:14px;background:var(--paper-2);
+  padding:14px 14px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;position:relative}
+.book .ic{font-size:40px;grid-row:span 2}
+.book b{font-family:var(--f-display);font-size:19px;line-height:1.15}
+.book span{font-size:14px;color:var(--muted)}
+.book[aria-pressed="true"]{border-color:var(--gold);background:#FFF1CC;box-shadow:0 0 0 3px #E9A82A55}
+.levels{display:flex;gap:12px;flex-wrap:wrap}
+.lvl{font:inherit;cursor:pointer;border:3px solid var(--edge);border-radius:14px;background:var(--paper-2);padding:10px 18px;display:grid;justify-items:center;min-width:120px}
+.lvl b{font-family:var(--f-display);font-size:24px}
+.lvl span{font-size:13px;color:var(--muted)}
+.lvl[aria-pressed="true"]{border-color:var(--gold);background:#FFF1CC;box-shadow:0 0 0 3px #E9A82A55}
+.opts{display:grid;gap:8px;margin:0;padding:0;border:0}
+.opts label{display:flex;gap:10px;align-items:center;cursor:pointer}
+.opts input{width:20px;height:20px;accent-color:var(--wood)}
+.fams{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{display:inline-flex;gap:6px;align-items:center;font-family:var(--f-display);font-weight:800;font-size:14px;color:#fff;background:var(--c);border-radius:999px;padding:4px 12px}
+.go{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.small-note{font-size:14px;color:var(--muted);margin:10px 0 0}
+
+/* Barre de jeu */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;color:#FFF3DC}
+.topbar h2{font-size:clamp(19px,2.6vw,24px);color:var(--gold)}
+.topbar .lv{font-family:var(--f-display);font-weight:800;background:#0003;border-radius:999px;padding:3px 12px;margin-left:8px;font-size:15px;color:#FFF3DC}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:28px;height:28px;border-radius:8px;background:#0003;border:2px solid #FFF3DC55;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:13px}
+.dot.here{border-color:var(--gold);color:var(--gold)}
+.dot.s2{background:var(--gold);border-color:var(--gold);color:#2A1D05}
+.dot.s1{background:#F6D88A;border-color:#F6D88A;color:#2A1D05}
+.dot.s0{background:#E9C7BE;border-color:#E9C7BE;color:#2A1D05}
+
+/* Texte */
+.reader{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.reader.solo{grid-template-columns:minmax(0,820px);justify-content:center}
+@media (max-width:880px){.reader{grid-template-columns:1fr}}
+.story{position:relative}
+.story .head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.story h3{font-size:clamp(22px,3vw,28px);color:var(--wood)}
+.story .src{font-size:13px;color:var(--muted);margin:2px 0 0}
+.txt{font-size:var(--fs,24px);line-height:1.65}
+.txt p{margin:0 0 .7em}
+.txt p:last-child{margin-bottom:0}
+.lv-CE1 .txt{--fs:22px} .lv-CE2 .txt{--fs:20px}
+@media (max-width:600px){.txt{--fs:20px!important}}
+mark{background:transparent;color:inherit;border-radius:4px;transition:background .3s,box-shadow .3s}
+mark.on{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
+.speak{font:inherit;font-weight:700;font-size:15px;background:transparent;color:var(--wood);border:2px solid var(--edge);border-radius:999px;padding:4px 12px;cursor:pointer}
+.reader.q-mode .story{max-height:78vh;overflow:auto}
+.cover{position:absolute;inset:0;background:var(--paper);border-radius:18px;display:grid;place-items:center;text-align:center;padding:20px;gap:10px}
+.cover p{margin:0;color:var(--muted)}
+.readgo{display:flex;justify-content:center;margin-top:18px}
+
+/* Question */
+.qcard{border-top:8px solid var(--c)}
+.qcard .tag{display:inline-flex;gap:6px;font-family:var(--f-display);font-weight:800;font-size:14px;color:#fff;background:var(--c);border-radius:999px;padding:3px 12px}
+.qcard .qtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.q{font-family:var(--f-display);font-weight:800;font-size:clamp(20px,2.6vw,25px);margin:0 0 14px;color:#3B2A12}
+.choices{display:grid;gap:10px}
+.choice{font:inherit;font-size:clamp(18px,2.3vw,21px);text-align:left;padding:11px 16px;border-radius:12px;cursor:pointer;
+  background:#fff;color:var(--ink);border:2px solid var(--edge);display:flex;gap:12px;align-items:center}
+.choice .l{font-family:var(--f-display);font-weight:800;color:var(--c);min-width:1.2em}
+.choice:hover:not(:disabled){border-color:var(--c)}
+.choice:disabled{cursor:default;opacity:.55}
+.choice.ok{background:var(--ok-bg);border-color:var(--ok);opacity:1}
+.choice.ko{background:var(--ko-bg);border-color:var(--ko);text-decoration:line-through}
+.choice.picked{border-color:var(--c);background:#F2F7EC}
+.choice.picked .l{background:var(--c);color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:grid;place-items:center}
+.fb{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:18px}
+.fb.ok{background:var(--ok-bg);border:2px solid var(--ok)}
+.fb.ko{background:var(--ko-bg);border:2px solid var(--ko)}
+.fb strong{font-family:var(--f-display)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.relire{margin-top:10px}
+
+/* Fin */
+.end{display:grid;gap:16px;justify-items:center;text-align:center;max-width:760px;margin:0 auto}
+.end h1{font-size:clamp(28px,5vw,44px);color:var(--wood)}
+.stars{font-size:clamp(40px,8vw,64px);letter-spacing:.08em}
+.score{font-family:var(--f-display);font-weight:800;font-size:22px}
+.recap{width:100%;border-collapse:collapse;text-align:left;font-size:16px}
+.recap th,.recap td{padding:8px 10px;border-bottom:1px solid var(--edge)}
+.recap th{font-family:var(--f-display);font-size:15px;color:var(--muted)}
+.recap td.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Version imprimable */
+#print{display:none}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff;font-size:13pt}
+  .wrap{display:none}
+  #print{display:block;color:#000}
+  #print h1{font-size:20pt;margin:0 0 2pt}
+  #print .meta{font-size:10pt;color:#555;margin:0 0 10pt}
+  #print .ptxt{font-size:var(--pfs,15pt);line-height:1.6;border:1.5pt solid #999;border-radius:8pt;padding:10pt 14pt;margin:0 0 12pt}
+  #print .ptxt p{margin:0 0 6pt}
+  #print ol.pq{padding-left:18pt;margin:0}
+  #print ol.pq>li{margin:0 0 10pt;break-inside:avoid}
+  #print .pq b{font-family:var(--f-read)}
+  #print .pq ul{list-style:none;padding:4pt 0 0 0;margin:0;display:flex;flex-wrap:wrap;gap:4pt 18pt}
+  #print .pq ul.col{display:block}
+  #print .pq ul.col li{margin:2pt 0}
+  #print .fam{font-size:9pt;color:#555}
+  #print .nom{float:right;font-size:11pt}
+  #print .pbreak{break-before:page}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="print" aria-hidden="true"></div>
+
+<script>
+/* ============================================================
+   CONTENUS
+   Contes traditionnels du domaine public (Ésope ; conte populaire),
+   réécrits pour Toujours cap ! en trois versions (CP, CE1, CE2).
+   Dans les textes, {k:mots} marque un indice (surligné sur demande).
+   Familles de questions : exp, pro, voc, inf, per, ord.
+   Pour enregistrer sa voix : déposer un MP3 dans /audio/bibliotheque/<conte>-<niveau>.mp3
+   et mettre son nom dans le champ audio du niveau.
+   ============================================================ */
+const FAM = {
+  exp:{nom:"Je trouve dans le texte", ic:"🔎", c:"var(--c-exp)", ex:"La réponse est écrite dans l'histoire."},
+  pro:{nom:"Qui ? Quoi ?", ic:"👉", c:"var(--c-pro)", ex:"Retrouver de qui ou de quoi on parle (il, elle, le, lui…)."},
+  voc:{nom:"Le sens des mots", ic:"📖", c:"var(--c-voc)", ex:"Comprendre un mot grâce à la phrase."},
+  inf:{nom:"Je devine", ic:"💡", c:"var(--c-inf)", ex:"La réponse n'est pas écrite : on la trouve avec des indices."},
+  per:{nom:"Les personnages", ic:"❤️", c:"var(--c-per)", ex:"Ce qu'ils ressentent, ce qu'ils pensent, ce que l'histoire apprend."},
+  ord:{nom:"Dans l'ordre", ic:"🔢", c:"var(--c-ord)", ex:"Remettre les moments de l'histoire dans l'ordre."}
+};
+
+const CONTES = [
+{
+  id:"poule", titre:"La petite poule rousse", ic:"🐔",
+  src:"Conte populaire traditionnel (domaine public), réécrit pour Toujours cap !",
+  resume:"Qui aide la poule à faire son pain ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "La petite poule rousse trouve {a:des grains de blé}. « Qui veut m'aider à planter le blé ? » demande-t-elle.",
+        "« Pas moi ! » dit le chat. « Pas moi ! » dit le chien. « Pas moi ! » dit le canard. Alors la poule plante le blé {b:toute seule}.",
+        "Le blé pousse. La poule coupe le blé, puis {c:elle fait du pain}. {d:Le pain sent très bon.}",
+        "« Qui veut manger le pain ? » demande la poule. « Moi ! Moi ! Moi ! » crient {e:les trois amis}.",
+        "« Non ! {f:Vous ne m'avez pas aidée.} Je vais le manger avec mes poussins. »"
+      ],
+      questions:[
+        {f:"exp", q:"Qu'est-ce que la poule trouve ?", choix:["des grains de blé","des cailloux","une pomme"], bon:0, ind:["a"]},
+        {f:"exp", q:"Qui aide la poule à planter le blé ?", choix:["personne","le chat","le chien"], bon:0, ind:["b"]},
+        {f:"pro", q:"« Elle fait du pain. » Qui est « elle » ?", choix:["la poule","la souris","la farine"], bon:0, ind:["c"]},
+        {f:"inf", q:"Pourquoi les trois amis crient « Moi ! » ?", choix:["Ils ont envie de manger le pain.","Ils veulent aider la poule.","Ils ont peur de la poule."], bon:0, ind:["d","e"]},
+        {f:"per", q:"Pourquoi la poule ne donne pas de pain à ses amis ?", choix:["Ils ne l'ont pas aidée.","Le pain est brûlé.","Ils n'aiment pas le pain."], bon:0, ind:["f"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante le blé.","La poule coupe le blé.","La poule fait du pain."], ind:["b","c"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "Un matin, {a:dans la cour de la ferme}, la petite poule rousse trouve quelques grains de blé. Elle appelle ses amis : « Qui veut m'aider à planter ce blé ? »",
+        "« Pas moi, {b:je dors} », répond le chat. « Pas moi, je me promène », dit le chien. « Pas moi, je nage », ajoute le canard.",
+        "« Tant pis, je le ferai toute seule ! » dit la poule. Elle plante les grains et les arrose chaque jour.",
+        "L'été arrive et le blé devient doré. Personne ne veut l'aider à le couper, ni à le porter au moulin. {c:Au moulin, le meunier écrase les grains pour faire de la farine.} Avec cette farine, la petite poule prépare une pâte, puis {d:elle la fait cuire dans le four}.",
+        "Bientôt, {e:une bonne odeur de pain chaud remplit la ferme}. Le chat, le chien et le canard {e:arrivent en courant}. « Qui veut manger ce pain ? » demande la poule. « Moi ! Moi ! Moi ! »",
+        "« {f:Vous n'avez rien fait pour m'aider.} Mes poussins et moi, nous allons le manger. » Et c'est ce qu'ils font, jusqu'à la dernière miette."
+      ],
+      questions:[
+        {f:"exp", q:"Où la poule trouve-t-elle les grains de blé ?", choix:["dans la cour de la ferme","dans le moulin","au bord de la mare"], bon:0, ind:["a"]},
+        {f:"exp", q:"Que fait le chat quand la poule demande de l'aide ?", choix:["Il dort.","Il nage.","Il se promène."], bon:0, ind:["b"]},
+        {f:"pro", q:"« Elle la fait cuire dans le four. » Qu'est-ce que la poule fait cuire ?", choix:["la pâte","la farine","le blé"], bon:0, ind:["d"]},
+        {f:"voc", q:"À quoi sert le moulin dans cette histoire ?", choix:["à faire de la farine avec les grains","à cuire le pain","à arroser le blé"], bon:0, ind:["c"]},
+        {f:"inf", q:"Pourquoi les animaux arrivent-ils en courant ?", choix:["Ils ont senti l'odeur du pain.","Ils veulent enfin aider la poule.","Il commence à pleuvoir."], bon:0, ind:["e"]},
+        {f:"per", q:"Que veut nous apprendre cette histoire ?", choix:["Pour profiter du travail, il faut y participer.","Il ne faut jamais manger de pain.","Les chats dorment beaucoup."], bon:0, ind:["f"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante les grains.","Le blé devient doré.","Le meunier fait la farine.","La poule fait cuire le pain."], ind:["c","d"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "Dans une petite ferme vivaient une poule rousse, un chat, un chien et un canard. {b:Le chat passait ses journées à dormir au soleil, le chien à flâner sur les chemins sans savoir où il allait}, et le canard à barboter dans la mare.",
+        "Un matin, en grattant la terre, la petite poule découvrit quelques grains de blé. « Qui veut m'aider à semer ces grains ? » demanda-t-elle. « Pas moi ! » répondirent {c:les trois compères}, sans même lever la tête. {d:La poule soupira. Pourtant, elle ne se découragea pas} : elle {a:enfonça les grains dans la terre}, un par un, et les arrosa chaque matin.",
+        "{e:Les semaines passèrent. Les petites pousses vertes devinrent de hautes tiges dorées.} « Qui veut m'aider à couper le blé ? » « Pas moi ! » « Qui veut m'aider à le porter au moulin ? » « Pas moi ! » La poule fit tout, et le meunier lui rendit un sac de farine bien blanche.",
+        "De retour à la ferme, elle pétrit la pâte et la glissa dans le four. Une délicieuse odeur de pain chaud se répandit jusqu'à la mare. {f:Comme par magie, le chat ouvrit un œil, le chien rentra au trot et le canard sortit de l'eau.}",
+        "« Qui veut m'aider à manger ce pain ? » demanda la poule. « Moi ! Moi ! Moi ! » s'écrièrent-ils en se bousculant. {g:« Vous n'avez pas voulu semer, ni couper, ni porter, ni pétrir. Mes poussins, eux, mangeront ce pain. »}",
+        "Ce soir-là, les trois compères allèrent se coucher le ventre vide. {h:L'année suivante, quand la poule trouva de nouveaux grains, ils furent les premiers à proposer leur aide.}"
+      ],
+      questions:[
+        {f:"voc", q:"Dans le texte, que veut dire « semer » ?", choix:["mettre des graines dans la terre pour qu'elles poussent","couper le blé quand il est mûr","écraser les grains pour faire de la farine"], bon:0, ind:["a"]},
+        {f:"voc", q:"Le chien passe ses journées à « flâner ». Cela veut dire :", choix:["se promener sans se presser, sans but","courir très vite","garder la ferme"], bon:0, ind:["b"]},
+        {f:"pro", q:"Qui sont « les trois compères » ?", choix:["le chat, le chien et le canard","la poule et ses poussins","le meunier et ses amis"], bon:0, ind:["c"]},
+        {f:"per", q:"Quand personne ne veut l'aider, comment est la poule ?", choix:["déçue, mais courageuse","très joyeuse","fâchée au point d'abandonner"], bon:0, ind:["d"]},
+        {f:"inf", q:"Combien de temps se passe-t-il entre les semis et la récolte du blé ?", choix:["plusieurs semaines","une seule nuit","une heure"], bon:0, ind:["e"]},
+        {f:"inf", q:"Pourquoi le chat, le chien et le canard se réveillent-ils « comme par magie » ?", choix:["L'odeur du pain les a attirés.","La poule les a appelés.","Le meunier est venu les chercher."], bon:0, ind:["f"]},
+        {f:"per", q:"Que comprennent les trois compères à la fin de l'histoire ?", choix:["Qu'il faut participer au travail pour en profiter.","Qu'il vaut mieux dormir que travailler.","Que la poule ne fait pas bien le pain."], bon:0, ind:["g","h"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule sème les grains.","Le blé devient doré.","Le meunier donne la farine.","La poule fait cuire le pain.","Les compères se couchent le ventre vide."], ind:["a","e","h"]}
+      ]
+    }
+  }
+},
+{
+  id:"lion", titre:"Le lion et la souris", ic:"🦁",
+  src:"D'après une fable d'Ésope (domaine public), réécrite pour Toujours cap !",
+  resume:"Un tout petit animal peut-il aider le roi des animaux ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "Un lion {a:dort sous un arbre}. Une petite souris court sur son nez.",
+        "Le lion se réveille et {b:attrape la souris}. « Laisse-moi partir, dit la souris. Un jour, je t'aiderai. » Le lion rit. {c:Une souris, aider un lion ?} Mais il la laisse partir.",
+        "Le lendemain, le lion est pris dans {d:un filet}. Il tire, il rugit, mais {d:il ne peut pas sortir}.",
+        "La souris arrive. {e:Elle ronge les cordes avec ses petites dents.} Le lion est libre !",
+        "« {f:Merci, petite souris. Tu avais raison.} »"
+      ],
+      questions:[
+        {f:"exp", q:"Où dort le lion ?", choix:["sous un arbre","dans une grotte","dans l'eau"], bon:0, ind:["a"]},
+        {f:"exp", q:"Que fait le lion quand il se réveille ?", choix:["Il attrape la souris.","Il mange une pomme.","Il se rendort."], bon:0, ind:["b"]},
+        {f:"inf", q:"Pourquoi le lion rit ?", choix:["Il pense qu'une souris est trop petite pour l'aider.","La souris lui fait des chatouilles.","Il a gagné un jeu."], bon:0, ind:["c"]},
+        {f:"pro", q:"« Elle ronge les cordes. » Qui est « elle » ?", choix:["la souris","la corde","la lionne"], bon:0, ind:["e"]},
+        {f:"per", q:"À la fin, comment se sent le lion ?", choix:["content et reconnaissant","en colère","triste"], bon:0, ind:["f"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le lion attrape la souris.","Le lion est pris dans un filet.","La souris ronge les cordes."], ind:["b","d","e"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "Par une chaude après-midi, un grand lion faisait la sieste {a:à l'ombre d'un arbre}. Une petite souris, qui cherchait des graines, {b:passa sur sa patte sans le voir}.",
+        "Le lion se réveilla d'un coup et la bloqua sous sa griffe. « Pardon, roi des animaux ! cria la souris. {c:Si tu me laisses partir, un jour je te rendrai service.} »",
+        "Le lion éclata de rire. {d:« Toi, si minuscule, tu veux m'aider ? »} Mais il était de bonne humeur : il souleva sa patte et la souris s'enfuit.",
+        "Quelques jours plus tard, des chasseurs tendirent un grand filet dans la forêt. Le lion tomba dedans. Plus il se débattait, plus {e:les cordes le serraient}. {f:Il poussa un rugissement terrible.}",
+        "{f:La souris reconnut sa voix} et courut aussitôt. Elle grignota une corde, puis une autre, puis une autre encore. Bientôt, {g:le filet céda et le lion put sortir}.",
+        "« Tu vois, dit la souris, {h:même un petit peut aider un grand.} »"
+      ],
+      questions:[
+        {f:"exp", q:"Que faisait le lion au début de l'histoire ?", choix:["la sieste à l'ombre d'un arbre","la chasse aux souris","un bain dans la rivière"], bon:0, ind:["a"]},
+        {f:"inf", q:"Pourquoi la souris passe-t-elle sur la patte du lion ?", choix:["Elle ne l'a pas vu.","Elle veut le réveiller.","Elle veut jouer avec lui."], bon:0, ind:["b"]},
+        {f:"exp", q:"Que promet la souris au lion ?", choix:["de lui rendre service un jour","de lui apporter des graines","de ne plus jamais revenir"], bon:0, ind:["c"]},
+        {f:"pro", q:"« Toi, si minuscule, tu veux m'aider ? » Qui est « toi » ?", choix:["la souris","le lion","le chasseur"], bon:0, ind:["d"]},
+        {f:"inf", q:"Comment la souris sait-elle que le lion a besoin d'aide ?", choix:["Elle a reconnu son rugissement.","Les chasseurs le lui ont dit.","Elle l'a vu tomber de l'arbre."], bon:0, ind:["f"]},
+        {f:"voc", q:"« Le filet céda. » Cela veut dire :", choix:["Le filet se cassa et s'ouvrit.","Le filet devint plus solide.","Le filet tomba dans l'eau."], bon:0, ind:["g"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris passe sur la patte du lion.","Le lion laisse partir la souris.","Le lion tombe dans un filet.","La souris grignote les cordes."], ind:["b","e","g"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "Au cœur de la savane, un lion dormait, étendu de tout son long à l'ombre d'un baobab. Une souris étourdie, qui trottinait à la recherche de graines, {a:escalada sa crinière en croyant grimper sur un buisson}.",
+        "Le lion ouvrit un œil furieux et emprisonna la petite bête sous sa lourde patte. {b:La souris tremblait de tout son corps.} « Seigneur, je ne l'ai pas fait exprès ! Épargne-moi, et je te promets qu'un jour, {c:je te rendrai la pareille}. »",
+        "Cette idée amusa tant le lion qu'il en oublia sa colère. {d:Une souris, venir au secours du roi des animaux ! Quelle plaisanterie !} D'un geste {e:dédaigneux}, il libéra sa prisonnière.",
+        "Or, la semaine suivante, des chasseurs tendirent un piège sur le chemin de la rivière. Le lion s'y prit les pattes. {f:Il eut beau rugir, mordre et se débattre, les mailles du filet le serraient chaque fois davantage.} Épuisé, il finit par se coucher, sans espoir.",
+        "{g:C'est alors qu'une petite voix s'éleva près de son oreille} : « Ne bouge plus, je m'en occupe. » De ses dents fines et pointues, la souris rongea maille après maille. {h:Avant l'aube, le lion était libre.}",
+        "Il baissa sa grosse tête vers la souris. « {i:Je me suis moqué de toi, et j'avais tort.} » {i:On a souvent besoin d'un plus petit que soi.}"
+      ],
+      questions:[
+        {f:"inf", q:"Pourquoi la souris grimpe-t-elle sur le lion ?", choix:["Elle croit que c'est un buisson.","Elle veut le réveiller pour jouer.","Elle cherche à lui faire peur."], bon:0, ind:["a"]},
+        {f:"per", q:"Comment se sent la souris sous la patte du lion ?", choix:["Elle a très peur.","Elle est fière.","Elle a envie de rire."], bon:0, ind:["b"]},
+        {f:"voc", q:"« Je te rendrai la pareille. » Cela veut dire :", choix:["Je te rendrai service à mon tour.","Je te rendrai ta patte.","Je te ferai peur à mon tour."], bon:0, ind:["c"]},
+        {f:"voc", q:"Le lion a un geste « dédaigneux ». Cela veut dire qu'il :", choix:["trouve la souris sans importance","est très gentil avec elle","a peur d'elle"], bon:0, ind:["d","e"]},
+        {f:"inf", q:"Pourquoi le lion ne réussit-il pas à sortir du filet ?", choix:["Plus il se débat, plus le filet le serre.","Il dort au lieu d'essayer.","Les chasseurs le tiennent."], bon:0, ind:["f"]},
+        {f:"pro", q:"« C'est alors qu'une petite voix s'éleva. » À qui est cette voix ?", choix:["à la souris","au chasseur","au lion"], bon:0, ind:["g"]},
+        {f:"inf", q:"Combien de temps la souris a-t-elle travaillé ?", choix:["toute la nuit","quelques secondes","plusieurs jours"], bon:0, ind:["h"]},
+        {f:"per", q:"Qu'a compris le lion à la fin ?", choix:["Même un petit peut aider un grand.","Il faut toujours dormir sous un baobab.","Les souris sont dangereuses."], bon:0, ind:["i"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris grimpe sur le lion.","Le lion libère la souris en riant.","Le lion se prend dans un piège.","La souris ronge les mailles."], ind:["a","d","f","h"]}
+      ]
+    }
+  }
+}
+];
+
+/* ============================================================
+   JEU
+   ============================================================ */
+const app = document.getElementById("app");
+const LETTRES = ["A","B","C","D","E"];
+const NIV = {CP:"Texte court, phrases simples", CE1:"Texte plus long", CE2:"Texte riche, vocabulaire"};
+const st = {conte:null, niv:null, voix:true, texteVisible:true, fams:new Set(Object.keys(FAM)), qs:[], i:0, res:[]};
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const sansMarques = s => s.replace(/\{[a-z]+:([^}]*)\}/g,"$1");
+const html = s => esc(s).replace(/\{([a-z]+):([^}]*)\}/g,'<mark data-k="$1">$2</mark>');
+const famStyle = f => `style="--c:${FAM[f].c}"`;
+
+/* Voix : robuste sur tablette (pas de cancel+speak d'un coup, resume avant de parler) */
+let audioEl = null;
+function stopVoix(){ try{ speechSynthesis.cancel(); }catch(e){} if(audioEl){ audioEl.pause(); audioEl=null; } }
+function parle(t){
+  stopVoix();
+  const txt = t.replace(/[«»]/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"");
+  setTimeout(()=>{ try{ const s=window.speechSynthesis; if(!s) return; s.resume();
+    const u=new SpeechSynthesisUtterance(txt); u.lang="fr-FR"; u.rate=.85;
+    const v=s.getVoices().find(v=>/^fr/i.test(v.lang)); if(v) u.voice=v; s.speak(u);
+    setTimeout(()=>{ if(!s.speaking && !s.pending){ try{s.speak(u)}catch(e){} } },700);
+  }catch(e){} },80);
+}
+function lireHistoire(){
+  const n = CONTES.find(c=>c.id===st.conte).niveaux[st.niv];
+  if(n.audio){ stopVoix(); audioEl=new Audio("/audio/bibliotheque/"+n.audio); audioEl.play().catch(()=>parle(n.texte.map(sansMarques).join(" "))); return; }
+  parle(n.texte.map(sansMarques).join(" "));
+}
+
+/* ---------- Accueil ---------- */
+function accueil(){
+  stopVoix();
+  app.innerHTML = `
+  <div class="home">
+    <header>
+      <h1>📚 La Bibliothèque des contes</h1>
+      <p>Choisis une histoire, lis-la bien, puis réponds aux questions. Si tu te trompes, les mots qui aident s'allument dans le texte.</p>
+    </header>
+    <section class="card">
+      <h2 class="step-t"><i>1</i>Choisis un livre</h2>
+      <div class="books">${CONTES.map(c=>`
+        <button class="book" data-c="${c.id}" aria-pressed="${st.conte===c.id}">
+          <span class="ic" aria-hidden="true">${c.ic}</span><b>${c.titre}</b><span>${c.resume}</span>
+        </button>`).join("")}</div>
+    </section>
+    <section class="card">
+      <h2 class="step-t"><i>2</i>Choisis ton niveau</h2>
+      <div class="levels">${Object.keys(NIV).map(n=>`
+        <button class="lvl" data-n="${n}" aria-pressed="${st.niv===n}"><b>${n}</b><span>${NIV[n]}</span></button>`).join("")}</div>
+    </section>
+    <details class="card">
+      <summary class="step-t" style="cursor:pointer;margin:0"><i>⚙</i>Réglages pour l'adulte</summary>
+      <fieldset class="opts" style="margin-top:14px">
+        <label><input type="checkbox" id="o-voix" ${st.voix?"checked":""}> L'élève peut écouter l'histoire et les questions</label>
+        <label><input type="checkbox" id="o-txt" ${st.texteVisible?"checked":""}> Le texte reste visible pendant les questions <span style="color:var(--muted)">(sinon : bouton « Relire le texte »)</span></label>
+      </fieldset>
+      <p class="small-note" style="margin-top:14px">Familles de questions (décocher pour cibler une compétence) :</p>
+      <fieldset class="opts" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px">
+        ${Object.entries(FAM).map(([k,f])=>`<label><input type="checkbox" class="o-fam" value="${k}" ${st.fams.has(k)?"checked":""}><span class="chip" ${famStyle(k)}>${f.ic} ${f.nom}</span></label>`).join("")}
+      </fieldset>
+      <p class="small-note">${Object.values(FAM).map(f=>`<b>${f.nom}</b> : ${f.ex}`).join("<br>")}</p>
+    </details>
+    <div class="go">
+      <button class="btn" id="start" ${st.conte&&st.niv?"":"disabled style=\"opacity:.5;cursor:not-allowed\""}>📖 Ouvrir le livre</button>
+      <button class="btn ghost" id="print-btn" style="color:#FFF3DC;border-color:#FFF3DC66" ${st.conte&&st.niv?"":"disabled"}>🖨️ Imprimer texte + questions</button>
+    </div>
+  </div>`;
+  app.querySelectorAll(".book").forEach(b=>b.onclick=()=>{ st.conte=b.dataset.c; accueil(); });
+  app.querySelectorAll(".lvl").forEach(b=>b.onclick=()=>{ st.niv=b.dataset.n; accueil(); });
+  const det = app.querySelector("details");
+  if(sessionStorage_get("reglages-ouverts")) det.open=true;
+  det.ontoggle = ()=>sessionStorage_set("reglages-ouverts", det.open?"1":"");
+  app.querySelector("#o-voix").onchange=e=>st.voix=e.target.checked;
+  app.querySelector("#o-txt").onchange=e=>st.texteVisible=e.target.checked;
+  app.querySelectorAll(".o-fam").forEach(c=>c.onchange=()=>{ c.checked?st.fams.add(c.value):st.fams.delete(c.value); if(!st.fams.size){ st.fams.add(c.value); c.checked=true; } });
+  app.querySelector("#start").onclick=()=>{ if(st.conte&&st.niv) lecture(); };
+  app.querySelector("#print-btn").onclick=()=>{ if(st.conte&&st.niv) imprimer(); };
+}
+function sessionStorage_get(k){ try{ return sessionStorage.getItem("bdc-"+k); }catch(e){ return null; } }
+function sessionStorage_set(k,v){ try{ sessionStorage.setItem("bdc-"+k,v); }catch(e){} }
+
+/* ---------- Texte ---------- */
+function blocTexte(c,n,avecEcoute){
+  return `<article class="card story" id="story">
+    <div class="head"><div><h3>${c.ic} ${c.titre}</h3><p class="src">${c.src}</p></div>
+    ${avecEcoute&&st.voix?`<button class="speak" id="ecoute">🔊 Écouter l'histoire</button>`:""}</div>
+    <div class="txt">${n.texte.map(p=>`<p>${html(p)}</p>`).join("")}</div>
+  </article>`;
+}
+function topbar(c){
+  return `<div class="topbar"><h2>${c.titre}<span class="lv">${st.niv}</span></h2>
+    <div class="dots">${st.qs.map((q,i)=>{ const r=st.res[i]; return `<span class="dot ${r?("s"+r.pts):""} ${i===st.i&&!r?"here":""}" title="${FAM[q.f].nom}">${i+1}</span>`; }).join("")}</div>
+    <button class="btn ghost small" id="quit" style="color:#FFF3DC;border-color:#FFF3DC66">⟵ Bibliothèque</button></div>`;
+}
+function lecture(){
+  const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv];
+  st.qs = n.questions.filter(q=>st.fams.has(q.f));
+  if(!st.qs.length) st.qs = n.questions;
+  st.i=0; st.res=[];
+  app.innerHTML = `${topbar(c)}
+  <div class="reader solo lv-${st.niv}">${blocTexte(c,n,true)}</div>
+  <div class="readgo"><button class="btn" id="go">J'ai lu, je réponds aux questions ▶</button></div>`;
+  app.querySelector("#quit").onclick=accueil;
+  const e=app.querySelector("#ecoute"); if(e) e.onclick=lireHistoire;
+  app.querySelector("#go").onclick=()=>{ stopVoix(); question(); };
+  window.scrollTo(0,0);
+}
+
+/* ---------- Questions ---------- */
+function question(){
+  const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv], q=st.qs[st.i];
+  const F = FAM[q.f];
+  const essais = {n:0};
+  const isOrd = !!q.ordre;
+  const items = isOrd ? shuffle(q.ordre.map((t,k)=>({t,k}))) : shuffle(q.choix.map((t,k)=>({t,k})));
+  app.innerHTML = `${topbar(c)}
+  <div class="reader q-mode lv-${st.niv}">
+    <div style="position:relative">${blocTexte(c,n,false)}
+      ${st.texteVisible?"":`<div class="cover" id="cover"><div><p>Le texte est caché.</p><button class="btn small relire" id="relire">👀 Relire le texte</button></div></div>`}
+    </div>
+    <section class="card qcard" ${famStyle(q.f)}>
+      <div class="qtop"><span class="tag">${F.ic} ${F.nom}</span>${st.voix?`<button class="speak" id="ecoute-q">🔊 Écouter</button>`:""}</div>
+      <p class="q">${esc(q.q)}</p>
+      ${isOrd?`<p style="margin:-6px 0 12px;color:var(--muted)">Clique sur les phrases dans l'ordre de l'histoire : d'abord ce qui se passe en premier.</p>`:""}
+      <div class="choices">${items.map((it,i)=>`<button class="choice" data-k="${it.k}"><span class="l">${isOrd?"":LETTRES[i]}</span><span>${esc(it.t)}</span></button>`).join("")}</div>
+      <div id="fb"></div>
+    </section>
+  </div>`;
+  app.querySelector("#quit").onclick=accueil;
+  const rl=app.querySelector("#relire"); if(rl) rl.onclick=()=>app.querySelector("#cover").remove();
+  const eq=app.querySelector("#ecoute-q");
+  if(eq) eq.onclick=()=>parle(q.q+" "+items.map((it,i)=>(isOrd?"":LETTRES[i]+". ")+it.t+".").join(" "));
+  const btns=[...app.querySelectorAll(".choice")];
+  const fb=app.querySelector("#fb");
+
+  function indices(on){
+    app.querySelectorAll("mark").forEach(m=>m.classList.toggle("on", on && q.ind.includes(m.dataset.k)));
+    if(on){ const cov=app.querySelector("#cover"); if(cov) cov.remove();
+      const m=app.querySelector("mark.on"); if(m) m.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+  }
+  function fin(pts){
+    st.res[st.i]={pts,f:q.f};
+    btns.forEach(b=>b.disabled=true);
+    indices(true);
+    const msgs = pts===2 ? ["Bravo !","Exactement !","Bien lu !","Super, détective !"] : pts===1 ? ["Bien rattrapé !","C'est ça, cette fois !"] : ["Voici la bonne réponse."];
+    const m = msgs[Math.floor(Math.random()*msgs.length)];
+    fb.innerHTML = `<div class="fb ${pts?"ok":"ko"}"><strong>${pts?"✅ ":"📖 "}${m}</strong> ${pts?"Les mots surlignés le montrent dans le texte.":"Relis les mots surlignés : ils donnent la réponse."}</div>
+      <div class="actions"><button class="btn" id="next">${st.i+1<st.qs.length?"Question suivante ▶":"Voir mon résultat 🏆"}</button></div>`;
+    dotsMaj();
+    const nx=fb.querySelector("#next"); nx.focus({preventScroll:true});
+    nx.onclick=()=>{ stopVoix(); st.i++; st.i<st.qs.length?question():resultat(); };
+  }
+  function rate(){
+    essais.n++;
+    if(essais.n>=2) return false;
+    indices(true);
+    fb.innerHTML = `<div class="fb ko"><strong>Pas encore !</strong> Relis les mots surlignés dans le texte, puis essaie encore.</div>`;
+    return true;
+  }
+  function dotsMaj(){ app.querySelector(".dots").outerHTML = topbar(c).match(/<div class="dots">[\s\S]*?<\/div>/)[0]; }
+
+  if(!isOrd){
+    btns.forEach(b=>b.onclick=()=>{
+      const k=+b.dataset.k;
+      if(k===q.bon){ b.classList.add("ok"); fin(essais.n?1:2); }
+      else { b.classList.add("ko"); b.disabled=true;
+        if(!rate()){ btns.find(x=>+x.dataset.k===q.bon).classList.add("ok"); fin(0); } }
+    });
+  } else {
+    let seq=[];
+    btns.forEach(b=>b.onclick=()=>{
+      if(b.classList.contains("picked")) return;
+      seq.push(+b.dataset.k); b.classList.add("picked"); b.querySelector(".l").textContent=seq.length;
+      if(seq.length<q.ordre.length) return;
+      const juste = seq.every((k,i)=>k===i);
+      if(juste){ btns.forEach(x=>x.classList.add("ok")); fin(essais.n?1:2); return; }
+      if(rate()){
+        setTimeout(()=>{ seq=[]; btns.forEach(x=>{ x.classList.remove("picked"); x.querySelector(".l").textContent=""; }); },900);
+      } else {
+        const box=app.querySelector(".choices");
+        q.ordre.forEach((t,k)=>{ const x=btns.find(b=>+b.dataset.k===k); x.classList.remove("picked"); x.classList.add("ok"); x.querySelector(".l").textContent=k+1; box.appendChild(x); });
+        fin(0);
+      }
+    });
+  }
+  window.scrollTo(0,0);
+}
+
+/* ---------- Résultat ---------- */
+function resultat(){
+  const c = CONTES.find(x=>x.id===st.conte);
+  const tot = st.res.reduce((s,r)=>s+r.pts,0), max = st.qs.length*2;
+  const ratio = tot/max;
+  const etoiles = ratio>=.85?3:ratio>=.6?2:ratio>=.3?1:0;
+  const titre = ["Relisons ensemble !","Bon début, lecteur !","Très bon lecteur !","Lecteur champion !"][etoiles];
+  const parFam = {};
+  st.res.forEach(r=>{ (parFam[r.f] ||= {n:0,p:0}); parFam[r.f].n++; parFam[r.f].p+=r.pts; });
+  const nivs = Object.keys(NIV), suiv = nivs[nivs.indexOf(st.niv)+1];
+  app.innerHTML = `<section class="card end">
+    <div class="stars" aria-label="${etoiles} étoiles sur 3">${"⭐".repeat(etoiles)}${"☆".repeat(3-etoiles)}</div>
+    <h1>${titre}</h1>
+    <p class="score">${c.titre} · ${st.niv} — ${tot} points sur ${max}</p>
+    <p style="margin:0;color:var(--muted)">2 points au premier essai, 1 point au deuxième.</p>
+    <table class="recap"><thead><tr><th>Famille de questions</th><th style="text-align:right">Points</th></tr></thead><tbody>
+      ${Object.keys(FAM).filter(f=>parFam[f]).map(f=>`<tr><td><span class="chip" ${famStyle(f)}>${FAM[f].ic} ${FAM[f].nom}</span></td><td class="r">${parFam[f].p} / ${parFam[f].n*2}</td></tr>`).join("")}
+    </tbody></table>
+    <div class="go">
+      <button class="btn" id="again">🔁 Relire et recommencer</button>
+      ${suiv&&etoiles>=2?`<button class="btn" id="up">⬆ Essayer le niveau ${suiv}</button>`:""}
+      <button class="btn ghost" id="home">📚 Choisir un autre livre</button>
+    </div>
+  </section>`;
+  app.querySelector("#again").onclick=lecture;
+  const up=app.querySelector("#up"); if(up) up.onclick=()=>{ st.niv=suiv; lecture(); };
+  app.querySelector("#home").onclick=accueil;
+  window.scrollTo(0,0);
+}
+
+/* ---------- Version imprimable ---------- */
+function imprimer(){
+  const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv];
+  const qs = n.questions.filter(q=>st.fams.has(q.f));
+  const fs = {CP:"17pt",CE1:"15pt",CE2:"14pt"}[st.niv];
+  document.getElementById("print").innerHTML = `
+    <span class="nom">Prénom : ………………………</span>
+    <h1>${c.ic} ${c.titre}</h1>
+    <p class="meta">Niveau ${st.niv} · ${c.src} · toujourscap.com</p>
+    <div class="ptxt" style="--pfs:${fs}">${n.texte.map(p=>`<p>${esc(sansMarques(p))}</p>`).join("")}</div>
+    <ol class="pq">${(qs.length?qs:n.questions).map(q=>`<li><b>${esc(q.q)}</b> <span class="fam">(${FAM[q.f].nom})</span>
+      ${q.ordre ? `<br><span class="fam">Numérote de 1 à ${q.ordre.length}.</span><ul class="col">${shuffle(q.ordre).map(t=>`<li>☐ ${esc(t)}</li>`).join("")}</ul>`
+                : `<ul class="${q.choix.some(t=>t.length>28)?"col":""}">${shuffle(q.choix).map(t=>`<li>☐ ${esc(t)}</li>`).join("")}</ul>`}</li>`).join("")}</ol>`;
+  window.print();
+}
+
+accueil();
+</script>
+</body>
+</html>
