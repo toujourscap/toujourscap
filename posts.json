@@ -1,6 +1,357 @@
 {
- "count": 38,
+ "count": 39,
  "posts": [
+  {
+   "title": "La roue du magicien",
+   "slug": "la-roue-du-magicien",
+   "excerpt": "Sur la scène du magicien, une roue magique contient un d. En la tournant et en la retournant, l'élève obtient b, d, p ou q pour compléter le mot. Un jeu de discrimination visuelle avec trois niveaux et un bilan des confusions.",
+   "date": "2026-11-04T17:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": "discrimination-visuelle",
+    "niveaux": [
+     "GS",
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu de discrimination visuelle pour ne plus confondre b, d, p et q. Sur la scène du magicien, une roue magique contient une seule lettre : un d. En la tournant, il devient p ; en la retournant, il devient b ; en faisant les deux, il devient q. L'élève doit trouver la bonne position pour écrire la lettre qui manque dans le mot.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'adulte choisit le niveau, le nombre de mots, les lettres à travailler (b, d, p, q, ou seulement deux d'entre elles) et les aides.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un mot apparaît devant la scène, avec une case vide à la place de chaque b, d, p ou q. L'image du mot s'affiche quand il en a une, et le mot est dit à voix haute.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève fait tourner la roue (avec le doigt, la souris ou le bouton « Tourner ») et la retourne comme une pièce (bouton « Retourner ») jusqu'à obtenir la bonne lettre.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il appuie sur « Abracadabra ! » : si la lettre est bonne, elle s'envole dans le mot. Sinon, la roue tremble. Après deux erreurs, la bonne lettre apparaît en gris dans la case.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, un bilan montre les mots écrits et, pour l'enseignant, un tableau des confusions (par exemple : il fallait b, l'élève a écrit d).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 3 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 : une seule lettre à écrire dans le mot (banane, domino, lapin), 15 mots illustrés.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 : plusieurs lettres dans le même mot (bébé, debout, pédale, papillon).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 : avec la lettre q (coq, bouquet, paquet, pique-nique).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Mes mots : l'enseignant tape sa propre liste.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Options",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le mot écrit en modèle au-dessus : l'élève compare et recopie la bonne lettre. Sans modèle, il s'appuie sur l'image et sur ce qu'il entend, c'est plus difficile.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Montrer ou cacher l'image, dire le mot à voix haute, bruitages.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Au clavier : flèches gauche et droite pour tourner, haut et bas pour retourner, Entrée pour valider (pratique au vidéoprojecteur).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-roue-du-magicien.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour combiner les syllabes : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les fusées des syllabes",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/les-fusees-des-syllabes/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "La Bibliothèque des contes",
    "slug": "la-bibliotheque-des-contes",
