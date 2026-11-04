@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La roue du magicien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* La roue du magicien : discrimination visuelle b / d / p / q.
+   Une seule lettre « d » dans une roue magique ; l'enfant tourne la roue (d ↔ p) et la retourne (d ↔ b, p ↔ q)
+   pour écrire la lettre qui manque dans le mot. */
+:root{
+  --nuit:#1d1033; --nuit-2:#2e1a4d; --violet:#6b3fa0; --violet-fonce:#46246f; --or:#f2c14e; --or-fonce:#b9861c;
+  --rouge:#b3243b; --rouge-fonce:#7a1325; --papier:#fff8ef; --encre:#24162e; --gris:#6f6478; --ok:#2f8a4e; --err:#d0661b;
+  --f-titre:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-lecture:"Andika","Arial",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--nuit);color:var(--encre);font-family:var(--f-lecture);font-size:16px;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:10px 16px 12px}
+#ecran-jeu{max-width:min(100%,calc((100vh - 170px) * 1.7778));margin:0 auto}
+h1,h2,h3{font-family:var(--f-titre);text-wrap:balance;margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* ---------- Réglages ---------- */
+.carte{background:var(--papier);border-radius:18px;padding:18px 22px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.entete{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.entete svg{width:46px;height:46px;flex:0 0 auto}
+.entete h1{font-size:clamp(24px,4vw,36px);color:var(--violet)}
+.entete p{margin:4px 0 0;color:var(--gris)}
+.niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.niv{position:relative}
+.niv input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.niv span{display:block;height:100%;border:3px solid #e6dcef;border-radius:14px;padding:9px 12px;background:#fff}
+.niv b{display:block;font-family:var(--f-titre);font-size:20px;color:var(--violet-fonce)}
+.niv small{display:block;color:var(--gris);font-size:14px;margin-top:4px;line-height:1.35}
+.niv input:checked+span{border-color:var(--violet);background:#f3ecfb;box-shadow:0 4px 0 var(--violet)}
+.niv input:focus-visible+span{outline:3px solid var(--or);outline-offset:2px}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+fieldset{border:2px solid #e6dcef;border-radius:14px;padding:12px 16px;margin:0;min-width:0}
+legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--violet-fonce)}
+.choix{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.chip span{display:inline-block;padding:7px 14px;border-radius:999px;border:2px solid #dccfe8;background:#fff;font-weight:700;font-size:17px}
+.chip.lettre span{font-size:24px;padding:2px 16px}
+.chip input:checked+span{background:var(--violet);border-color:var(--violet);color:#fff}
+.chip input:focus-visible+span{outline:3px solid var(--or);outline-offset:2px}
+.etiq{font-size:13px;color:var(--gris);margin:8px 0 5px}
+.etiq:first-of-type{margin-top:0}
+.coche{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-size:15px}
+.coche input{width:20px;height:20px;flex:0 0 auto;margin:1px 0 0}
+textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px solid #dccfe8;border-radius:10px;min-height:84px;resize:vertical}
+.note{font-size:13px;color:var(--gris);margin:6px 0 0;line-height:1.45}
+.apercu{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:12px;font-size:17px}
+.apercu span{background:#f3ecfb;border-radius:8px;padding:2px 8px}
+.apercu b{color:var(--violet)}
+.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.btn{border:none;border-radius:14px;padding:13px 24px;font-size:20px;font-weight:800;font-family:var(--f-titre)}
+.btn-go{background:var(--violet);color:#fff;box-shadow:0 5px 0 var(--violet-fonce)}
+.btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--violet-fonce)}
+.btn-go:disabled{opacity:.45;cursor:default;transform:none}
+.btn-sec{background:#ece3f5;color:var(--encre)}
+
+/* ---------- Jeu ---------- */
+.bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#f3e7ff;margin-bottom:8px;flex-wrap:wrap}
+.bandeau h2{font-size:20px}
+.progres{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.progres i{width:16px;height:16px;border-radius:50%;background:rgba(243,231,255,.22);display:block}
+.progres i.fait{background:var(--or);box-shadow:0 0 8px var(--or)}
+.progres i.encours{outline:2px solid #f3e7ff}
+.lien{background:none;border:2px solid rgba(243,231,255,.5);color:#f3e7ff;border-radius:10px;padding:5px 12px;font-size:15px}
+
+/* La scène (16/9). Tailles en cqw pour garder les proportions de l'écran au vidéoprojecteur. */
+.scene{position:relative;aspect-ratio:16/9;width:100%;border-radius:18px;overflow:hidden;container-type:inline-size;
+  background:
+    radial-gradient(ellipse 38% 55% at 62% 62%,rgba(255,236,170,.30),transparent 70%),
+    linear-gradient(#3a1d5e,#22113b 70%);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.scene.decor-image{background:#22113b center/cover no-repeat}
+.scene.decor-image .decor{display:none}
+/* Avec le décor Canva : le magicien reste visible au centre, le tableau à gauche, la roue à droite, le mot devant la scène. */
+.scene.decor-image .panneau{top:auto;bottom:2%}
+.scene.decor-image .tableau{left:5%;top:22%;width:21%}
+.scene.decor-image .ecouter{left:5%;top:12%}
+.scene.decor-image .roue-zone{left:65%;top:15%;width:29%}
+.scene.decor-image .bulle{left:5%;bottom:auto;top:62%;transform:none;white-space:normal;max-width:30%;text-align:center}
+.scene.decor-image .tableau.vide{display:none}
+/* Décor dessiné (remplacé par l'image Canva si elle est présente) */
+.decor{position:absolute;inset:0;pointer-events:none}
+.rideau{position:absolute;top:0;bottom:12%;width:13%;
+  background:repeating-linear-gradient(90deg,#9e1c32 0 1.6cqw,#c42f47 1.6cqw 2.6cqw,#8a1529 2.6cqw 3.4cqw);
+  box-shadow:inset 0 0 3cqw rgba(0,0,0,.45)}
+.rideau.g{left:0;border-bottom-right-radius:60% 22%}
+.rideau.d{right:0;border-bottom-left-radius:60% 22%}
+.lambrequin{position:absolute;left:0;right:0;top:0;height:7%;
+  background:radial-gradient(circle at 50% 0,#c42f47 68%,transparent 70%) 0 0/6cqw 100% repeat-x;
+  filter:drop-shadow(0 .4cqw .4cqw rgba(0,0,0,.4))}
+.lambrequin::after{content:"";position:absolute;left:0;right:0;top:0;height:30%;background:#7a1325}
+.plancher{position:absolute;left:0;right:0;bottom:0;height:13%;
+  background:repeating-linear-gradient(90deg,#7a4a24 0 7cqw,#6a3e1c 7cqw 7.2cqw),linear-gradient(#8b5a2b,#5c3618);
+  background-blend-mode:multiply;border-top:.5cqw solid #4a2a12}
+.etoile{position:absolute;color:#ffe9a8;font-size:1.6cqw;opacity:.8;animation:scintille 2.4s ease-in-out infinite}
+@keyframes scintille{50%{opacity:.25;transform:scale(.7)}}
+
+/* Le mot à écrire */
+.panneau{position:absolute;left:50%;top:9%;transform:translateX(-50%);min-width:44%;max-width:84%;
+  background:linear-gradient(#fffaf0,#f6e8cf);border:.45cqw solid var(--or);border-radius:2cqw;
+  padding:.9cqw 2.4cqw 1.2cqw;text-align:center;box-shadow:0 .8cqw 0 rgba(0,0,0,.25)}
+.modele{font-size:2.6cqw;color:var(--gris);line-height:1.1;margin-bottom:.3cqw;letter-spacing:.05em}
+.modele[hidden]{display:none}
+.mot{display:flex;justify-content:center;align-items:flex-end;gap:.15cqw;font-size:6.2cqw;line-height:1.15;color:var(--encre);flex-wrap:nowrap}
+.mot .l{display:inline-block;min-width:.3em;text-align:center}
+.mot .trou{width:.72em;height:1.12em;border:.35cqw dashed #b9a7cc;border-radius:1cqw;position:relative;color:var(--violet);
+  display:inline-flex;align-items:center;justify-content:center}
+.mot .trou.actif{border-color:var(--or-fonce);border-style:solid;background:#fff4cf;animation:pulse 1.3s ease-in-out infinite}
+.mot .trou.rempli{border-color:transparent;background:none;animation:none;color:var(--violet)}
+.mot .trou .fantome{color:#cfc2dc}
+.mot .trou.rempli.aide{color:var(--err)}
+@keyframes pulse{50%{box-shadow:0 0 0 .8cqw rgba(242,193,78,.35)}}
+
+/* Le tableau (image du mot) */
+.tableau{position:absolute;left:14%;top:38%;width:23%;aspect-ratio:1;background:#fff;border:.8cqw solid var(--or);border-radius:1.5cqw;
+  box-shadow:0 1cqw 0 rgba(0,0,0,.3),inset 0 0 0 .3cqw var(--or-fonce);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tableau img{width:92%;height:92%;object-fit:contain}
+.tableau .chapeau{width:80%}
+.tableau.apparait{animation:apparait .6s cubic-bezier(.3,1.5,.5,1)}
+@keyframes apparait{from{transform:scale(.3) rotate(-12deg);opacity:0}}
+.ecouter{position:absolute;left:14%;top:30%;
+  background:var(--violet);color:#fff;border:none;border-radius:999px;font-size:1.7cqw;padding:.6cqw 1.4cqw;font-weight:700;box-shadow:0 .4cqw 0 var(--violet-fonce)}
+
+/* La roue */
+.roue-zone{position:absolute;left:47%;top:35%;width:34%;aspect-ratio:1}
+.roue{position:absolute;inset:0;cursor:grab;touch-action:none;transition:transform .55s cubic-bezier(.3,1.3,.5,1)}
+.roue.drag{transition:none;cursor:grabbing}
+.roue svg{width:100%;height:100%;display:block;overflow:visible}
+.lettre-roue{transform-origin:50% 50%;transition:transform .55s ease;transform-box:fill-box}
+.roue-zone.secoue{animation:secoue .45s}
+@keyframes secoue{20%,60%{transform:translateX(-3%)}40%,80%{transform:translateX(3%)}}
+.roue-zone.brille .halo{opacity:1}
+.halo{position:absolute;inset:-8%;border-radius:50%;background:radial-gradient(circle,rgba(255,233,150,.8),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}
+.fleche{position:absolute;left:50%;top:-6%;transform:translateX(-50%);width:9%;filter:drop-shadow(0 .3cqw .2cqw rgba(0,0,0,.4))}
+.bulle{position:absolute;left:25.5%;bottom:3%;transform:translateX(-50%);background:#fff;border-radius:1.6cqw;padding:.7cqw 1.6cqw;font-family:var(--f-titre);
+  font-size:2.3cqw;color:var(--violet-fonce);box-shadow:0 .5cqw 0 rgba(0,0,0,.25);white-space:nowrap;transition:opacity .25s}
+.bulle.err{color:var(--err)}
+.bulle.ok{color:var(--ok)}
+
+.volante{position:fixed;z-index:20;font-family:var(--f-lecture);color:var(--violet);pointer-events:none;
+  transition:transform .7s cubic-bezier(.5,-.3,.4,1.2),font-size .7s;text-shadow:0 0 12px #ffe9a8}
+.paillette{position:fixed;z-index:21;pointer-events:none;width:12px;height:12px;color:var(--or);font-size:16px;line-height:1}
+
+/* Commandes sous la scène */
+.commandes{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.cmd{border:none;border-radius:14px;padding:11px 18px;font-size:clamp(16px,2.2vw,22px);font-weight:800;font-family:var(--f-titre);
+  background:#efe4fa;color:var(--violet-fonce);box-shadow:0 5px 0 #b8a3cf;display:inline-flex;align-items:center;gap:8px}
+.cmd:active{transform:translateY(3px);box-shadow:0 2px 0 #b8a3cf}
+.cmd.magie{background:var(--or);color:var(--encre);box-shadow:0 5px 0 var(--or-fonce)}
+.cmd.magie:active{box-shadow:0 2px 0 var(--or-fonce)}
+.cmd:disabled{opacity:.45;cursor:default;transform:none}
+.cmd svg{width:1.2em;height:1.2em}
+.aide-touches{color:#cbb9e4;text-align:center;font-size:13px;margin:8px 0 0}
+
+/* Fin */
+.fin h2{color:var(--violet);font-size:clamp(26px,4vw,38px)}
+.liste-fin{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.liste-fin figure{margin:0;background:#fff;border:2px solid #e6dcef;border-radius:12px;padding:8px 10px;text-align:center;min-width:92px}
+.liste-fin img{width:70px;height:70px;object-fit:contain;display:block;margin:0 auto 4px}
+.liste-fin figcaption{font-size:22px}
+.liste-fin figcaption b{color:var(--violet)}
+.liste-fin small{display:block;color:var(--gris);font-size:12px}
+table.conf{border-collapse:collapse;margin-top:6px;font-size:16px}
+table.conf th,table.conf td{border:1px solid #e6dcef;padding:5px 10px;text-align:center}
+table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
+.lg{font-size:22px;font-weight:700}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ======== Réglages ======== -->
+<section id="ecran-reglages" class="carte">
+  <div class="entete">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#6b3fa0" stroke="#f2c14e" stroke-width="7"/><g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"><circle cx="45" cy="60" r="15"/><line x1="60" y1="27" x2="60" y2="75"/></g></svg>
+    <div>
+      <h1>La roue du magicien</h1>
+      <p>Tourne et retourne la lettre magique pour écrire b, d, p ou q.</p>
+    </div>
+  </div>
+
+  <div class="niveaux" role="radiogroup" aria-label="Niveau">
+    <label class="niv"><input type="radio" name="niveau" value="1" checked><span><b>Niveau 1</b><small>Une seule lettre à écrire : la-<b>p</b>in, <b>b</b>anane, <b>d</b>omino.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Plusieurs lettres dans le mot : <b>b</b>é<b>b</b>é, <b>d</b>e<b>b</b>out, <b>p</b>é<b>d</b>ale.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Avec la lettre q : co<b>q</b>, <b>b</b>ou<b>q</b>uet, <b>p</b>i<b>q</b>ue-ni<b>q</b>ue.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="perso"><span><b>Mes mots</b><small>Je tape ma propre liste de mots.</small></span></label>
+  </div>
+
+  <div id="bloc-perso" hidden style="margin-bottom:12px">
+    <textarea id="mes-mots" placeholder="Un mot par ligne ou séparés par des virgules : bobine, padou, dîner…"></textarea>
+    <p class="note">Seules les lettres b, d, p, q cochées plus bas sont à écrire avec la roue ; les autres lettres sont déjà écrites. Ces mots n'ont pas d'image.</p>
+  </div>
+
+  <div class="grille">
+    <fieldset>
+      <legend>La partie</legend>
+      <div class="etiq">Nombre de mots</div>
+      <div class="choix" id="choix-nb">
+        <label class="chip"><input type="radio" name="nb" value="5"><span>5</span></label>
+        <label class="chip"><input type="radio" name="nb" value="8" checked><span>8</span></label>
+        <label class="chip"><input type="radio" name="nb" value="12"><span>12</span></label>
+        <label class="chip"><input type="radio" name="nb" value="99"><span>Tous</span></label>
+      </div>
+      <div class="etiq">Lettres à écrire avec la roue</div>
+      <div class="choix">
+        <label class="chip lettre"><input type="checkbox" name="lettre" value="b" checked><span>b</span></label>
+        <label class="chip lettre"><input type="checkbox" name="lettre" value="d" checked><span>d</span></label>
+        <label class="chip lettre"><input type="checkbox" name="lettre" value="p" checked><span>p</span></label>
+        <label class="chip lettre"><input type="checkbox" name="lettre" value="q" checked><span>q</span></label>
+      </div>
+      <p class="note">Par exemple, ne garder que b et d pour travailler cette seule confusion.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Aides</legend>
+      <label class="coche"><input type="checkbox" id="opt-image" checked><span>Montrer l'image du mot (quand il en a une)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-modele" checked><span>Écrire le mot en modèle au-dessus (l'élève recopie la bonne lettre)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-voix" checked><span>Dire le mot quand il apparaît</span></label>
+      <label class="coche"><input type="checkbox" id="opt-son" checked><span>Bruitages</span></label>
+      <p class="note">Sans modèle, l'élève s'appuie sur l'image et sur ce qu'il entend : c'est plus difficile.</p>
+    </fieldset>
+  </div>
+
+  <div class="apercu" id="apercu" aria-live="polite"></div>
+
+  <div class="actions">
+    <span class="note" id="msg-reglages"></span>
+    <button class="btn btn-go" id="jouer">✨ Lever le rideau</button>
+  </div>
+</section>
+
+<!-- ======== Jeu ======== -->
+<section id="ecran-jeu" hidden>
+  <div class="bandeau">
+    <h2 id="titre-jeu">Niveau 1</h2>
+    <div class="progres" id="progres" aria-label="Progression"></div>
+    <button class="lien" id="quitter">✕ Réglages</button>
+  </div>
+
+  <div class="scene" id="scene">
+    <div class="decor" aria-hidden="true">
+      <div class="rideau g"></div><div class="rideau d"></div><div class="lambrequin"></div><div class="plancher"></div>
+      <span class="etoile" style="left:20%;top:12%">✦</span><span class="etoile" style="left:80%;top:14%;animation-delay:.8s">✦</span>
+      <span class="etoile" style="left:41%;top:33%;animation-delay:1.5s">✧</span><span class="etoile" style="left:85%;top:42%;animation-delay:.4s">✧</span>
+      <span class="etoile" style="left:16%;top:30%;animation-delay:1.1s">✧</span>
+    </div>
+
+    <div class="panneau" aria-live="polite">
+      <div class="modele" id="modele"></div>
+      <div class="mot" id="mot"></div>
+    </div>
+
+    <div class="tableau" id="tableau"></div>
+    <button class="ecouter" id="ecouter" type="button">🔊 Écouter</button>
+
+    <div class="roue-zone" id="roue-zone">
+      <div class="halo"></div>
+      <div class="roue" id="roue" role="img" aria-label="Roue magique">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <radialGradient id="g-roue" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#8a5cc2"/><stop offset="1" stop-color="#3f1f68"/></radialGradient>
+            <linearGradient id="g-or" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".5" stop-color="#f2c14e"/><stop offset="1" stop-color="#b9861c"/></linearGradient>
+          </defs>
+          <circle cx="100" cy="100" r="96" fill="url(#g-or)"/>
+          <circle cx="100" cy="100" r="84" fill="url(#g-roue)" stroke="#2a1347" stroke-width="2"/>
+          <g id="rayons" stroke="rgba(255,255,255,.12)" stroke-width="2"></g>
+          <g id="clous" fill="#fff6d6"></g>
+          <circle cx="100" cy="100" r="58" fill="#fffaf0" stroke="#f2c14e" stroke-width="4"/>
+          <!-- La lettre « d » dessinée, centrée sur (100,100) : retournée = b, tournée = p, les deux = q -->
+          <g class="lettre-roue" id="lettre-roue">
+            <g fill="none" stroke="#46246f" stroke-width="14" stroke-linecap="round">
+              <circle cx="100" cy="110" r="22"/>
+              <line x1="122" y1="68" x2="122" y2="132"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <svg class="fleche" viewBox="0 0 40 46" aria-hidden="true"><path d="M20 44 L4 6 Q20 0 36 6 Z" fill="#f2c14e" stroke="#7a5510" stroke-width="3" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="bulle" id="bulle">Tourne la roue !</div>
+  </div>
+
+  <div class="commandes">
+    <button class="cmd" id="b-gauche" title="Tourner la roue (flèche gauche)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Tourner</button>
+    <button class="cmd" id="b-retourner" title="Retourner la lettre (flèche haut)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 7 3 12l5 5"/><path d="m16 7 5 5-5 5"/></svg>Retourner</button>
+    <button class="cmd magie" id="b-valider" title="Valider (Entrée)">🪄 Abracadabra !</button>
+  </div>
+  <p class="aide-touches">On peut aussi faire tourner la roue avec le doigt ou la souris. Clavier : ← → tourner, ↑ ↓ retourner, Entrée valider.</p>
+</section>
+
+<!-- ======== Fin ======== -->
+<section id="ecran-fin" class="carte fin" hidden>
+  <h2 id="titre-fin">Tu es un vrai magicien !</h2>
+  <p id="resume-fin" class="lg"></p>
+  <div class="liste-fin" id="liste-fin"></div>
+  <div id="bilan-conf"></div>
+  <div class="actions">
+    <button class="btn btn-sec" id="b-reglages">Réglages</button>
+    <button class="btn btn-go" id="b-rejouer">✨ Rejouer</button>
+  </div>
+</section>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const IMG = "/images/fusees-syllabes/mots/";
+const DECOR = "/images/roue-magique/scene.jpg";
+
+/* Mots. i = image (dossier des fusées des syllabes). Les lettres b d p q sont repérées automatiquement. */
+const MOTS = {
+  1: [
+    {m:"banane",i:"banane"},{m:"bateau",i:"bateau"},{m:"robot",i:"robot"},{m:"lavabo",i:"lavabo"},
+    {m:"domino",i:"domino"},{m:"dragon",i:"dragon"},{m:"canard",i:"canard"},
+    {m:"lapin",i:"lapin"},{m:"tulipe",i:"tulipe"},{m:"pirate",i:"pirate"},{m:"poisson",i:"poisson"},
+    {m:"pingouin",i:"pingouin"},{m:"pantalon",i:"pantalon"},{m:"champignon",i:"champignon"},{m:"trompette",i:"trompette"}
+  ],
+  2: [
+    {m:"papillon",i:"papillon"},{m:"parapluie",i:"parapluie"},{m:"bébé"},{m:"bidon"},{m:"debout"},{m:"double"},
+    {m:"pédale"},{m:"poupée"},{m:"pompe"},{m:"baobab"},{m:"dauphin"},{m:"dindon"},{m:"bobine"},{m:"pied"},{m:"bandeau"}
+  ],
+  3: [
+    {m:"coq"},{m:"quatre"},{m:"requin"},{m:"phoque"},{m:"masque"},{m:"disque"},{m:"bouquet"},{m:"paquet"},
+    {m:"briquet"},{m:"barque"},{m:"banquet"},{m:"bosquet"},{m:"plaque"},{m:"moustique"},{m:"pique-nique"}
+  ]
+};
+
+/* ---------- État de la roue ----------
+   rot : angle cumulé de la roue (multiple de 180 au repos) ; flip : lettre retournée (miroir).
+   d = 0° ; p = 180° ; b = 0° retournée ; q = 180° retournée. */
+let rot = 0, flip = false;
+function lettreRoue(){ const r = ((Math.round(rot/180)*180 % 360) + 360) % 360; return r === 0 ? (flip ? "b" : "d") : (flip ? "q" : "p"); }
+function majRoue(){ $("roue").style.transform = `rotate(${rot}deg)`; $("lettre-roue").style.transform = `scaleX(${flip ? -1 : 1})`; }
+function etatPour(l){ return {d:[0,false],p:[180,false],b:[0,true],q:[180,true]}[l]; }
+
+/* Décor de la roue : rayons + clous dorés */
+(function(){
+  let r = "", c = "";
+  for(let k=0;k<12;k++){ const a = k*Math.PI/6, x1=100+60*Math.cos(a), y1=100+60*Math.sin(a), x2=100+84*Math.cos(a), y2=100+84*Math.sin(a);
+    r += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+    const xc=100+90*Math.cos(a+Math.PI/12), yc=100+90*Math.sin(a+Math.PI/12); c += `<circle cx="${xc}" cy="${yc}" r="3.2"/>`; }
+  $("rayons").innerHTML = r; $("clous").innerHTML = c;
+})();
+
+/* ---------- Sons ---------- */
+let ac = null;
+function son(type){
+  if(!$("opt-son").checked) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const t = ac.currentTime;
+    const note = (f, d, v=.15, onde="triangle", dt=0) => { const o=ac.createOscillator(), g=ac.createGain(); o.type=onde; o.frequency.setValueAtTime(f,t+dt);
+      g.gain.setValueAtTime(0,t+dt); g.gain.linearRampToValueAtTime(v,t+dt+.01); g.gain.exponentialRampToValueAtTime(.001,t+dt+d); o.connect(g).connect(ac.destination); o.start(t+dt); o.stop(t+dt+d+.05); return o; };
+    if(type==="tour"){ for(let k=0;k<5;k++) note(900+k*90,.05,.05,"square",k*.07); }
+    if(type==="retourne"){ const o=note(500,.3,.08,"sine"); o.frequency.exponentialRampToValueAtTime(1100,t+.28); }
+    if(type==="ok"){ [784,988,1175,1568].forEach((f,k)=>note(f,.35,.12,"triangle",k*.08)); }
+    if(type==="mot"){ [523,659,784,1047,1319,1568,2093].forEach((f,k)=>note(f,.5,.1,"triangle",k*.07)); }
+    if(type==="err"){ const o=note(260,.4,.12,"sawtooth"); o.frequency.linearRampToValueAtTime(170,t+.38); }
+  }catch(e){}
+}
+
+/* ---------- Voix ---------- */
+let voix = null;
+function choisirVoix(){ const v=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang)); voix = v.find(x=>/fr-FR/i.test(x.lang)&&/google|amélie|thomas|denise|julie/i.test(x.name)) || v.find(x=>/fr-FR/i.test(x.lang)) || v[0] || null; }
+if("speechSynthesis" in window){ choisirVoix(); speechSynthesis.onvoiceschanged = choisirVoix; }
+function dire(t){ if(!("speechSynthesis" in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; if(voix) u.voice=voix; u.rate=.85; speechSynthesis.speak(u); }
+
+/* ---------- Réglages ---------- */
+const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
+const lettresChoisies = () => [...document.querySelectorAll('input[name="lettre"]:checked')].map(i=>i.value);
+function cibles(mot, lettres){ return [...mot].map((c,k)=>lettres.includes(c)?k:-1).filter(k=>k>=0); }
+
+function listeMots(){
+  const lettres = lettresChoisies(), niv = val("niveau");
+  let base;
+  if(niv === "perso"){
+    base = $("mes-mots").value.split(/[\n,;]+/).map(s=>s.trim().toLowerCase()).filter(Boolean).map(m=>({m}));
+  } else base = MOTS[niv];
+  return base.filter(o => cibles(o.m, lettres).length > 0);
+}
+function majApercu(){
+  $("bloc-perso").hidden = val("niveau") !== "perso";
+  const lettres = lettresChoisies(), l = listeMots();
+  $("apercu").innerHTML = l.length
+    ? l.map(o => `<span>${[...o.m].map(c => lettres.includes(c) ? `<b>${c}</b>` : c).join("")}</span>`).join("")
+    : `<span style="background:none;color:var(--err)">Aucun mot avec ${lettres.length ? "ces lettres" : "une lettre cochée"} à ce niveau.</span>`;
+  $("jouer").disabled = !l.length;
+  $("msg-reglages").textContent = l.length ? `${l.length} mot${l.length>1?"s":""} disponible${l.length>1?"s":""}` : "";
+}
+document.querySelectorAll("#ecran-reglages input, #mes-mots").forEach(i => i.addEventListener("input", majApercu));
+
+/* ---------- Partie ---------- */
+let partie = [], idx = 0, trous = [], tIdx = 0, essais = 0, lettres = [];
+let stats = { premierCoup:0, total:0, conf:{} , mots:[] };
+
+function melanger(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function demarrer(){
+  lettres = lettresChoisies();
+  const nb = +val("nb");
+  partie = melanger(listeMots()).slice(0, nb);
+  idx = 0; stats = { premierCoup:0, total:0, conf:{}, mots:[] };
+  const niv = val("niveau");
+  $("titre-jeu").textContent = niv === "perso" ? "Mes mots" : `Niveau ${niv}`;
+  $("progres").innerHTML = partie.map(()=>"<i></i>").join("");
+  $("ecran-reglages").hidden = true; $("ecran-fin").hidden = true; $("ecran-jeu").hidden = false;
+  $("modele").hidden = !$("opt-modele").checked;
+  $("ecouter").hidden = !("speechSynthesis" in window);
+  // Décor Canva s'il existe sur le site, sinon décor dessiné
+  const img = new Image(); img.onload = () => { $("scene").style.backgroundImage = `url("${DECOR}")`; $("scene").classList.add("decor-image"); }; img.src = DECOR;
+  motSuivant();
+}
+
+function motSuivant(){
+  const o = partie[idx];
+  [...$("progres").children].forEach((e,k)=>{ e.className = k<idx ? "fait" : k===idx ? "encours" : ""; });
+  trous = cibles(o.m, lettres); tIdx = 0;
+  $("modele").textContent = o.m;
+  $("mot").innerHTML = [...o.m].map((c,k) => trous.includes(k) ? `<span class="trou" data-k="${k}"></span>` : `<span class="l">${c === " " ? "&nbsp;" : c}</span>`).join("");
+  const t = $("tableau");
+  const avecImage = !!(o.i && $("opt-image").checked);
+  t.innerHTML = avecImage ? `<img src="${IMG}${o.i}.jpg" alt="${o.m}">` : chapeau();
+  t.classList.toggle("vide", !avecImage);
+  t.classList.remove("apparait"); void t.offsetWidth; t.classList.add("apparait");
+  stats.mots.push({ m:o.m, i:o.i, erreurs:0 });
+  if($("opt-voix").checked) setTimeout(()=>dire(o.m), 350);
+  trouSuivant();
+}
+
+function chapeau(){
+  return `<svg class="chapeau" viewBox="0 0 120 110" aria-hidden="true">
+    <ellipse cx="60" cy="92" rx="54" ry="12" fill="#24162e"/><rect x="28" y="22" width="64" height="70" rx="6" fill="#2e1a4d"/>
+    <rect x="28" y="66" width="64" height="12" fill="#b3243b"/><ellipse cx="60" cy="22" rx="32" ry="7" fill="#46246f"/>
+    <line x1="88" y1="60" x2="114" y2="18" stroke="#24162e" stroke-width="6" stroke-linecap="round"/><line x1="108" y1="28" x2="114" y2="18" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <text x="104" y="12" font-size="14" fill="#f2c14e">✦</text></svg>`;
+}
+
+function trouSuivant(){
+  document.querySelectorAll("#mot .trou").forEach(e=>e.classList.remove("actif"));
+  const cible = $("mot").querySelector(`.trou[data-k="${trous[tIdx]}"]`);
+  cible.classList.add("actif");
+  essais = 0;
+  // La roue repart d'une position qui n'est pas la bonne
+  const bonne = partie[idx].m[trous[tIdx]];
+  const autres = ["b","d","p","q"].filter(l => l !== bonne);
+  const [r, f] = etatPour(autres[Math.floor(Math.random()*autres.length)]);
+  rot = Math.round(rot/360)*360 + r; flip = f; majRoue();
+  bulle(tIdx === 0 ? "Tourne la roue !" : "Encore une lettre magique !");
+  activer(true);
+}
+
+function bulle(t, cls=""){ const b=$("bulle"); b.textContent=t; b.className="bulle "+cls; }
+function activer(on){ ["b-gauche","b-retourner","b-valider"].forEach(id=>$(id).disabled=!on); enJeu = on; }
+let enJeu = false;
+
+function tourner(sens=1){ if(!enJeu) return; rot = Math.round(rot/180)*180 + 180*sens; majRoue(); son("tour"); }
+function retourner(){ if(!enJeu) return; flip = !flip; majRoue(); son("retourne"); }
+
+function valider(){
+  if(!enJeu) return;
+  const o = partie[idx], k = trous[tIdx], bonne = o.m[k], donnee = lettreRoue();
+  const trou = $("mot").querySelector(`.trou[data-k="${k}"]`);
+  if(donnee === bonne){
+    activer(false);
+    stats.total++; if(essais === 0) stats.premierCoup++;
+    son("ok"); bulle("Bravo !", "ok");
+    $("roue-zone").classList.add("brille"); setTimeout(()=>$("roue-zone").classList.remove("brille"), 600);
+    envol(bonne, trou, () => {
+      trou.classList.remove("actif"); trou.classList.add("rempli"); if(essais>=2) trou.classList.add("aide");
+      trou.textContent = bonne; paillettes(trou);
+      tIdx++;
+      if(tIdx < trous.length) setTimeout(trouSuivant, 350);
+      else finMot();
+    });
+  } else {
+    essais++; stats.mots[stats.mots.length-1].erreurs++;
+    const cle = bonne + "→" + donnee; stats.conf[cle] = (stats.conf[cle]||0) + 1;
+    son("err");
+    const z = $("roue-zone"); z.classList.remove("secoue"); void z.offsetWidth; z.classList.add("secoue");
+    if(essais >= 2){
+      trou.innerHTML = `<span class="fantome">${bonne}</span>`;
+      bulle(`Ce n'est pas un ${bonne}… regarde la lettre grise.`, "err");
+    } else {
+      bulle($("opt-modele").checked ? "Pas encore ! Regarde bien le modèle." : "Pas encore ! Essaie encore.", "err");
+    }
+  }
+}
+
+function envol(lettre, trou, fin){
+  const s = $("roue").getBoundingClientRect(), d = trou.getBoundingClientRect();
+  const el = document.createElement("div"); el.className = "volante"; el.textContent = lettre;
+  const fsDepart = s.width*0.5, fsFin = parseFloat(getComputedStyle($("mot")).fontSize);
+  el.style.fontSize = fsDepart+"px"; el.style.left = (s.left + s.width/2)+"px"; el.style.top = (s.top + s.height/2)+"px";
+  el.style.transform = "translate(-50%,-55%)";
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.style.fontSize = fsFin+"px";
+    el.style.transform = `translate(calc(-50% + ${d.left + d.width/2 - s.left - s.width/2}px), calc(-55% + ${d.top + d.height/2 - s.top - s.height/2}px))`;
+  }));
+  setTimeout(()=>{ el.remove(); fin(); }, 720);
+}
+
+function paillettes(cible, n=10){
+  const r = cible.getBoundingClientRect();
+  for(let k=0;k<n;k++){
+    const p = document.createElement("span"); p.className="paillette"; p.textContent = k%2 ? "✦" : "✧";
+    p.style.left = (r.left + r.width/2)+"px"; p.style.top = (r.top + r.height/2)+"px";
+    document.body.appendChild(p);
+    const a = Math.random()*Math.PI*2, dist = 30 + Math.random()*50;
+    p.animate([{transform:"translate(-50%,-50%) scale(1)",opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px), calc(-50% + ${Math.sin(a)*dist}px)) scale(.3)`,opacity:0}],{duration:700+Math.random()*300,easing:"ease-out"}).onfinish=()=>p.remove();
+  }
+}
+
+function finMot(){
+  const o = partie[idx];
+  son("mot"); bulle(`Abracadabra… ${o.m} !`, "ok");
+  if($("opt-voix").checked) setTimeout(()=>dire(o.m), 250);
+  paillettes($("mot"), 22); paillettes($("tableau"), 14);
+  setTimeout(()=>{ idx++; if(idx < partie.length) motSuivant(); else finPartie(); }, 2300);
+}
+
+function finPartie(){
+  $("ecran-jeu").hidden = true; $("ecran-fin").hidden = false;
+  const sans = stats.mots.filter(m=>m.erreurs===0).length;
+  $("titre-fin").textContent = sans === stats.mots.length ? "Tu es un grand magicien !" : "Tu es un vrai magicien !";
+  $("resume-fin").textContent = `${stats.mots.length} mot${stats.mots.length>1?"s":""} écrit${stats.mots.length>1?"s":""} · ${stats.premierCoup} lettre${stats.premierCoup>1?"s":""} sur ${stats.total} trouvée${stats.total>1?"s":""} du premier coup.`;
+  $("liste-fin").innerHTML = stats.mots.map(m => `<figure>${m.i && $("opt-image").checked ? `<img src="${IMG}${m.i}.jpg" alt="">` : ""}
+    <figcaption>${[...m.m].map(c => lettres.includes(c) ? `<b>${c}</b>` : c).join("")}</figcaption><small>${m.erreurs ? m.erreurs+" erreur"+(m.erreurs>1?"s":"") : "du premier coup"}</small></figure>`).join("");
+  const c = Object.entries(stats.conf).sort((a,b)=>b[1]-a[1]);
+  $("bilan-conf").innerHTML = c.length
+    ? `<p class="note" style="font-size:15px">Pour l'enseignant : confusions de l'élève.</p><table class="conf"><tr><th>Il fallait</th><th>L'élève a écrit</th><th>Fois</th></tr>${c.map(([k,n])=>{ const [a,b]=k.split("→"); return `<tr><td class="lg">${a}</td><td class="lg">${b}</td><td>${n}</td></tr>`; }).join("")}</table>`
+    : `<p class="note" style="font-size:15px">Aucune confusion pendant cette partie.</p>`;
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+}
+
+/* ---------- Faire tourner la roue au doigt ---------- */
+(function(){
+  const roue = $("roue"); let depart = null, rot0 = 0, a0 = 0, bouge = 0;
+  const angle = e => { const r = roue.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top+r.height/2), e.clientX - (r.left+r.width/2)) * 180/Math.PI; };
+  roue.addEventListener("pointerdown", e => { if(!enJeu) return; depart = e.pointerId; roue.setPointerCapture(e.pointerId); rot0 = rot; a0 = angle(e); bouge = 0; roue.classList.add("drag"); });
+  roue.addEventListener("pointermove", e => { if(e.pointerId !== depart) return; let d = angle(e) - a0; if(d>180) d-=360; if(d<-180) d+=360; a0 = angle(e); rot += d; bouge += Math.abs(d); majRoue(); });
+  const lacher = e => { if(e.pointerId !== depart) return; depart = null; roue.classList.remove("drag");
+    if(bouge < 6){ rot = rot0; tourner(1); return; }
+    rot = Math.round(rot/180)*180; majRoue(); son("tour"); };
+  roue.addEventListener("pointerup", lacher); roue.addEventListener("pointercancel", lacher);
+})();
+
+/* ---------- Boutons et clavier ---------- */
+$("b-gauche").onclick = () => tourner(1);
+$("b-retourner").onclick = retourner;
+$("b-valider").onclick = valider;
+$("ecouter").onclick = () => dire(partie[idx] ? partie[idx].m : "");
+document.addEventListener("keydown", e => {
+  if($("ecran-jeu").hidden || /TEXTAREA|INPUT/.test(document.activeElement.tagName)) return;
+  if(e.key === "ArrowLeft"){ tourner(-1); e.preventDefault(); }
+  else if(e.key === "ArrowRight"){ tourner(1); e.preventDefault(); }
+  else if(e.key === "ArrowUp" || e.key === "ArrowDown"){ retourner(); e.preventDefault(); }
+  else if(e.key === "Enter"){ valider(); e.preventDefault(); }
+});
+$("jouer").onclick = demarrer;
+$("b-rejouer").onclick = demarrer;
+$("b-reglages").onclick = () => { $("ecran-fin").hidden = true; $("ecran-reglages").hidden = false; };
+$("quitter").onclick = () => { $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; activer(false); if("speechSynthesis" in window) speechSynthesis.cancel(); };
+majApercu();
+</script>
+</body>
+</html>
