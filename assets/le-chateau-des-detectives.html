@@ -176,25 +176,6 @@ mark{background:transparent;color:inherit;border-radius:4px;transition:backgroun
 .coin{position:absolute;top:-30px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF2B8,var(--gold) 55%,#A97A16);animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* Professeur Zigzag (correction par IA, /api/zigzag) */
-.zz{margin-top:14px;border-top:2px dashed var(--parch-edge);padding-top:12px;color:var(--ink)}
-.zz .prof{display:flex;align-items:flex-end;gap:10px;margin:0 0 10px}
-.zz .prof img{height:110px;width:auto;flex:none;transform-origin:50% 100%}
-.zz .prof img.hop{animation:hop .6s ease}
-@keyframes hop{30%{transform:translateY(-10px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
-.zz .bulle{position:relative;background:#fff;border:2px solid var(--parch-edge);border-radius:14px;padding:9px 12px;font-size:17px;line-height:1.4;margin-bottom:26px}
-.zz .bulle::before{content:"";position:absolute;left:-11px;bottom:12px;border:9px solid transparent;border-right-color:var(--parch-edge);border-left:0}
-.zz .redit{position:relative}
-.zz textarea{font:inherit;font-size:19px;color:var(--ink);width:100%;min-height:96px;border:2px solid var(--parch-edge);border-radius:12px;padding:10px 60px 10px 12px;background:#fff;resize:vertical}
-.zz .micro{position:absolute;right:8px;top:8px;width:44px;height:44px;border-radius:50%;border:0;background:var(--gold);font-size:20px;cursor:pointer}
-.zz .micro.ecoute{background:var(--ko);animation:zzpulse 1s infinite}
-@keyframes zzpulse{50%{transform:scale(1.08)}}
-.zz .compteur{font-size:13px;text-align:right;color:#6C5638;margin:2px 0 6px}
-.zz .aide-micro{font-size:14px;color:#6C5638;margin:0 0 6px}
-.zz .idees{list-style:none;padding:0;margin:6px 0 4px;font-size:17px}
-.zz .idees li{margin:3px 0}.zz .idees li.ok{color:#1d7a46;font-weight:700}
-.parch .zz .ghost{color:var(--ink);border-color:var(--parch-edge)}
-@media (max-width:560px){.zz .prof img{height:84px}}
 </style>
 </head>
 <body>
@@ -426,12 +407,11 @@ function loadRoom(){
       document.getElementById("stage").classList.add("open");
       const last = g.room === 9;
       const dejaVus = p.classList.contains("show-clue");
-      after.innerHTML = `<div class="bilan ok"><strong>Bravo, détective !</strong> La porte s'ouvre.${IA.actif ? "" : dejaVus ? "<br>Les mots surlignés t'ont aidé : relis-les." : "<br>Montre dans le message les mots qui t'ont aidé."}</div>
+      after.innerHTML = `<div class="bilan ok"><strong>Bravo, détective !</strong> La porte s'ouvre.${dejaVus ? "<br>Les mots surlignés t'ont aidé : relis-les." : "<br>Montre dans le message les mots qui t'ont aidé."}</div>
         <div class="actions"><button class="btn ghost" id="clue">Voir les indices</button>
         <button class="btn" id="next">${last?"Entrer dans la pièce secrète":"Passer la porte"}</button></div>`;
       after.querySelector("#clue").onclick = () => p.classList.toggle("show-clue");
-      if(IA.actif) zigzagExplique(after, card, p, dejaVus);
-      after.querySelector("#next").onclick = () => { arreterMicro(); try{speechSynthesis.cancel()}catch(e){}; g.room++; g.room>=10 ? finish() : loadRoom(); };
+      after.querySelector("#next").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; g.room++; g.room>=10 ? finish() : loadRoom(); };
       after.querySelector("#next").focus({preventScroll:true});
     } else {
       g.fautes[g.room]++; g.vies--; renderLives();
@@ -451,71 +431,6 @@ function loadRoom(){
   }
 }
 
-// ---- Professeur Zigzag : j'explique comment j'ai trouvé (correction par IA, /api/zigzag)
-// Facultatif : n'apparaît que si la correction est activée sur le site ; « Passer la porte » reste toujours possible.
-const IA = {actif:false, turnstile:null, token:null, widget:null};
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let reco = null;
-function arreterMicro(){ if(reco){ try{ reco.stop(); }catch(e){} } }
-const ZZ_SURLIGNE = ["Bravo, détective ! Tu vois les mots surlignés ? Explique-moi <b>pourquoi</b> ils te montrent la bonne réponse.",
-  "Saperlipopette, la porte s'ouvre ! Regarde les mots surlignés : en quoi t'aident-ils à trouver ?"];
-const ZZ_DEBUT = ["Bravo, détective ! Mais dis-moi : <b>comment</b> as-tu trouvé ? Quels mots du message t'ont aidé ?",
-  "Saperlipopette, la porte s'ouvre ! Explique-moi ton enquête : qu'est-ce qui, dans le message, t'a mis sur la piste ?"];
-function zigzagExplique(after, card, p, dejaVus){
-  const box = document.createElement("div");
-  box.className = "actions"; box.innerHTML = `<button class="btn ghost" id="zzOuvrir">🧐 J'explique au professeur Zigzag</button>`;
-  after.insertBefore(box, after.querySelector(".actions"));
-  box.querySelector("#zzOuvrir").onclick = () => {
-    // Indices pas encore vus : on les cache pendant l'explication (sinon la question n'a plus de sens), retour après la réponse de Zigzag.
-    const btnIndices = after.querySelector("#clue");
-    const cacherIndices = c => { if(dejaVus || !btnIndices) return; btnIndices.hidden = c; if(c) p.classList.remove("show-clue"); };
-    cacherIndices(true);
-    box.className = "zz";
-    box.innerHTML = `<div class="prof"><img src="/images/zigzag/professeur.png" alt="Le professeur Zigzag"><div class="bulle" aria-live="polite"></div></div>
-      <div class="redit"><textarea maxlength="300" aria-label="Comment j'ai trouvé" placeholder="J'ai trouvé parce que…"></textarea>${SR?'<button class="micro" type="button" title="Expliquer au micro">🎤</button>':''}</div>
-      <div class="compteur">0 / 300</div>${SR?"":'<p class="aide-micro">🎤 Pour parler au micro, ouvre le jeu avec Edge ou Chrome.</p>'}<p class="aide-micro" hidden>Parle bien fort, puis appuie à nouveau sur 🎤. Vérifie ce qui est écrit avant d'envoyer.</p>
-      <div class="ts"></div><ul class="idees" hidden></ul>
-      <div class="actions"><button class="btn ghost zcorr" hidden>✏️ Corriger</button><button class="btn zenv">Envoyer au professeur Zigzag</button></div>`;
-    const q = s => box.querySelector(s), ta = q("textarea"), bulle = q(".bulle"), img = q(".prof img"), env = q(".zenv"), corr = q(".zcorr"), idees = q(".idees"), mic = q(".micro");
-    const dit = (html, voix) => { bulle.innerHTML = html; img.classList.remove("hop"); void img.offsetWidth; img.classList.add("hop");
-      if(voix){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(bulle.textContent.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"")); u.lang="fr-FR"; u.rate=.95; u.pitch=1.15; speechSynthesis.speak(u);}catch(e){} } };
-    const maj = () => { q(".compteur").textContent = ta.value.length+" / 300"; env.disabled = ta.disabled || ta.value.trim().length<3 || !!(IA.turnstile && !IA.token); };
-    const debut = dejaVus ? ZZ_SURLIGNE : ZZ_DEBUT; dit(debut[Math.floor(Math.random()*debut.length)], false);
-    ta.addEventListener("input", maj); maj(); ta.focus();
-    if(IA.turnstile && window.turnstile){
-      try{ if(IA.widget!==null) turnstile.remove(IA.widget); }catch(e){}
-      IA.token=null; IA.widget = turnstile.render(q(".ts"), {sitekey:IA.turnstile, size:"flexible", callback:t=>{IA.token=t; maj();}, "expired-callback":()=>{IA.token=null; maj();}});
-    }
-    if(mic) mic.onclick = () => {
-      if(reco){ arreterMicro(); return; }
-      try{ speechSynthesis.cancel(); }catch(e){}
-      let base = ta.value.trim(); if(base) base += " ";
-      reco = new SR(); reco.lang="fr-FR"; reco.interimResults=true; reco.continuous=true;
-      reco.onresult = e => { let t=""; for(let i=0;i<e.results.length;i++) t+=e.results[i][0].transcript; ta.value=(base+t).slice(0,300); maj(); };
-      reco.onerror = e => { if(e.error==="not-allowed") dit("Je n'ai pas accès au micro. Tu peux écrire au clavier !", true); };
-      reco.onend = () => { reco=null; mic.classList.remove("ecoute"); };
-      try{ reco.start(); mic.classList.add("ecoute"); q(".aide-micro").hidden=false; }catch(e){ reco=null; }
-    };
-    env.onclick = async () => {
-      arreterMicro();
-      const texte = ta.value.trim(); if(texte.length<3) return;
-      ta.disabled = true; maj(); dit("Hmm… je lis… ma loupe chauffe ! 🔍", false);
-      let r;
-      try{ r = await (await fetch("/api/zigzag", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify({jeu:"le-chateau-des-detectives", element:card.id, texte, token:IA.token})})).json(); }
-      catch(e){ r = {erreur:"Le professeur Zigzag fait la sieste. Réessaie dans un moment !"}; }
-      if(IA.widget!==null && window.turnstile){ IA.token=null; try{ turnstile.reset(IA.widget); }catch(e){} }
-      if(r.erreur){ dit(esc(r.erreur), true); ta.disabled=false; maj(); return; }
-      idees.innerHTML = r.idees.map((x,k) => r.trouvees[k] ? `<li class="ok">✅ ${esc(x)}</li>` : `<li>⬜ Un indice t'attend encore…</li>`).join("");
-      idees.hidden = !!r.hors_sujet; env.hidden = true; corr.hidden = false;
-      dit(esc(r.message), true); cacherIndices(false);
-    };
-    corr.onclick = () => { cacherIndices(true); ta.disabled=false; env.hidden=false; corr.hidden=true; idees.hidden=true; maj(); ta.focus(); };
-  };
-}
-fetch("/api/zigzag").then(r => r.json()).then(r => {
-  IA.actif = !!r.actif; IA.turnstile = r.turnstile || null;
-  if(IA.actif && IA.turnstile){ const sc=document.createElement("script"); sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; sc.async=true; document.head.appendChild(sc); }
-}).catch(() => { IA.actif = false; });
 
 function carnet(){
   const parFam = {};
