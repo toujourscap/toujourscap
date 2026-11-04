@@ -13,15 +13,15 @@
   --wood:#6B3F22; --wood-2:#8A5530; --shelf:#4A2A16; --paper:#FFF9EC; --paper-2:#F6EBD2; --edge:#E2CFA6;
   --ink:#2B2118; --muted:#7A6A57; --gold:#E9A82A; --gold-d:#A8740F; --hl:#FFE066;
   --ok:#2F9E5E; --ok-bg:#E2F4E8; --ko:#C8433A; --ko-bg:#FBE4E0;
-  --c-exp:#3B78D8; --c-pro:#8A63D2; --c-voc:#16A08F; --c-inf:#E0861A; --c-ord:#4E9A2F; --c-per:#D14E8A;
+  --c-zz:#5B5BD6; --c-exp:#3B78D8; --c-pro:#8A63D2; --c-voc:#16A08F; --c-inf:#E0861A; --c-ord:#4E9A2F; --c-per:#D14E8A;
   --f-display:"Grandstander","Comic Sans MS",system-ui,sans-serif;
   --f-read:"Andika","Verdana",system-ui,sans-serif;
   color-scheme:light;
 }
 *{box-sizing:border-box} [hidden]{display:none!important}
-html{background:var(--wood)}
-body{margin:0;min-height:100vh;background:var(--wood);color:var(--ink);font-family:var(--f-read);font-size:17px;line-height:1.45;
-  background-image:repeating-linear-gradient(90deg,#0000 0 120px,#0000001a 120px 122px),linear-gradient(#ffffff0d,#0000001a)}
+html{min-height:100%;background-color:var(--wood);background-image:linear-gradient(#2a170bb8,#1d1008d9),url("/images/bibliotheque/decor.jpg");background-size:cover;background-position:center;background-attachment:fixed}
+@media (max-width:700px){html{background-attachment:scroll}}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--f-read);font-size:17px;line-height:1.45}
 .wrap{max-width:1280px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
 h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;text-wrap:balance}
 .card{background:var(--paper);border-radius:18px;box-shadow:0 6px 0 var(--shelf),0 14px 30px #0005;padding:20px 22px}
@@ -39,7 +39,7 @@ button:focus-visible{outline:3px solid var(--c-exp);outline-offset:3px}
 .home header p{margin:0;max-width:62ch;font-size:18px;opacity:.92}
 .step-t{font-family:var(--f-display);font-weight:800;font-size:20px;margin:0 0 12px;display:flex;gap:10px;align-items:center}
 .step-t i{font-style:normal;background:var(--wood);color:#FFF3DC;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:16px}
-.books{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
 .book{font:inherit;color:var(--ink);cursor:pointer;text-align:left;border:3px solid var(--edge);border-radius:14px;background:var(--paper-2);
   padding:14px 14px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;position:relative}
 .book .ic{font-size:40px;grid-row:span 2}
@@ -113,6 +113,28 @@ mark.on{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .relire{margin-top:10px}
 
+/* Professeur Zigzag (correction par IA, /api/zigzag) */
+.prof{display:flex;align-items:flex-end;gap:10px;margin:0 0 12px}
+.prof img{height:110px;width:auto;flex:none;transform-origin:50% 100%}
+.prof img.hop{animation:hop .6s ease}
+@keyframes hop{30%{transform:translateY(-10px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
+.bulle{position:relative;background:#fff;border:3px solid var(--edge);border-radius:16px;padding:10px 14px;font-size:18px;line-height:1.4;margin-bottom:26px;flex:1}
+.bulle::before{content:"";position:absolute;left:-12px;bottom:14px;border:10px solid transparent;border-right-color:var(--edge);border-left:0}
+.redit{position:relative}
+.redit textarea{font-family:inherit;font-size:20px;line-height:1.4;color:var(--ink);width:100%;min-height:110px;border:3px solid var(--edge);border-radius:12px;padding:10px 64px 10px 12px;background:#fff;resize:vertical}
+.redit textarea:focus{outline:3px solid var(--c-zz);outline-offset:1px}
+.redit .micro{position:absolute;right:10px;top:10px;width:46px;height:46px;border-radius:50%;border:0;background:var(--c-zz);color:#fff;font-size:22px;cursor:pointer}
+.redit .micro.ecoute{background:var(--ko);animation:pulse2 1s infinite}
+@keyframes pulse2{50%{transform:scale(1.08)}}
+.compteur{font-size:14px;text-align:right;color:var(--muted);margin:2px 0 6px}
+.aide-micro{font-size:15px;margin:0 0 8px;color:var(--muted)}
+.idees{list-style:none;padding:0;margin:8px 0 4px;font-size:18px}
+.idees li{margin:4px 0}
+.idees li.ok{color:var(--ok);font-weight:700}
+@media (max-width:560px){.prof img{height:80px}.bulle{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.print-zz{border-bottom:1pt dotted #888;height:22pt}
+
 /* Fin */
 .end{display:grid;gap:16px;justify-items:center;text-align:center;max-width:760px;margin:0 auto}
 .end h1{font-size:clamp(28px,5vw,44px);color:var(--wood)}
@@ -127,7 +149,7 @@ mark.on{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
 #print{display:none}
 @media print{
   @page{margin:14mm}
-  body{background:#fff;font-size:13pt}
+  html,body{background:#fff!important;font-size:13pt}
   .wrap{display:none}
   #print{display:block;color:#000}
   #print h1{font-size:20pt;margin:0 0 2pt}
@@ -157,6 +179,9 @@ mark.on{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
    réécrits pour Toujours cap ! en trois versions (CP, CE1, CE2).
    Dans les textes, {k:mots} marque un indice (surligné sur demande).
    Familles de questions : exp, pro, voc, inf, per, ord.
+   Questions "zz" (professeur Zigzag) : réponse libre corrigée par l'IA du site ;
+   leurs idées attendues sont recopiées dans lib/zigzag.js (jeu "la-bibliotheque-des-contes",
+   élément <conte>-<niveau>-<n° de la question zz>). Elles n'apparaissent que si l'IA est active.
    Pour enregistrer sa voix : déposer un MP3 dans /audio/bibliotheque/<conte>-<niveau>.mp3
    et mettre son nom dans le champ audio du niveau.
    ============================================================ */
@@ -166,7 +191,8 @@ const FAM = {
   voc:{nom:"Le sens des mots", ic:"📖", c:"var(--c-voc)", ex:"Comprendre un mot grâce à la phrase."},
   inf:{nom:"Je devine", ic:"💡", c:"var(--c-inf)", ex:"La réponse n'est pas écrite : on la trouve avec des indices."},
   per:{nom:"Les personnages", ic:"❤️", c:"var(--c-per)", ex:"Ce qu'ils ressentent, ce qu'ils pensent, ce que l'histoire apprend."},
-  ord:{nom:"Dans l'ordre", ic:"🔢", c:"var(--c-ord)", ex:"Remettre les moments de l'histoire dans l'ordre."}
+  ord:{nom:"Dans l'ordre", ic:"🔢", c:"var(--c-ord)", ex:"Remettre les moments de l'histoire dans l'ordre."},
+  zz:{nom:"Avec le professeur Zigzag", ic:"🎓", c:"var(--c-zz)", ex:"Répondre avec ses mots, à l'écrit ou au micro : le professeur Zigzag (correction par IA) dit ce qui est trouvé."}
 };
 
 const CONTES = [
@@ -189,7 +215,8 @@ const CONTES = [
         {f:"pro", q:"« Elle fait du pain. » Qui est « elle » ?", choix:["la poule","la souris","la farine"], bon:0, ind:["c"]},
         {f:"inf", q:"Pourquoi les trois amis crient « Moi ! » ?", choix:["Ils ont envie de manger le pain.","Ils veulent aider la poule.","Ils ont peur de la poule."], bon:0, ind:["d","e"]},
         {f:"per", q:"Pourquoi la poule ne donne pas de pain à ses amis ?", choix:["Ils ne l'ont pas aidée.","Le pain est brûlé.","Ils n'aiment pas le pain."], bon:0, ind:["f"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante le blé.","La poule coupe le blé.","La poule fait du pain."], ind:["b","c"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante le blé.","La poule coupe le blé.","La poule fait du pain."], ind:["b","c"]},
+        {f:"zz", q:"Explique avec tes mots pourquoi la poule ne partage pas son pain.", idees:["Les amis n'ont pas voulu l'aider (à planter, à faire le pain)","La poule a tout fait toute seule, alors elle garde le pain pour elle et ses poussins"], ind:["b","f"]}
       ]
     },
     CE1:{
@@ -208,7 +235,8 @@ const CONTES = [
         {f:"voc", q:"À quoi sert le moulin dans cette histoire ?", choix:["à faire de la farine avec les grains","à cuire le pain","à arroser le blé"], bon:0, ind:["c"]},
         {f:"inf", q:"Pourquoi les animaux arrivent-ils en courant ?", choix:["Ils ont senti l'odeur du pain.","Ils veulent enfin aider la poule.","Il commence à pleuvoir."], bon:0, ind:["e"]},
         {f:"per", q:"Que veut nous apprendre cette histoire ?", choix:["Pour profiter du travail, il faut y participer.","Il ne faut jamais manger de pain.","Les chats dorment beaucoup."], bon:0, ind:["f"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante les grains.","Le blé devient doré.","Le meunier fait la farine.","La poule fait cuire le pain."], ind:["c","d"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule plante les grains.","Le blé devient doré.","Le meunier fait la farine.","La poule fait cuire le pain."], ind:["c","d"]},
+        {f:"zz", q:"Raconte avec tes mots comment la poule a fait son pain, du grain jusqu'au pain.", idees:["Elle plante les grains et les arrose","Le blé pousse, elle le coupe et le porte au moulin pour avoir de la farine","Avec la farine, elle prépare une pâte et la fait cuire au four"], ind:["c","d"]}
       ]
     },
     CE2:{
@@ -228,7 +256,9 @@ const CONTES = [
         {f:"inf", q:"Combien de temps se passe-t-il entre les semis et la récolte du blé ?", choix:["plusieurs semaines","une seule nuit","une heure"], bon:0, ind:["e"]},
         {f:"inf", q:"Pourquoi le chat, le chien et le canard se réveillent-ils « comme par magie » ?", choix:["L'odeur du pain les a attirés.","La poule les a appelés.","Le meunier est venu les chercher."], bon:0, ind:["f"]},
         {f:"per", q:"Que comprennent les trois compères à la fin de l'histoire ?", choix:["Qu'il faut participer au travail pour en profiter.","Qu'il vaut mieux dormir que travailler.","Que la poule ne fait pas bien le pain."], bon:0, ind:["g","h"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule sème les grains.","Le blé devient doré.","Le meunier donne la farine.","La poule fait cuire le pain.","Les compères se couchent le ventre vide."], ind:["a","e","h"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La poule sème les grains.","Le blé devient doré.","Le meunier donne la farine.","La poule fait cuire le pain.","Les compères se couchent le ventre vide."], ind:["a","e","h"]},
+        {f:"zz", q:"Raconte avec tes mots toutes les étapes, du grain de blé jusqu'au pain.", idees:["Semer les grains (et les arroser)","Couper le blé quand il est doré et le porter au moulin","Le meunier en fait de la farine","Pétrir la pâte et la faire cuire au four"], ind:["a","e"]},
+        {f:"zz", q:"Pourquoi les trois compères proposent-ils leur aide l'année suivante ?", idees:["Ils ont compris que, pour manger le pain, il faut aider à le faire","Ils ne veulent plus se coucher le ventre vide"], ind:["g","h"]}
       ]
     }
   }
@@ -252,7 +282,8 @@ const CONTES = [
         {f:"inf", q:"Pourquoi le lion rit ?", choix:["Il pense qu'une souris est trop petite pour l'aider.","La souris lui fait des chatouilles.","Il a gagné un jeu."], bon:0, ind:["c"]},
         {f:"pro", q:"« Elle ronge les cordes. » Qui est « elle » ?", choix:["la souris","la corde","la lionne"], bon:0, ind:["e"]},
         {f:"per", q:"À la fin, comment se sent le lion ?", choix:["content et reconnaissant","en colère","triste"], bon:0, ind:["f"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le lion attrape la souris.","Le lion est pris dans un filet.","La souris ronge les cordes."], ind:["b","d","e"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le lion attrape la souris.","Le lion est pris dans un filet.","La souris ronge les cordes."], ind:["b","d","e"]},
+        {f:"zz", q:"Explique avec tes mots comment la souris a aidé le lion.", idees:["Le lion est pris dans un filet et ne peut pas sortir","La souris ronge les cordes avec ses dents et le lion est libre"], ind:["d","e"]}
       ]
     },
     CE1:{
@@ -271,7 +302,9 @@ const CONTES = [
         {f:"pro", q:"« Toi, si minuscule, tu veux m'aider ? » Qui est « toi » ?", choix:["la souris","le lion","le chasseur"], bon:0, ind:["d"]},
         {f:"inf", q:"Comment la souris sait-elle que le lion a besoin d'aide ?", choix:["Elle a reconnu son rugissement.","Les chasseurs le lui ont dit.","Elle l'a vu tomber de l'arbre."], bon:0, ind:["f"]},
         {f:"voc", q:"« Le filet céda. » Cela veut dire :", choix:["Le filet se cassa et s'ouvrit.","Le filet devint plus solide.","Le filet tomba dans l'eau."], bon:0, ind:["g"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris passe sur la patte du lion.","Le lion laisse partir la souris.","Le lion tombe dans un filet.","La souris grignote les cordes."], ind:["b","e","g"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris passe sur la patte du lion.","Le lion laisse partir la souris.","Le lion tombe dans un filet.","La souris grignote les cordes."], ind:["b","e","g"]},
+        {f:"zz", q:"Pourquoi le lion a-t-il ri quand la souris a promis de l'aider ?", idees:["Il pensait qu'une souris est trop petite pour aider un grand lion"], ind:["d"]},
+        {f:"zz", q:"Qu'est-ce que cette histoire nous apprend ? Dis-le avec tes mots.", idees:["Même un petit peut aider un grand (il ne faut pas se moquer des plus petits)"], ind:["h"]}
       ]
     },
     CE2:{
@@ -292,7 +325,272 @@ const CONTES = [
         {f:"pro", q:"« C'est alors qu'une petite voix s'éleva. » À qui est cette voix ?", choix:["à la souris","au chasseur","au lion"], bon:0, ind:["g"]},
         {f:"inf", q:"Combien de temps la souris a-t-elle travaillé ?", choix:["toute la nuit","quelques secondes","plusieurs jours"], bon:0, ind:["h"]},
         {f:"per", q:"Qu'a compris le lion à la fin ?", choix:["Même un petit peut aider un grand.","Il faut toujours dormir sous un baobab.","Les souris sont dangereuses."], bon:0, ind:["i"]},
-        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris grimpe sur le lion.","Le lion libère la souris en riant.","Le lion se prend dans un piège.","La souris ronge les mailles."], ind:["a","d","f","h"]}
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La souris grimpe sur le lion.","Le lion libère la souris en riant.","Le lion se prend dans un piège.","La souris ronge les mailles."], ind:["a","d","f","h"]},
+        {f:"zz", q:"Raconte avec tes mots comment la souris a tenu sa promesse.", idees:["Le lion est pris dans le filet des chasseurs et ne peut pas se libérer","La souris ronge les mailles du filet une à une","Le lion est libre (avant le matin)"], ind:["f","g","h"]},
+        {f:"zz", q:"Le lion dit « Je me suis moqué de toi, et j'avais tort ». Explique pourquoi il avait tort.", idees:["Il pensait qu'une petite souris ne pourrait jamais l'aider","C'est pourtant la souris qui l'a sauvé : on a souvent besoin d'un plus petit que soi"], ind:["d","i"]}
+      ]
+    }
+  }
+},
+{
+  id:"corbeau", titre:"Le corbeau et le renard", ic:"🐦‍⬛",
+  src:"D'après une fable d'Ésope et de La Fontaine (domaine public), réécrite pour Toujours cap !",
+  resume:"Comment le renard va-t-il avoir le fromage ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "Un corbeau est perché sur un arbre. {a:Il tient un fromage dans son bec.}",
+        "Un renard passe. {b:Il sent le fromage et il a très faim.}",
+        "« Bonjour, Monsieur le Corbeau ! Que vous êtes beau ! {c:Si votre voix est aussi belle que vos plumes, vous êtes le roi de la forêt !} »",
+        "Le corbeau est très content. {d:Il ouvre son bec pour chanter.} {e:Le fromage tombe !} Le renard l'attrape et le mange.",
+        "« {f:Ne crois pas ceux qui te font des compliments pour avoir quelque chose !} » dit le renard en partant."
+      ],
+      questions:[
+        {f:"exp", q:"Qu'est-ce que le corbeau tient dans son bec ?", choix:["un fromage","une pomme","un ver de terre"], bon:0, ind:["a"]},
+        {f:"inf", q:"Pourquoi le renard s'arrête sous l'arbre ?", choix:["Il veut le fromage.","Il est fatigué.","Il cherche un ami."], bon:0, ind:["b"]},
+        {f:"pro", q:"« Il ouvre son bec pour chanter. » Qui est « il » ?", choix:["le corbeau","le renard","le fromage"], bon:0, ind:["d"]},
+        {f:"inf", q:"Pourquoi le fromage tombe ?", choix:["Le corbeau ouvre son bec pour chanter.","Le vent souffle trop fort.","Le renard secoue l'arbre."], bon:0, ind:["d","e"]},
+        {f:"per", q:"Pourquoi le renard dit que le corbeau est beau ?", choix:["pour avoir le fromage","parce qu'il l'aime beaucoup","pour l'aider à chanter"], bon:0, ind:["c","f"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le renard sent le fromage.","Le renard dit que le corbeau est beau.","Le corbeau ouvre son bec.","Le renard mange le fromage."], ind:["b","c","d"]},
+        {f:"zz", q:"Explique avec tes mots comment le renard a eu le fromage.", idees:["Le renard fait des compliments au corbeau (il dit qu'il est beau, qu'il chante bien)","Le corbeau ouvre son bec pour chanter et le fromage tombe"], ind:["c","d","e"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "Maître Corbeau s'est posé sur une haute branche. {a:Dans son bec, il serre un gros morceau de fromage qu'il a trouvé près de la ferme.}",
+        "Maître Renard passe par là. {b:L'odeur du fromage lui chatouille le nez. Son ventre gargouille.} {c:Mais l'arbre est bien trop haut pour lui.} Alors il a une idée.",
+        "« Bonjour, Monsieur du Corbeau ! Comme vous êtes joli ! Quelles belles plumes noires et brillantes ! {d:Je suis sûr que votre chant est aussi beau que vos plumes.} »",
+        "{e:Le corbeau gonfle ses plumes, très fier.} Pour montrer sa belle voix, {f:il ouvre grand son bec… et le fromage tombe.} Le renard l'attrape au vol.",
+        "« Mon cher Monsieur, {g:apprenez que celui qui fait des compliments vit aux dépens de celui qui l'écoute.} Cette leçon vaut bien un fromage ! »",
+        "{h:Le corbeau, honteux, jure qu'on ne l'y prendra plus.}"
+      ],
+      questions:[
+        {f:"exp", q:"Où le corbeau a-t-il trouvé le fromage ?", choix:["près de la ferme","dans la forêt","chez le renard"], bon:0, ind:["a"]},
+        {f:"voc", q:"« Son ventre gargouille. » Cela veut dire que le renard :", choix:["a faim","est malade","rit très fort"], bon:0, ind:["b"]},
+        {f:"inf", q:"Pourquoi le renard ne prend-il pas le fromage tout seul ?", choix:["L'arbre est trop haut pour lui.","Il n'aime pas le fromage.","Il a peur du corbeau."], bon:0, ind:["c"]},
+        {f:"per", q:"Comment se sent le corbeau quand le renard lui fait des compliments ?", choix:["fier","triste","en colère"], bon:0, ind:["e"]},
+        {f:"pro", q:"« Le renard l'attrape au vol. » Qu'est-ce que le renard attrape ?", choix:["le fromage","le corbeau","une plume"], bon:0, ind:["f"]},
+        {f:"per", q:"Comment se sent le corbeau à la fin ?", choix:["honteux","joyeux","fier"], bon:0, ind:["h"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le renard sent l'odeur du fromage.","Le renard fait des compliments au corbeau.","Le corbeau ouvre son bec pour chanter.","Le renard attrape le fromage."], ind:["b","d","f"]},
+        {f:"zz", q:"Explique la ruse du renard avec tes mots.", idees:["Le renard flatte le corbeau : il lui fait des compliments sur ses plumes et sa voix","Il veut que le corbeau chante (qu'il ouvre son bec)","Quand le corbeau ouvre le bec, le fromage tombe et le renard le prend"], ind:["c","d","f"]},
+        {f:"zz", q:"Qu'est-ce que le corbeau a appris ? Dis-le avec tes mots.", idees:["Il ne faut pas croire ceux qui font des compliments pour obtenir quelque chose"], ind:["g","h"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "Perché sur la plus haute branche d'un chêne, Maître Corbeau tenait dans son bec {a:un fromage qu'il venait de dérober sur le rebord d'une fenêtre}. Il s'apprêtait à le savourer tranquillement.",
+        "Attiré par l'odeur, Maître Renard s'arrêta au pied de l'arbre. {b:Il leva la tête, se lécha les babines et réfléchit. Grimper était impossible ; il faudrait être plus malin.}",
+        "{c:D'une voix mielleuse}, il commença : « Ah ! Bonjour, Monsieur du Corbeau ! Que vous êtes élégant ! {d:Sans mentir, si votre chant ressemble à votre plumage, vous êtes le plus merveilleux oiseau de ces bois.} »",
+        "À ces mots, le corbeau ne se sentit plus de joie. {e:Pour prouver la beauté de sa voix, il ouvrit un large bec} et poussa un croassement. {f:Le fromage glissa, tomba, et le renard s'en saisit aussitôt.}",
+        "« {g:Mon bon Monsieur, apprenez que tout flatteur vit aux dépens de celui qui l'écoute. Cette leçon vaut bien un fromage.} »",
+        "{h:Le corbeau, honteux et confus, jura, mais un peu tard, qu'on ne l'y prendrait plus.}"
+      ],
+      questions:[
+        {f:"voc", q:"Le corbeau a « dérobé » le fromage. Cela veut dire qu'il l'a :", choix:["volé","acheté","fabriqué"], bon:0, ind:["a"]},
+        {f:"inf", q:"Pourquoi le renard « réfléchit »-il au pied de l'arbre ?", choix:["Il ne peut pas grimper : il cherche une ruse.","Il a oublié le chemin de sa maison.","Il se demande si le fromage est bon."], bon:0, ind:["b"]},
+        {f:"voc", q:"Le renard parle « d'une voix mielleuse ». C'est une voix :", choix:["trop douce, trop gentille, pour tromper","très forte et fâchée","triste et fatiguée"], bon:0, ind:["c"]},
+        {f:"per", q:"Que pense vraiment le renard du chant du corbeau ?", choix:["Il s'en moque : il veut seulement le fromage.","Il l'adore et veut l'écouter.","Il a peur de l'entendre."], bon:0, ind:["d","g"]},
+        {f:"pro", q:"« Le renard s'en saisit aussitôt. » De quoi se saisit-il ?", choix:["du fromage","du bec du corbeau","de la branche"], bon:0, ind:["f"]},
+        {f:"inf", q:"Le corbeau jure « mais un peu tard » qu'on ne l'y prendra plus. Pourquoi « un peu tard » ?", choix:["Il a déjà perdu son fromage.","Il fait déjà nuit.","Le renard est déjà revenu."], bon:0, ind:["f","h"]},
+        {f:"per", q:"Comment se sent le corbeau à la fin ?", choix:["honteux","fier","amusé"], bon:0, ind:["h"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le corbeau dérobe un fromage.","Le renard cherche une ruse.","Le renard complimente le corbeau.","Le corbeau ouvre le bec.","Le corbeau jure qu'on ne l'y prendra plus."], ind:["a","b","d","e","h"]},
+        {f:"zz", q:"Raconte avec tes mots comment le renard a trompé le corbeau.", idees:["Le renard flatte le corbeau (il lui fait des compliments sur sa beauté)","Il lui fait croire qu'il doit avoir une belle voix, pour qu'il chante","Le corbeau ouvre le bec, le fromage tombe et le renard le prend"], ind:["c","d","e","f"]},
+        {f:"zz", q:"Explique la morale avec tes mots : « tout flatteur vit aux dépens de celui qui l'écoute ».", idees:["Un flatteur fait des compliments pour obtenir quelque chose","Celui qui croit le flatteur perd quelque chose (il se fait avoir)"], ind:["g"]}
+      ]
+    }
+  }
+},
+{
+  id:"lievre", titre:"Le lièvre et la tortue", ic:"🐢",
+  src:"D'après une fable d'Ésope et de La Fontaine (domaine public), réécrite pour Toujours cap !",
+  resume:"Qui va gagner la course : le plus rapide ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "Le lièvre se moque de la tortue : « {a:Tu es si lente !} » La tortue répond : « {b:Faisons une course !} »",
+        "{c:Le lièvre court très vite. Il est loin devant.} Alors il se dit : « {d:J'ai bien le temps !} » {e:Il se couche sous un arbre et il dort.}",
+        "La tortue avance, pas à pas. {f:Elle ne s'arrête jamais.}",
+        "{g:Quand le lièvre se réveille, la tortue a déjà gagné !} {h:Le lièvre n'en revient pas.}"
+      ],
+      questions:[
+        {f:"exp", q:"Que dit le lièvre à la tortue ?", choix:["« Tu es si lente ! »","« Tu es si belle ! »","« Allons manger ! »"], bon:0, ind:["a"]},
+        {f:"exp", q:"Qui veut faire la course ?", choix:["la tortue","le lièvre","le renard"], bon:0, ind:["b"]},
+        {f:"pro", q:"« Il se couche sous un arbre. » Qui est « il » ?", choix:["le lièvre","la tortue","l'arbre"], bon:0, ind:["e"]},
+        {f:"inf", q:"Pourquoi le lièvre dort pendant la course ?", choix:["Il pense qu'il a le temps de gagner.","Il est malade.","C'est la nuit."], bon:0, ind:["c","d"]},
+        {f:"per", q:"À la fin, comment se sent le lièvre ?", choix:["très surpris","très content","fier de lui"], bon:0, ind:["g","h"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La tortue veut faire la course.","Le lièvre dort sous un arbre.","La tortue gagne."], ind:["b","e","g"]},
+        {f:"zz", q:"Explique avec tes mots pourquoi la tortue a gagné.", idees:["Le lièvre s'est arrêté pour dormir","La tortue a avancé sans jamais s'arrêter"], ind:["e","f"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "Un matin, le lièvre rit de la tortue : « {a:Avec tes petites pattes, tu mets une journée pour traverser le pré !} » La tortue, calme, lui répond : « Je parie que j'arrive avant toi au grand chêne. »",
+        "« Toi ? Me battre à la course ? » Le lièvre éclate de rire. {b:Il est si sûr de gagner qu'il laisse partir la tortue la première.}",
+        "{c:La tortue avance lentement, mais sans jamais s'arrêter.} Le lièvre, lui, mange un peu d'herbe, regarde les nuages, puis {d:fait une petite sieste au soleil}.",
+        "{e:Quand il ouvre les yeux, le soleil est déjà bas.} Il part comme une flèche, mais trop tard : {f:la tortue touche le grand chêne juste devant lui.}",
+        "« Tu vois, dit la tortue, {g:rien ne sert de courir, il faut partir à temps !} »"
+      ],
+      questions:[
+        {f:"exp", q:"Où se trouve l'arrivée de la course ?", choix:["au grand chêne","au bord de la rivière","devant la ferme"], bon:0, ind:["f"]},
+        {f:"inf", q:"Pourquoi le lièvre laisse-t-il partir la tortue la première ?", choix:["Il est sûr de gagner.","Il est poli.","Il a mal aux pattes."], bon:0, ind:["b"]},
+        {f:"exp", q:"Comment avance la tortue ?", choix:["lentement, sans jamais s'arrêter","très vite, en sautant","en s'arrêtant souvent"], bon:0, ind:["c"]},
+        {f:"inf", q:"« Le soleil est déjà bas. » Qu'est-ce que cela veut dire ?", choix:["Le lièvre a dormi longtemps, c'est presque le soir.","Il va pleuvoir.","C'est le matin très tôt."], bon:0, ind:["e"]},
+        {f:"voc", q:"« Il part comme une flèche. » Cela veut dire qu'il part :", choix:["très vite","très lentement","en volant dans le ciel"], bon:0, ind:["e","f"]},
+        {f:"per", q:"Que veut nous apprendre cette histoire ?", choix:["Il vaut mieux avancer sans s'arrêter qu'être rapide et paresseux.","Les lièvres dorment beaucoup.","Il ne faut jamais faire la course."], bon:0, ind:["g"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le lièvre se moque de la tortue.","La tortue part la première.","Le lièvre fait une sieste.","La tortue touche le grand chêne."], ind:["a","b","d","f"]},
+        {f:"zz", q:"Explique avec tes mots pourquoi la tortue a gagné la course.", idees:["Le lièvre était trop sûr de lui : il a perdu du temps (il a mangé, il a dormi)","La tortue a avancé sans jamais s'arrêter"], ind:["b","c","d"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "Dans la prairie, le lièvre se vantait sans cesse de sa vitesse. {a:Un jour, la tortue, lassée de ses moqueries, lui proposa un pari} : « Je suis sûre d'arriver avant toi au vieux moulin. »",
+        "{b:Le lièvre crut à une plaisanterie.} « Ma pauvre amie, il te faudrait un remède pour soigner ta folie ! » Pourtant, il accepta. {c:Persuadé que la victoire l'attendait, il laissa la tortue prendre beaucoup d'avance.}",
+        "La tortue se mit en route sans se presser. {d:Pas après pas, elle avançait, régulière et obstinée.} Le lièvre, lui, {e:broutait, flânait, et finit même par s'assoupir dans un fossé}, certain qu'il la rattraperait en trois bonds.",
+        "Lorsqu'il se réveilla enfin, {f:il aperçut, tout au loin, la tortue qui touchait presque le moulin}. Il s'élança de toutes ses forces. {g:Hélas, ses efforts furent vains : la tortue franchit la ligne la première.}",
+        "« Eh bien ! lui dit-elle. {h:Rien ne sert de courir ; il faut partir à point.} Avec toute ta vitesse, tu as perdu, et moi, avec ma maison sur le dos, j'ai gagné ! »"
+      ],
+      questions:[
+        {f:"inf", q:"Pourquoi la tortue propose-t-elle un pari au lièvre ?", choix:["Elle en a assez de ses moqueries.","Elle veut gagner de l'argent.","Elle s'ennuie dans la prairie."], bon:0, ind:["a"]},
+        {f:"per", q:"Que pense le lièvre quand la tortue propose la course ?", choix:["que c'est une plaisanterie","qu'il va sûrement perdre","que la tortue est très rapide"], bon:0, ind:["b"]},
+        {f:"voc", q:"La tortue est « obstinée ». Cela veut dire qu'elle :", choix:["continue sans abandonner","est très fatiguée","change souvent d'avis"], bon:0, ind:["d"]},
+        {f:"voc", q:"Le lièvre finit par « s'assoupir ». Il :", choix:["s'endort","se cache","se fâche"], bon:0, ind:["e"]},
+        {f:"pro", q:"« Il s'élança de toutes ses forces. » Qui est « il » ?", choix:["le lièvre","le moulin","le fossé"], bon:0, ind:["f"]},
+        {f:"voc", q:"« Ses efforts furent vains. » Cela veut dire que :", choix:["ses efforts n'ont servi à rien","il a gagné facilement","il s'est fait mal"], bon:0, ind:["g"]},
+        {f:"per", q:"Quelle erreur le lièvre a-t-il faite ?", choix:["Il était trop sûr de lui et a perdu son temps.","Il a couru trop vite au début.","Il s'est trompé de chemin."], bon:0, ind:["c","e"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La tortue propose un pari.","Le lièvre laisse la tortue partir devant.","Le lièvre s'endort dans un fossé.","Le lièvre court de toutes ses forces.","La tortue franchit la ligne."], ind:["a","c","e","f","g"]},
+        {f:"zz", q:"Raconte avec tes mots pourquoi le lièvre a perdu.", idees:["Le lièvre était trop sûr de gagner (il a laissé la tortue partir devant)","Il a perdu son temps : il a mangé, flâné, dormi","La tortue a avancé régulièrement, sans s'arrêter"], ind:["c","d","e"]},
+        {f:"zz", q:"Explique la morale avec tes mots : « Rien ne sert de courir ; il faut partir à point ».", idees:["Aller vite ne suffit pas","Il faut commencer à temps / s'y mettre tout de suite et continuer"], ind:["h"]}
+      ]
+    }
+  }
+},
+{
+  id:"soupe", titre:"La soupe au caillou", ic:"🍲",
+  src:"Conte populaire traditionnel (domaine public), réécrit pour Toujours cap !",
+  resume:"Peut-on faire une bonne soupe avec un caillou ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "Un voyageur arrive dans un village. {a:Il a très faim, mais il n'a rien à manger.}",
+        "Il remplit une marmite d'eau. Puis {b:il met un caillou dedans}.",
+        "Une dame demande : « Que fais-tu ? » — « Une soupe au caillou ! {c:Elle serait encore meilleure avec une carotte.} » La dame apporte une carotte.",
+        "{d:Un monsieur apporte un poireau.} Un enfant apporte des pommes de terre.",
+        "{e:Bientôt, la soupe sent très bon.} Tout le village mange avec le voyageur. {f:Il sourit : il a eu un bon repas grâce à tout le monde.}"
+      ],
+      questions:[
+        {f:"exp", q:"Qu'est-ce que le voyageur met dans la marmite ?", choix:["un caillou","une pomme","un os"], bon:0, ind:["b"]},
+        {f:"inf", q:"Pourquoi le voyageur fait-il une soupe au caillou ?", choix:["Il a faim, mais il n'a rien à manger.","Il aime manger des cailloux.","Il veut faire peur aux gens."], bon:0, ind:["a"]},
+        {f:"pro", q:"« Elle serait encore meilleure. » Qui est « elle » ?", choix:["la soupe","la dame","la carotte"], bon:0, ind:["c"]},
+        {f:"exp", q:"Qui apporte un poireau ?", choix:["un monsieur","la dame","un enfant"], bon:0, ind:["d"]},
+        {f:"per", q:"À la fin, comment est le voyageur ?", choix:["content","fâché","triste"], bon:0, ind:["f"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Le voyageur met un caillou dans l'eau.","La dame apporte une carotte.","Tout le village mange la soupe."], ind:["b","c","e"]},
+        {f:"zz", q:"Explique avec tes mots comment le voyageur a eu une bonne soupe.", idees:["Il met un caillou dans l'eau et dit que ce sera meilleur avec des légumes","Chaque personne du village apporte un légume","Tout le monde mange la soupe ensemble"], ind:["c","d","e"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "Un soir d'hiver, un voyageur arrive dans un petit village. {a:Il a froid, il a faim, et son sac est vide.} Il frappe aux portes, mais {b:personne ne veut lui donner à manger.}",
+        "Alors, sur la place, il allume un feu, pose une marmite d'eau dessus et {c:y jette un gros caillou bien lisse}.",
+        "Les villageois s'approchent, curieux. « Que prépares-tu ? » — « {d:Une soupe au caillou, la meilleure du monde !} Mais il manque peut-être un peu de sel… »",
+        "Une femme rapporte du sel. « Avec un oignon, ce serait parfait », ajoute le voyageur. Un homme court chercher un oignon. {e:Puis chacun apporte quelque chose : des carottes, des choux, des navets, un morceau de lard.}",
+        "{f:Bientôt, une odeur délicieuse remplit la place.} On sort des bols, des cuillères, et {g:tout le village partage la soupe en riant.}",
+        "Le lendemain, le voyageur reprend la route. {h:Il laisse son caillou au village : « Gardez-le, il fait de si bonnes soupes ! »}"
+      ],
+      questions:[
+        {f:"exp", q:"Que se passe-t-il quand le voyageur frappe aux portes ?", choix:["Personne ne veut lui donner à manger.","On l'invite à dîner.","Personne n'est à la maison."], bon:0, ind:["b"]},
+        {f:"exp", q:"Où le voyageur prépare-t-il la soupe ?", choix:["sur la place du village","dans une maison","dans la forêt"], bon:0, ind:["c"]},
+        {f:"voc", q:"Les villageois sont « curieux ». Cela veut dire qu'ils :", choix:["veulent savoir ce qui se passe","ont peur","sont pressés de partir"], bon:0, ind:["d"]},
+        {f:"inf", q:"Pourquoi le voyageur dit-il qu'il manque du sel, puis un oignon ?", choix:["pour que les villageois apportent à manger","parce qu'il n'aime pas les cailloux","parce qu'il veut vendre sa soupe"], bon:0, ind:["d","e"]},
+        {f:"pro", q:"« Gardez-le, il fait de si bonnes soupes ! » De quoi parle le voyageur ?", choix:["du caillou","du sel","de l'oignon"], bon:0, ind:["h"]},
+        {f:"per", q:"Que veut nous apprendre cette histoire ?", choix:["Quand chacun partage un peu, tout le monde mange bien.","Les cailloux donnent du goût à la soupe.","Il ne faut pas parler aux voyageurs."], bon:0, ind:["e","g"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Personne ne donne à manger au voyageur.","Le voyageur jette un caillou dans l'eau.","Chacun apporte quelque chose.","Tout le village partage la soupe."], ind:["b","c","e","g"]},
+        {f:"zz", q:"Explique avec tes mots la ruse du voyageur.", idees:["Il fait croire que la soupe au caillou est délicieuse","Il dit qu'il manque juste un ingrédient, pour que les villageois en apportent","Grâce aux légumes de chacun, la soupe devient vraiment bonne"], ind:["d","e"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "C'était un hiver de disette. Un voyageur affamé arriva dans un village où {a:les habitants, méfiants, cachaient leurs provisions au fond des caves}. À chaque porte où il frappait, on lui répondait : « Nous n'avons rien, passe ton chemin ! »",
+        "{b:Le voyageur ne se découragea pas.} Sur la place, il alluma un feu, y posa sa vieille marmite remplie d'eau et, {c:avec le plus grand sérieux, y déposa un caillou}.",
+        "Intrigués, les villageois sortirent un à un. « {d:Une soupe au caillou ? Jamais entendu parler !} » — « C'est un délice, assura le voyageur. {e:Dommage, elle serait encore meilleure avec un chou… mais tant pis.} »",
+        "La boulangère, qui avait justement un chou, alla le chercher. Le forgeron offrit des carottes, le meunier des pommes de terre, la vieille Jeanne un bouquet d'herbes. {f:Chacun, voulant goûter cette soupe merveilleuse, ajouta quelque chose.}",
+        "{g:Le soir venu, tout le village était réuni autour de la marmite fumante.} On sortit le pain, on chanta, on rit. {h:Jamais, de mémoire de villageois, on n'avait partagé un repas aussi joyeux.}",
+        "Au moment de partir, le voyageur retira le caillou de la marmite, l'essuya et le glissa dans sa poche. {i:« Il servira encore », dit-il avec un clin d'œil.}"
+      ],
+      questions:[
+        {f:"voc", q:"« Un hiver de disette », c'est un hiver où :", choix:["on manque de nourriture","il neige beaucoup","tout le monde fait la fête"], bon:0, ind:["a"]},
+        {f:"inf", q:"Pourquoi les villageois disent-ils « Nous n'avons rien » ?", choix:["Ils sont méfiants et cachent leurs provisions.","Ils n'ont vraiment plus rien à manger.","Ils ne comprennent pas le voyageur."], bon:0, ind:["a"]},
+        {f:"voc", q:"Les villageois sont « intrigués ». Cela veut dire qu'ils sont :", choix:["curieux, ils veulent comprendre","en colère","fatigués"], bon:0, ind:["d"]},
+        {f:"inf", q:"Pourquoi le voyageur dit « elle serait encore meilleure avec un chou… mais tant pis » ?", choix:["pour donner envie aux villageois d'apporter un chou","parce qu'il déteste le chou","parce qu'il a déjà un chou"], bon:0, ind:["e","f"]},
+        {f:"pro", q:"« Il servira encore. » De quoi parle le voyageur ?", choix:["du caillou","du chou","du feu"], bon:0, ind:["i"]},
+        {f:"per", q:"Au début, les villageois sont méfiants. Et à la fin ?", choix:["Ils sont joyeux et partagent.","Ils sont toujours méfiants.","Ils sont fâchés contre le voyageur."], bon:0, ind:["g","h"]},
+        {f:"per", q:"Que veut dire le clin d'œil du voyageur à la fin ?", choix:["Il va refaire la même ruse dans un autre village.","Il a une poussière dans l'œil.","Il veut vendre son caillou."], bon:0, ind:["i"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["Les villageois cachent leurs provisions.","Le voyageur dépose un caillou dans la marmite.","Chacun ajoute quelque chose.","Tout le village partage le repas.","Le voyageur remet le caillou dans sa poche."], ind:["a","c","f","g","i"]},
+        {f:"zz", q:"Raconte avec tes mots comment le voyageur a réussi à manger.", idees:["Personne ne voulait lui donner à manger","Il fait une soupe avec un caillou et fait croire qu'elle est délicieuse","Il dit qu'il manque un ingrédient, et chaque villageois apporte quelque chose","Ils mangent tous ensemble"], ind:["a","c","e","f"]},
+        {f:"zz", q:"Qu'est-ce que les villageois ont appris, sans le savoir ?", idees:["En partageant chacun un peu, on fait un grand repas pour tous","Partager rend joyeux (ils sont moins méfiants)"], ind:["f","h"]}
+      ]
+    }
+  }
+},
+{
+  id:"cigale", titre:"La cigale et la fourmi", ic:"🐜",
+  src:"D'après une fable d'Ésope et de La Fontaine (domaine public), réécrite pour Toujours cap !",
+  resume:"Chanter tout l'été ou faire des provisions ?",
+  niveaux:{
+    CP:{
+      texte:[
+        "{a:Tout l'été, la cigale chante au soleil.} {b:La fourmi, elle, travaille : elle ramasse des graines.}",
+        "L'hiver arrive. {c:Il fait froid et il n'y a plus rien à manger.}",
+        "{d:La cigale a très faim.} Elle va chez la fourmi : « {e:Peux-tu me donner un peu de graines ?} »",
+        "La fourmi demande : « {f:Que faisais-tu cet été ?} » — « Je chantais ! » — « {g:Tu chantais ? Eh bien, danse maintenant !} »"
+      ],
+      questions:[
+        {f:"exp", q:"Que fait la cigale tout l'été ?", choix:["Elle chante.","Elle travaille.","Elle dort."], bon:0, ind:["a"]},
+        {f:"exp", q:"Que ramasse la fourmi ?", choix:["des graines","des fleurs","des cailloux"], bon:0, ind:["b"]},
+        {f:"inf", q:"Pourquoi la cigale a faim en hiver ?", choix:["Elle n'a pas ramassé de graines.","Elle est malade.","La fourmi a mangé ses graines."], bon:0, ind:["a","c","d"]},
+        {f:"pro", q:"« Peux-tu me donner un peu de graines ? » Qui demande ?", choix:["la cigale","la fourmi","l'hiver"], bon:0, ind:["e"]},
+        {f:"per", q:"Est-ce que la fourmi veut aider la cigale ?", choix:["Non, elle se moque d'elle.","Oui, elle lui donne tout.","Elle ne répond pas."], bon:0, ind:["g"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La cigale chante tout l'été.","L'hiver arrive.","La cigale demande des graines."], ind:["a","c","e"]},
+        {f:"zz", q:"Explique avec tes mots pourquoi la cigale n'a rien à manger.", idees:["Elle a chanté tout l'été au lieu de ramasser des graines","En hiver, il n'y a plus rien à manger dehors"], ind:["a","c"]}
+      ]
+    },
+    CE1:{
+      texte:[
+        "{a:Pendant tout l'été, la cigale passe ses journées à chanter}, perchée sur une branche. Elle ne pense qu'à s'amuser.",
+        "Juste en dessous, {b:la fourmi fait des allers-retours du matin au soir. Elle porte des graines et des miettes jusqu'à sa maison}, sous la terre.",
+        "Puis le vent du nord se met à souffler. {c:Les feuilles tombent, la neige recouvre le sol.} {d:La cigale n'a plus une seule mouche, plus un seul vermisseau à manger.}",
+        "Tremblante de froid, elle frappe chez sa voisine. « {e:Prête-moi quelques graines, je te les rendrai au printemps, c'est promis !} »",
+        "{f:Mais la fourmi n'aime pas prêter.} « Et que faisais-tu quand il faisait chaud ? » — « Je chantais, pour le plaisir de tous. » — « {g:Tu chantais ? J'en suis ravie. Eh bien, danse maintenant !} » Et elle ferme sa porte."
+      ],
+      questions:[
+        {f:"exp", q:"Où la fourmi range-t-elle ses graines ?", choix:["dans sa maison, sous la terre","sur une branche","dans la neige"], bon:0, ind:["b"]},
+        {f:"inf", q:"Quelle saison arrive quand « le vent du nord se met à souffler » ?", choix:["l'hiver","l'été","le printemps"], bon:0, ind:["c"]},
+        {f:"voc", q:"Un « vermisseau », c'est :", choix:["un petit ver","une graine","un oiseau"], bon:0, ind:["d"]},
+        {f:"pro", q:"« Je te les rendrai au printemps. » Que promet de rendre la cigale ?", choix:["les graines","les chansons","la maison"], bon:0, ind:["e"]},
+        {f:"per", q:"Comment est la fourmi avec la cigale ?", choix:["dure : elle refuse de l'aider","généreuse","joyeuse"], bon:0, ind:["f","g"]},
+        {f:"inf", q:"La fourmi dit « J'en suis ravie ». Le pense-t-elle vraiment ?", choix:["Non, elle se moque de la cigale.","Oui, elle adore les chansons.","Oui, elle veut danser avec elle."], bon:0, ind:["g"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La cigale chante tout l'été.","La neige recouvre le sol.","La cigale frappe chez la fourmi.","La fourmi ferme sa porte."], ind:["a","c","e","g"]},
+        {f:"zz", q:"À ton avis, qui a raison : la cigale ou la fourmi ? Explique pourquoi avec l'histoire.", idees:["L'élève donne un avis (la cigale, la fourmi, ou les deux)","Il le justifie avec l'histoire : la fourmi a travaillé et prévu l'hiver, la cigale a chanté sans penser à l'hiver, ou la fourmi refuse d'aider quelqu'un qui a faim"], ind:["a","b","f"]}
+      ]
+    },
+    CE2:{
+      texte:[
+        "{a:La cigale avait chanté tout l'été, sans jamais se soucier du lendemain.} {b:Pendant ce temps, la fourmi, prévoyante, remplissait son grenier de grains de blé, jour après jour.}",
+        "{c:Quand la bise fut venue, la cigale se trouva fort dépourvue} : pas le moindre morceau de mouche ou de vermisseau. {d:Affamée, elle alla crier famine chez la fourmi, sa voisine.}",
+        "« {e:Pourriez-vous me prêter quelques grains pour subsister jusqu'à la saison nouvelle ? Je vous paierai avant l'été, foi d'animal, intérêt et principal.} »",
+        "{f:Mais la fourmi n'est pas prêteuse : c'est là son moindre défaut.} « Que faisiez-vous au temps chaud ? demanda-t-elle. — Nuit et jour, à tout venant, je chantais, ne vous déplaise. — {g:Vous chantiez ? J'en suis fort aise. Eh bien, dansez maintenant !} »",
+        "{h:La cigale repartit dans le froid, le ventre vide.} Certains disent qu'elle aurait dû travailler ; {i:d'autres pensent que la fourmi aurait pu partager un peu, en échange de ses chansons.}"
+      ],
+      questions:[
+        {f:"voc", q:"La fourmi est « prévoyante ». Cela veut dire qu'elle :", choix:["pense à l'avenir et se prépare","est très gourmande","voit très loin"], bon:0, ind:["b"]},
+        {f:"voc", q:"« La bise » qui arrive, c'est :", choix:["un vent froid d'hiver","un baiser","une petite pluie d'été"], bon:0, ind:["c"]},
+        {f:"voc", q:"La cigale est « fort dépourvue ». Cela veut dire qu'elle :", choix:["n'a plus rien","est très forte","est très fatiguée de chanter"], bon:0, ind:["c"]},
+        {f:"exp", q:"Que demande la cigale à la fourmi ?", choix:["de lui prêter quelques grains","de lui apprendre à danser","de l'aider à construire un grenier"], bon:0, ind:["e"]},
+        {f:"inf", q:"« La fourmi n'est pas prêteuse : c'est là son moindre défaut. » Cela veut dire que :", choix:["la fourmi n'aime pas du tout prêter","la fourmi prête tout ce qu'elle a","la fourmi n'a aucun défaut"], bon:0, ind:["f"]},
+        {f:"inf", q:"Quand la fourmi dit « Eh bien, dansez maintenant ! », elle veut dire :", choix:["Débrouille-toi, je ne t'aiderai pas.","Viens danser chez moi au chaud.","Je vais te donner du blé si tu danses."], bon:0, ind:["g","h"]},
+        {f:"per", q:"Selon le dernier paragraphe, que pensent certaines personnes ?", choix:["La fourmi aurait pu partager un peu.","La cigale aurait dû chanter plus fort.","La fourmi aurait dû aller chanter."], bon:0, ind:["i"]},
+        {f:"ord", q:"Remets l'histoire dans l'ordre.", ordre:["La cigale chante tout l'été.","La bise arrive.","La cigale demande à emprunter du grain.","La fourmi refuse.","La cigale repart le ventre vide."], ind:["a","c","e","g","h"]},
+        {f:"zz", q:"Explique avec tes mots pourquoi la cigale n'a rien à manger à l'arrivée de l'hiver.", idees:["Elle a chanté tout l'été sans penser à l'hiver (sans faire de provisions)","En hiver, il n'y a plus de mouches ni de vermisseaux à manger"], ind:["a","c"]},
+        {f:"zz", q:"Donne ton avis : la fourmi a-t-elle eu raison de refuser ? Explique pourquoi.", idees:["L'élève donne un avis clair (oui, non, ou un peu des deux)","Il le justifie avec une raison tirée de l'histoire (la prévoyance de la fourmi, l'insouciance de la cigale, le partage, les chansons offertes)"], ind:["b","f","i"]}
       ]
     }
   }
@@ -306,6 +604,9 @@ const app = document.getElementById("app");
 const LETTRES = ["A","B","C","D","E"];
 const NIV = {CP:"Texte court, phrases simples", CE1:"Texte plus long", CE2:"Texte riche, vocabulaire"};
 const st = {conte:null, niv:null, voix:true, texteVisible:true, fams:new Set(Object.keys(FAM)), qs:[], i:0, res:[]};
+const IA = {actif:false, turnstile:null, token:null, widget:null};
+const zzId = (c,n,q) => c+"-"+n+"-"+(CONTES.find(x=>x.id===c).niveaux[n].questions.filter(x=>x.f==="zz").indexOf(q)+1);
+const famsVisibles = () => Object.keys(FAM).filter(k=>k!=="zz"||IA.actif);
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 const sansMarques = s => s.replace(/\{[a-z]+:([^}]*)\}/g,"$1");
@@ -338,6 +639,7 @@ function accueil(){
     <header>
       <h1>📚 La Bibliothèque des contes</h1>
       <p>Choisis une histoire, lis-la bien, puis réponds aux questions. Si tu te trompes, les mots qui aident s'allument dans le texte.</p>
+      ${IA.actif?`<p style="font-size:16px">🎓 Pour finir, le professeur Zigzag te pose une question : tu réponds avec tes mots, en écrivant ou au micro.</p>`:""}
     </header>
     <section class="card">
       <h2 class="step-t"><i>1</i>Choisis un livre</h2>
@@ -359,9 +661,9 @@ function accueil(){
       </fieldset>
       <p class="small-note" style="margin-top:14px">Familles de questions (décocher pour cibler une compétence) :</p>
       <fieldset class="opts" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px">
-        ${Object.entries(FAM).map(([k,f])=>`<label><input type="checkbox" class="o-fam" value="${k}" ${st.fams.has(k)?"checked":""}><span class="chip" ${famStyle(k)}>${f.ic} ${f.nom}</span></label>`).join("")}
+        ${famsVisibles().map(k=>[k,FAM[k]]).map(([k,f])=>`<label><input type="checkbox" class="o-fam" value="${k}" ${st.fams.has(k)?"checked":""}><span class="chip" ${famStyle(k)}>${f.ic} ${f.nom}</span></label>`).join("")}
       </fieldset>
-      <p class="small-note">${Object.values(FAM).map(f=>`<b>${f.nom}</b> : ${f.ex}`).join("<br>")}</p>
+      <p class="small-note">${famsVisibles().map(k=>FAM[k]).map(f=>`<b>${f.nom}</b> : ${f.ex}`).join("<br>")}</p>
     </details>
     <div class="go">
       <button class="btn" id="start" ${st.conte&&st.niv?"":"disabled style=\"opacity:.5;cursor:not-allowed\""}>📖 Ouvrir le livre</button>
@@ -392,13 +694,14 @@ function blocTexte(c,n,avecEcoute){
 }
 function topbar(c){
   return `<div class="topbar"><h2>${c.titre}<span class="lv">${st.niv}</span></h2>
-    <div class="dots">${st.qs.map((q,i)=>{ const r=st.res[i]; return `<span class="dot ${r?("s"+r.pts):""} ${i===st.i&&!r?"here":""}" title="${FAM[q.f].nom}">${i+1}</span>`; }).join("")}</div>
+    <div class="dots">${st.qs.map((q,i)=>{ const r=st.res[i]; return `<span class="dot ${r?("s"+(q.f==="zz"?(r.pts>0?2:0):r.pts)):""} ${i===st.i&&!r?"here":""}" title="${FAM[q.f].nom}">${q.f==="zz"?"🎓":i+1}</span>`; }).join("")}</div>
     <button class="btn ghost small" id="quit" style="color:#FFF3DC;border-color:#FFF3DC66">⟵ Bibliothèque</button></div>`;
 }
 function lecture(){
   const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv];
-  st.qs = n.questions.filter(q=>st.fams.has(q.f));
-  if(!st.qs.length) st.qs = n.questions;
+  const ok = q => st.fams.has(q.f) && (q.f!=="zz" || IA.actif);
+  st.qs = n.questions.filter(q=>ok(q) && q.f!=="zz").concat(n.questions.filter(q=>ok(q) && q.f==="zz"));
+  if(!st.qs.length) st.qs = n.questions.filter(q=>q.f!=="zz");
   st.i=0; st.res=[];
   app.innerHTML = `${topbar(c)}
   <div class="reader solo lv-${st.niv}">${blocTexte(c,n,true)}</div>
@@ -413,6 +716,7 @@ function lecture(){
 function question(){
   const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv], q=st.qs[st.i];
   const F = FAM[q.f];
+  if(q.f==="zz") return questionZigzag(c,n,q);
   const essais = {n:0};
   const isOrd = !!q.ordre;
   const items = isOrd ? shuffle(q.ordre.map((t,k)=>({t,k}))) : shuffle(q.choix.map((t,k)=>({t,k})));
@@ -489,15 +793,109 @@ function question(){
   window.scrollTo(0,0);
 }
 
+/* ---------- Question avec le professeur Zigzag ----------
+   Correction par IA commune au site (functions/api/zigzag.js, contenus dans lib/zigzag.js).
+   La page envoie seulement le nom du jeu, l'élément et la réponse de l'élève. */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let reco=null;
+function arreterMicro(){ if(reco){ try{ reco.stop(); }catch(e){} } }
+const DIT_Z = ["Bonjour, jeune lecteur ! Réponds-moi avec <b>tes</b> mots. Tu peux écrire ou parler dans le micro 🎤.",
+               "Abracadabra, une question de professeur ! Réponds avec tes mots, à l'écrit ou au micro 🎤."];
+function zigzag(bulle,img,txt,voix){
+  bulle.innerHTML=txt; img.classList.remove("hop"); void img.offsetWidth; img.classList.add("hop");
+  if(voix && st.voix){ stopVoix(); setTimeout(()=>{ try{ speechSynthesis.resume(); const u=new SpeechSynthesisUtterance(bulle.textContent.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,""));
+    u.lang="fr-FR"; u.rate=.95; u.pitch=1.15; speechSynthesis.speak(u); }catch(e){} },80); }
+}
+function questionZigzag(c,n,q){
+  const F = FAM.zz, el = zzId(c.id,st.niv,q);
+  app.innerHTML = `${topbar(c)}
+  <div class="reader q-mode lv-${st.niv}">
+    <div style="position:relative">${blocTexte(c,n,false)}
+      ${st.texteVisible?"":`<div class="cover" id="cover"><div><p>Le texte est caché.</p><button class="btn small relire" id="relire">👀 Relire le texte</button></div></div>`}
+    </div>
+    <section class="card qcard" ${famStyle("zz")}>
+      <div class="qtop"><span class="tag">${F.ic} ${F.nom}</span>${st.voix?`<button class="speak" id="ecoute-q">🔊 Écouter</button>`:""}</div>
+      <div class="prof"><img src="/images/zigzag/professeur.png" alt="Le professeur Zigzag"><div class="bulle" aria-live="polite"></div></div>
+      <p class="q">${esc(q.q)}</p>
+      <div class="redit"><textarea maxlength="300" aria-label="Ma réponse avec mes mots" placeholder="J'écris ma réponse ici…"></textarea>
+        ${SR?`<button class="micro" type="button" title="Répondre au micro">🎤</button>`:""}</div>
+      <div class="compteur">0 / 300</div>
+      <p class="aide-micro" id="aide-mic" hidden>Parle bien fort, puis appuie à nouveau sur 🎤. Vérifie ce qui est écrit avant d'envoyer.</p>
+      ${SR?"":`<p class="aide-micro">🎤 Pour répondre au micro, ouvre le jeu avec Edge ou Chrome.</p>`}
+      <div id="ts"></div>
+      <ul class="idees" hidden></ul>
+      <div class="actions">
+        <button class="btn" id="env">Envoyer au professeur Zigzag</button>
+        <button class="btn ghost small" id="corr" hidden>✏️ Compléter ma réponse</button>
+        <button class="btn ghost small" id="suite">Passer ➜</button>
+      </div>
+    </section>
+  </div>`;
+  app.querySelector("#quit").onclick=()=>{ arreterMicro(); accueil(); };
+  const rl=app.querySelector("#relire"); if(rl) rl.onclick=()=>app.querySelector("#cover").remove();
+  const img=app.querySelector(".prof img"), bulle=app.querySelector(".bulle");
+  const ta=app.querySelector("textarea"), cpt=app.querySelector(".compteur"), mic=app.querySelector(".micro");
+  const bEnv=app.querySelector("#env"), bCorr=app.querySelector("#corr"), bSuite=app.querySelector("#suite"), idees=app.querySelector(".idees");
+  const eq=app.querySelector("#ecoute-q"); if(eq) eq.onclick=()=>parle(q.q);
+  zigzag(bulle,img,DIT_Z[Math.floor(Math.random()*DIT_Z.length)],false);
+  let res = null;
+  if(IA.turnstile && window.turnstile){
+    try{ if(IA.widget!==null) turnstile.remove(IA.widget); }catch(e){}
+    IA.token=null;
+    IA.widget=turnstile.render(app.querySelector("#ts"),{sitekey:IA.turnstile,size:"flexible",callback:t=>{IA.token=t;maj();},"expired-callback":()=>{IA.token=null;maj();}});
+  }
+  function maj(){ const k=ta.value.length; cpt.textContent=k+" / 300"; bEnv.disabled = ta.disabled || k<3 || !!(IA.turnstile && !IA.token); bEnv.style.opacity=bEnv.disabled?.5:1; }
+  ta.addEventListener("input",maj); maj();
+  if(mic) mic.onclick=()=>{
+    if(reco){ arreterMicro(); return; }
+    stopVoix();
+    let base=ta.value.trim(); if(base) base+=" ";
+    reco=new SR(); reco.lang="fr-FR"; reco.interimResults=true; reco.continuous=true;
+    reco.onresult=ev=>{ let t=""; for(let i=0;i<ev.results.length;i++) t+=ev.results[i][0].transcript; ta.value=(base+t).slice(0,300); maj(); };
+    reco.onerror=ev=>{ if(ev.error==="not-allowed") zigzag(bulle,img,"Je n'ai pas accès au micro. Tu peux écrire au clavier !",true); };
+    reco.onend=()=>{ reco=null; mic.classList.remove("ecoute"); };
+    try{ reco.start(); mic.classList.add("ecoute"); app.querySelector("#aide-mic").hidden=false; }catch(e){ reco=null; }
+  };
+  bEnv.onclick=()=>{
+    arreterMicro();
+    const texte=ta.value.trim(); if(texte.length<3) return;
+    ta.disabled=true; maj(); zigzag(bulle,img,"Hmm… je lis… mon crayon chauffe ! 🤔",false);
+    fetch("/api/zigzag",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({jeu:"la-bibliotheque-des-contes",element:el,texte,token:IA.token})})
+      .then(r=>r.json()).catch(()=>({erreur:"Le professeur Zigzag fait la sieste. Réessaie dans un moment !"}))
+      .then(r=>{
+        if(IA.widget!==null && window.turnstile){ IA.token=null; try{ turnstile.reset(IA.widget); }catch(e){} }
+        if(r.erreur){ zigzag(bulle,img,esc(r.erreur),true); ta.disabled=false; maj(); return; }
+        idees.innerHTML=r.idees.map((x,k)=>r.trouvees[k] ? `<li class="ok">✅ ${esc(x)}</li>` : `<li>⬜ Il manque encore quelque chose…</li>`).join("");
+        idees.hidden=!!r.hors_sujet;
+        const nb = r.hors_sujet ? 0 : r.trouvees.filter(Boolean).length;
+        res = {pts:nb, f:"zz", trouvees:nb, total:r.idees.length};
+        const tout = nb===r.idees.length;
+        if(!tout && !r.hors_sujet) app.querySelectorAll("mark").forEach(m=>m.classList.toggle("on", q.ind.includes(m.dataset.k)));
+        bEnv.hidden=true; bCorr.hidden=false;
+        bSuite.textContent = st.i+1<st.qs.length ? "Question suivante ▶" : "Voir mon résultat 🏆";
+        bSuite.className = tout ? "btn" : "btn ghost small";
+        zigzag(bulle,img,esc(r.message),true);
+      });
+  };
+  bCorr.onclick=()=>{ ta.disabled=false; bEnv.hidden=false; bCorr.hidden=true; idees.hidden=true; maj(); ta.focus(); };
+  bSuite.onclick=()=>{
+    arreterMicro(); stopVoix();
+    st.res[st.i] = res || {pts:0, f:"zz", trouvees:0, total:q.idees.length, passe:true};
+    st.i++; st.i<st.qs.length?question():resultat();
+  };
+  window.scrollTo(0,0);
+}
+
 /* ---------- Résultat ---------- */
 function resultat(){
   const c = CONTES.find(x=>x.id===st.conte);
-  const tot = st.res.reduce((s,r)=>s+r.pts,0), max = st.qs.length*2;
+  const qcm = st.res.filter(r=>r&&r.f!=="zz"), zz = st.res.filter(r=>r&&r.f==="zz");
+  const tot = qcm.reduce((s,r)=>s+r.pts,0), max = Math.max(1,st.qs.filter(q=>q.f!=="zz").length*2);
   const ratio = tot/max;
   const etoiles = ratio>=.85?3:ratio>=.6?2:ratio>=.3?1:0;
   const titre = ["Relisons ensemble !","Bon début, lecteur !","Très bon lecteur !","Lecteur champion !"][etoiles];
   const parFam = {};
-  st.res.forEach(r=>{ (parFam[r.f] ||= {n:0,p:0}); parFam[r.f].n++; parFam[r.f].p+=r.pts; });
+  qcm.forEach(r=>{ (parFam[r.f] ||= {n:0,p:0}); parFam[r.f].n++; parFam[r.f].p+=r.pts; });
+  const zzLigne = zz.length ? `<tr><td><span class="chip" ${famStyle("zz")}>🎓 Professeur Zigzag</span></td><td class="r">${zz.reduce((s,r)=>s+r.trouvees,0)} idée(s) sur ${zz.reduce((s,r)=>s+r.total,0)}${zz.some(r=>r.passe)?" · question passée":""}</td></tr>` : "";
   const nivs = Object.keys(NIV), suiv = nivs[nivs.indexOf(st.niv)+1];
   app.innerHTML = `<section class="card end">
     <div class="stars" aria-label="${etoiles} étoiles sur 3">${"⭐".repeat(etoiles)}${"☆".repeat(3-etoiles)}</div>
@@ -505,7 +903,8 @@ function resultat(){
     <p class="score">${c.titre} · ${st.niv} — ${tot} points sur ${max}</p>
     <p style="margin:0;color:var(--muted)">2 points au premier essai, 1 point au deuxième.</p>
     <table class="recap"><thead><tr><th>Famille de questions</th><th style="text-align:right">Points</th></tr></thead><tbody>
-      ${Object.keys(FAM).filter(f=>parFam[f]).map(f=>`<tr><td><span class="chip" ${famStyle(f)}>${FAM[f].ic} ${FAM[f].nom}</span></td><td class="r">${parFam[f].p} / ${parFam[f].n*2}</td></tr>`).join("")}
+      ${Object.keys(FAM).filter(f=>f!=="zz"&&parFam[f]).map(f=>`<tr><td><span class="chip" ${famStyle(f)}>${FAM[f].ic} ${FAM[f].nom}</span></td><td class="r">${parFam[f].p} / ${parFam[f].n*2}</td></tr>`).join("")}
+      ${zzLigne}
     </tbody></table>
     <div class="go">
       <button class="btn" id="again">🔁 Relire et recommencer</button>
@@ -522,20 +921,26 @@ function resultat(){
 /* ---------- Version imprimable ---------- */
 function imprimer(){
   const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv];
-  const qs = n.questions.filter(q=>st.fams.has(q.f));
+  const qs = n.questions.filter(q=>st.fams.has(q.f) || q.f==="zz");
   const fs = {CP:"17pt",CE1:"15pt",CE2:"14pt"}[st.niv];
   document.getElementById("print").innerHTML = `
     <span class="nom">Prénom : ………………………</span>
     <h1>${c.ic} ${c.titre}</h1>
     <p class="meta">Niveau ${st.niv} · ${c.src} · toujourscap.com</p>
     <div class="ptxt" style="--pfs:${fs}">${n.texte.map(p=>`<p>${esc(sansMarques(p))}</p>`).join("")}</div>
-    <ol class="pq">${(qs.length?qs:n.questions).map(q=>`<li><b>${esc(q.q)}</b> <span class="fam">(${FAM[q.f].nom})</span>
-      ${q.ordre ? `<br><span class="fam">Numérote de 1 à ${q.ordre.length}.</span><ul class="col">${shuffle(q.ordre).map(t=>`<li>☐ ${esc(t)}</li>`).join("")}</ul>`
+    <ol class="pq">${(qs.length?qs:n.questions).map(q=>`<li><b>${esc(q.q)}</b> <span class="fam">(${q.f==="zz"?"Je réponds avec mes mots":FAM[q.f].nom})</span>
+      ${q.f==="zz" ? `<div class="print-zz"></div><div class="print-zz"></div><div class="print-zz"></div>` : q.ordre ? `<br><span class="fam">Numérote de 1 à ${q.ordre.length}.</span><ul class="col">${shuffle(q.ordre).map(t=>`<li>☐ ${esc(t)}</li>`).join("")}</ul>`
                 : `<ul class="${q.choix.some(t=>t.length>28)?"col":""}">${shuffle(q.choix).map(t=>`<li>☐ ${esc(t)}</li>`).join("")}</ul>`}</li>`).join("")}</ol>`;
   window.print();
 }
 
 accueil();
+// Les questions du professeur Zigzag n'apparaissent que si la correction par IA est activée sur le site
+fetch("/api/zigzag").then(r=>r.json()).then(r=>{
+  IA.actif=!!r.actif; IA.turnstile=r.turnstile||null;
+  if(IA.actif && IA.turnstile){ const sc=document.createElement("script"); sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; sc.async=true; document.head.appendChild(sc); }
+  if(IA.actif && !st.qs.length) accueil();
+}).catch(()=>{ IA.actif=false; });
 </script>
 </body>
 </html>
