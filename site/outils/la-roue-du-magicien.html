@@ -84,12 +84,19 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
   box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .scene.decor-image{background:#22113b center/cover no-repeat}
 .scene.decor-image .decor{display:none}
-/* Avec le décor Canva : le magicien reste visible au centre, le tableau à gauche, la roue à droite, le mot devant la scène. */
+/* Avec le décor Canva : le magicien reste visible au centre, la roue à gauche, le mot devant la scène. */
 .scene.decor-image .panneau{top:auto;bottom:2%}
-.scene.decor-image .chapeau-zone{left:6%;top:13%;width:20%}
+/* Avec le décor : l'image sort du chapeau posé sur la table, à droite du magicien (ouverture vers 69 % / 53,5 %), la roue passe à gauche. */
+.scene.decor-image .chapeau-zone{left:56%;top:0;width:26.4%;height:53.5%;aspect-ratio:auto}
+.scene.decor-image .chapeau-zone svg{display:none}
+.scene.decor-image .sortie{left:0;width:100%;top:0;height:100%}
+.scene.decor-image .surprise{left:27.5%;right:27.5%;transform:translateY(100%) scale(.55);transform-origin:50% 100%}
+.scene.decor-image .chapeau-zone.sort .surprise{animation:sortir-table 1.1s cubic-bezier(.25,1.4,.5,1) forwards}
+@keyframes sortir-table{0%{transform:translateY(100%) scale(.55)}100%{transform:translateY(-4%) scale(1.9)}}
+.scene.decor-image .chapeau-zone.apparait{animation:none}
 .scene.decor-image .ecouter{left:4%;top:4%}
-.scene.decor-image .roue-zone{left:65%;top:15%;width:29%}
-.scene.decor-image .bulle{left:4%;bottom:auto;top:65%;transform:none;white-space:normal;max-width:30%;text-align:center}
+.scene.decor-image .roue-zone{left:5%;top:15%;width:26%}
+.scene.decor-image .bulle{left:4%;bottom:auto;top:64%;transform:none;white-space:normal;max-width:34%;text-align:center;text-wrap:balance}
 /* Décor dessiné (remplacé par l'image Canva si elle est présente) */
 .decor{position:absolute;inset:0;pointer-events:none}
 .rideau{position:absolute;top:0;bottom:12%;width:13%;
