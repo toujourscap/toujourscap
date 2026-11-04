@@ -1174,7 +1174,7 @@
   {
    "title": "Les fusées des syllabes",
    "slug": "les-fusees-des-syllabes",
-   "excerpt": "Sur une base martienne, l'image d'un mot apparaît : l'enfant place les bonnes syllabes dans les fusées. Si c'est juste, elles décollent, se rejoignent, explosent et le mot apparaît. Trois niveaux, 36 mots illustrés.",
+   "excerpt": "Sur une base martienne, l'image d'un mot apparaît : l'enfant place les bonnes syllabes dans les fusées. Si c'est juste, ces fusées de feu d'artifice s'envolent, se rejoignent et explosent : les étincelles dessinent le mot. Trois niveaux, 36 mots illustrés.",
    "date": "2026-10-28T13:00:00.000Z",
    "categoryIds": [],
    "media": {
@@ -1202,7 +1202,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jeu de combinatoire syllabique sur une base de lancement martienne. L'image d'un mot apparaît d'abord en grand, puis se range dans un coin de l'écran. Sous les fusées, une réserve de syllabes : les bonnes et quelques intrus. L'enfant place les syllabes dans les hublots pour former le mot de l'image. Si c'est juste, les fusées décollent, se rejoignent dans le ciel, explosent en feu d'artifice… et le mot entier apparaît !",
+         "text": "Un jeu de combinatoire syllabique sur une base de lancement martienne. L'image d'un mot apparaît d'abord en grand, puis se range dans un coin de l'écran. Sous les fusées, une réserve de syllabes : les bonnes et quelques intrus. L'enfant place les syllabes dans les hublots pour former le mot de l'image. Si c'est juste, la nuit tombe sur Mars : les trois fusées de feu d'artifice s'envolent en sifflant, se rejoignent dans le ciel et explosent… et les étincelles dessinent le mot, chaque syllabe de la couleur de sa fusée !",
          "decorations": []
         }
        }
@@ -1269,7 +1269,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Il appuie sur « Décollage ! » : compte à rebours 3, 2, 1… Si le mot est juste, les fusées montent en se rapprochant, explosent ensemble et le mot s'affiche. Sinon, elles tremblent et les syllabes mal placées retournent dans la réserve.",
+             "text": "Il appuie sur « Mise à feu ! » : compte à rebours 3, 2, 1… Si le mot est juste, les fusées montent en se rapprochant, explosent ensemble et leurs étincelles forment le mot, syllabe par syllabe en couleurs. Sinon, elles tremblent et les syllabes mal placées retournent dans la réserve.",
              "decorations": []
             }
            }
@@ -1462,7 +1462,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Bruitages du compte à rebours, du décollage et de l'explosion.",
+             "text": "Bruitages du compte à rebours, du sifflement des fusées et de l'explosion.",
              "decorations": []
             }
            }
