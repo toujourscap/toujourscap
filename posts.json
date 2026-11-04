@@ -4,7 +4,7 @@
   {
    "title": "La Bibliothèque des contes",
    "slug": "la-bibliotheque-des-contes",
-   "excerpt": "Jeu de compréhension de texte du CP au CE2 : deux contes du domaine public en trois versions, des questions par compétence, des indices surlignés et une version à imprimer.",
+   "excerpt": "Jeu de compréhension de texte du CP au CE2 : six contes du domaine public en trois versions, des questions par compétence, des indices surlignés, le professeur Zigzag et une version à imprimer.",
    "date": "2026-11-04T13:00:00.000Z",
    "cat": "lecture",
    "categoryIds": [],
@@ -30,7 +30,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Une même histoire, trois niveaux de lecture. L'élève choisit un conte et son niveau (CP, CE1 ou CE2), lit le texte, puis répond aux questions. Toute la classe peut travailler sur la même histoire, chacun avec le texte qui lui convient.",
+         "text": "Une même histoire, trois niveaux de lecture. Dans une grande bibliothèque, l'élève choisit un des six contes et son niveau (CP, CE1 ou CE2), lit le texte, puis répond aux questions. Toute la classe peut travailler sur la même histoire, chacun avec le texte qui lui convient.",
          "decorations": []
         }
        }
@@ -75,32 +75,14 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "L'élève choisit un livre : ",
+             "text": "L'élève choisit un livre parmi six contes : ",
              "decorations": []
             }
            },
            {
             "type": "TEXT",
             "textData": {
-             "text": "La petite poule rousse",
-             "decorations": [
-              {
-               "type": "BOLD"
-              }
-             ]
-            }
-           },
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": " ou ",
-             "decorations": []
-            }
-           },
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": "Le lion et la souris",
+             "text": "La petite poule rousse, Le lion et la souris, Le corbeau et le renard, Le lièvre et la tortue, La soupe au caillou, La cigale et la fourmi",
              "decorations": [
               {
                "type": "BOLD"
@@ -197,6 +179,41 @@
            {
             "type": "TEXT",
             "textData": {
+             "text": "Pour finir, ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "le professeur Zigzag",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " pose une ou deux questions ouvertes : l'élève répond avec ses mots, en écrivant ou au micro (Edge ou Chrome). Le professeur dit ce qui est trouvé et donne un indice s'il manque quelque chose. On peut toujours passer la question.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
              "text": "À la fin : des étoiles et un bilan par famille de questions, pour repérer ce qui est réussi et ce qui reste à travailler.",
              "decorations": []
             }
@@ -216,7 +233,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les 6 familles de questions",
+         "text": "Les 7 familles de questions",
          "decorations": []
         }
        }
@@ -392,6 +409,34 @@
           ]
          }
         ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Avec le professeur Zigzag",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : répondre avec ses mots à une question ouverte (raconter, expliquer, donner son avis en le justifiant), corrigée par IA.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
        }
       ]
      },
@@ -435,6 +480,45 @@
       ]
      },
      {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sur la fiche imprimée, les questions du professeur Zigzag deviennent des questions ouvertes, avec des lignes pour répondre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le professeur Zigzag",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La correction par IA est faite par Claude (Anthropic), sans inscription ni enregistrement de la réponse de l'élève. Elle ne corrige que les questions du jeu. Si elle n'est pas disponible, ces questions n'apparaissent pas et le jeu fonctionne normalement.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
       "type": "HEADING",
       "headingData": {
        "level": 2
@@ -455,7 +539,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les deux histoires sont des contes traditionnels du domaine public (conte populaire et fable d'Ésope), réécrits pour le site en trois versions de difficulté croissante : phrases courtes au CP, texte plus long au CE1, vocabulaire plus riche et passé simple au CE2. Ils sont libres d'usage en classe.",
+         "text": "Les six histoires sont des contes traditionnels du domaine public (contes populaires et fables d'Ésope et de La Fontaine), réécrits pour le site en trois versions de difficulté croissante : phrases courtes au CP, texte plus long au CE1, vocabulaire plus riche et passé simple au CE2. Ils sont libres d'usage en classe.",
          "decorations": []
         }
        }
