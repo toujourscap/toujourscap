@@ -67,7 +67,11 @@
 function pleinEcran(b){
   var f = b.closest('.embed').querySelector('iframe');
   var req = f.requestFullscreen || f.webkitRequestFullscreen;
-  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  if (req) { try { var p = req.call(f);
+    // Sur téléphone : passer en paysage, même si la rotation automatique est bloquée (Android)
+    var paysage = function () { try { var o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(function () {}); } catch (e) {} };
+    if (p && p.then) p.then(paysage, function () { window.open(f.src, '_blank'); }); else paysage();
+    return; } catch (e) {} }
   window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
 }
 </script><h2>Les 6 lieux du cerveau</h2><ol><li><strong>La forêt des neurones : </strong>l&#x27;élève relie deux neurones en s&#x27;entraînant. Le cerveau se muscle : tout le monde peut progresser.</li><li><strong>Le phare de l&#x27;attention : </strong>trouver les étoiles sans se laisser distraire.</li><li><strong>L&#x27;atelier des idées : </strong>participer, essayer, poser des questions.</li><li><strong>La bibliothèque des souvenirs : </strong>un vrai jeu de mémoire en deux essais, pour constater qu&#x27;on retient mieux en refaisant de mémoire.</li><li><strong>Le lac miroir des erreurs : </strong>aider Léo à comprendre son erreur en 4 étapes.</li><li><strong>Le nuage du sommeil : </strong>à quoi sert de dormir, et combien d&#x27;heures.</li></ol><p>Chaque consigne peut être écoutée avec le bouton 🔊. Une mauvaise réponse n&#x27;est jamais sanctionnée : l&#x27;élève réessaie, car se tromper, c&#x27;est apprendre.</p><p>Le jeu prolonge le diaporama « Apprendre ! » de la même rubrique, qui donne aussi les référents théoriques.</p><p class="btn-wrap"><a class="btn" href="/post/apprendre-a-apprendre-diaporama-memoire/" target="_blank" rel="noopener">Voir le diaporama « Apprendre ! »</a></p></div>

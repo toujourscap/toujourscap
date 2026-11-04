@@ -67,7 +67,11 @@
 function pleinEcran(b){
   var f = b.closest('.embed').querySelector('iframe');
   var req = f.requestFullscreen || f.webkitRequestFullscreen;
-  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  if (req) { try { var p = req.call(f);
+    // Sur téléphone : passer en paysage, même si la rotation automatique est bloquée (Android)
+    var paysage = function () { try { var o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(function () {}); } catch (e) {} };
+    if (p && p.then) p.then(paysage, function () { window.open(f.src, '_blank'); }); else paysage();
+    return; } catch (e) {} }
   window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
 }
 </script><h2>Comment l&#x27;utiliser</h2><ol><li>Tirer le levier devant le groupe et lire à voix haute les trois cartes.</li><li>Chaque enfant ajoute à son tour une phrase à l&#x27;histoire, en utilisant le personnage, le lieu et l&#x27;objet.</li><li>Le journal des tirages garde les combinaisons : on peut y revenir pour raconter à nouveau.</li></ol></div>

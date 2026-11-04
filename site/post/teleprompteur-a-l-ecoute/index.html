@@ -67,7 +67,11 @@
 function pleinEcran(b){
   var f = b.closest('.embed').querySelector('iframe');
   var req = f.requestFullscreen || f.webkitRequestFullscreen;
-  if (req) { try { var p = req.call(f); if (p && p.catch) p.catch(function () { window.open(f.src, '_blank'); }); return; } catch (e) {} }
+  if (req) { try { var p = req.call(f);
+    // Sur téléphone : passer en paysage, même si la rotation automatique est bloquée (Android)
+    var paysage = function () { try { var o = screen.orientation; if (o && o.lock) o.lock('landscape').catch(function () {}); } catch (e) {} };
+    if (p && p.then) p.then(paysage, function () { window.open(f.src, '_blank'); }); else paysage();
+    return; } catch (e) {} }
   window.open(f.src, '_blank');  // iPhone : pas de plein écran possible, on ouvre le jeu seul
 }
 </script><p>Voir aussi : <a href="/post/lecture-rapide-de-mots-tachistoscope/">Lecture rapide de mots</a> et <a href="/post/teleprompteur-de-lecture/">Fluence sur 3 niveaux de texte</a>.</p></div>
