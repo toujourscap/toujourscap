@@ -84,6 +84,7 @@ main > section, main > article { padding-top: 40px; padding-bottom: 24px; }
 
 /* Cartes */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.grid.quatre { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); } /* 4 vignettes sur une ligne (page Français) */
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
 .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 .card-img { aspect-ratio: 4 / 3; background: var(--accent-soft); overflow: hidden; }

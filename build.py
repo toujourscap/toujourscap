@@ -628,9 +628,14 @@ def main():
         return next((q["cover"] for q in lst if q["cover"]), "")
     subs = [("cercle-conteur", "Langage oral", "Des contes à raconter ensemble en GS et en CP, avec leurs formules à dire en chœur et des outils pour inventer des histoires.", cc),
             ("lecture", CATS["lecture"]["name"], CATS["lecture"]["desc"], lec),
-            ("etude-langue", "Étude de la langue", CATS["etude-langue"]["desc"], edl)]
-    vignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/francais/{k}/">
-  <div class="card-img">{f'<img src="{esc(cover_of(lst))}" alt="{esc(t)}" loading="lazy">' if cover_of(lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
+            ("etude-langue", "Étude de la langue", CATS["etude-langue"]["desc"], edl),
+            # Raccourci vers les jeux de discrimination visuelle (ils restent aussi dans Lecture-compréhension)
+            ("discrimination-visuelle", "Discrimination visuelle", "Jeux pour bien regarder les lettres et ne plus les confondre (b, d, p, q, m, n, u…) et pour garder plusieurs lettres en tête d'un seul coup d'œil.",
+             sorted([q for q in lec if (q.get("jeu") or {}).get("competence") == "discrimination-visuelle"], key=lambda q: q["date"], reverse=True))]
+    # Lecture-compréhension : vignette prise sur un jeu qui n'est pas de discrimination visuelle (ceux-ci ont leur propre vignette)
+    vimg_fr = lambda k, lst: cover_of([q for q in lst if (q.get("jeu") or {}).get("competence") != "discrimination-visuelle"]) if k == "lecture" else cover_of(lst)
+    vignettes = '<div class="grid quatre">' + "".join(f"""<a class="card" href="/francais/{k}/">
+  <div class="card-img">{f'<img src="{esc(vimg_fr(k, lst))}" alt="{esc(t)}" loading="lazy">' if vimg_fr(k, lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
 </a>""" for k, t, d, lst in subs) + "</div>"
     write("/francais/", page("Français", f"""<section class="wrap">
