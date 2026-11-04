@@ -455,6 +455,7 @@ SEO_TITRES = {
     "/post/la-minute-des-syllabes/": "La minute des syllabes : jeu de fluence en 1 minute, CP-CE1",
     "/post/les-fusees-des-syllabes/": "Les fusées des syllabes : jeu de combinatoire syllabique GS-CP-CE1",
     "/post/la-roue-du-magicien/": "La roue du magicien : jeu de discrimination visuelle b, d, p, q GS-CP-CE1",
+    "/post/les-fleches-de-robin/": "Les flèches de Robin : jeu de discrimination visuelle et d'empan visuel GS-CP-CE1",
     "/post/le-chemin-des-sons/": "Le chemin des sons : lire des mots avec ou, an, in, eu au CP",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
@@ -538,7 +539,7 @@ def main():
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     shutil.copytree(os.path.join(ROOT, "assets", "audio"), os.path.join(OUT, "audio"))  # voix enregistrées des jeux
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "les-fleches-de-robin.html"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
