@@ -425,11 +425,12 @@ function loadRoom(){
       btns.forEach(b=>b.disabled=true); btns[k].classList.add("ok");
       document.getElementById("stage").classList.add("open");
       const last = g.room === 9;
-      after.innerHTML = `<div class="bilan ok"><strong>Bravo, détective !</strong> La porte s'ouvre.<br>Montre dans le message les mots qui t'ont aidé.</div>
+      const dejaVus = p.classList.contains("show-clue");
+      after.innerHTML = `<div class="bilan ok"><strong>Bravo, détective !</strong> La porte s'ouvre.${IA.actif ? "" : dejaVus ? "<br>Les mots surlignés t'ont aidé : relis-les." : "<br>Montre dans le message les mots qui t'ont aidé."}</div>
         <div class="actions"><button class="btn ghost" id="clue">Voir les indices</button>
         <button class="btn" id="next">${last?"Entrer dans la pièce secrète":"Passer la porte"}</button></div>`;
       after.querySelector("#clue").onclick = () => p.classList.toggle("show-clue");
-      if(IA.actif) zigzagExplique(after, card);
+      if(IA.actif) zigzagExplique(after, card, p, dejaVus);
       after.querySelector("#next").onclick = () => { arreterMicro(); try{speechSynthesis.cancel()}catch(e){}; g.room++; g.room>=10 ? finish() : loadRoom(); };
       after.querySelector("#next").focus({preventScroll:true});
     } else {
@@ -456,13 +457,19 @@ const IA = {actif:false, turnstile:null, token:null, widget:null};
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let reco = null;
 function arreterMicro(){ if(reco){ try{ reco.stop(); }catch(e){} } }
+const ZZ_SURLIGNE = ["Bravo, détective ! Tu vois les mots surlignés ? Explique-moi <b>pourquoi</b> ils te montrent la bonne réponse.",
+  "Saperlipopette, la porte s'ouvre ! Regarde les mots surlignés : en quoi t'aident-ils à trouver ?"];
 const ZZ_DEBUT = ["Bravo, détective ! Mais dis-moi : <b>comment</b> as-tu trouvé ? Quels mots du message t'ont aidé ?",
   "Saperlipopette, la porte s'ouvre ! Explique-moi ton enquête : qu'est-ce qui, dans le message, t'a mis sur la piste ?"];
-function zigzagExplique(after, card){
+function zigzagExplique(after, card, p, dejaVus){
   const box = document.createElement("div");
   box.className = "actions"; box.innerHTML = `<button class="btn ghost" id="zzOuvrir">🧐 J'explique au professeur Zigzag</button>`;
   after.insertBefore(box, after.querySelector(".actions"));
   box.querySelector("#zzOuvrir").onclick = () => {
+    // Indices pas encore vus : on les cache pendant l'explication (sinon la question n'a plus de sens), retour après la réponse de Zigzag.
+    const btnIndices = after.querySelector("#clue");
+    const cacherIndices = c => { if(dejaVus || !btnIndices) return; btnIndices.hidden = c; if(c) p.classList.remove("show-clue"); };
+    cacherIndices(true);
     box.className = "zz";
     box.innerHTML = `<div class="prof"><img src="/images/zigzag/professeur.png" alt="Le professeur Zigzag"><div class="bulle" aria-live="polite"></div></div>
       <div class="redit"><textarea maxlength="300" aria-label="Comment j'ai trouvé" placeholder="J'ai trouvé parce que…"></textarea>${SR?'<button class="micro" type="button" title="Expliquer au micro">🎤</button>':''}</div>
@@ -473,7 +480,7 @@ function zigzagExplique(after, card){
     const dit = (html, voix) => { bulle.innerHTML = html; img.classList.remove("hop"); void img.offsetWidth; img.classList.add("hop");
       if(voix){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(bulle.textContent.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"")); u.lang="fr-FR"; u.rate=.95; u.pitch=1.15; speechSynthesis.speak(u);}catch(e){} } };
     const maj = () => { q(".compteur").textContent = ta.value.length+" / 300"; env.disabled = ta.disabled || ta.value.trim().length<3 || !!(IA.turnstile && !IA.token); };
-    dit(ZZ_DEBUT[Math.floor(Math.random()*ZZ_DEBUT.length)], false);
+    const debut = dejaVus ? ZZ_SURLIGNE : ZZ_DEBUT; dit(debut[Math.floor(Math.random()*debut.length)], false);
     ta.addEventListener("input", maj); maj(); ta.focus();
     if(IA.turnstile && window.turnstile){
       try{ if(IA.widget!==null) turnstile.remove(IA.widget); }catch(e){}
@@ -500,9 +507,9 @@ function zigzagExplique(after, card){
       if(r.erreur){ dit(esc(r.erreur), true); ta.disabled=false; maj(); return; }
       idees.innerHTML = r.idees.map((x,k) => r.trouvees[k] ? `<li class="ok">✅ ${esc(x)}</li>` : `<li>⬜ Un indice t'attend encore…</li>`).join("");
       idees.hidden = !!r.hors_sujet; env.hidden = true; corr.hidden = false;
-      dit(esc(r.message), true);
+      dit(esc(r.message), true); cacherIndices(false);
     };
-    corr.onclick = () => { ta.disabled=false; env.hidden=false; corr.hidden=true; idees.hidden=true; maj(); ta.focus(); };
+    corr.onclick = () => { cacherIndices(true); ta.disabled=false; env.hidden=false; corr.hidden=true; idees.hidden=true; maj(); ta.focus(); };
   };
 }
 fetch("/api/zigzag").then(r => r.json()).then(r => {
