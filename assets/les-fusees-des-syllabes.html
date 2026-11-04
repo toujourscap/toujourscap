@@ -75,6 +75,8 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .progres i.encours{outline:2px solid var(--sable)}
 .lien{background:none;border:2px solid rgba(247,223,192,.4);color:var(--sable);border-radius:10px;padding:5px 12px;font-size:15px}
 .scene{position:relative;width:100%;aspect-ratio:1680/944;border-radius:18px 18px 0 0;overflow:hidden;background:#e98d55 center/cover no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none}
+.nuit{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(18,10,40,.55),rgba(8,4,22,.9));opacity:0;transition:opacity 1.1s;pointer-events:none;z-index:1}
+.nuit.on{opacity:1}
 .scene canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
 
 /* image du mot */
@@ -85,21 +87,21 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @keyframes apparait{from{transform:translate(-50%,-50%) scale(.2);opacity:0}}
 
 /* fusées */
-.fusee{position:absolute;bottom:14%;width:14%;aspect-ratio:399/830;transform:translateX(-50%);container-type:inline-size;z-index:3}
+.fusee{position:absolute;bottom:14%;width:13%;aspect-ratio:90/178;transform:translateX(-50%);container-type:inline-size;z-index:3}
 .fusee img,.fusee svg.corps{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
-.hublot{position:absolute;left:50%;top:43.3%;width:56%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:none;background:transparent;padding:0;cursor:pointer;display:grid;place-items:center}
-.hublot:empty::after{content:"";width:62%;aspect-ratio:1;border-radius:50%;border:3px dashed rgba(212,85,42,.55);animation:attend 1.4s ease-in-out infinite}
+.hublot{position:absolute;left:50%;top:41%;width:66%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:none;background:transparent;padding:0;cursor:pointer;display:grid;place-items:center}
+.hublot:empty::after{content:"";width:70%;aspect-ratio:1;border-radius:50%;border:3px dashed rgba(42,26,34,.45);animation:attend 1.4s ease-in-out infinite}
 @keyframes attend{50%{transform:scale(.85);opacity:.5}}
 .hublot.cible{background:rgba(246,196,55,.45);box-shadow:0 0 0 4px var(--jaune)}
 .hublot .syl{font-family:var(--f-lecture);font-weight:700;color:var(--encre);line-height:1;white-space:nowrap;background:rgba(255,255,255,.92);border-radius:.3em;padding:.06em .12em;animation:pose .25s ease-out}
 @keyframes pose{from{transform:scale(1.5);opacity:.3}}
 .syl.l1,.syl.l2{font-size:32cqw}.syl.l3{font-size:30cqw}.syl.l4{font-size:27cqw}.syl.l5{font-size:23cqw}.syl.l6{font-size:20cqw}.syl.l7{font-size:17cqw}
-.flamme{position:absolute;left:50%;top:92%;width:40%;height:0;transform:translateX(-50%);border-radius:50% 50% 50% 50%/30% 30% 70% 70%;background:radial-gradient(ellipse at 50% 15%,#fff7c2 0%,#ffd23f 30%,#ff7a1a 60%,rgba(255,60,0,0) 75%);pointer-events:none;transition:height .3s}
-.allume .flamme{height:55%;animation:flamme .09s infinite alternate}
+.flamme{position:absolute;left:50%;top:97%;width:34%;height:0;transform:translateX(-50%);border-radius:50% 50% 50% 50%/30% 30% 70% 70%;background:radial-gradient(ellipse at 50% 15%,#fff7c2 0%,#ffd23f 30%,#ff7a1a 60%,rgba(255,60,0,0) 75%);pointer-events:none;transition:height .3s}
+.allume .flamme{height:22%;animation:flamme .09s infinite alternate}
 @keyframes flamme{to{transform:translateX(-50%) scaleY(1.15) scaleX(.92)}}
 .vibre{animation:vibre .08s infinite}
 @keyframes vibre{0%{margin-left:-.25%}50%{margin-left:.25%}100%{margin-left:0}}
-.vole .flamme{height:95%}
+.vole .flamme{height:40%}
 .non{animation:non .45s}
 @keyframes non{20%{margin-left:-1.4%}40%{margin-left:1.4%}60%{margin-left:-.9%}80%{margin-left:.9%}}
 .fumee{position:absolute;bottom:13%;width:9%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(230,220,215,.6) 55%,rgba(230,220,215,0) 72%);transform:translate(-50%,0) scale(.2);pointer-events:none;z-index:2;animation:fumee 1.4s ease-out forwards}
@@ -111,6 +113,9 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @keyframes compte{0%{transform:translate(-50%,-50%) scale(1.8);opacity:0}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:.85}}
 .mot{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font:700 clamp(40px,10vw,120px)/1.1 var(--f-lecture);color:#fff;z-index:9;pointer-events:none;text-shadow:0 3px 0 rgba(0,0,0,.3);white-space:nowrap;background:rgba(42,22,49,.62);border-radius:.3em;padding:.08em .35em .14em;animation:grossit .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes grossit{from{transform:translate(-50%,-50%) scale(.1);opacity:0}}
+.mot.doux{animation:fondu .8s ease-out;background:rgba(42,22,49,.45)}
+@keyframes fondu{from{opacity:0}}
+.mot span:nth-child(1){color:#ff8a8a}.mot span:nth-child(2){color:#8ec5ff}.mot span:nth-child(3){color:#9cf09f}
 .bravo{position:absolute;left:50%;top:50%;transform:translateX(-50%);font:800 clamp(18px,3.4vw,34px)/1 var(--f-titre);color:var(--jaune);z-index:9;text-shadow:0 2px 0 rgba(0,0,0,.35);white-space:nowrap;background:rgba(42,22,49,.72);border-radius:999px;padding:.25em .8em;animation:grossit .5s backwards}
 .message{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:var(--err);color:#fff;font-weight:700;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);z-index:9;white-space:nowrap;animation:grossit .3s}
 .cosmo{position:absolute;left:1.5%;bottom:3%;width:13%;z-index:4;pointer-events:none;transform-origin:50% 100%}
@@ -151,7 +156,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
     <div class="logo" id="logo"></div>
     <div>
       <h1>Les fusées des syllabes</h1>
-      <p>Regarde l'image, mets les bonnes syllabes dans les fusées… et décollage !</p>
+      <p>Regarde l'image, mets les bonnes syllabes dans les fusées… et feu d'artifice !</p>
     </div>
   </div>
 
@@ -190,7 +195,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
       <label class="coche"><input type="checkbox" id="opt-dire"><span>Dire le mot à voix haute quand il apparaît</span></label>
       <label class="coche"><input type="checkbox" id="opt-ecouter"><span>Bouton « Écouter le mot » (indice à l'oral)</span></label>
       <label class="coche"><input type="checkbox" id="opt-aide"><span>Après 2 essais ratés, la 1<sup>re</sup> syllabe se place toute seule</span></label>
-      <label class="coche"><input type="checkbox" id="opt-sons"><span>Bruitages (compte à rebours, décollage, explosion)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-sons"><span>Bruitages (compte à rebours, sifflement, explosion)</span></label>
     </fieldset>
     <fieldset id="bloc-perso" hidden>
       <legend>Mes mots</legend>
@@ -214,6 +219,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
   </div>
   <div class="scene" id="scene">
     <div class="consigne" id="consigne">Mets les syllabes dans les fusées</div>
+    <div class="nuit" id="nuit"></div>
     <div class="cosmo" id="cosmo"><img alt="" draggable="false"></div>
     <canvas id="feux"></canvas>
   </div>
@@ -222,7 +228,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
     <div class="reserve" id="reserve" aria-label="Syllabes à placer"></div>
     <div class="commandes">
       <button class="btn btn-sec" id="ecouter" hidden>🔊 Écouter</button>
-      <button class="btn btn-go" id="decollage" disabled>🚀 Décollage !</button>
+      <button class="btn btn-go" id="decollage" disabled>🎆 Mise à feu !</button>
       <button class="btn btn-go" id="suivant" hidden>Mot suivant →</button>
     </div>
   </div>
@@ -243,7 +249,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 <script>
 /* ---------- Images (créées sur Canva) ---------- */
 const DOSSIER = "/images/fusees-syllabes/";
-const CANVA = {fond:DOSSIER+"fond.jpg", fusee:DOSSIER+"fusee.png", cosmonaute:DOSSIER+"cosmonaute.png"};
+const CANVA = {fond:DOSSIER+"fond.jpg", cosmonaute:DOSSIER+"cosmonaute.png"};
 const imageMot = cle => DOSSIER + "mots/" + cle + ".jpg";
 
 /* ---------- Mots : syllabes écrites séparées par des tirets, et nom du fichier image ---------- */
@@ -264,10 +270,28 @@ const INTRUS = {
 };
 const NOMS_NIV = {1:"Niveau 1",2:"Niveau 2",3:"Niveau 3",perso:"Mes mots"};
 
-const SVG_FUSEE = `<svg class="corps" viewBox="0 0 90 178" xmlns="http://www.w3.org/2000/svg"><path d="M45 4C25 26 18 58 20 104L22 150H68L70 104C72 58 65 26 45 4Z" fill="#f4f1ec" stroke="#d8d1c6" stroke-width="2"/><path d="M45 4C33 17 27 30 24 42H66C63 30 57 17 45 4Z" fill="#d93a2b"/><path d="M24 42H66l1 5H23z" fill="#f2b630"/><circle cx="45" cy="77" r="17" fill="#fff" stroke="#f2b630" stroke-width="5"/><path d="M21 104L4 150 6 168 23 150Z" fill="#d93a2b"/><path d="M69 104L86 150 84 168 67 150Z" fill="#d93a2b"/><path d="M40 120h10l2 52h-14z" fill="#d93a2b"/></svg>`;
-let fuseeOk = true;
-function imgFusee(){ return fuseeOk ? `<img src="${CANVA.fusee}" alt="" draggable="false">` : SVG_FUSEE; }
-(function(){ const im=new Image(); im.onerror=()=>{ fuseeOk=false; document.querySelectorAll(".fusee img").forEach(i=>i.outerHTML=SVG_FUSEE); majLogo(); }; im.src=CANVA.fusee; })();
+/* Fusées de feu d'artifice (dessinées ici) : une couleur par position, la même que celle de la syllabe dans le mot qui explose */
+const TEINTES = [
+  {corps:"#e63946", bande:"#ffd166", clair:"#ff8a8a"},
+  {corps:"#2f6fd6", bande:"#ffd166", clair:"#8ec5ff"},
+  {corps:"#2a9d4b", bande:"#ffd166", clair:"#9cf09f"}
+];
+function svgFusee(i){
+  const t = TEINTES[i % TEINTES.length];
+  return `<svg class="corps" viewBox="0 0 90 178" xmlns="http://www.w3.org/2000/svg">
+  <rect x="43" y="118" width="4" height="56" rx="2" fill="#b07a45"/>
+  <path d="M45 3 L72 36 H18 Z" fill="${t.bande}" stroke="#2a1a22" stroke-opacity=".25" stroke-width="2"/>
+  <path d="M45 3 L58 19 H32 Z" fill="#fff" opacity=".35"/>
+  <rect x="15" y="34" width="60" height="88" rx="6" fill="${t.corps}" stroke="#2a1a22" stroke-opacity=".25" stroke-width="2"/>
+  <rect x="15" y="40" width="60" height="7" fill="${t.bande}"/>
+  <rect x="15" y="108" width="60" height="7" fill="${t.bande}"/>
+  <path d="M15 52 l60 22 v6 l-60 -22z M15 84 l60 22 v-6 l-60 -22z" fill="#fff" opacity=".18"/>
+  <rect x="20" y="36" width="7" height="84" rx="3" fill="#fff" opacity=".22"/>
+  <circle cx="45" cy="73" r="27" fill="#fff" stroke="${t.bande}" stroke-width="4"/>
+  <path d="M45 122 q-4 6 0 10" stroke="#5a3a20" stroke-width="2" fill="none"/>
+  <circle cx="61" cy="8" r="2.4" fill="${t.bande}"/><circle cx="27" cy="14" r="2" fill="${t.bande}"/><circle cx="70" cy="22" r="1.6" fill="#fff"/>
+</svg>`;
+}
 
 /* ---------- Stockage local ---------- */
 const store = {
@@ -275,7 +299,7 @@ const store = {
   set(k,v){try{localStorage.setItem("fds-"+k,v)}catch(e){}}
 };
 const $ = id => document.getElementById(id);
-function majLogo(){ $("logo").innerHTML = imgFusee(); }
+function majLogo(){ $("logo").innerHTML = svgFusee(0); }
 majLogo();
 (function(){ const c=$("cosmo").querySelector("img"); c.onerror=()=>{$("cosmo").hidden=true;}; c.src=CANVA.cosmonaute; })();
 
@@ -319,6 +343,8 @@ function bip(f=660,d=.15,type="sine",vol=.18){ const a=audio(); if(!a) return; c
 function bruit(d=1.6,vol=.35,filtre=500,montee=false){ const a=audio(); if(!a) return; const n=a.sampleRate*d, b=a.createBuffer(1,n,a.sampleRate), c=b.getChannelData(0); for(let i=0;i<n;i++) c[i]=Math.random()*2-1; const s=a.createBufferSource(); s.buffer=b; const f=a.createBiquadFilter(); f.type="lowpass"; f.frequency.value=filtre; const g=a.createGain(); const t=a.currentTime; if(montee){g.gain.setValueAtTime(.001,t); g.gain.exponentialRampToValueAtTime(vol,t+.4); g.gain.exponentialRampToValueAtTime(.001,t+d);} else {g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+d);} s.connect(f).connect(g).connect(a.destination); s.start(); }
 function boum(){ bruit(1.1,.6,900); bip(90,.5,"triangle",.4); }
 function rate(){ bip(220,.18,"square",.08); setTimeout(()=>bip(165,.25,"square",.08),170); }
+function sifflement(d=1.5){ const a=audio(); if(!a) return; const o=a.createOscillator(), g=a.createGain(), t=a.currentTime; o.type="sine"; o.frequency.setValueAtTime(900,t); o.frequency.exponentialRampToValueAtTime(2600,t+d); g.gain.setValueAtTime(.001,t); g.gain.exponentialRampToValueAtTime(.07,t+.2); g.gain.exponentialRampToValueAtTime(.001,t+d); o.connect(g).connect(a.destination); o.start(); o.stop(t+d); bruit(d,.12,1800,true); }
+function crepite(d=1.5){ const a=audio(); if(!a) return; const n=Math.round(d*26); for(let i=0;i<n;i++) setTimeout(()=>bruit(.04,.18+Math.random()*.15,3000+Math.random()*3000),Math.random()*d*1000); }
 function clic(){ bip(560,.06,"sine",.1); }
 
 /* ---------- Voix ---------- */
@@ -362,6 +388,7 @@ function choisirIntrus(syl, n){
 
 async function nouveauTour(){
   scene.querySelectorAll(".fusee,.mot,.bravo,.decompte,.message,.fumee,.image-mot").forEach(e=>e.remove());
+  $("nuit").classList.remove("on"); parts=parts.filter(p=>!p.lettre);
   const [mot,cle]=partie.mots[partie.i], syl=mot.split("-");
   const tuiles = melanger(syl.concat(choisirIntrus(syl,+val("intrus")))).map((s,id)=>({id,s}));
   tour={mot,cle,syl,tuiles,cases:syl.map(()=>null),essais:0,verrou:true,fusees:[]};
@@ -369,7 +396,7 @@ async function nouveauTour(){
   const x=slots(syl.length);
   syl.forEach((_,i)=>{
     const f=document.createElement("div"); f.className="fusee"; f.style.left=x[i]+"%";
-    f.innerHTML = imgFusee() + `<button class="hublot" data-i="${i}" aria-label="Fusée ${i+1}, vide"></button><span class="flamme"></span>`;
+    f.innerHTML = svgFusee(i) + `<button class="hublot" data-i="${i}" aria-label="Fusée ${i+1}, vide"></button><span class="flamme"></span>`;
     scene.appendChild(f); tour.fusees.push(f);
   });
   scene.querySelectorAll(".hublot").forEach(h=>h.addEventListener("click",()=>vider(+h.dataset.i)));
@@ -455,7 +482,7 @@ function hublotSous(x,y){
   return null;
 }
 
-/* ---------- Décollage ---------- */
+/* ---------- Mise à feu ---------- */
 async function decoller(){
   if(tour.verrou || tour.cases.includes(null)) return;
   tour.verrou=true; $("decollage").disabled=true; $("consigne").style.opacity=0;
@@ -465,33 +492,38 @@ async function decoller(){
   const dc=document.createElement("div"); dc.className="decompte"; scene.appendChild(dc);
   for(const t of ["3","2","1"]){ dc.textContent=t; dc.classList.remove("anim"); void dc.offsetWidth; dc.classList.add("anim"); bip(t==="1"?880:660,.18); await pause(650); }
   dc.remove();
-  els.forEach(e=>e.classList.add("allume","vibre")); fumee(els);
-  bruit(bon?2.4:1,.32,420,true);
-  await pause(700);
+  els.forEach(e=>e.classList.add("allume","vibre")); fumee(els); crepite(bon?.5:.8);
+  await pause(600);
   if(!bon){ await echec(els, lu); return; }
-  await rejoindre(els);
-  const r=scene.getBoundingClientRect();
+  $("nuit").classList.add("on"); sifflement(1.5);
+  const p = await rejoindre(els);
   els.forEach(e=>e.style.visibility="hidden");
-  boum(); exploser([{x:.5,y:.3}], true); reagir("saute");
-  await pause(300);
-  afficherMot();
+  boum(); crepite(1.8); reagir("saute");
+  const taille = feuMot(p, tour.syl);
+  await pause(2900);
+  afficherMot(taille);
 }
-/* les fusées montent en se rapprochant, et se rejoignent au centre du ciel */
+/* les fusées montent en sifflant, se rapprochent et se rejoignent dans le ciel ; renvoie le point de rencontre (0..1) */
 function rejoindre(els){
-  const r=scene.getBoundingClientRect(), dur=1500, t0=performance.now();
+  initCanvas();
+  const dur=1500, t0=performance.now(), sc=scene.getBoundingClientRect();
   const dep = els.map(e=>({x:parseFloat(e.style.left), b:14}));
   els.forEach(e=>{ e.classList.remove("vibre"); e.classList.add("vole"); });
   return new Promise(res=>{
     function pas(t){
-      const k=Math.min(1,(t-t0)/dur), e=k*k*(3-2*k), monte=k*k;
+      const k=Math.min(1,(t-t0)/dur), e=k*k*(3-2*k), monte=1-Math.pow(1-k,1.6);
       els.forEach((el,i)=>{
         const x = dep[i].x + (50-dep[i].x)*e;
-        const tourne = (50-dep[i].x)*(1-k)*0.5;
+        const tourne = (50-dep[i].x)*(1-k)*0.6;
         el.style.left = x+"%";
-        el.style.bottom = (dep[i].b + 46*monte)+"%";
-        el.style.transform = `translateX(-50%) rotate(${tourne}deg) scale(${1-.35*e})`;
+        el.style.bottom = (dep[i].b + 36*monte)+"%";
+        el.style.transform = `translateX(-50%) rotate(${tourne}deg) scale(${1-.55*e})`;
+        // traînée d'étincelles sous la fusée
+        const r=el.getBoundingClientRect();
+        trainee(r.left+r.width/2-sc.left, r.bottom-sc.top-r.height*.05, i);
       });
-      if(k<1) requestAnimationFrame(pas); else res();
+      if(k<1) requestAnimationFrame(pas);
+      else { const r=els[0].getBoundingClientRect(); res({x:(r.left+r.width/2-sc.left)/sc.width, y:(r.top+r.height*.3-sc.top)/sc.height}); }
     }
     requestAnimationFrame(pas);
   });
@@ -522,11 +554,14 @@ function fumee(els){
     }
   });
 }
-function afficherMot(){
+function afficherMot(taille){
   const mot=tour.syl.join("");
-  const d=document.createElement("div"); d.className="mot"; d.textContent=mot; scene.appendChild(d);
+  const d=document.createElement("div"); d.className="mot"+(taille?" doux":"");
+  d.innerHTML=tour.syl.map(x=>`<span>${x}</span>`).join("");
+  if(taille) d.style.fontSize=taille+"px";
+  scene.appendChild(d);
   if($("opt-dire").checked) setTimeout(()=>dire(mot),350);
-  setTimeout(()=>{ const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Décollage réussi !","Génial !"][Math.floor(Math.random()*5)]; scene.appendChild(b); },900);
+  setTimeout(()=>{ const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Quel feu d'artifice !","Génial !"][Math.floor(Math.random()*5)]; scene.appendChild(b); },900);
   $("lecture").innerHTML = "Le mot : <b>" + mot + "</b>";
   reserve.querySelectorAll(".tuile").forEach(b=>b.classList.add("posee"));
   partie.reussis.push({mot, cle:tour.cle, aide:tour.essais>=2});
@@ -537,31 +572,96 @@ function afficherMot(){
 }
 function reagir(c){ const e=$("cosmo"); e.classList.remove("saute","boude"); void e.offsetWidth; e.classList.add(c); }
 
-/* ---------- Explosion (canvas) ---------- */
+/* ---------- Feu d'artifice (canvas) ---------- */
 const cv=$("feux"), cx=cv.getContext("2d"); let parts=[], anim=null;
 const COULEURS=["#ffd23f","#ff7a1a","#ff3d6e","#ffffff","#7ad7ff","#9cff6b","#c77dff"];
-function exploser(points, grosse){
+const ETINCELLES=["#fff3b0","#ffd23f","#ffb347","#ffffff"];
+function initCanvas(){
   const r=scene.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-  cv.width=r.width*dpr; cv.height=r.height*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
+  const w=Math.round(r.width*dpr), h=Math.round(r.height*dpr);
+  if(cv.width!==w || cv.height!==h){ cv.width=w; cv.height=h; }
+  cx.setTransform(dpr,0,0,dpr,0,0);
+  return r;
+}
+function demarrer(){ if(!anim) anim=requestAnimationFrame(boucle); }
+function trainee(x,y,i){
+  const w=cv.width/(window.devicePixelRatio||1);
+  for(let k=0;k<4;k++){
+    const a=Math.PI/2+(Math.random()-.5)*.9, v=Math.random()*w*.003;
+    parts.push({x:x+(Math.random()-.5)*4,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:.9,decr:.03+Math.random()*.03,c:k?ETINCELLES[k%ETINCELLES.length]:TEINTES[i%3].clair,t:1+Math.random()*1.8,g:.03});
+  }
+  demarrer();
+}
+function exploser(points, grosse){
+  const r=initCanvas();
   points.forEach(p=>{
     const x=p.x*r.width, y=p.y*r.height, n=grosse?300:120, f=grosse?1.5:1;
     parts.push({x,y,flash:1,taille:r.width*.2*f});
     for(let i=0;i<n;i++){
       const a=Math.random()*Math.PI*2, v=(.25+Math.random()*.75)*r.width*.012*f;
-      parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:1,decr:.006+Math.random()*.01,c:COULEURS[Math.floor(Math.random()*COULEURS.length)],t:(2+Math.random()*2.6)*Math.max(1,r.width/900)});
+      parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:1,decr:.006+Math.random()*.01,c:COULEURS[Math.floor(Math.random()*COULEURS.length)],t:(2+Math.random()*2.6)*Math.max(1,r.width/900),g:.05});
     }
   });
-  if(!anim) anim=requestAnimationFrame(boucle);
+  demarrer();
+}
+/* explosion au point p, puis les étincelles vont dessiner le mot ; chaque syllabe garde la couleur de sa fusée.
+   Renvoie la taille de police utilisée (pour afficher ensuite le mot au même endroit). */
+function feuMot(p, syl){
+  const r=initCanvas(), W=r.width, H=r.height, mot=syl.join("");
+  const off=document.createElement("canvas"), oc=off.getContext("2d");
+  const police=t=>`700 ${t}px Andika, Arial, sans-serif`;
+  oc.font=police(100); const l100=oc.measureText(mot).width||1;
+  const taille=Math.max(28, Math.min(H*.24, W*.8/l100*100));
+  oc.font=police(taille);
+  const lt=oc.measureText(mot).width, cxm=W/2, cym=H*.3;
+  off.width=Math.ceil(lt+20); off.height=Math.ceil(taille*1.5);
+  oc.font=police(taille); oc.textBaseline="middle"; oc.fillStyle="#fff"; oc.fillText(mot,10,off.height/2);
+  // limites des syllabes (en x, dans le canvas du mot)
+  const bornes=[]; let acc="";
+  syl.forEach(x=>{ acc+=x; bornes.push(10+oc.measureText(acc).width); });
+  const pas=Math.max(3, Math.round(taille/12));
+  const d=oc.getImageData(0,0,off.width,off.height).data, cibles=[];
+  for(let y=0;y<off.height;y+=pas) for(let x=0;x<off.width;x+=pas){
+    if(d[(y*off.width+x)*4+3]>128){
+      const s=bornes.findIndex(b=>x<b);
+      cibles.push({tx:cxm-(off.width/2)+x, ty:cym-(off.height/2)+y, s:s<0?syl.length-1:s});
+    }
+  }
+  const x0=p.x*W, y0=p.y*H, t0=performance.now();
+  parts.push({x:x0,y:y0,flash:1,taille:W*.28});
+  // gerbe décorative
+  for(let i=0;i<180;i++){
+    const a=Math.random()*Math.PI*2, v=(.3+Math.random()*.7)*W*.013;
+    parts.push({x:x0,y:y0,vx:Math.cos(a)*v,vy:Math.sin(a)*v,vie:1,decr:.008+Math.random()*.01,c:COULEURS[Math.floor(Math.random()*COULEURS.length)],t:(1.6+Math.random()*2)*Math.max(1,W/900),g:.05});
+  }
+  // étincelles qui forment le mot
+  const rayon=Math.max(1.6, pas*.55);
+  cibles.forEach(c=>{
+    const a=Math.random()*Math.PI*2, v=(.4+Math.random()*.6)*W*.011;
+    parts.push({lettre:true,x:x0,y:y0,vx:Math.cos(a)*v,vy:Math.sin(a)*v,tx:c.tx,ty:c.ty,c:TEINTES[c.s%3].clair,t:rayon,t0,ph:Math.random()*6.3,delai:Math.random()*180});
+  });
+  demarrer();
+  return Math.round(taille);
 }
 function boucle(){
-  const dpr=window.devicePixelRatio||1, w=cv.width/dpr, h=cv.height/dpr;
+  const dpr=window.devicePixelRatio||1, w=cv.width/dpr, h=cv.height/dpr, now=performance.now();
   cx.globalCompositeOperation="source-over"; cx.clearRect(0,0,w,h);
   cx.globalCompositeOperation="lighter";
   parts = parts.filter(p=>{
     if(p.flash!==undefined){ p.flash-=.035; if(p.flash<=0) return false;
       const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.taille); g.addColorStop(0,`rgba(255,250,220,${p.flash})`); g.addColorStop(1,"rgba(255,200,80,0)");
       cx.fillStyle=g; cx.beginPath(); cx.arc(p.x,p.y,p.taille,0,7); cx.fill(); return true; }
-    p.vx*=.975; p.vy=p.vy*.975+.05; p.x+=p.vx; p.y+=p.vy; p.vie-=p.decr; if(p.vie<=0) return false;
+    if(p.lettre){
+      const e=now-p.t0; let al=1;
+      if(e<420){ p.vx*=.93; p.vy*=.93; p.x+=p.vx; p.y+=p.vy; p.sx=p.x; p.sy=p.y; }
+      else if(e<1350+p.delai){ const k=Math.min(1,(e-420)/(930+p.delai)), q=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; p.x=p.sx+(p.tx-p.sx)*q; p.y=p.sy+(p.ty-p.sy)*q; }
+      else if(e<2900){ p.x=p.tx; p.y=p.ty; al=.75+.25*Math.sin(now/90+p.ph); }
+      else { const k=(e-2900)/700; if(k>=1) return false; al=1-k; p.y+=.25; }
+      cx.globalAlpha=al*.28; cx.fillStyle=p.c; cx.beginPath(); cx.arc(p.x,p.y,p.t*2.2,0,7); cx.fill();
+      cx.globalAlpha=al; cx.beginPath(); cx.arc(p.x,p.y,p.t,0,7); cx.fill(); cx.globalAlpha=1;
+      return true;
+    }
+    p.vx*=.975; p.vy=p.vy*.975+(p.g||.05); p.x+=p.vx; p.y+=p.vy; p.vie-=p.decr; if(p.vie<=0) return false;
     cx.globalAlpha=Math.max(0,p.vie); cx.fillStyle=p.c; cx.beginPath(); cx.arc(p.x,p.y,p.t,0,7); cx.fill(); cx.globalAlpha=1; return true;
   });
   anim = parts.length ? requestAnimationFrame(boucle) : (cx.clearRect(0,0,w,h), null);
@@ -571,7 +671,7 @@ function boucle(){
 function finPartie(){
   $("ecran-jeu").hidden=true; $("ecran-fin").hidden=false;
   const n=partie.reussis.length, aides=partie.reussis.filter(r=>r.aide).length;
-  $("bilan").textContent = `${n} fusée${n>1?"s":""} lancée${n>1?"s":""} sur Mars !` + (aides ? ` (${aides} mot${aides>1?"s":""} trouvé${aides>1?"s":""} avec l'aide, en pointillés)` : "");
+  $("bilan").textContent = `${n} feu${n>1?"x":""} d'artifice tiré${n>1?"s":""} sur Mars !` + (aides ? ` (${aides} mot${aides>1?"s":""} trouvé${aides>1?"s":""} avec l'aide, en pointillés)` : "");
   $("liste").innerHTML = partie.reussis.map(r=>`<figure class="${r.aide?"aide":""}">${r.cle?`<img src="${imageMot(r.cle)}" alt="">`:""}${r.mot}</figure>`).join("");
 }
 
