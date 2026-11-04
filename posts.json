@@ -110,6 +110,59 @@
            {
             "type": "TEXT",
             "textData": {
+             "text": "L'élève choisit aussi ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "comment il répond",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : en choisissant parmi des propositions, ou ",
+             "decorations": []
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "avec le professeur Zigzag",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", sans propositions : il répond avec ses mots, en écrivant ou au micro (Edge ou Chrome). Le professeur dit si c'est trouvé et donne un indice sinon ; à la fin, il pose une ou deux questions pour raconter, expliquer ou donner son avis.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
              "text": "Il lit l'histoire (il peut l'écouter si l'adulte l'autorise), puis clique sur « J'ai lu, je réponds aux questions ».",
              "decorations": []
             }
@@ -127,7 +180,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Pour chaque question, il choisit parmi trois réponses. Le texte reste à côté (ou se cache, au choix de l'adulte).",
+             "text": "Pour chaque question, il choisit parmi trois réponses (ou répond avec ses mots, en mode professeur Zigzag). Le texte reste à côté (ou se cache, au choix de l'adulte).",
              "decorations": []
             }
            }
@@ -179,41 +232,6 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Pour finir, ",
-             "decorations": []
-            }
-           },
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": "le professeur Zigzag",
-             "decorations": [
-              {
-               "type": "BOLD"
-              }
-             ]
-            }
-           },
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": " pose une ou deux questions ouvertes : l'élève répond avec ses mots, en écrivant ou au micro (Edge ou Chrome). Le professeur dit ce qui est trouvé et donne un indice s'il manque quelque chose. On peut toujours passer la question.",
-             "decorations": []
-            }
-           }
-          ]
-         }
-        ]
-       },
-       {
-        "type": "LIST_ITEM",
-        "nodes": [
-         {
-          "type": "PARAGRAPH",
-          "nodes": [
-           {
-            "type": "TEXT",
-            "textData": {
              "text": "À la fin : des étoiles et un bilan par famille de questions, pour repérer ce qui est réussi et ce qui reste à travailler.",
              "decorations": []
             }
@@ -233,7 +251,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les 7 familles de questions",
+         "text": "Les 6 familles de questions",
          "decorations": []
         }
        }
@@ -409,34 +427,6 @@
           ]
          }
         ]
-       },
-       {
-        "type": "LIST_ITEM",
-        "nodes": [
-         {
-          "type": "PARAGRAPH",
-          "nodes": [
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": "Avec le professeur Zigzag",
-             "decorations": [
-              {
-               "type": "BOLD"
-              }
-             ]
-            }
-           },
-           {
-            "type": "TEXT",
-            "textData": {
-             "text": " : répondre avec ses mots à une question ouverte (raconter, expliquer, donner son avis en le justifiant), corrigée par IA.",
-             "decorations": []
-            }
-           }
-          ]
-         }
-        ]
        }
       ]
      },
@@ -512,7 +502,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "La correction par IA est faite par Claude (Anthropic), sans inscription ni enregistrement de la réponse de l'élève. Elle ne corrige que les questions du jeu. Si elle n'est pas disponible, ces questions n'apparaissent pas et le jeu fonctionne normalement.",
+         "text": "En mode professeur Zigzag, l'élève répond sans propositions : la correction par IA est faite par Claude (Anthropic), sans inscription ni enregistrement de la réponse de l'élève. Les questions « Dans l'ordre » ne sont pas posées dans ce mode. Si la correction n'est pas disponible, ce choix n'apparaît pas et le jeu fonctionne avec les propositions.",
          "decorations": []
         }
        }

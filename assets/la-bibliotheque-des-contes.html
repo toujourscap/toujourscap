@@ -51,6 +51,11 @@ button:focus-visible{outline:3px solid var(--c-exp);outline-offset:3px}
 .lvl b{font-family:var(--f-display);font-size:24px}
 .lvl span{font-size:13px;color:var(--muted)}
 .lvl[aria-pressed="true"]{border-color:var(--gold);background:#FFF1CC;box-shadow:0 0 0 3px #E9A82A55}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.lvl.mode{justify-items:start;text-align:left;padding:12px 16px;gap:2px}
+.lvl.mode b{font-size:20px}
+.lvl.mode span{font-size:14px}
+.lvl.mode[data-m="zigzag"][aria-pressed="true"]{border-color:var(--c-zz);background:#ECEBFF;box-shadow:0 0 0 3px #5B5BD644}
 .opts{display:grid;gap:8px;margin:0;padding:0;border:0}
 .opts label{display:flex;gap:10px;align-items:center;cursor:pointer}
 .opts input{width:20px;height:20px;accent-color:var(--wood)}
@@ -603,10 +608,14 @@ const CONTES = [
 const app = document.getElementById("app");
 const LETTRES = ["A","B","C","D","E"];
 const NIV = {CP:"Texte court, phrases simples", CE1:"Texte plus long", CE2:"Texte riche, vocabulaire"};
-const st = {conte:null, niv:null, voix:true, texteVisible:true, fams:new Set(Object.keys(FAM)), qs:[], i:0, res:[]};
+const st = {conte:null, niv:null, mode:"choix", voix:true, texteVisible:true, fams:new Set(Object.keys(FAM).filter(k=>k!=="zz")), qs:[], i:0, res:[]};
 const IA = {actif:false, turnstile:null, token:null, widget:null};
-const zzId = (c,n,q) => c+"-"+n+"-"+(CONTES.find(x=>x.id===c).niveaux[n].questions.filter(x=>x.f==="zz").indexOf(q)+1);
-const famsVisibles = () => Object.keys(FAM).filter(k=>k!=="zz"||IA.actif);
+// Identifiant de la question pour le professeur Zigzag (doit correspondre à lib/zigzag.js) :
+// questions ouvertes « zz » → conte-niveau-1, -2… ; autres questions → conte-niveau-q<rang dans la liste>
+const zzId = (c,n,q) => { const L=CONTES.find(x=>x.id===c).niveaux[n].questions;
+  return q.f==="zz" ? c+"-"+n+"-"+(L.filter(x=>x.f==="zz").indexOf(q)+1) : c+"-"+n+"-q"+(L.indexOf(q)+1); };
+const famsVisibles = () => Object.keys(FAM).filter(k=>k!=="zz");
+const modeZigzag = () => st.mode==="zigzag" && IA.actif;
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
 const sansMarques = s => s.replace(/\{[a-z]+:([^}]*)\}/g,"$1");
@@ -639,7 +648,6 @@ function accueil(){
     <header>
       <h1>📚 La Bibliothèque des contes</h1>
       <p>Choisis une histoire, lis-la bien, puis réponds aux questions. Si tu te trompes, les mots qui aident s'allument dans le texte.</p>
-      ${IA.actif?`<p style="font-size:16px">🎓 Pour finir, le professeur Zigzag te pose une question : tu réponds avec tes mots, en écrivant ou au micro.</p>`:""}
     </header>
     <section class="card">
       <h2 class="step-t"><i>1</i>Choisis un livre</h2>
@@ -653,6 +661,13 @@ function accueil(){
       <div class="levels">${Object.keys(NIV).map(n=>`
         <button class="lvl" data-n="${n}" aria-pressed="${st.niv===n}"><b>${n}</b><span>${NIV[n]}</span></button>`).join("")}</div>
     </section>
+    ${IA.actif?`<section class="card">
+      <h2 class="step-t"><i>3</i>Comment réponds-tu ?</h2>
+      <div class="levels modes">
+        <button class="lvl mode" data-m="choix" aria-pressed="${st.mode==="choix"}"><b>📝 Je choisis</b><span>Je choisis la bonne réponse parmi des propositions</span></button>
+        <button class="lvl mode" data-m="zigzag" aria-pressed="${st.mode==="zigzag"}" ${famStyle("zz")}><b>🎓 Avec le professeur Zigzag</b><span>Pas de propositions : je réponds avec mes mots, en écrivant ou au micro</span></button>
+      </div>
+    </section>`:""}
     <details class="card">
       <summary class="step-t" style="cursor:pointer;margin:0"><i>⚙</i>Réglages pour l'adulte</summary>
       <fieldset class="opts" style="margin-top:14px">
@@ -671,7 +686,8 @@ function accueil(){
     </div>
   </div>`;
   app.querySelectorAll(".book").forEach(b=>b.onclick=()=>{ st.conte=b.dataset.c; accueil(); });
-  app.querySelectorAll(".lvl").forEach(b=>b.onclick=()=>{ st.niv=b.dataset.n; accueil(); });
+  app.querySelectorAll(".lvl:not(.mode)").forEach(b=>b.onclick=()=>{ st.niv=b.dataset.n; accueil(); });
+  app.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{ st.mode=b.dataset.m; accueil(); });
   const det = app.querySelector("details");
   if(sessionStorage_get("reglages-ouverts")) det.open=true;
   det.ontoggle = ()=>sessionStorage_set("reglages-ouverts", det.open?"1":"");
@@ -694,14 +710,16 @@ function blocTexte(c,n,avecEcoute){
 }
 function topbar(c){
   return `<div class="topbar"><h2>${c.titre}<span class="lv">${st.niv}</span></h2>
-    <div class="dots">${st.qs.map((q,i)=>{ const r=st.res[i]; return `<span class="dot ${r?("s"+(q.f==="zz"?(r.pts>0?2:0):r.pts)):""} ${i===st.i&&!r?"here":""}" title="${FAM[q.f].nom}">${q.f==="zz"?"🎓":i+1}</span>`; }).join("")}</div>
+    <div class="dots">${st.qs.map((q,i)=>{ const r=st.res[i]; return `<span class="dot ${r?("s"+r.pts):""} ${i===st.i&&!r?"here":""}" title="${FAM[q.f].nom}">${i+1}</span>`; }).join("")}</div>
     <button class="btn ghost small" id="quit" style="color:#FFF3DC;border-color:#FFF3DC66">⟵ Bibliothèque</button></div>`;
 }
 function lecture(){
   const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv];
-  const ok = q => st.fams.has(q.f) && (q.f!=="zz" || IA.actif);
-  st.qs = n.questions.filter(q=>ok(q) && q.f!=="zz").concat(n.questions.filter(q=>ok(q) && q.f==="zz"));
-  if(!st.qs.length) st.qs = n.questions.filter(q=>q.f!=="zz");
+  // Mode « je choisis » : questions à propositions. Mode Zigzag : sans propositions (réponse libre),
+  // sauf « Dans l'ordre » (manipulation), puis les questions ouvertes du professeur.
+  const base = n.questions.filter(q=>q.f!=="zz" && st.fams.has(q.f) && !(modeZigzag() && q.ordre));
+  st.qs = modeZigzag() ? base.concat(n.questions.filter(q=>q.f==="zz")) : base;
+  if(!st.qs.length) st.qs = n.questions.filter(q=>q.f!=="zz" && !(modeZigzag() && q.ordre));
   st.i=0; st.res=[];
   app.innerHTML = `${topbar(c)}
   <div class="reader solo lv-${st.niv}">${blocTexte(c,n,true)}</div>
@@ -716,7 +734,7 @@ function lecture(){
 function question(){
   const c = CONTES.find(x=>x.id===st.conte), n=c.niveaux[st.niv], q=st.qs[st.i];
   const F = FAM[q.f];
-  if(q.f==="zz") return questionZigzag(c,n,q);
+  if(q.f==="zz" || (modeZigzag() && !q.ordre)) return questionZigzag(c,n,q);
   const essais = {n:0};
   const isOrd = !!q.ordre;
   const items = isOrd ? shuffle(q.ordre.map((t,k)=>({t,k}))) : shuffle(q.choix.map((t,k)=>({t,k})));
@@ -806,13 +824,14 @@ function zigzag(bulle,img,txt,voix){
     u.lang="fr-FR"; u.rate=.95; u.pitch=1.15; speechSynthesis.speak(u); }catch(e){} },80); }
 }
 function questionZigzag(c,n,q){
-  const F = FAM.zz, el = zzId(c.id,st.niv,q);
+  const F = FAM[q.f], el = zzId(c.id,st.niv,q), ouverte = q.f==="zz";
+  let envois = 0;
   app.innerHTML = `${topbar(c)}
   <div class="reader q-mode lv-${st.niv}">
     <div style="position:relative">${blocTexte(c,n,false)}
       ${st.texteVisible?"":`<div class="cover" id="cover"><div><p>Le texte est caché.</p><button class="btn small relire" id="relire">👀 Relire le texte</button></div></div>`}
     </div>
-    <section class="card qcard" ${famStyle("zz")}>
+    <section class="card qcard" ${famStyle(q.f)}>
       <div class="qtop"><span class="tag">${F.ic} ${F.nom}</span>${st.voix?`<button class="speak" id="ecoute-q">🔊 Écouter</button>`:""}</div>
       <div class="prof"><img src="/images/zigzag/professeur.png" alt="Le professeur Zigzag"><div class="bulle" aria-live="polite"></div></div>
       <p class="q">${esc(q.q)}</p>
@@ -838,11 +857,15 @@ function questionZigzag(c,n,q){
   const eq=app.querySelector("#ecoute-q"); if(eq) eq.onclick=()=>parle(q.q);
   zigzag(bulle,img,DIT_Z[Math.floor(Math.random()*DIT_Z.length)],false);
   let res = null;
-  if(IA.turnstile && window.turnstile){
+  // Anti-robot : si le script Turnstile n'est pas encore chargé, on l'attend (sinon le bouton restait grisé)
+  const tsBox = app.querySelector("#ts");
+  (function rendreTS(essai){
+    if(!IA.turnstile || !document.body.contains(tsBox)) return;
+    if(!window.turnstile){ if(essai<40) setTimeout(()=>rendreTS(essai+1),250); return; }
     try{ if(IA.widget!==null) turnstile.remove(IA.widget); }catch(e){}
     IA.token=null;
-    IA.widget=turnstile.render(app.querySelector("#ts"),{sitekey:IA.turnstile,size:"flexible",callback:t=>{IA.token=t;maj();},"expired-callback":()=>{IA.token=null;maj();}});
-  }
+    IA.widget=turnstile.render(tsBox,{sitekey:IA.turnstile,size:"flexible",callback:t=>{IA.token=t;maj();},"expired-callback":()=>{IA.token=null;maj();}});
+  })(0);
   function maj(){ const k=ta.value.length; cpt.textContent=k+" / 300"; bEnv.disabled = ta.disabled || k<3 || !!(IA.turnstile && !IA.token); bEnv.style.opacity=bEnv.disabled?.5:1; }
   ta.addEventListener("input",maj); maj();
   if(mic) mic.onclick=()=>{
@@ -867,8 +890,10 @@ function questionZigzag(c,n,q){
         idees.innerHTML=r.idees.map((x,k)=>r.trouvees[k] ? `<li class="ok">✅ ${esc(x)}</li>` : `<li>⬜ Il manque encore quelque chose…</li>`).join("");
         idees.hidden=!!r.hors_sujet;
         const nb = r.hors_sujet ? 0 : r.trouvees.filter(Boolean).length;
-        res = {pts:nb, f:"zz", trouvees:nb, total:r.idees.length};
+        envois++;
         const tout = nb===r.idees.length;
+        res = ouverte ? {pts:nb, f:"zz", trouvees:nb, total:r.idees.length}
+                      : {pts: tout ? (envois===1?2:1) : 0, f:q.f};
         if(!tout && !r.hors_sujet) app.querySelectorAll("mark").forEach(m=>m.classList.toggle("on", q.ind.includes(m.dataset.k)));
         bEnv.hidden=true; bCorr.hidden=false;
         bSuite.textContent = st.i+1<st.qs.length ? "Question suivante ▶" : "Voir mon résultat 🏆";
@@ -879,7 +904,7 @@ function questionZigzag(c,n,q){
   bCorr.onclick=()=>{ ta.disabled=false; bEnv.hidden=false; bCorr.hidden=true; idees.hidden=true; maj(); ta.focus(); };
   bSuite.onclick=()=>{
     arreterMicro(); stopVoix();
-    st.res[st.i] = res || {pts:0, f:"zz", trouvees:0, total:q.idees.length, passe:true};
+    st.res[st.i] = res || (ouverte ? {pts:0, f:"zz", trouvees:0, total:q.idees.length, passe:true} : {pts:0, f:q.f});
     st.i++; st.i<st.qs.length?question():resultat();
   };
   window.scrollTo(0,0);
