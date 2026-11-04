@@ -1,6 +1,263 @@
 {
- "count": 39,
+ "count": 40,
  "posts": [
+  {
+   "title": "Les flèches de Robin",
+   "slug": "les-fleches-de-robin",
+   "excerpt": "Dans la forêt de Robin des Bois, des lettres apparaissent sur un parchemin. L'élève fait tirer Robin ou Marion dans la cible qui porte exactement les mêmes lettres, parmi des lettres qui se ressemblent. Un jeu de discrimination visuelle qui travaille aussi l'empan visuel, de 1 à 4 lettres.",
+   "date": "2026-11-04T20:45:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": "discrimination-visuelle",
+    "niveaux": [
+     "GS",
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un jeu de discrimination visuelle et d'empan visuel. Dans la forêt de Robin des Bois, un modèle apparaît sur le parchemin : une lettre, puis deux, trois ou quatre. En face, des cibles portent le modèle et des suites qui lui ressemblent (b/d/p/q, m/n/u, lettres inversées). L'élève fait tirer Robin, ou Marion, l'archère, dans la bonne cible.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'adulte choisit le niveau, les familles de lettres qui se ressemblent (b d p q, m n u h, f t l i j, a o e c), le nombre de cibles, la durée d'affichage du modèle et l'archer (Robin ou Marion).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le modèle apparaît sur le parchemin puis disparaît (après 3 s par défaut, ou 1,5 s, ou 0,7 s) : les cibles n'arrivent qu'après, l'élève doit garder les lettres en tête. On peut aussi choisir de laisser le modèle affiché.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève touche une cible (ou tape son numéro au clavier) : Robin tire. Si c'est la bonne, la flèche se plante dans le mille.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Si c'est raté, la cible se grise et le modèle réapparaît. Après deux erreurs, la bonne cible brille.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, un bilan indique les cibles touchées du premier coup et, pour l'enseignant, la liste des tirs ratés : lettre ressemblante ou lettres dans le désordre.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 4 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 : une seule lettre (b parmi d, p, q).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 : deux lettres (bu parmi du, ub, bn).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 : trois lettres.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 4 : quatre lettres, pour les plus forts.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Aux niveaux 2 à 4, on peut choisir des syllabes à lire ou des lettres au hasard : avec des lettres au hasard, l'élève ne peut pas s'aider de la lecture et doit regarder chaque lettre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/les-fleches-de-robin.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "La roue du magicien",
    "slug": "la-roue-du-magicien",
