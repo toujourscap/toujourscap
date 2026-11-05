@@ -157,6 +157,13 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @keyframes secoue{20%,60%{transform:translateX(-3%)}40%,80%{transform:translateX(3%)}}
 .roue-zone.brille .halo{opacity:1}
 .halo{position:absolute;inset:-8%;border-radius:50%;background:radial-gradient(circle,rgba(255,233,150,.8),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}
+/* Repères fixes autour de la lettre : haut/bas = tourner, gauche/droite = retourner */
+.zones-aide{position:absolute;inset:0;pointer-events:none}
+.za{position:absolute;font-size:2.2cqw;line-height:1;color:#fff6d6;text-shadow:0 0 .4cqw #2a1347,0 0 .4cqw #2a1347;font-weight:900}
+.za.haut{left:50%;top:9%;transform:translateX(-50%)}
+.za.bas{left:50%;bottom:9%;transform:translateX(-50%)}
+.za.gauche{left:9%;top:50%;transform:translateY(-50%)}
+.za.droite{right:9%;top:50%;transform:translateY(-50%)}
 .fleche{position:absolute;left:50%;top:-6%;transform:translateX(-50%);width:9%;filter:drop-shadow(0 .3cqw .2cqw rgba(0,0,0,.4))}
 .bulle{position:absolute;left:25.5%;bottom:3%;transform:translateX(-50%);background:#fff;border-radius:1.6cqw;padding:.7cqw 1.6cqw;font-family:var(--f-titre);
   font-size:2.3cqw;color:var(--violet-fonce);box-shadow:0 .5cqw 0 rgba(0,0,0,.25);white-space:nowrap;transition:opacity .25s}
@@ -312,6 +319,7 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
           </g>
         </svg>
       </div>
+      <div class="zones-aide" aria-hidden="true"><span class="za haut">↻</span><span class="za bas">↻</span><span class="za gauche">⇆</span><span class="za droite">⇆</span></div>
       <svg class="fleche" viewBox="0 0 40 46" aria-hidden="true"><path d="M20 44 L4 6 Q20 0 36 6 Z" fill="#f2c14e" stroke="#7a5510" stroke-width="3" stroke-linejoin="round"/></svg>
     </div>
 
@@ -323,7 +331,7 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
     <button class="cmd" id="b-retourner" title="Retourner la lettre (flèche haut)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 7 3 12l5 5"/><path d="m16 7 5 5-5 5"/></svg>Retourner</button>
     <button class="cmd magie" id="b-valider" title="Valider (Entrée)">🪄 Abracadabra !</button>
   </div>
-  <p class="aide-touches">On peut aussi faire tourner la roue avec le doigt ou la souris. Clavier : ← → tourner, ↑ ↓ retourner, Entrée valider.</p>
+  <p class="aide-touches">Sur la roue : touche en haut ou en bas pour tourner, à gauche ou à droite pour retourner (on peut aussi la faire tourner avec le doigt). Clavier : ← → tourner, ↑ ↓ retourner, Entrée valider.</p>
 </section>
 
 <!-- ======== Fin ======== -->
@@ -571,7 +579,9 @@ function finPartie(){
   roue.addEventListener("pointerdown", e => { if(!enJeu) return; depart = e.pointerId; roue.setPointerCapture(e.pointerId); rot0 = rot; a0 = angle(e); bouge = 0; roue.classList.add("drag"); });
   roue.addEventListener("pointermove", e => { if(e.pointerId !== depart) return; let d = angle(e) - a0; if(d>180) d-=360; if(d<-180) d+=360; a0 = angle(e); rot += d; bouge += Math.abs(d); majRoue(); });
   const lacher = e => { if(e.pointerId !== depart) return; depart = null; roue.classList.remove("drag");
-    if(bouge < 6){ rot = rot0; tourner(1); return; }
+    // simple appui : en haut ou en bas de la roue → tourner ; à gauche ou à droite → retourner
+    if(bouge < 6){ rot = rot0; const r = roue.getBoundingClientRect(), dx = e.clientX-(r.left+r.width/2), dy = e.clientY-(r.top+r.height/2);
+      if(Math.abs(dx) > Math.abs(dy)) { majRoue(); retourner(); } else tourner(1); return; }
     rot = Math.round(rot/180)*180; majRoue(); son("tour"); };
   roue.addEventListener("pointerup", lacher); roue.addEventListener("pointercancel", lacher);
 })();
