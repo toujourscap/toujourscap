@@ -86,4 +86,107 @@
     }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { badge(false); }); else badge(false);
+
+  /* Fin de partie : boutons « 🎮 Autres jeux » (retour à la rubrique du site) et, pour les jeux qui n'ont pas
+     déjà de bouton Réglages, « ☰ Menu du jeu » (retour à l'écran de départ).
+     b = bouton de fin du jeu (Rejouer…) : les boutons s'ajoutent à côté et s'affichent en même temps que lui.
+     box = zone de fin sans bouton (si = texte qui signale la fin). menu = ajouter « Menu du jeu ». */
+  var FIN = {
+    "images-du-quotidien": { b: "#again" },
+    "la-bibliotheque-des-contes": { b: "#again", menu: 1 },
+    "la-course-des-additions": { b: "#again" },
+    "la-course-des-multiplications": { b: "#again" },
+    "la-dictee-de-la-feuille-pliee": { b: "#refaire" },
+    "la-maison-de-briques": { b: "#reglages" },
+    "la-minute-des-syllabes": { b: "#btnRejouer" },
+    "la-roue-du-magicien": { b: "#b-rejouer" },
+    "le-chateau-des-detectives": { b: "#again" },
+    "le-chateau-des-nombres": { b: "#finRejouer" },
+    "le-chemin-des-sons": { b: "#b-rejouer" },
+    "le-mistigri-des-attitudes": { b: "#vSuite", menu: 1 },
+    "le-puzzle-du-chateau": { b: "#finNouveau" },
+    "le-secret-de-la-pyramide": { b: "#finBoutons button" },
+    "le-tape-taupe-des-additions": { b: "#again" },
+    "les-explorateurs-du-cerveau": { b: "#rejouer", menu: 1 },
+    "les-fleches-de-robin": { b: "#b-rejouer" },
+    "les-formules-du-sorcier": { b: "#again" },
+    "les-fusees-des-syllabes": { b: "#rejouer" },
+    "redis-la-regle": { b: "#rejouer", menu: 1 },
+    "tour-des-nombres": { b: "#btnRejouer" },
+    "lecture-rapide-de-mots-avec-le-tachitoscope": { box: "#word-display", si: /BRAVO/ },
+    "teleprompteur-de-lecture": { box: "#done" },
+    "teleprompteur-a-l-ecoute": { box: "#done" }
+  };
+  var FIN_TXT = /rejouer|recommencer|refaire|nouvelle partie|nouveau puzzle|réessayer|réglages/i;
+
+  function urlAutresJeux() {
+    try {
+      var a = window.top.document.querySelectorAll("nav.crumbs a");
+      if (a.length) return a[a.length - 1].href;
+    } catch (e) {}
+    return "/outils-pedagogiques/";
+  }
+  function bouton(txt, cls, fn, style) {
+    var x = document.createElement("button");
+    x.type = "button"; x.className = cls || ""; x.textContent = txt;
+    if (style) x.style.cssText = style;
+    x.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); fn(); });
+    return x;
+  }
+  function autresJeux() {
+    var u = urlAutresJeux();
+    try { window.top.location.href = u; } catch (e) { location.href = u; }
+  }
+  function boutonsFin(cfg, cls, style) {
+    var s = document.createElement("span");
+    s.className = "tdc-fin"; s.style.display = "contents";
+    if (cfg.menu) { s.appendChild(bouton("☰ Menu du jeu", cls, function () { location.reload(); }, style)); s.appendChild(document.createTextNode(" ")); }
+    s.appendChild(bouton("🎮 Autres jeux", cls, autresJeux, style));
+    return s;
+  }
+  function visible(el) {
+    for (var e = el; e && e !== document.body; e = e.parentElement) {
+      if (e.hidden) return false;
+      if (e === el && getComputedStyle(e).display === "none") return false;
+    }
+    return true;
+  }
+  function verifierFin() {
+    var cfg = FIN[jeu];
+    if (!cfg) return;
+    if (cfg.box) {
+      var z = document.querySelector(cfg.box);
+      if (!z || z.querySelector(".tdc-fin")) return;
+      if (cfg.si && !cfg.si.test(z.textContent)) return;
+      var p = boutonsFin(cfg, "", "font:600 15px system-ui,sans-serif;margin:8px 4px 0;padding:8px 14px;border-radius:999px;border:0;background:#1e6fd9;color:#fff;cursor:pointer");
+      p.style.display = "block"; p.style.textAlign = "center"; p.style.whiteSpace = "normal";
+      z.appendChild(p);
+      return;
+    }
+    var bs = document.querySelectorAll(cfg.b);
+    for (var i = 0; i < bs.length; i++) {
+      var a = bs[i];
+      if (!FIN_TXT.test(a.textContent)) continue;
+      var par = a.parentElement, s = par.querySelector(":scope > .tdc-fin");
+      if (!s) {
+        /* même style que les autres boutons secondaires de la fin (Réglages, Accueil…), sinon que le bouton Rejouer */
+        var modele = a, autres = par.querySelectorAll(":scope > button");
+        for (var k = 0; k < autres.length; k++) if (autres[k] !== a && !FIN_TXT.test(autres[k].textContent) || /réglages/i.test(autres[k].textContent)) { if (autres[k] !== a) { modele = autres[k]; break; } }
+        s = boutonsFin(cfg, modele.className);
+        par.appendChild(document.createTextNode(" "));
+        par.appendChild(s);
+        s._a = a;
+      }
+      var d = visible(s._a || a) ? "contents" : "none";
+      if (s.style.display !== d) s.style.display = d;
+    }
+  }
+  var attente = false;
+  function planifier() { if (attente) return; attente = true; requestAnimationFrame(function () { attente = false; verifierFin(); }); }
+  function demarrerFin() {
+    if (!FIN[jeu] || !document.body) return;
+    new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "class", "style"] });
+    verifierFin();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrerFin); else demarrerFin();
 })();
