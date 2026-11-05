@@ -234,6 +234,9 @@ NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/f
        ("/maths/", "Maths"), ("/divers/", "Divers"), ("/blog/", "Blog"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
+DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
+
+
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
     "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
 
@@ -575,8 +578,9 @@ def main():
         content = "".join(render(n, ctx) for n in p["nodes"])
         recent = [q for q in posts if q["slug"] != p["slug"] and q["cat"] == p["cat"]][:3] or [q for q in posts if q["slug"] != p["slug"]][:3]
         cat = CATS[p["cat"]]
+        dom = cat["domain"]  # onglet du menu (Français, Maths, Divers) auquel appartient l'article
         body = f"""<article class="wrap narrow post">
-  <nav class="crumbs"><a href="/blog/">Blog</a> › <a href="/blog/{p['cat']}/">{cat['name']}</a></nav>
+  <nav class="crumbs"><a href="/{dom}/">{DOM_NOMS[dom]}</a> › <a href="/{dom}/{p['cat']}/">{cat['name']}</a></nav>
   <h1>{esc(p['title'])}</h1>
   <p class="meta">{p['date_fr']} · <span class="chip">{cat['name']}</span></p>
   {reperes(p)}
@@ -588,7 +592,7 @@ def main():
   {grid(recent)}
 </section>"""
         url = f"{SITE}/post/{p['slug']}/"
-        crumbs = [("Blog", "/blog/"), (cat["name"], f"/blog/{p['cat']}/"), (p["title"], f"/post/{p['slug']}/")]
+        crumbs = [(DOM_NOMS[dom], f"/{dom}/"), (cat["name"], f"/{dom}/{p['cat']}/"), (p["title"], f"/post/{p['slug']}/")]
         ld = [{"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"],
                "description": p["excerpt"], "datePublished": p["date"], "inLanguage": "fr-FR",
                "mainEntityOfPage": url, "url": url, "articleSection": cat["name"],
@@ -600,7 +604,7 @@ def main():
                "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}},
               {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
                   {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
-        write(f"/post/{p['slug']}/", page(p["title"], body, "/blog/", p["excerpt"], p["cover"], "article", ld),
+        write(f"/post/{p['slug']}/", page(p["title"], body, f"/{dom}/", p["excerpt"], p["cover"], "article", ld),
               lastmod=p["date"][:10])
 
     # Blog + catégories
