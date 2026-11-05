@@ -125,6 +125,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .verif button{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700;color:#4a5752}
 .verif button[aria-pressed=true]{background:var(--vert);border-color:var(--vert);color:#fff}
 .ardoise.cachee .tableau{color:transparent;background:#3d4a45;position:relative}
+.ardoise.cachee.vue-modele .tableau{color:#fff;background:#2f5d50}
+.ardoise.cachee.vue-modele .tableau::after{content:none}
 .ardoise.cachee .tableau::after{content:"modèle caché";position:absolute;inset:0;display:grid;place-items:center;color:#cfd8d4;font-size:17px}
 
 .feuille{position:relative;background:#fff;border:1px solid #d9d2c4;border-radius:8px;box-shadow:6px 8px 0 rgba(0,0,0,.06);padding:8px 14px 18px 64px;
@@ -140,7 +142,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .accents button{min-width:38px;height:38px;border-radius:9px;border:2px solid #e7e0d4;background:#fff;font-size:19px;font-weight:700;color:var(--stylo)}
 .bulle .ecouter{position:absolute;right:-12px;bottom:-12px;width:34px;height:34px;border-radius:50%;border:3px solid var(--vert);background:#fff;font-size:15px;cursor:pointer;display:grid;place-items:center;padding:0}
 .msg{min-height:28px;margin:10px 0 0;font-size:17px;font-weight:700}
-.msg.rouge{color:var(--rouge)} .msg.vert{color:var(--correc)}
+.msg.rouge{color:var(--rouge)} .msg.vert{color:var(--correc)} .msg.orange{color:#c56a00}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 
 /* Lettres cliquables (pièges) */
@@ -1104,7 +1106,7 @@ function modele(){return mod().texte;}
 function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   fermerBulle();
-  etat.essais=[];etat.cats1=null;etat.pieges=[];etat.correction=null;
+  etat.essais=[];etat.regarde=false;etat.regarde1=false;etat.cats1=null;etat.pieges=[];etat.correction=null;
   $("compteur").textContent=PH("Phrase ","Liste ")+(etat.i+1)+(etat.libre?"":" sur "+dictee.p.length);
   $("quitter").textContent=etat.libre?"Accueil":PH("Mes phrases","Mes listes");
   $("saisie").setAttribute("aria-label",PH("J'écris ma phrase ici","J'écris mes mots ici"));
@@ -1277,10 +1279,22 @@ function plier(){
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
+  etat.regarde=false;$("ardoise").classList.remove("vue-modele");
   bouton(PH("J'ai écrit ma phrase","J'ai écrit mes mots"),"vert",verifier);
+  bouton("👀 Regarder le modèle","blanc",regarderModele);
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
 }
 
+/* Pendant l'écriture, l'élève peut jeter un œil au modèle (5 s) : l'essai ne compte alors pas comme juste */
+var tRegard=null;
+function regarderModele(){
+  if(!$("ardoise").classList.contains("cachee"))return;
+  etat.regarde=true;
+  $("ardoise").classList.add("vue-modele");
+  msg("Tu as regardé le modèle : ce n'est pas grave, mais cet essai ne comptera pas comme juste.","orange");
+  clearTimeout(tRegard);tRegard=setTimeout(function(){$("ardoise").classList.remove("vue-modele");},5000);
+  $("saisie").focus();
+}
 /* Étapes 4, 6 : déplier, comparer, corriger en couleur */
 function boutonsSuite(){
   if(etat.libre){
@@ -1297,12 +1311,23 @@ function verifier(){
   saisieVisible(false);
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
-  etat.essais.push(err.length);
+  var regarde=!!etat.regarde;etat.regarde=false;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");
+  // modèle regardé : l'essai compte au moins 1 erreur (jamais « juste »)
+  etat.essais.push(regarde?Math.max(err.length,1):err.length);
+  if(etat.essais.length===1)etat.regarde1=regarde;
   if(!etat.cats1){etat.cats1={};err.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
   verif=verif.filter(function(v){return actif(v);});if(!verif.length)verif=tous();
   var r=ajouterRangee();
   rabat(0);$("ardoise").classList.remove("cachee");
   etape(etat.essais.length===1?4:6);
+  if(!err.length&&regarde){
+    r.textContent=essai;var v0=document.createElement("span");v0.className="vu";v0.textContent="👀";r.appendChild(v0);
+    etape(etat.essais.length===1?4:6,"J'ai regardé le modèle : ce n'est pas compté juste.");
+    msg("Ta phrase est bien écrite, mais tu as regardé le modèle. Replie et réécris-la sans regarder !","orange");
+    bouton(etat.essais.length===1?"Je replie et je réécris":"Je replie encore","vert",plier);
+    boutonsSuite();
+    return;
+  }
   if(!err.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
     etape(8,PH("Bravo ! Ma phrase est juste, sans erreur !","Bravo ! Mes mots sont justes, sans erreur !"));
@@ -1359,7 +1384,7 @@ function verifier(){
 }
 
 function suivante(encore){
-  etat.resultats.push({p:modele(),premier:etat.essais[0],cats:etat.cats1||{}});
+  etat.resultats.push({p:modele(),premier:etat.essais[0],vu:!!etat.regarde1,cats:etat.cats1||{}});
   if(!etat.libre){var f=faites();f[etat.i]=etat.essais[0];ecrire(cle()+"-"+aujourdhui(),f);if(encore){choixPhrase();return;}bilan();return;}
   etat.i++;
   if(encore){nouvellePhrase();return;}
@@ -1373,7 +1398,7 @@ function bilan(){
   var total=etat.resultats.reduce(function(s,r){return s+r.premier;},0),parCat={};
   etat.resultats.forEach(function(r){Object.keys(r.cats).forEach(function(k){parCat[k]=(parCat[k]||0)+r.cats[k];});});
   var tb=$("bilanLignes");tb.innerHTML="";
-  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0 ⭐":r.premier;tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr);});
+  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0 ⭐":r.vu?"👀 modèle regardé":r.premier;tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr);});
   $("bilanTexte").textContent=total===0?"Zéro erreur au premier essai : ta dictée est apprise !":"Au premier essai, tu as fait "+total+" erreur"+(total>1?"s":"")+". En les corrigeant, tu as appris !";
   $("bilanCats").textContent=total?"À surveiller : "+CATS.filter(function(c){return parCat[c.id];}).map(function(c){return c.nom.toLowerCase()+" ("+parCat[c.id]+")";}).join(", ")+".":"";
   var h=lire(cle(),[]),j=aujourdhui();
