@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>La tour de contrôle</title>
+<script src="tour-de-controle.js"></script>
+<style>
+:root{
+  --nuit:#0d2340; --nuit2:#13325a; --verre:rgba(10,30,58,.84); --ligne:rgba(120,200,255,.35);
+  --radar:#4be08a; --ciel:#7cc8ff; --jaune:#ffd23f; --blanc:#f4f8ff; --gris:#a9bbd3; --rouge:#ff7a6b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:16px/1.4 "Trebuchet MS",system-ui,-apple-system,sans-serif;color:var(--blanc);background:#0d2340 url(/images/tour-de-controle/decor.jpg) center/cover no-repeat fixed;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(8,22,45,.15),rgba(8,22,45,.55));pointer-events:none}
+.ecran{position:relative;min-height:100%;padding:16px;display:flex;flex-direction:column;align-items:center}
+[hidden]{display:none!important}
+button,input{font:inherit}
+.btn{border:0;border-radius:999px;padding:12px 22px;font-weight:700;cursor:pointer;background:var(--jaune);color:#1d2430;box-shadow:0 3px 0 #c79a00;transition:transform .1s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c79a00}
+.btn.sec{background:rgba(255,255,255,.14);color:var(--blanc);box-shadow:none;border:1px solid var(--ligne)}
+.btn.petit{padding:7px 14px;font-size:14px}
+.btn.danger{background:var(--rouge);box-shadow:0 3px 0 #b84a3e;color:#fff}
+
+/* ---------- Accueil ---------- */
+#accueil{justify-content:center}
+.pupitre{width:min(560px,100%);background:var(--verre);border:2px solid var(--ligne);border-radius:22px;padding:22px 22px 18px;text-align:center;backdrop-filter:blur(3px);box-shadow:0 12px 40px rgba(0,0,0,.4);position:relative;overflow:hidden}
+.pupitre h1{margin:0 0 2px;font-size:clamp(26px,5vw,38px);letter-spacing:.5px}
+.pupitre .sous{margin:0 0 14px;color:var(--gris)}
+.radar{width:96px;height:96px;margin:0 auto 10px;border-radius:50%;border:2px solid var(--radar);position:relative;background:radial-gradient(circle,rgba(75,224,138,.18) 0 30%,transparent 31% 60%,rgba(75,224,138,.12) 61%);overflow:hidden}
+.radar::after{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,rgba(75,224,138,.75),transparent 70deg);animation:balayage 2.6s linear infinite}
+.radar i{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--radar);box-shadow:0 0 8px var(--radar);top:28%;left:62%;animation:clignote 2.6s infinite}
+@keyframes balayage{to{transform:rotate(360deg)}}
+@keyframes clignote{0%,100%{opacity:.2}10%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.radar::after,.radar i{animation:none}}
+.question{font-size:20px;font-weight:700;margin:4px 0 10px}
+.saisie{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.saisie input{flex:1 1 220px;max-width:300px;padding:12px 16px;border-radius:999px;border:2px solid var(--ciel);background:#fff;color:#14233a;font-size:22px;font-weight:700;text-align:center}
+.saisie input:focus{outline:3px solid var(--jaune)}
+.connus{margin-top:16px}
+.connus p{margin:0 0 8px;color:var(--gris);font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.badge-pilote{border:1px solid var(--ligne);background:rgba(124,200,255,.14);color:var(--blanc);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:700}
+.badge-pilote:hover,.badge-pilote:focus{background:rgba(124,200,255,.3);outline:none}
+.note{font-size:13px;color:var(--gris);margin:14px 0 0}
+.lien-ens{position:fixed;right:12px;bottom:10px;z-index:3}
+
+/* ---------- Carnet de vol ---------- */
+#carnet{align-items:stretch;max-width:1100px;margin:0 auto;gap:14px}
+.entete{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--verre);border:2px solid var(--ligne);border-radius:18px;padding:12px 16px}
+.galon{font-size:34px;line-height:1}
+.entete h1{margin:0;font-size:clamp(20px,3.6vw,28px)}
+.entete .grade{color:var(--jaune);font-weight:700}
+.entete .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.chiffres{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.chiffre{background:var(--verre);border:1px solid var(--ligne);border-radius:14px;padding:10px 14px}
+.chiffre b{display:block;font-size:26px;color:var(--radar)}
+.chiffre small{color:var(--gris)}
+.prochain{height:8px;border-radius:9px;background:rgba(255,255,255,.15);overflow:hidden;margin-top:6px}
+.prochain span{display:block;height:100%;background:var(--jaune)}
+
+.tableau{background:#0b0d12;border:3px solid #2a2f3a;border-radius:12px;padding:10px 12px;font-family:"Courier New",ui-monospace,monospace;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.tableau h2{margin:0 0 6px;font-size:16px;color:var(--jaune);letter-spacing:2px;font-family:inherit}
+.tableau table{width:100%;border-collapse:collapse;font-size:14px}
+.tableau th{text-align:left;color:#8a93a3;font-weight:400;font-size:12px;letter-spacing:1px;padding:2px 6px}
+.tableau td{padding:5px 6px;color:var(--jaune);border-top:1px solid #1d222c;vertical-align:top}
+.tableau td.ok{color:var(--radar)} .tableau td.ko{color:var(--rouge)}
+.tableau .vide{color:#8a93a3;padding:8px 6px}
+
+.zone h2{margin:6px 0 8px;font-size:20px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.carte{background:var(--verre);border:1px solid var(--ligne);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.carte img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1b3a63}
+.carte.jamais img{filter:grayscale(.85) brightness(.75)}
+.carte .corps{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.carte h3{margin:0;font-size:16px}
+.carte .info{font-size:13px;color:var(--gris)}
+.carte .info b{color:var(--blanc)}
+.etoiles{color:var(--jaune);letter-spacing:2px}
+.barres{display:flex;align-items:flex-end;gap:3px;height:34px}
+.barres span{flex:1;max-width:18px;background:var(--radar);border-radius:3px 3px 0 0;min-height:3px}
+.barres span.ko{background:var(--rouge)}
+.carte .bas{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap}
+.carte a.btn{text-decoration:none;font-size:14px;padding:7px 14px}
+.historique{font-size:13px;margin:0;padding:0;list-style:none;max-height:160px;overflow:auto;border-top:1px solid var(--ligne)}
+.historique li{padding:4px 0;border-bottom:1px dashed rgba(169,187,211,.25)}
+
+/* ---------- Enseignant ---------- */
+#enseignant{max-width:900px;margin:0 auto;align-items:stretch;gap:12px}
+.panneau{background:var(--verre);border:2px solid var(--ligne);border-radius:18px;padding:16px}
+.panneau h1{margin:0 0 6px;font-size:24px}
+.panneau table{width:100%;border-collapse:collapse;font-size:15px}
+.panneau th,.panneau td{padding:8px 6px;border-bottom:1px solid var(--ligne);text-align:left}
+.panneau th{color:var(--gris);font-weight:400;font-size:13px}
+.panneau td .btn{margin:2px}
+.verrou{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.verrou input{width:90px;padding:9px 12px;border-radius:10px;border:2px solid var(--ciel);font-size:18px;text-align:center}
+.msg{min-height:1.4em;color:var(--jaune);font-weight:700}
+
+/* ---------- Décollage ---------- */
+.avion{position:fixed;left:-120px;top:42%;font-size:64px;z-index:5;pointer-events:none;transform:rotate(-12deg);opacity:0}
+.avion.vole{animation:vole 1.6s ease-in forwards}
+@keyframes vole{0%{left:-120px;top:60%;opacity:1}100%{left:110%;top:5%;opacity:1}}
+
+@media (max-width:560px){
+  .ecran{padding:10px}
+  .tableau table{font-size:12px}
+  .tableau .col-niv{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ======= Accueil : le prénom du pilote ======= -->
+<section class="ecran" id="accueil">
+  <div class="pupitre">
+    <div class="radar" aria-hidden="true"><i></i></div>
+    <h1>La tour de contrôle</h1>
+    <p class="sous">Ici, on garde le carnet de vol de chaque pilote&nbsp;: tous tes résultats dans les jeux du site.</p>
+    <form id="form-pilote" autocomplete="off">
+      <label class="question" for="prenom">Bonjour pilote&nbsp;! Écris ton prénom&nbsp;:</label>
+      <div class="saisie">
+        <input id="prenom" maxlength="20" placeholder="Ton prénom" spellcheck="false" autocapitalize="words">
+        <button class="btn" type="submit">🛫 Décoller</button>
+      </div>
+    </form>
+    <div class="connus" id="connus" hidden>
+      <p>Ou choisis ton badge&nbsp;:</p>
+      <div class="badges" id="badges"></div>
+    </div>
+    <p class="note">Seulement le prénom. Les résultats restent sur cet appareil, rien n'est envoyé sur Internet.</p>
+  </div>
+  <button class="btn sec petit lien-ens" type="button" id="vers-ens">👩‍🏫 Enseignant</button>
+</section>
+
+<!-- ======= Carnet de vol du pilote ======= -->
+<section class="ecran" id="carnet" hidden>
+  <div class="entete">
+    <span class="galon" id="galon" aria-hidden="true">🧑‍✈️</span>
+    <div>
+      <h1 id="titre-pilote"></h1>
+      <div class="grade" id="grade"></div>
+    </div>
+    <div class="actions">
+      <button class="btn sec petit" type="button" id="changer">🔄 Changer de pilote</button>
+    </div>
+  </div>
+
+  <div class="chiffres" id="chiffres"></div>
+
+  <div class="tableau">
+    <h2>✈ ARRIVÉES — MES DERNIERS VOLS</h2>
+    <table><thead><tr><th>JOUR</th><th>JEU</th><th>RÉSULTAT</th><th class="col-niv">NIVEAU</th></tr></thead><tbody id="arrivees"></tbody></table>
+  </div>
+
+  <div id="zones"></div>
+  <p class="note" style="text-align:center;text-shadow:0 1px 2px #000">Joue à un jeu du site : ton résultat atterrit ici automatiquement. Ton prénom s'affiche en bas à gauche pendant le jeu.</p>
+</section>
+
+<!-- ======= Espace enseignant ======= -->
+<section class="ecran" id="enseignant" hidden>
+  <div class="panneau" id="ens-verrou">
+    <h1>👩‍🏫 Espace enseignant</h1>
+    <p>Pour entrer, réponds au calcul (pour éviter les effacements par erreur)&nbsp;:</p>
+    <form class="verrou" id="form-verrou"><label for="rep" id="calcul"></label><input id="rep" inputmode="numeric" autocomplete="off"><button class="btn petit" type="submit">Entrer</button><button class="btn sec petit" type="button" id="ens-retour1">Retour</button></form>
+    <p class="msg" id="msg-verrou"></p>
+  </div>
+  <div class="panneau" id="ens-contenu" hidden>
+    <h1>👩‍🏫 Tous les pilotes de cet appareil</h1>
+    <p class="note" style="margin-top:0">Les résultats sont gardés dans ce navigateur, sur cet appareil seulement. « Copier » met le bilan d'un élève dans le presse-papiers (pour le coller dans un document ou un message).</p>
+    <div style="overflow:auto"><table><thead><tr><th>Pilote</th><th>Vols</th><th>Jeux</th><th>Dernier vol</th><th></th></tr></thead><tbody id="liste-pilotes"></tbody></table></div>
+    <p class="msg" id="msg-ens"></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn sec petit" type="button" id="ens-retour">⬅ Retour à la tour</button>
+      <button class="btn danger petit" type="button" id="tout-effacer">Tout effacer</button>
+    </div>
+  </div>
+</section>
+
+<div class="avion" id="avion" aria-hidden="true">✈️</div>
+
+<script>
+/* ---------- Les jeux du site : fichier → titre, article, rubrique ---------- */
+var JEUX = [
+  ["Français : lire", [
+    ["les-fleches-de-robin","Les flèches de Robin","les-fleches-de-robin"],
+    ["la-roue-du-magicien","La roue du magicien","la-roue-du-magicien"],
+    ["les-fusees-des-syllabes","Les fusées des syllabes","les-fusees-des-syllabes"],
+    ["la-minute-des-syllabes","La minute des syllabes","la-minute-des-syllabes"],
+    ["puissance-4-syllabique","Puissance 4 syllabique","puissance-4-syllabiques"],
+    ["le-chemin-des-sons","Le chemin des sons","le-chemin-des-sons"],
+    ["lecture-rapide-de-mots-avec-le-tachitoscope","Lecture rapide de mots","lecture-rapide-de-mots-tachistoscope"],
+    ["images-du-quotidien","Images du quotidien","images-du-quotidien"],
+    ["teleprompteur-a-l-ecoute","Téléprompteur à l'écoute","teleprompteur-a-l-ecoute"],
+    ["teleprompteur-de-lecture","Téléprompteur de lecture","teleprompteur-de-lecture"],
+    ["le-chateau-des-detectives","Le Château des Détectives","le-chateau-des-detectives"],
+    ["la-bibliotheque-des-contes","La Bibliothèque des contes","la-bibliotheque-des-contes"]
+  ]],
+  ["Français : contes, orthographe", [
+    ["les-formules-du-sorcier","Les Formules du Sorcier","les-formules-du-sorcier"],
+    ["le-jackpot-des-contes","Le Jackpot des contes","le-jackpot-des-contes","/images/contes/le-jackpot-des-contes.jpg"],
+    ["la-dictee-de-la-feuille-pliee","Prépare ta dictée !","la-dictee-de-la-feuille-pliee"],
+    ["redis-la-regle","Apprends les règles d'orthographe","redis-la-regle"]
+  ]],
+  ["Maths", [
+    ["tour-des-nombres","La tour des nombres","la-tour-des-nombres"],
+    ["le-chateau-des-nombres","Le château des nombres","le-chateau-des-nombres"],
+    ["le-puzzle-du-chateau","Le puzzle du château","le-puzzle-du-chateau-des-nombres"],
+    ["la-maison-de-briques","La maison de briques","la-maison-de-briques"],
+    ["la-course-des-additions","La Course des Additions","la-course-des-additions"],
+    ["la-course-des-multiplications","La Course des Multiplications","la-course-des-multiplications"],
+    ["le-tape-taupe-des-additions","Le Tape-taupe des additions","le-tape-taupe-des-additions"],
+    ["le-secret-de-la-pyramide","Le secret de la pyramide","le-secret-de-la-pyramide"]
+  ]],
+  ["Mieux apprendre", [
+    ["le-mistigri-des-attitudes","Le Mistigri des attitudes","le-mistigri-des-attitudes"],
+    ["les-explorateurs-du-cerveau","Les explorateurs du cerveau","les-explorateurs-du-cerveau"]
+  ]]
+];
+var INFO = {}, NB_JEUX = 0;
+JEUX.forEach(function(z){ z[1].forEach(function(j){ INFO[j[0]] = {titre:j[1], slug:j[2], img:j[3] || "/images/jeux/"+j[2]+".jpg"}; NB_JEUX++; }); });
+
+/* Grades : selon le nombre de vols */
+var GRADES = [[0,"Passager","🧳"],[1,"Élève pilote","🎒"],[5,"Copilote","🧑‍✈️"],[15,"Pilote","✈️"],[30,"Commandant de bord","🎖️"],[60,"Pilote de légende","🏆"]];
+function grade(n){ var g = GRADES[0], suiv = null; for(var i=0;i<GRADES.length;i++){ if(n>=GRADES[i][0]){ g=GRADES[i]; suiv=GRADES[i+1]||null; } } return {g:g, suiv:suiv}; }
+
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function montre(id){ ["accueil","carnet","enseignant"].forEach(function(e){ $(e).hidden = e!==id; }); window.scrollTo(0,0); }
+function jour(t){ var d=new Date(t), a=new Date(); var memeJour=d.toDateString()===a.toDateString(); var hier=new Date(a-864e5).toDateString()===d.toDateString();
+  var h=String(d.getHours()).padStart(2,"0")+"h"+String(d.getMinutes()).padStart(2,"0");
+  return memeJour ? "Auj. "+h : hier ? "Hier "+h : d.getDate()+"/"+(d.getMonth()+1)+" "+h; }
+function duree(s){ s=Math.max(0,Math.round(s||0)); var m=Math.round(s/60); if(m<1) return s+" s"; if(m<60) return m+" min"; return Math.floor(m/60)+" h "+String(m%60).padStart(2,"0"); }
+function pct(v){ return (typeof v.s==="number" && v.n) ? Math.max(0,Math.min(1,v.s/v.n)) : (v.g===true?1:v.g===false?0:null); }
+function etoiles(p){ return p==null ? "" : p>=.9 ? "★★★" : p>=.6 ? "★★☆" : p>=.3 ? "★☆☆" : "☆☆☆"; }
+function resultat(v){
+  if(v.type==="seance") return "Séance de "+duree(v.dur);
+  var r = (typeof v.s==="number" && v.n) ? v.s+" / "+v.n : "";
+  if(v.g===true && !r) r = "Réussi";
+  if(v.g===false && !r) r = "À retenter";
+  return r || "Joué";
+}
+
+/* ---------- Son du radar (petit bip) ---------- */
+var ac = null;
+function bip(f,d,delai){ try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); var o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime+(delai||0);
+  o.frequency.value=f; o.type="sine"; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.12,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+d+.05); }catch(e){} }
+
+/* ---------- Accueil ---------- */
+function accueil(){
+  var c = TDC.lire(), noms = Object.keys(c.pilotes).sort(function(a,b){ return a.localeCompare(b,"fr"); });
+  $("connus").hidden = !noms.length;
+  $("badges").innerHTML = noms.map(function(n){ return '<button class="badge-pilote" type="button" data-n="'+esc(n)+'">✈️ '+esc(n)+'</button>'; }).join("");
+  $("prenom").value = "";
+  montre("accueil");
+  setTimeout(function(){ try{ $("prenom").focus({preventScroll:true}); }catch(e){} }, 50);
+}
+$("badges").addEventListener("click", function(e){ var b = e.target.closest(".badge-pilote"); if(b) entrer(b.dataset.n); });
+$("form-pilote").addEventListener("submit", function(e){
+  e.preventDefault();
+  var n = TDC.propre($("prenom").value);
+  if(!n){ $("prenom").focus(); return; }
+  // même prénom écrit autrement (lea / Léa) → on garde le badge existant
+  var c = TDC.lire(), cle = function(s){ return s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); };
+  var existe = Object.keys(c.pilotes).filter(function(p){ return cle(p)===cle(n); })[0];
+  entrer(existe || n);
+});
+function entrer(n){
+  var c = TDC.lire();
+  if(!c.pilotes[n]) c.pilotes[n] = {depuis: Date.now(), vols: []};
+  c.actif = n;
+  if(!TDC.ecrire(c)){ alert("Ce navigateur ne permet pas d'enregistrer les résultats (navigation privée ?)."); return; }
+  bip(660,.12); bip(880,.18,.12);
+  var a = $("avion"); a.classList.remove("vole"); void a.offsetWidth;
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches) a.classList.add("vole");
+  carnet();
+}
+
+/* ---------- Carnet de vol ---------- */
+function carnet(){
+  var c = TDC.lire(), n = c.actif, p = c.pilotes[n];
+  if(!p){ accueil(); return; }
+  var vols = (p.vols||[]).filter(function(v){ return INFO[v.j]; });
+  var jeux = {}; vols.forEach(function(v){ (jeux[v.j] = jeux[v.j] || []).push(v); });
+  var nbJeux = Object.keys(jeux).length, temps = vols.reduce(function(s,v){ return s+(v.dur||0); },0);
+  var gr = grade(vols.length);
+  $("galon").textContent = gr.g[2];
+  $("titre-pilote").textContent = "Pilote " + n;
+  $("grade").textContent = "Grade : " + gr.g[1];
+  var reussis = vols.filter(function(v){ var q=pct(v); return q!=null && q>=.8; }).length;
+  $("chiffres").innerHTML =
+    '<div class="chiffre"><b>'+vols.length+'</b><small>vol'+(vols.length>1?"s":"")+' (parties jouées)</small>'+
+      (gr.suiv ? '<div class="prochain" title="Vers le grade suivant"><span style="width:'+Math.round(100*(vols.length-gr.g[0])/(gr.suiv[0]-gr.g[0]))+'%"></span></div><small>Encore '+(gr.suiv[0]-vols.length)+' vol'+(gr.suiv[0]-vols.length>1?"s":"")+' pour devenir '+gr.suiv[1]+'</small>' : '<small> · grade maximum !</small>')+'</div>'+
+    '<div class="chiffre"><b>'+nbJeux+' / '+NB_JEUX+'</b><small>aéroports visités (jeux différents)</small></div>'+
+    '<div class="chiffre"><b>'+reussis+'</b><small>atterrissages parfaits (80 % ou plus)</small></div>'+
+    '<div class="chiffre"><b>'+duree(temps)+'</b><small>temps de vol</small></div>';
+
+  var der = vols.slice().sort(function(a,b){ return b.t-a.t; }).slice(0,8);
+  $("arrivees").innerHTML = der.length ? der.map(function(v){ var q=pct(v);
+    return '<tr><td>'+esc(jour(v.t))+'</td><td>'+esc(INFO[v.j].titre)+'</td><td class="'+(q==null?"":q>=.6?"ok":"ko")+'">'+esc(resultat(v))+(q!=null?' '+etoiles(q):"")+'</td><td class="col-niv">'+esc(v.niv||"")+'</td></tr>'; }).join("")
+    : '<tr><td colspan="4" class="vide">Aucun vol pour l\'instant… Choisis un jeu ci-dessous et décolle !</td></tr>';
+
+  $("zones").innerHTML = JEUX.map(function(z){
+    return '<div class="zone"><h2>'+esc(z[0])+'</h2><div class="cartes">'+z[1].map(function(j){
+      var id=j[0], i=INFO[id], L=(jeux[id]||[]).slice().sort(function(a,b){ return a.t-b.t; });
+      var url = "/post/"+i.slug+"/";
+      if(!L.length) return '<div class="carte jamais"><img src="'+esc(i.img)+'" alt="" loading="lazy"><div class="corps"><h3>'+esc(i.titre)+'</h3><div class="info">Destination à découvrir</div><div class="bas"><a class="btn" target="_top" href="'+url+'">🛫 Décoller</a></div></div></div>';
+      var notes = L.map(pct).filter(function(q){ return q!=null; });
+      var best = notes.length ? Math.max.apply(null,notes) : null, last = L[L.length-1];
+      var barres = notes.slice(-10).map(function(q){ return '<span class="'+(q<.5?"ko":"")+'" style="height:'+Math.max(8,Math.round(q*100))+'%"></span>'; }).join("");
+      var hist = L.slice().reverse().map(function(v){ return '<li>'+esc(jour(v.t))+' · <b>'+esc(resultat(v))+'</b>'+(v.niv?' · '+esc(v.niv):"")+(v.d?'<br><small>'+esc(v.d)+'</small>':"")+'</li>'; }).join("");
+      return '<div class="carte"><img src="'+esc(i.img)+'" alt="" loading="lazy"><div class="corps"><h3>'+esc(i.titre)+'</h3>'+
+        '<div class="info"><b>'+L.length+'</b> vol'+(L.length>1?"s":"")+' · dernier : <b>'+esc(resultat(last))+'</b>'+(best!=null?'<br>Meilleur : <span class="etoiles">'+etoiles(best)+'</span> ('+Math.round(best*100)+' %)':"")+'</div>'+
+        (notes.length>1 ? '<div class="barres" title="Mes derniers résultats">'+barres+'</div>' : "")+
+        '<details><summary class="info" style="cursor:pointer">Mes vols</summary><ul class="historique">'+hist+'</ul></details>'+
+        '<div class="bas"><a class="btn" target="_top" href="'+url+'">🛫 Rejouer</a></div></div></div>';
+    }).join("")+'</div></div>';
+  }).join("");
+  montre("carnet");
+}
+$("changer").addEventListener("click", function(){ var c=TDC.lire(); c.actif=""; TDC.ecrire(c); accueil(); });
+
+/* ---------- Espace enseignant ---------- */
+var attendu = 0;
+$("vers-ens").addEventListener("click", function(){
+  var a = 6+Math.floor(Math.random()*4), b = 6+Math.floor(Math.random()*4); attendu = a*b;
+  $("calcul").textContent = a+" × "+b+" =";
+  $("rep").value = ""; $("msg-verrou").textContent = "";
+  $("ens-verrou").hidden = false; $("ens-contenu").hidden = true; montre("enseignant");
+  setTimeout(function(){ try{ $("rep").focus(); }catch(e){} }, 50);
+});
+$("form-verrou").addEventListener("submit", function(e){ e.preventDefault();
+  if(parseInt($("rep").value,10)===attendu){ $("ens-verrou").hidden = true; $("ens-contenu").hidden = false; listePilotes(); }
+  else $("msg-verrou").textContent = "Ce n'est pas le bon résultat.";
+});
+$("ens-retour1").addEventListener("click", accueil);
+$("ens-retour").addEventListener("click", accueil);
+function listePilotes(){
+  var c = TDC.lire(), noms = Object.keys(c.pilotes).sort(function(a,b){ return a.localeCompare(b,"fr"); });
+  $("liste-pilotes").innerHTML = noms.length ? noms.map(function(n){ var v=(c.pilotes[n].vols||[]).filter(function(x){ return INFO[x.j]; });
+    var j = {}; v.forEach(function(x){ j[x.j]=1; }); var der = v.length ? Math.max.apply(null, v.map(function(x){ return x.t; })) : 0;
+    return '<tr><td><b>'+esc(n)+'</b></td><td>'+v.length+'</td><td>'+Object.keys(j).length+'</td><td>'+(der?esc(jour(der)):"—")+'</td><td>'+
+      '<button class="btn sec petit" type="button" data-voir="'+esc(n)+'">Voir</button><button class="btn sec petit" type="button" data-copier="'+esc(n)+'">Copier</button><button class="btn danger petit" type="button" data-effacer="'+esc(n)+'">Effacer</button></td></tr>'; }).join("")
+    : '<tr><td colspan="5">Aucun pilote enregistré sur cet appareil.</td></tr>';
+}
+$("liste-pilotes").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if(!b) return; var c = TDC.lire();
+  if(b.dataset.voir){ c.actif = b.dataset.voir; TDC.ecrire(c); carnet(); }
+  else if(b.dataset.effacer){ var n=b.dataset.effacer; if(confirm("Effacer le carnet de vol de "+n+" ? Ses résultats seront perdus.")){ delete c.pilotes[n]; if(c.actif===n) c.actif=""; TDC.ecrire(c); listePilotes(); $("msg-ens").textContent = "Carnet de "+n+" effacé."; } }
+  else if(b.dataset.copier){ copier(b.dataset.copier); }
+});
+function copier(n){
+  var p = TDC.lire().pilotes[n]; if(!p) return;
+  var vols = (p.vols||[]).filter(function(v){ return INFO[v.j]; }).sort(function(a,b){ return a.t-b.t; });
+  var txt = "Carnet de vol de "+n+" ("+vols.length+" vols)\n";
+  JEUX.forEach(function(z){ z[1].forEach(function(j){ var L = vols.filter(function(v){ return v.j===j[0]; }); if(!L.length) return;
+    txt += "\n"+j[1]+"\n" + L.map(function(v){ return "  - "+new Date(v.t).toLocaleDateString("fr-FR")+" : "+resultat(v)+(v.niv?" ("+v.niv+")":"")+(v.d?" — "+v.d:""); }).join("\n")+"\n"; }); });
+  var ok = function(){ $("msg-ens").textContent = "Bilan de "+n+" copié : collez-le où vous voulez (Ctrl+V)."; };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, function(){ secours(txt); ok(); });
+  else { secours(txt); ok(); }
+}
+function secours(txt){ var t=document.createElement("textarea"); t.value=txt; t.style.position="fixed"; t.style.opacity="0"; document.body.appendChild(t); t.select(); try{ document.execCommand("copy"); }catch(e){} t.remove(); }
+$("tout-effacer").addEventListener("click", function(){
+  if(confirm("Effacer TOUS les carnets de vol de cet appareil ?")){ TDC.ecrire({actif:"", pilotes:{}}); listePilotes(); $("msg-ens").textContent = "Tous les carnets sont effacés."; }
+});
+
+/* Retour sur la page (après un jeu) : carnet à jour */
+addEventListener("pageshow", function(){ if(!$("carnet").hidden) carnet(); });
+document.addEventListener("visibilitychange", function(){ if(document.visibilityState==="visible" && !$("carnet").hidden) carnet(); });
+addEventListener("storage", function(){ if(!$("carnet").hidden) carnet(); });
+
+if(TDC.pilote()) carnet(); else accueil();
+</script>
+</body>
+</html>

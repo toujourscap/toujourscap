@@ -199,7 +199,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- Accueil -->
@@ -1415,6 +1415,7 @@ function cle(){if(etat.libre)return "dictee-pliee-libre";var s=dictee.p.join("|"
 function aujourdhui(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function bilan(){
   var total=etat.resultats.reduce(function(s,r){return s+r.premier;},0),parCat={};
+  try{TDC.note({s:etat.resultats.filter(function(r){return r.premier===0&&!r.vu;}).length,n:etat.resultats.length,g:total===0,d:total===0?"Zéro erreur au premier essai":total+" erreur"+(total>1?"s":"")+" au premier essai"})}catch(e){}
   etat.resultats.forEach(function(r){Object.keys(r.cats).forEach(function(k){parCat[k]=(parCat[k]||0)+r.cats[k];});});
   var tb=$("bilanLignes");tb.innerHTML="";
   etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0 ⭐":r.vu?"👀 modèle regardé":r.premier;tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr);});

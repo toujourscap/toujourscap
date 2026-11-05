@@ -101,7 +101,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
 .cell.playable{box-shadow:inset 0 0 0 5px var(--yel)}
 .cell.playable.tour-r{box-shadow:inset 0 0 0 5px var(--red)}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
   <header>
@@ -297,7 +297,7 @@ function validate(ok){
     board[r][c]=p;pending=null;
     const line=winLine(r,c,p);
     if(line){over=true;score[p]++;render();line.forEach(([rr,cc])=>{const d=grid.children[rr*COLS+cc].querySelector(".disc");if(d)d.classList.add("win")});
-      setStatus(p==="r"?"Rouge gagne !":(mode===1?"L'ordinateur gagne !":"Jaune gagne !"));resetReader();
+      setStatus(p==="r"?"Rouge gagne !":(mode===1?"L'ordinateur gagne !":"Jaune gagne !"));try{TDC.note({g:mode===1?p==="r":undefined,d:mode===1?(p==="r"?"Partie gagnée contre l'ordinateur":"L'ordinateur a gagné"):(p==="r"?"Rouge":"Jaune")+" gagne (partie à deux)"})}catch(e){}resetReader();
       return}
     if(board[0].every(x=>x)){over=true;render();setStatus("Plateau plein : match nul");resetReader();return}
     turn=p==="r"?"y":"r";render();setStatus();resetReader();

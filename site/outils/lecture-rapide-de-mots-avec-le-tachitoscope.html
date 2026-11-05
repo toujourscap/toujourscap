@@ -117,7 +117,7 @@
             cursor: pointer;
         }
     </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <div id="tachi-container">
@@ -192,6 +192,7 @@
     // Fonction dédiée pour afficher l'écran de victoire détaillé
     function afficherVictoire() {
         const totalWords = words.length;
+  try{TDC.note({s:totalWords,n:totalWords,g:true,d:"Les "+totalWords+" mots de la liste lus"})}catch(e){}
         wordDisplay.innerHTML = `
             <div style="font-size: 0.5em; line-height: 1.4; color: #198754;">
                 🎉 <strong style="font-size: 1.3em;">SUPER BRAVO !</strong> 🎉<br><br>

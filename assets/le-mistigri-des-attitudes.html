@@ -98,7 +98,7 @@ button{font:inherit;color:inherit}
 @media (max-width:700px){.barre{gap:8px;padding:8px 10px}.barre h1{width:100%}.duo{gap:3vw}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <header class="barre">
   <h1>Le Mistigri des attitudes</h1>
@@ -301,6 +301,7 @@ button{font:inherit;color:inherit}
   function fin() {
     sons.bravo(); confettis();
     $("vTitre").textContent = "Bravo ! Les 8 paires sont trouvées !";
+  try{TDC.note({s:8,n:8,g:true,d:"Les 8 paires d'attitudes trouvées"})}catch(e){}
     $("vCorps").innerHTML = img("le-mistigri", "mistigri-img") + '<p class="question" style="margin:2vh auto 1vh">Le Mistigri, lui, n\'a pas de paire…</p><p class="phrase" style="margin:0 auto 2vh">Quel conseil lui donnez-vous pour bien apprendre&nbsp;?</p><p><button class="btn gros" type="button" id="vSuite">↻ Rejouer</button></p>';
     ouvreVoile();
     $("vSuite").addEventListener("click", nouvellePartie);

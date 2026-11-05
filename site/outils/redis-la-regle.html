@@ -100,7 +100,7 @@ details{margin-top:28px;color:var(--muted);font-size:.8em;background:rgba(255,25
 summary{cursor:pointer}
 @media (max-width:480px){body{font-size:18px}.face{padding:16px}.prof img{height:110px}.bulle{margin-bottom:34px;font-size:.9em}.avatar{font-size:1.7em}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
 <div class="prof">
@@ -432,6 +432,7 @@ $('#verifier').onclick = () => {
   $('#feuille').classList.remove('tournee');
   let s = bons===2 ? 3 : 1; if(peeked && s>2) s=2;
   setStar(cur.id,s);
+  try{TDC.note({s:bons,n:2,niv:classe()||"",d:cur.titre+" : "+s+" étoile"+(s>1?"s":"")+(peeked?" (avec un coup d'œil)":"")})}catch(e){}
   const msg = bons===2 ? (peeked?'Tu as trouvé les deux, avec un coup d\'œil.':'Tu as trouvé les deux élèves qui avaient raison !')
             : bons===1 ? 'Un seul juste sur deux. Lis les explications et rejoue !'
             : 'Les pièges t\'ont eu ! Lis les explications et rejoue.';

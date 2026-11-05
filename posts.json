@@ -1,6 +1,287 @@
 {
- "count": 40,
+ "count": 41,
  "posts": [
+  {
+   "title": "La tour de contrôle",
+   "slug": "la-tour-de-controle",
+   "cat": "metacognition",
+   "excerpt": "Le carnet de vol de chaque élève : il écrit son prénom dans la tour de contrôle, puis tous ses résultats dans les jeux du site s'y enregistrent. Grades de pilote, tableau des arrivées et bilan à copier pour l'enseignant.",
+   "date": "2026-11-05T13:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur",
+    "supports": [
+     "ecran"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avant de jouer, l'élève entre dans la tour de contrôle et écrit son prénom. Ensuite, chaque partie jouée sur le site devient un « vol » noté dans son carnet : le jeu, le résultat, le niveau et le jour. En revenant dans la tour, il voit ses progrès et choisit sa prochaine destination.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-tour-de-controle.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment ça marche",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Décoller. ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève écrit son prénom (ou touche son badge s'il est déjà venu), puis clique sur « Décoller ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Jouer. ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il ouvre un jeu du site depuis la tour ou depuis les rubriques. Son prénom s'affiche discrètement en bas à gauche : à la fin de la partie, « vol enregistré » apparaît.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Revenir à la tour. ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le tableau des arrivées montre ses derniers vols ; chaque jeu a sa carte avec le nombre de parties, le dernier résultat, le meilleur score et les barres de progrès.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Monter en grade. ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Élève pilote, copilote, pilote, commandant de bord… selon le nombre de vols. Les jeux pas encore essayés sont des « destinations à découvrir ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour l'enseignant",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le bouton « Enseignant » (protégé par un petit calcul) liste tous les pilotes de l'appareil : voir le carnet d'un élève, copier son bilan pour le coller dans un document, effacer un carnet.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur un ordinateur de classe partagé, chaque élève a son badge : il suffit de changer de pilote entre deux élèves.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les outils sans score (téléprompteur de lecture, Jackpot des contes, Images du quotidien) sont notés comme « séance » avec leur durée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Et les données ?",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Seul le prénom est demandé. Tout reste dans le navigateur de l'appareil utilisé : rien n'est envoyé sur Internet, rien n'est visible depuis un autre ordinateur. Effacer les données du navigateur efface aussi les carnets de vol.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Les flèches de Robin",
    "slug": "les-fleches-de-robin",

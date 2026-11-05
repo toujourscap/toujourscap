@@ -146,7 +146,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 @media (max-width:640px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.barre{flex-wrap:wrap}.reserve{order:-1;flex-basis:100%;gap:8px}.lecture{flex:1 1 0}}
 @media (prefers-reduced-motion:reduce){.allume .flamme,.vibre,.hublot:empty::after{animation:none}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -680,6 +680,7 @@ function finPartie(){
   $("ecran-jeu").hidden=true; $("ecran-fin").hidden=false;
   const n=partie.reussis.length, aides=partie.reussis.filter(r=>r.aide).length;
   $("bilan").textContent = `${n} feu${n>1?"x":""} d'artifice tiré${n>1?"s":""} au bal du 14 juillet !` + (aides ? ` (${aides} mot${aides>1?"s":""} trouvé${aides>1?"s":""} avec l'aide, en pointillés)` : "");
+  try{TDC.note({s:n,n:partie.mots.length,d:$("bilan").textContent})}catch(e){}
   $("liste").innerHTML = partie.reussis.map(r=>`<figure class="${r.aide?"aide":""}">${r.cle?`<img src="${imageMot(r.cle)}" alt="">`:""}${r.mot}</figure>`).join("");
 }
 

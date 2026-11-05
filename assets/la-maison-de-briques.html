@@ -194,7 +194,7 @@
   .clavier{gap:clamp(4px,.7vh,6px)}
   .clavier button{font-size:clamp(1.1rem,3vh,1.5rem);padding:clamp(1px,.6vh,8px) 0}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- Accueil -->
@@ -725,6 +725,7 @@
       $('fin-texte').textContent = 'La maison n\'était pas finie : ' + etat.total + ' briques sur 100. On réessaie ?';
       dire('Le loup a soufflé. On réessaie ?');
     }
+  try{TDC.note({g:!!gagne,s:gagne?100:etat.total,n:100,d:$('fin-texte').textContent})}catch(e){}
     montrer('fin');
   }
 

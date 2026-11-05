@@ -200,7 +200,7 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -563,6 +563,7 @@ function finPartie(){
   const sans = stats.mots.filter(m=>m.erreurs===0).length;
   $("titre-fin").textContent = sans === stats.mots.length ? "Tu es un grand magicien !" : "Tu es un vrai magicien !";
   $("resume-fin").textContent = `${stats.mots.length} mot${stats.mots.length>1?"s":""} écrit${stats.mots.length>1?"s":""} · ${stats.premierCoup} lettre${stats.premierCoup>1?"s":""} sur ${stats.total} trouvée${stats.total>1?"s":""} du premier coup.`;
+  try{TDC.note({s:stats.premierCoup,n:stats.total,d:$("resume-fin").textContent})}catch(e){}
   $("liste-fin").innerHTML = stats.mots.map(m => `<figure>${m.i && $("opt-image").checked ? `<img src="${IMG}${m.i}.jpg" alt="">` : ""}
     <figcaption>${[...m.m].map(c => lettres.includes(c) ? `<b>${c}</b>` : c).join("")}</figcaption><small>${m.erreurs ? m.erreurs+" erreur"+(m.erreurs>1?"s":"") : "du premier coup"}</small></figure>`).join("");
   const c = Object.entries(stats.conf).sort((a,b)=>b[1]-a[1]);
