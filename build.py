@@ -285,8 +285,8 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 </main>
 <footer class="site-footer">
   <div class="wrap">
-    <p><strong>Toujours cap&nbsp;!</strong> — ressources pédagogiques pour le cycle 2.</p>
-    <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! Tous droits réservés.</p>
+    <p><strong>Toujours cap&nbsp;!</strong> — ressources pédagogiques pour les cycles 2 et 3.</p>
+    <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! — Contenus sous licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a> : libres pour la classe, avec mention de la source, sans usage commercial.</p>
   </div>
 </footer>
 <script>try{{navigator.sendBeacon("/api/vue",JSON.stringify({{p:location.pathname,r:document.referrer}}))}}catch(e){{}}</script>
