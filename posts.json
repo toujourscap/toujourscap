@@ -9289,7 +9289,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Fluence sur 3 niveaux de texte",
+         "text": "Fluence sur 5 niveaux de texte",
          "decorations": [
           {
            "type": "LINK",
@@ -9373,7 +9373,7 @@
     "custom": false
    },
    "cat": "lecture",
-   "title": "Fluence sur 3 niveaux de texte du CP au CE1",
+   "title": "Fluence sur 5 niveaux de texte du CP au CM2",
    "slug": "teleprompteur-de-lecture",
    "excerpt": "Un téléprompteur de lecture : le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute.",
    "date": "2026-05-21T11:09:14Z",
@@ -9381,7 +9381,10 @@
     "competence": "phrases-textes",
     "niveaux": [
      "CP",
-     "CE1"
+     "CE1",
+     "CE2",
+     "CM1",
+     "CM2"
     ],
     "supports": [
      "ecran",
@@ -9396,7 +9399,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Trois textes au choix (sons simples, quelques sons complexes, niveau CE1), ou son propre texte.",
+         "text": "Le texte s'affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute. Cinq textes au choix (sons simples, quelques sons complexes, CE1, CE2, CM1-CM2), ou son propre texte.",
          "decorations": []
         }
        }
@@ -9484,13 +9487,16 @@
    "cat": "lecture",
    "title": "Texte de fluence à vitesse automatique",
    "slug": "teleprompteur-a-l-ecoute",
-   "excerpt": "L'élève lit à voix haute : le texte suit sa lecture, même s'il va vite. Quatre niveaux de textes ou votre propre texte. Bilan à la minute : mots lus et erreurs. Avec Chrome ou Edge.",
+   "excerpt": "L'élève lit à voix haute : le texte suit sa lecture, même s'il va vite. Cinq niveaux de textes ou votre propre texte. Bilan à la minute : mots lus et erreurs. Avec Chrome ou Edge.",
    "date": "2026-05-21T11:09:13Z",
    "jeu": {
     "competence": "phrases-textes",
     "niveaux": [
      "CP",
-     "CE1"
+     "CE1",
+     "CE2",
+     "CM1",
+     "CM2"
     ],
     "supports": [
      "ecran",
@@ -9523,7 +9529,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir le texte : quatre niveaux (CP sons simples, CP sons complexes, CE1, CE2-CM1), assez longs pour une minute de lecture. Avec « Mon texte », l'enseignant ou le parent colle le texte de son choix ; il reste enregistré sur l'ordinateur.",
+             "text": "Choisir le texte : cinq niveaux (CP sons simples, CP sons complexes, CE1, CE2, CM1-CM2), assez longs pour une minute de lecture. Avec « Mon texte », l'enseignant ou le parent colle le texte de son choix ; il reste enregistré sur l'ordinateur.",
              "decorations": []
             }
            }
@@ -9669,7 +9675,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Fluence sur 3 niveaux de texte",
+         "text": "Fluence sur 5 niveaux de texte",
          "decorations": [
           {
            "type": "LINK",

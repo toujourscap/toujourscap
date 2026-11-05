@@ -140,6 +140,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .ligne-saisie .crayon{font-size:22px}
 .accents{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .accents button{min-width:38px;height:38px;border-radius:9px;border:2px solid #e7e0d4;background:#fff;font-size:19px;font-weight:700;color:var(--stylo)}
+.accents button:disabled{opacity:.4;cursor:default}
 .bulle .ecouter{position:absolute;right:-12px;bottom:-12px;width:34px;height:34px;border-radius:50%;border:3px solid var(--vert);background:#fff;font-size:15px;cursor:pointer;display:grid;place-items:center;padding:0}
 .msg{min-height:28px;margin:10px 0 0;font-size:17px;font-weight:700}
 .msg.rouge{color:var(--rouge)} .msg.vert{color:var(--correc)} .msg.orange{color:#c56a00}
@@ -1282,7 +1283,7 @@ function plier(){
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
-  etat.regarde=false;etat.vues=0;$("ardoise").classList.remove("vue-modele");
+  etat.regarde=false;etat.vues=0;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
   bouton(PH("J'ai écrit ma phrase","J'ai écrit mes mots"),"vert",verifier);
   etat.btnRegard=bouton("👀 Regarder le modèle (3)","blanc",regarderModele);
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
@@ -1297,9 +1298,20 @@ function regarderModele(){
   if(bt){bt.textContent=reste?"👀 Regarder le modèle ("+reste+")":"👀 Plus de coup d'œil";bt.disabled=!reste;}
   etat.regarde=true;
   $("ardoise").classList.add("vue-modele");
-  msg("Tu as regardé le modèle : ce n'est pas grave, mais cet essai ne comptera pas comme juste.","orange");
-  clearTimeout(tRegard);tRegard=setTimeout(function(){$("ardoise").classList.remove("vue-modele");},5000);
-  $("saisie").focus();
+  bloquerSaisie(true);
+  msg("");
+  clearTimeout(tRegard);tRegard=setTimeout(finRegard,5000);
+}
+function finRegard(){
+  $("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
+  if($("ligneSaisie").style.display!=="none"){msg("Le modèle est caché : à toi d'écrire ! Cet essai ne comptera pas comme juste.","orange");$("saisie").focus();}
+}
+// pendant que le modèle est affiché, l'élève ne peut pas écrire (ni clavier, ni accents, ni valider)
+function bloquerSaisie(b){
+  var i=$("saisie");i.readOnly=b;if(b)i.blur();
+  $("ligneSaisie").style.opacity=b?".45":"";
+  $("accents").querySelectorAll("button").forEach(function(x){x.disabled=b;});
+  $("actions").querySelectorAll("button").forEach(function(x){if(x!==etat.btnRegard)x.disabled=b;else if(b)x.disabled=true;else x.disabled=etat.vues>=MAX_VUES;});
 }
 /* Étapes 4, 6 : déplier, comparer, corriger en couleur */
 function boutonsSuite(){
@@ -1312,12 +1324,13 @@ function boutonsSuite(){
   }
 }
 function verifier(){
+  if($("saisie").readOnly)return; // modèle affiché : on attend qu'il soit caché
   var essai=normaliser($("saisie").value);
   if(!essai){$("saisie").focus();return;}
   saisieVisible(false);
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
-  var regarde=!!etat.regarde;etat.regarde=false;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");
+  var regarde=!!etat.regarde;etat.regarde=false;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
   // modèle regardé : l'essai compte au moins 1 erreur (jamais « juste »)
   etat.essais.push(regarde?Math.max(err.length,1):err.length);
   if(etat.essais.length===1)etat.regarde1=regarde;
