@@ -515,7 +515,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le mot écrit en modèle au-dessus : l'élève compare et recopie la bonne lettre. Sans modèle, il s'appuie sur l'image et sur ce qu'il entend, c'est plus difficile.",
+             "text": "Le mot écrit en modèle au-dessus (option à cocher, décochée au départ) : l'élève compare et recopie la bonne lettre. Sans modèle, il s'appuie sur l'image et sur ce qu'il entend, c'est plus difficile.",
              "decorations": []
             }
            }
