@@ -444,7 +444,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 2 : plusieurs lettres dans le même mot (bébé, debout, pédale, papillon).",
+             "text": "Niveau 2 : plusieurs lettres dans le même mot (bébé, panda, dauphin, papillon), 14 mots illustrés.",
              "decorations": []
             }
            }
@@ -461,7 +461,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 3 : avec la lettre q (coq, bouquet, paquet, pique-nique).",
+             "text": "Niveau 3 : avec la lettre q (coq, bouquet, perroquet, pique-nique), 12 mots illustrés.",
              "decorations": []
             }
            }
