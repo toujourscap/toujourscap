@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Comment mémoriser ma dictée ?</title>
+<title>Prépare ta dictée !</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 <!-- Accueil -->
 <section class="ecran actif" id="accueil">
   <div class="carte">
-    <h1>Comment mémoriser ma dictée ?</h1>
+    <h1>Prépare ta dictée !</h1>
     <p class="sous">J'apprends ma dictée comme un détective&nbsp;!</p>
     <p class="titre-dictee" id="titreDictee"></p>
     <p class="centre" style="font-weight:700;margin:0">Choisis ton détective&nbsp;:</p>
@@ -872,6 +872,9 @@ function explication(x,md){
 // Synthèse vocale (voix française de l'appareil)
 function dire(txt){
   try{var sy=window.speechSynthesis;if(!sy)return;sy.cancel();
+    var NOMS_P={"?":"point d'interrogation","!":"point d'exclamation",".":"point",",":"virgule",";":"point-virgule",":":"deux-points","'":"apostrophe","-":"trait d'union"};
+    // un signe seul entre guillemets (« ? », « . »…) est lu par son nom, sinon la voix ne dit rien
+    txt=txt.replace(/«\s*([?!.,;:'-])\s*»/g,function(_,c){return NOMS_P[c];});
     var u=new SpeechSynthesisUtterance(txt.replace(/[«»]/g,"").replace(/[\p{Extended_Pictographic}\uFE0F]/gu,"").replace(/([.!?:])\s*\./g,"$1").replace(/\s+/g," ").trim());u.lang="fr-FR";u.rate=0.9;
     var v=sy.getVoices().filter(function(v){return /^fr/i.test(v.lang);});if(v.length)u.voice=v.find(function(x){return /fr-FR/i.test(x.lang);})||v[0];
     sy.speak(u);}catch(e){}
