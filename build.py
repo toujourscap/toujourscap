@@ -231,7 +231,7 @@ def render(n, ctx):
 
 # ---------- Gabarit ----------
 NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/francais/", "Français"),
-       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/blog/", "Blog"), ("/qui-suis-je/", "Qui suis-je ?")]
+       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/post/la-tour-de-controle/", "🗼 La tour de contrôle"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
 DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
