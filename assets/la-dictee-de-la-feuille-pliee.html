@@ -122,15 +122,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .bulle-corr .bc-btns{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px}
 .bulle-corr button{border:0;background:#eef7f2;border-radius:8px;width:28px;height:28px;font-size:15px;cursor:pointer;line-height:1}
 .verif .titre{font-weight:700;color:var(--vert);margin-right:4px}
-.verif button{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700;color:#4a5752}
-.verif button[aria-pressed=true]{background:var(--vert);border-color:var(--vert);color:#fff}
-/* Je vérifie : vert = réussi, rouge = erreurs à corriger (vérifié), orange = autres erreurs */
-.verif button.reussi{background:#e6f4ea;border-color:var(--correc);color:#14663a}
-.verif button.reussi[aria-pressed=true]{background:var(--correc);border-color:var(--correc);color:#fff}
-.verif button.rate{background:#fde8e8;border-color:var(--rouge);color:#a32323}
-.verif button.rate[aria-pressed=true]{background:var(--rouge);border-color:var(--rouge);color:#fff}
-.verif button.rate-o{background:#fdf0e8;border-color:var(--orange);color:#9a4a1f}
-.verif button.rate-o[aria-pressed=true]{background:var(--orange);border-color:var(--orange);color:#fff}
+.verif .etat{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700;color:#4a5752}
+/* Je vérifie : tout est vérifié ; vert = juste ou absent, rouge = erreurs */
+.verif .etat.reussi{background:#e6f4ea;border-color:var(--correc);color:#14663a}
+.verif .etat.rate{background:var(--rouge);border-color:var(--rouge);color:#fff}
 .ardoise.cachee .tableau{color:transparent;background:#3d4a45;position:relative}
 .ardoise.cachee.vue-modele .tableau{color:#fff;background:#2f5d50}
 .ardoise.cachee.vue-modele .tableau::after{content:none}
@@ -247,8 +242,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <textarea id="ensPhrases" spellcheck="true" placeholder="Exemple :&#10;Il prend ses affaires.&#10;Le chat dort sur le canapé."></textarea>
     <p class="aide" id="ensAidePhrases">Collez le texte ou écrivez une phrase par ligne : l'outil sépare les phrases à chaque point. Écrivez-les exactement comme l'élève doit les écrire, avec la majuscule et le point. Facultatif : mettez les verbes entre étoiles (Le chat *dort*.) pour que les erreurs de conjugaison soient bien reconnues ; sinon l'outil les devine.</p>
     <div class="niveaux" id="ensNiveaux"><span>Niveau&nbsp;:</span><button type="button" data-n="CP">CP</button><button type="button" data-n="CE1">CE1</button><button type="button" data-n="CE2">CE2</button><button type="button" data-n="CM1">CM1</button><button type="button" data-n="CM2">CM2</button></div>
-    <fieldset class="cats" id="ensCats"><legend>Les erreurs que l'élève devra vérifier</legend></fieldset>
-    <p class="aide">Les types cochés sont à corriger obligatoirement (« ? » rouge). Les autres erreurs restent signalées à l'élève en orange : il peut les corriger s'il le souhaite.</p>
+    <fieldset class="cats" id="ensCats"><legend>Les types d'erreurs affichés à l'élève</legend></fieldset>
+    <p class="aide">Toutes les erreurs sont à corriger (« ? » rouge). Après chaque essai, la liste « Je vérifie » montre en vert les types justes ou absents de la dictée, en rouge ceux qui ont des erreurs.</p>
     <label for="ensNote">Mon conseil pour les pièges (facultatif)</label>
     <input id="ensNote" maxlength="200" placeholder="Exemple : attention aux mots avec « eau » et au pluriel.">
     <div class="rangee">
@@ -314,7 +309,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
         <div class="accents" id="accents"></div>
       </div>
       <div class="pieges" id="pieges"></div>
-      <div class="verif" id="verif" role="group" aria-label="Ce que je vérifie"></div>
+      <div class="verif" id="verif" role="group" aria-label="Ce que je vérifie : vert juste, rouge erreur"></div>
       <div class="explications" id="explications" aria-live="polite"></div>
       <p class="msg" id="msg" aria-live="polite"></p>
       <div class="bulle2" id="bulle2">C'est en corrigeant mes erreurs que j'apprends&nbsp;!</div>
@@ -1064,24 +1059,17 @@ function actif(cat){return cat==="autre"?tous().length===CHOIX.length:tous().ind
 verif=Array.isArray(verif)?verif.filter(function(v){return NOMCAT[v]&&!NOMCAT[v].cache;}):[];
 if(!verif.length)verif=tous();
 function toutCoche(){return verif.length===tous().length;}
-function choisi(cat){return cat==="autre"?toutCoche()&&actif("autre"):verif.indexOf(cat)>=0;}
+function choisi(){return true;} // tout est vérifié : toutes les erreurs sont en rouge
 function dessinerVerif(){
+  // tout est vérifié : vert = juste ou absent de la dictée, rouge = erreurs
   var z=$("verif");z.innerHTML='<span class="titre">Je vérifie :</span>';
-  var tout=document.createElement("button");tout.type="button";tout.textContent="Tout";tout.setAttribute("aria-pressed",toutCoche()?"true":"false");
-  tout.onclick=function(){verif=tous();changerVerif();};z.appendChild(tout);
-  // couleur selon le résultat de l'essai : vert = réussi, rouge = erreurs vérifiées, orange = autres erreurs
-  var err=etat&&etat.correction&&etat.correction.err,nb={},total=0;
-  if(err)err.forEach(function(x){nb[x.cat]=(nb[x.cat]||0)+1;total++;});
-  function teinter(b,n,coche){if(!err)return;b.classList.add(!n?"reussi":coche?"rate":"rate-o");b.title=!n?"Réussi":n+" erreur"+(n>1?"s":"");}
-  teinter(tout,total,toutCoche());
-  CHOIX.filter(function(c){return actif(c.id);}).forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
-    b.onclick=function(){
-      if(toutCoche())verif=[c.id];
-      else{var i=verif.indexOf(c.id);if(i>=0)verif.splice(i,1);else verif.push(c.id);if(!verif.length)verif=tous();}
-      changerVerif();};
-    var n=nb[c.id]||0;if(c.id==="autre")Object.keys(nb).forEach(function(k){if(!actif(k))n+=nb[k];});
-    teinter(b,n,choisi(c.id));
-    z.appendChild(b);});
+  var err=etat&&etat.correction&&etat.correction.err,nb={},affiches=CHOIX.filter(function(c){return actif(c.id);});
+  if(err)err.forEach(function(x){nb[x.cat]=(nb[x.cat]||0)+1;});
+  function pastille(nom,n){var b=document.createElement("span");b.className="etat"+(err?(n?" rate":" reussi"):"");b.textContent=(err?(n?"✗ ":"✓ "):"")+nom;
+    if(err)b.title=n?n+" erreur"+(n>1?"s":""):"Juste";z.appendChild(b);}
+  affiches.forEach(function(c){pastille(c.nom,nb[c.id]||0);});
+  var reste=0;Object.keys(nb).forEach(function(k){if(!affiches.some(function(c){return c.id===k;}))reste+=nb[k];});
+  if(reste)pastille("D'autres erreurs",reste);
 }
 function changerVerif(){ecrire("dictee-pliee-verif",verif);dessinerVerif();if(etat&&etat.correction)etat.correction.dessiner();}
 
@@ -1303,7 +1291,7 @@ function plier(){
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
 }
 
-/* Pendant l'écriture, l'élève peut jeter un œil au modèle (5 s, 3 fois par essai au maximum) : l'essai ne compte alors pas comme juste */
+/* Pendant l'écriture, l'élève peut jeter un œil au modèle (3 s, 3 fois par essai au maximum) : l'essai ne compte alors pas comme juste */
 var tRegard=null,MAX_VUES=3;
 function regarderModele(){
   if(!$("ardoise").classList.contains("cachee")||etat.vues>=MAX_VUES)return;
@@ -1314,7 +1302,7 @@ function regarderModele(){
   $("ardoise").classList.add("vue-modele");
   bloquerSaisie(true);
   msg("");
-  clearTimeout(tRegard);tRegard=setTimeout(finRegard,5000);
+  clearTimeout(tRegard);tRegard=setTimeout(finRegard,3000);
 }
 function finRegard(){
   $("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
@@ -1373,8 +1361,7 @@ function verifier(){
   etat.correction={dessiner:dessiner,err:err};
   $("verif").classList.add("vue");dessinerVerif();
   // Toutes les erreurs sont indiquées par un « ? » :
-  //  - rouge : ce que je vérifie (choisi par l'élève, parmi ce que l'enseignant a coché) — à corriger pour continuer ;
-  //  - orange : les autres erreurs — indiquées aussi, l'élève peut les corriger s'il le souhaite.
+  //  - rouge : toutes les erreurs — à corriger pour continuer ;
   function dessiner(){
     fermerBulle();r.innerHTML="";
     var aVoir=0,dansChoix=0,autres=0;
