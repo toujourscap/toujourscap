@@ -124,6 +124,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 .verif .titre{font-weight:700;color:var(--vert);margin-right:4px}
 .verif button{border:2px solid #d9d2c4;background:#fffdf8;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700;color:#4a5752}
 .verif button[aria-pressed=true]{background:var(--vert);border-color:var(--vert);color:#fff}
+/* Je vérifie : vert = réussi, rouge = erreurs à corriger (vérifié), orange = autres erreurs */
+.verif button.reussi{background:#e6f4ea;border-color:var(--correc);color:#14663a}
+.verif button.reussi[aria-pressed=true]{background:var(--correc);border-color:var(--correc);color:#fff}
+.verif button.rate{background:#fde8e8;border-color:var(--rouge);color:#a32323}
+.verif button.rate[aria-pressed=true]{background:var(--rouge);border-color:var(--rouge);color:#fff}
+.verif button.rate-o{background:#fdf0e8;border-color:var(--orange);color:#9a4a1f}
+.verif button.rate-o[aria-pressed=true]{background:var(--orange);border-color:var(--orange);color:#fff}
 .ardoise.cachee .tableau{color:transparent;background:#3d4a45;position:relative}
 .ardoise.cachee.vue-modele .tableau{color:#fff;background:#2f5d50}
 .ardoise.cachee.vue-modele .tableau::after{content:none}
@@ -1062,11 +1069,18 @@ function dessinerVerif(){
   var z=$("verif");z.innerHTML='<span class="titre">Je vérifie :</span>';
   var tout=document.createElement("button");tout.type="button";tout.textContent="Tout";tout.setAttribute("aria-pressed",toutCoche()?"true":"false");
   tout.onclick=function(){verif=tous();changerVerif();};z.appendChild(tout);
+  // couleur selon le résultat de l'essai : vert = réussi, rouge = erreurs vérifiées, orange = autres erreurs
+  var err=etat&&etat.correction&&etat.correction.err,nb={},total=0;
+  if(err)err.forEach(function(x){nb[x.cat]=(nb[x.cat]||0)+1;total++;});
+  function teinter(b,n,coche){if(!err)return;b.classList.add(!n?"reussi":coche?"rate":"rate-o");b.title=!n?"Réussi":n+" erreur"+(n>1?"s":"");}
+  teinter(tout,total,toutCoche());
   CHOIX.filter(function(c){return actif(c.id);}).forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c.nom;b.setAttribute("aria-pressed",!toutCoche()&&verif.indexOf(c.id)>=0?"true":"false");
     b.onclick=function(){
       if(toutCoche())verif=[c.id];
       else{var i=verif.indexOf(c.id);if(i>=0)verif.splice(i,1);else verif.push(c.id);if(!verif.length)verif=tous();}
       changerVerif();};
+    var n=nb[c.id]||0;if(c.id==="autre")Object.keys(nb).forEach(function(k){if(!actif(k))n+=nb[k];});
+    teinter(b,n,choisi(c.id));
     z.appendChild(b);});
 }
 function changerVerif(){ecrire("dictee-pliee-verif",verif);dessinerVerif();if(etat&&etat.correction)etat.correction.dessiner();}
@@ -1356,7 +1370,7 @@ function verifier(){
   }
   var vues={};
   $("explications").innerHTML="";
-  etat.correction={dessiner:dessiner};
+  etat.correction={dessiner:dessiner,err:err};
   $("verif").classList.add("vue");dessinerVerif();
   // Toutes les erreurs sont indiquées par un « ? » :
   //  - rouge : ce que je vérifie (choisi par l'élève, parmi ce que l'enseignant a coché) — à corriger pour continuer ;
