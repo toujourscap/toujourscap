@@ -167,7 +167,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -543,6 +543,7 @@ function finPartie(){
   const N = partie.length, p = stats.premier;
   $("titre-fin").textContent = p === N ? "Dans le mille à chaque fois !" : p >= N*.7 ? "Bravo, fin archer !" : "Bel entraînement, archer !";
   $("resume-fin").textContent = `${p} cible${p>1?"s":""} sur ${N} touchée${p>1?"s":""} du premier coup.`;
+  try{TDC.note({s:p,n:N,d:$("resume-fin").textContent})}catch(e){}
   const nl = stats.rates.filter(r=>r.type==="lettre").length, no = stats.rates.filter(r=>r.type==="ordre").length;
   $("barres").innerHTML = `<div><b>${p}/${N}</b><small>du premier coup</small></div><div><b>${nl}</b><small>lettre confondue</small></div>${+val("niveau")>1?`<div><b>${no}</b><small>lettres dans le désordre</small></div>`:""}`;
   $("bilan-conf").innerHTML = stats.rates.length

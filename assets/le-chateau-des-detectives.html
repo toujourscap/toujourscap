@@ -177,7 +177,7 @@ mark{background:transparent;color:inherit;border-radius:4px;transition:backgroun
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 
@@ -458,6 +458,7 @@ function gameOver(){
 function finish(){
   document.getElementById("end").classList.remove("go");
   const sans = g.fautes.filter(f=>f===0).length;
+  try{TDC.note({s:sans,n:10,g:true,d:"Portes ouvertes du premier coup : "+sans+" sur 10"})}catch(e){}
   const parFam = {};
   g.cards.forEach((c,i)=>{ if(g.fautes[i]) parFam[c.cat]=(parFam[c.cat]||0)+1; });
   const fams = Object.keys(parFam);

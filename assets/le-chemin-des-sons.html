@@ -148,7 +148,7 @@ td a{font-size:13px;color:var(--bois)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:600px){.carte{padding:16px}.pancarte{padding:14px 18px 16px}.btn{padding:12px 18px;font-size:18px}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -675,6 +675,7 @@ async function finir(gagne){
   $("fin-h1").textContent = gagne ? (cfg.prenom?`Bravo ${cfg.prenom} ! `:"Bravo ! ")+"Le Petit Chaperon rouge est arrivé chez Mère-Grand." : `Le loup a rattrapé ${nom}… On recommence ?`;
   const bons=jeu.res.filter(r=>r.ok&&!r.aide).length;
   $("fin-score").textContent = `${bons} mot${bons>1?"s":""} bien lu${bons>1?"s":""} sur ${jeu.res.length} lu${jeu.res.length>1?"s":""} (${N} pancartes sur le chemin).`;
+  try{TDC.note({s:bons,n:jeu.res.length,g:!!gagne,d:$("fin-score").textContent})}catch(e){}
   const parSon={}; jeu.res.forEach(r=>{parSon[r.son]=parSon[r.son]||[0,0];parSon[r.son][1]++;if(r.ok&&!r.aide)parSon[r.son][0]++;});
   $("fin-parson").innerHTML=Object.entries(parSon).map(([s,[a,b]])=>`<span><b>${LIBELLE[s]}</b> ${a}/${b}</span>`).join("");
   const nomF=(cfg.prenom||"eleve").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]/g,"");

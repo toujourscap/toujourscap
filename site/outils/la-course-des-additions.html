@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Additions</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-additions/"><meta name="description" content="Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l&#x27;ordinateur, ou en classe par équipes avec un classement au temps."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Additions</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-additions/"><meta name="description" content="Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l&#x27;ordinateur, ou en classe par équipes avec un classement au temps."><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
 /* Layout : écran unique — en-tête, scène de course en défilement (ciel, collines, 2 couloirs), question + pavé */
@@ -592,6 +592,7 @@ function finish(win){
   $("lead").textContent="";
   if(win){ store.medals[R.table]=store.medals[R.table]||{}; store.medals[R.table][l.id]=true; save(); confetti(l); cheerNear(0,1e5,3500); }
   MUS.stop(); jingle(win);
+  try{TDC.note({s:R.good,n:STEPS,g:!!win,niv:({bronze:"Bronze",argent:"Argent",or:"Or"})[l.id]||l.id,d:(win?"Médaille "+({bronze:"de bronze",argent:"d'argent",or:"d'or"})[l.id]+" en "+fmt(el)+" s":"L'ordinateur a gagné : "+R.good+" / "+STEPS)+" · table "+R.table})}catch(e){}
   const next = LEVELS[LEVELS.indexOf(l)+1];
   const ov=$("ov"); ov.hidden=false;
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">

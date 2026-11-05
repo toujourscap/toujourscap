@@ -128,7 +128,7 @@
     .scene{height:34vh}
   }
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- ============ Réglages ============ -->
@@ -475,6 +475,7 @@
     $("scoreFin").textContent = s;
     const min = etat.duree === 60 ? "en 1 minute" : etat.duree === 30 ? "en 30 secondes" : etat.duree === 90 ? "en 1 minute 30" : "en 2 minutes";
     $("phraseFin").textContent = (s > 1 ? "syllabes bien lues " : "syllabe bien lue ") + min + " · " + NIVEAUX[n].nom;
+  try{TDC.note({s:s,niv:NIVEAUX[n].nom,d:s+" "+$("phraseFin").textContent.split(" · ")[0]})}catch(e){}
     // Record : calculé sur une minute pour comparer des durées différentes
     const cle = n + "-" + etat.duree;
     const ancien = records[cle] || 0;

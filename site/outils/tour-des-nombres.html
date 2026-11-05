@@ -119,7 +119,7 @@
     .tour{--h:calc((46vh - 100px) / var(--max))}
   }
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- ===== Réglages ===== -->
@@ -490,6 +490,7 @@
     dessinerTour(false, true);
     sonVictoire();
     dire("Bravo ! La tour est construite !");
+  try{TDC.note({g:true,d:"Tour de "+etat.hauteur+" étages construite (nombres de "+etat.min+" à "+etat.max+")"})}catch(e){}
     confettis();
     setTimeout(() => $("victoire").classList.add("actif"), 900);
   }

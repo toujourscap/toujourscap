@@ -142,7 +142,7 @@ button.obj[aria-pressed=true]{border-color:var(--violet);background:var(--violet
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- ACCUEIL -->
@@ -555,7 +555,8 @@ function finale(){
   $("#titre-fin").textContent=g("Diplôme d'{e} du cerveau");
   $("#img-fin").src="/images/cerveau/"+E(["exploratrice","explorateur"])+".jpg";
   var t="Bravo ! Tu as découvert les 6 secrets pour mieux apprendre.";
-  $("#txt-fin").textContent=t; $("#son-fin").onclick=function(){parle(t,5);};
+  $("#txt-fin").textContent=t;
+  try{TDC.note({s:6,n:6,g:true,d:"Diplôme : les 6 secrets du cerveau découverts"})}catch(e){} $("#son-fin").onclick=function(){parle(t,5);};
   $("#regles").innerHTML=LIEUX.map(function(l){return '<div class="regle"><span aria-hidden="true">'+l.badge+'</span>'+esc(l.lecon)+'</div>';}).join("");
   parle(t,5);
   if(!matchMedia("(prefers-reduced-motion: reduce)").matches){

@@ -82,7 +82,7 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
 #suivant{align-self:flex-end;font-size:1.15rem;padding:6px 18px}
 @media (max-width:640px){.setup .deco{display:none}.setup{min-height:0}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 
@@ -510,6 +510,7 @@ async function finish() {
   state = "done"; clearInterval(taunter); q = total; hud();
   eq.setAttribute("font-size", "62"); eq.setAttribute("fill", "#2e7a2a");
   eq.textContent = `Bravo ! ${score} / ${total} du premier coup`;
+  try{TDC.note({s:score,n:total,d:score+" / "+total+" du premier coup"})}catch(e){}
   sWin();
   moles.forEach(m => setValue(m, null));
   const msg = ["Bien joué...", "On se rend !", "Pitié !", "Ouille !", "Revanche ?"];

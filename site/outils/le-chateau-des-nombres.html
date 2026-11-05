@@ -111,7 +111,7 @@
   .confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:30;pointer-events:none;animation:tombe linear forwards}
   @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- ===== Réglages ===== -->
@@ -510,6 +510,7 @@
     $("finEtoiles").textContent = r >= .9 ? "⭐⭐⭐" : r >= .6 ? "⭐⭐" : "⭐";
     $("finTitre").textContent = r >= .9 ? "Bravo, tu es le roi du château\u00a0!" : r >= .6 ? "Bien joué\u00a0!" : "Continue, tu progresses\u00a0!";
     $("finScore").textContent = etat.bons + " / " + t + (etat.mode === "lire" ? " nombres bien lus" : " nombres trouvés du premier coup");
+  try{TDC.note({s:etat.bons,n:t,d:$("finScore").textContent})}catch(e){}
     const revoir = [...new Set(etat.aRevoir)].sort((a,b) => a-b);
     $("finRevoir").innerHTML = revoir.length ? "<p>À revoir :</p><div class='revoir'>" + revoir.map(n => `<span>${n}</span>`).join("") + "</div>" : "";
     $("finRevoirBtn").style.display = revoir.length ? "" : "none";

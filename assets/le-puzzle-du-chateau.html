@@ -112,7 +112,7 @@
     .decoupe td{width:12.5mm;height:12.5mm;padding:0;text-align:center;font-size:15pt;font-family:"Andika",sans-serif}
   }
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 
 <!-- ===== Réglages ===== -->
@@ -466,6 +466,7 @@
     const e = etat.erreurs;
     $("finEtoiles").textContent = e <= 2 ? "⭐⭐⭐" : e <= 6 ? "⭐⭐" : "⭐";
     $("finTexte").textContent = `${etat.pieces.length} pièces en ${duree}` + (e ? ` · ${e} pièce${e > 1 ? "s" : ""} mal placée${e > 1 ? "s" : ""}` : " · aucune erreur !");
+  try{TDC.note({g:true,d:$("finTexte").textContent})}catch(e){}
     sonVictoire(); confettis();
     setTimeout(() => $("fin").classList.add("actif"), 1100);
   }

@@ -172,7 +172,7 @@ mark.on{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
   #print .pbreak{break-before:page}
 }
 </style>
-</head>
+<script src="tour-de-controle.js"></script></head>
 <body>
 <div class="wrap" id="app"></div>
 <div id="print" aria-hidden="true"></div>
@@ -918,6 +918,7 @@ function resultat(){
   const ratio = tot/max;
   const etoiles = ratio>=.85?3:ratio>=.6?2:ratio>=.3?1:0;
   const titre = ["Relisons ensemble !","Bon début, lecteur !","Très bon lecteur !","Lecteur champion !"][etoiles];
+  try{TDC.note({s:tot,n:max,niv:st.niv?("Niveau "+st.niv):"",d:c.titre+" : "+etoiles+" étoile"+(etoiles>1?"s":"")+" ("+tot+" / "+max+" points)"})}catch(e){}
   const parFam = {};
   qcm.forEach(r=>{ (parFam[r.f] ||= {n:0,p:0}); parFam[r.f].n++; parFam[r.f].p+=r.pts; });
   const zzLigne = zz.length ? `<tr><td><span class="chip" ${famStyle("zz")}>🎓 Professeur Zigzag</span></td><td class="r">${zz.reduce((s,r)=>s+r.trouvees,0)} idée(s) sur ${zz.reduce((s,r)=>s+r.total,0)}${zz.some(r=>r.passe)?" · question passée":""}</td></tr>` : "";

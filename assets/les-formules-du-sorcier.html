@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
 <title>Les Formules du Sorcier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Henny+Penny&family=Playwrite+FR+Moderne&display=swap">
@@ -477,6 +477,7 @@ const SCENE_VICTOIRE=`<svg class="scene" viewBox="0 0 640 400" role="img" aria-l
 
 function finPartie(gagne){
   S.phase="fin"; clearInterval(S.timer); clearTimeout(S.auto);
+  try{TDC.note({g:!!gagne,d:gagne?"La princesse est sauvée !":"Le troll a rempli ses fioles"})}catch(e){}
   app.innerHTML= gagne ? `
     <h1>${J().nom} a sauvé la princesse !</h1>
     <div class="end">${SCENE_VICTOIRE}
