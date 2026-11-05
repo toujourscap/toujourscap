@@ -1279,16 +1279,19 @@ function plier(){
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
-  etat.regarde=false;$("ardoise").classList.remove("vue-modele");
+  etat.regarde=false;etat.vues=0;$("ardoise").classList.remove("vue-modele");
   bouton(PH("J'ai écrit ma phrase","J'ai écrit mes mots"),"vert",verifier);
-  bouton("👀 Regarder le modèle","blanc",regarderModele);
+  etat.btnRegard=bouton("👀 Regarder le modèle (3)","blanc",regarderModele);
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
 }
 
-/* Pendant l'écriture, l'élève peut jeter un œil au modèle (5 s) : l'essai ne compte alors pas comme juste */
-var tRegard=null;
+/* Pendant l'écriture, l'élève peut jeter un œil au modèle (5 s, 3 fois par essai au maximum) : l'essai ne compte alors pas comme juste */
+var tRegard=null,MAX_VUES=3;
 function regarderModele(){
-  if(!$("ardoise").classList.contains("cachee"))return;
+  if(!$("ardoise").classList.contains("cachee")||etat.vues>=MAX_VUES)return;
+  etat.vues++;
+  var reste=MAX_VUES-etat.vues,bt=etat.btnRegard;
+  if(bt){bt.textContent=reste?"👀 Regarder le modèle ("+reste+")":"👀 Plus de coup d'œil";bt.disabled=!reste;}
   etat.regarde=true;
   $("ardoise").classList.add("vue-modele");
   msg("Tu as regardé le modèle : ce n'est pas grave, mais cet essai ne comptera pas comme juste.","orange");
