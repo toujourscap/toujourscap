@@ -33,3 +33,10 @@ liaison D1 `DB` (déjà utilisée par les commentaires, pour les quotas).
 Facultatif : `IA_MAX_HEURE` (40 corrections par visiteur et par heure), `IA_MAX_JOUR` (2000 pour tout le site),
 `TURNSTILE_SITEKEY` + `TURNSTILE_SECRET` (anti-robot Cloudflare Turnstile).
 Fixer une limite de dépense mensuelle dans la console Anthropic (console.anthropic.com → Limits).
+
+## Parties à plusieurs tablettes
+
+`functions/api/salle.js` + `lib/salle.js` : une course partagée entre plusieurs tablettes (code à 4 lettres, jusqu'à 8 tablettes),
+gardée dans la même base D1 `DB` (tables `salles` et `salle_joueurs`, créées automatiquement, effacées au bout de 24 h).
+Les tablettes interrogent le serveur toutes les 0,8 à 1,5 s ; le départ est fixé à l'heure du serveur pour que le compte à rebours soit le même partout.
+Jeu branché : La course des additions (mode « 📱 Plusieurs tablettes »). Aucun réglage Cloudflare supplémentaire.
