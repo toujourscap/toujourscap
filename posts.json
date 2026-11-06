@@ -4211,7 +4211,7 @@
    "title": "La Course des Additions",
    "slug": "la-course-des-additions",
    "cat": "calcul",
-   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l'ordinateur, ou en classe par équipes avec un classement au temps.",
+   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l'ordinateur, ou en classe par équipes, ou sur plusieurs tablettes dans la même course.",
    "date": "2026-10-25T13:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -4223,7 +4223,7 @@
      "CP",
      "CE1"
     ],
-    "joueurs": "1 joueur ou la classe par équipes",
+    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 tablettes",
     "supports": [
      "ecran",
      "projetable"
@@ -4466,6 +4466,118 @@
         "type": "TEXT",
         "textData": {
          "text": "Les erreurs ne sont pas pénalisées par des secondes en plus : elles coûtent déjà du temps, puisqu'il faut retrouver la bonne réponse avant de repartir.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sur plusieurs tablettes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une seule course, affichée sur toutes les tablettes : chaque tablette a son vélo et tout le monde voit tous les vélos avancer. Jusqu'à 8 tablettes connectées à Internet (un élève ou une petite équipe par tablette).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur la tablette de l'adulte : choisir « 📱 Plusieurs tablettes », choisir la table, puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur chaque tablette d'élève : « 📱 Plusieurs tablettes », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Quand tout le monde est inscrit, l'adulte appuie sur « Partez ! » : même compte à rebours et mêmes 10 additions partout.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles additions.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Aucun compte : seul le prénom tapé est gardé, le temps de la partie, et il est effacé au bout de 24 heures.",
          "decorations": []
         }
        }
