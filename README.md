@@ -39,4 +39,4 @@ Fixer une limite de dépense mensuelle dans la console Anthropic (console.anthro
 `functions/api/salle.js` + `lib/salle.js` : une course partagée entre plusieurs tablettes (code à 4 lettres, jusqu'à 8 tablettes),
 gardée dans la même base D1 `DB` (tables `salles` et `salle_joueurs`, créées automatiquement, effacées au bout de 24 h).
 Les tablettes interrogent le serveur toutes les 0,8 à 1,5 s ; le départ est fixé à l'heure du serveur pour que le compte à rebours soit le même partout.
-Jeu branché : La course des additions (mode « 📱 Plusieurs tablettes »). Aucun réglage Cloudflare supplémentaire.
+Jeux branchés : La course des additions et La course des multiplications (mode « 📱 Plusieurs tablettes »). Aucun réglage Cloudflare supplémentaire.
