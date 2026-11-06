@@ -461,6 +461,9 @@
     etat.fini = true;
     $("chateau").classList.add("victoire");
     $("bac").style.display = "none";
+    // Le bac disparaît : le château se recentre, on replace les pièces posées dessus
+    const o = origine(), c = etat.c;
+    etat.pieces.forEach(p => { p.el.classList.remove("anim"); p.x = o.x + p.x0 * c; p.y = o.y + p.y0 * c; placer(p); });
     const s = Math.round((Date.now() - etat.debut) / 1000), m = Math.floor(s / 60);
     const duree = m ? `${m} min ${String(s % 60).padStart(2, "0")} s` : `${s} s`;
     const e = etat.erreurs;

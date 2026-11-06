@@ -3864,7 +3864,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir la table, de 0 à 10.",
+             "text": "Choisir la table, de 0 à 10, ou « Toutes » pour mélanger toutes les tables.",
              "decorations": []
             }
            }
@@ -3881,7 +3881,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir la médaille visée : bronze, argent ou or. Plus la médaille est précieuse, plus l'ordinateur pédale vite.",
+             "text": "Choisir la médaille visée : bronze, argent ou or. Plus la médaille est précieuse, plus l'ordinateur pédale vite. Puis cliquer sur « Partez ! ».",
              "decorations": []
             }
            }
@@ -3958,7 +3958,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un réglage réservé à l'adulte fixe le temps de l'ordinateur pour la médaille de bronze (60 secondes par défaut). L'argent demande 75 % de ce temps et l'or 55 %. On peut ainsi adapter la course à chaque élève : laisser du temps à celui qui compte encore sur ses doigts, ou pousser celui qui connaît déjà ses tables.",
+         "text": "Un réglage réservé à l'adulte fixe le temps de l'ordinateur pour la médaille de bronze (95 secondes par défaut). L'argent demande 75 % de ce temps et l'or 55 %. On peut ainsi adapter la course à chaque élève : laisser du temps à celui qui compte encore sur ses doigts, ou pousser celui qui connaît déjà ses tables.",
          "decorations": []
         }
        }

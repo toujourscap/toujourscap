@@ -168,7 +168,7 @@
     </div>
     <div class="erreur-reglage" id="msgReglage"></div>
     <button class="btn btn-go" id="btnCommencer">Construire ma tour !</button>
-    <p class="note">Le nombre suivant arrive tout seul après 3 secondes. Clavier : <b>Espace</b> = passer tout de suite au suivant, <b>Entrée</b> = bien lu, <b>X</b> = erreur.<br>Mode « choisir » : touches <b>1, 2, 3…</b> pour répondre, <b>R</b> pour réécouter. Pensez à activer le son.</p>
+    <p class="note">Après une bonne réponse, le nombre suivant arrive directement ; après une erreur, au bout de 3 secondes. Clavier : <b>Espace</b> = passer tout de suite au suivant (après une erreur), <b>Entrée</b> = bien lu, <b>X</b> = erreur.<br>Mode « choisir » : touches <b>1, 2, 3…</b> pour répondre, <b>R</b> pour réécouter. Pensez à activer le son.</p>
   </div>
 </section>
 
@@ -448,7 +448,12 @@
     if(etat.blocs.length >= etat.hauteur){
       setTimeout(victoire, 700);
     } else {
-      setTimeout(pret, etat.mode === "choix" ? 900 : 450);
+      // Bonne réponse : le nombre suivant arrive directement, sans bouton à cliquer
+      boutons([]);
+      clearTimeout(etat.suivant);
+      etat.suivant = setTimeout(() => {
+        if(etat.phase === "anim" && $("ecranJeu").classList.contains("actif")) lancer();
+      }, etat.mode === "choix" ? 1300 : 1000);
     }
   }
 
