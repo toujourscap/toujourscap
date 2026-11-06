@@ -69,7 +69,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
     });
     var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
-      c.hidden = !!f && c.dataset.comp !== f;
+      c.hidden = !!f && c.dataset.comp.split(' ').indexOf(f) < 0;
       if (!c.hidden) n++;
     });
     var v = document.querySelector('.filtres-vide');

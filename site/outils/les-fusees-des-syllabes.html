@@ -116,7 +116,8 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .mot.doux{animation:fondu .8s ease-out;background:rgba(42,22,49,.45)}
 @keyframes fondu{from{opacity:0}}
 .mot span:nth-child(1){color:#ff8a8a}.mot span:nth-child(2){color:#8ec5ff}.mot span:nth-child(3){color:#9cf09f}
-.bravo{position:absolute;left:50%;top:50%;transform:translateX(-50%);font:800 clamp(18px,3.4vw,34px)/1 var(--f-titre);color:var(--jaune);z-index:9;text-shadow:0 2px 0 rgba(0,0,0,.35);white-space:nowrap;background:rgba(42,22,49,.72);border-radius:999px;padding:.25em .8em;animation:grossit .5s backwards}
+.bravo{position:absolute;left:50%;top:50%;transform:translateX(-50%);font:800 clamp(18px,3.4vw,34px)/1 var(--f-titre);color:var(--jaune);z-index:9;text-shadow:0 2px 0 rgba(0,0,0,.35);white-space:nowrap;background:rgba(42,22,49,.72);border-radius:999px;padding:.25em .8em;animation:grossit .5s backwards,efface .6s 2.4s forwards;pointer-events:none}
+@keyframes efface{to{opacity:0;visibility:hidden}}
 .message{position:absolute;left:50%;top:5%;transform:translateX(-50%);background:var(--err);color:#fff;font-weight:700;border-radius:999px;padding:.35em 1em;font-size:clamp(13px,2vw,20px);z-index:9;white-space:nowrap;animation:grossit .3s}
 .cosmo{position:absolute;right:1.5%;bottom:2%;width:10%;z-index:4;pointer-events:none;transform-origin:50% 100%}
 .cosmo img{width:100%;display:block}
@@ -255,13 +256,21 @@ const imageMot = cle => DOSSIER + "mots/" + cle + ".jpg";
 /* ---------- Mots : syllabes écrites séparées par des tirets, et nom du fichier image ---------- */
 const MOTS = {
   1: [["lu-ne","lune"],["mo-to","moto"],["vé-lo","velo"],["la-ma","lama"],["ro-bot","robot"],["ki-wi","kiwi"],
-      ["to-ma-te","tomate"],["do-mi-no","domino"],["la-va-bo","lavabo"],["pi-ra-te","pirate"],["ba-na-ne","banane"],["tu-li-pe","tulipe"]],
+      ["to-ma-te","tomate"],["do-mi-no","domino"],["la-va-bo","lavabo"],["pi-ra-te","pirate"],["ba-na-ne","banane"],["tu-li-pe","tulipe"],
+      ["bé-bé","bebe"],["ca-nard","canard"],["bo-bi-ne","bobine"],
+      ["ca-na-pé","canape"],["ta-pis","tapis"],["ju-pe","jupe"],["sa-la-de","salade"],["ra-dis","radis"]],
   2: [["la-pin","lapin",1],["ba-teau","bateau",1],["gâ-teau","gateau",1],["dra-gon","dragon",1],["cra-yon","crayon",1],
       ["cho-co-lat","chocolat",1],["é-toi-le","etoile",1],["é-lé-phant","elephant",1],
+      ["pan-da","panda",1],["re-quin","requin",1],["ca-deau","cadeau",1],["sa-pin","sapin",1],["ba-lai","balai",1],["lou-pe","loupe",1],["dra-peau","drapeau",1],
       ["mou-ton","mouton",2],["pois-son","poisson",2],["mai-son","maison",2],["cha-peau","chapeau",2],["pin-gouin","pingouin",2],
-      ["pan-ta-lon","pantalon",2],["cham-pi-gnon","champignon",2],["pa-pil-lon","papillon",2]],
+      ["pan-ta-lon","pantalon",2],["cham-pi-gnon","champignon",2],["pa-pil-lon","papillon",2],
+      ["bam-bou","bambou",2],["bon-bon","bonbon",2],["dau-phin","dauphin",2],["din-don","dindon",2],["pom-pier","pompier",2],["bou-quet","bouquet",2],
+      ["cou-teau","couteau",2],["mou-lin","moulin",2],["poi-reau","poireau",2]],
   3: [["pin-gouin","pingouin"],["dra-gon","dragon"],["cra-yon","crayon"],["pa-pil-lon","papillon"],["é-lé-phant","elephant"],["cham-pi-gnon","champignon"],
-      ["pa-ra-pluie","parapluie"],["é-cu-reuil","ecureuil"],["es-car-got","escargot"],["ci-trouil-le","citrouille"],["gre-nouil-le","grenouille"],["trom-pet-te","trompette"]]
+      ["pa-ra-pluie","parapluie"],["é-cu-reuil","ecureuil"],["es-car-got","escargot"],["ci-trouil-le","citrouille"],["gre-nouil-le","grenouille"],["trom-pet-te","trompette"],
+      ["ca-rot-te","carotte"],["cas-quet-te","casquette"],["pas-tè-que","pasteque"],["mous-ti-que","moustique"],["per-ro-quet","perroquet"],
+      ["pou-bel-le","poubelle"],["mas-que","masque"],["bar-que","barque"],["pho-que","phoque"],
+      ["trac-teur","tracteur"],["ci-tron","citron"],["fram-boi-se","framboise"],["gi-ra-fe","girafe"],["tor-tue","tortue"],["ser-pent","serpent"]]
 };
 /* Intrus supplémentaires par niveau (en plus des syllabes des autres mots du niveau) */
 const INTRUS = {
@@ -360,6 +369,7 @@ function dire(t){ if(!("speechSynthesis" in window)) return; speechSynthesis.can
 const scene=$("scene"), reserve=$("reserve");
 let partie=null;  // {mots:[[syl,cle]], i, reussis:[]}
 let tour=null;    // {mot, cle, syl:[], cases:[tuileId|null], tuiles:[{id,s}], essais, verrou}
+let minuteurBravo=null;
 const pause = ms => new Promise(r=>setTimeout(r,ms));
 function melanger(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function slots(n){ return n===2 ? [38,62] : [27,50,73]; }
@@ -394,6 +404,7 @@ function choisirIntrus(syl, n){
 }
 
 async function nouveauTour(){
+  clearTimeout(minuteurBravo);
   scene.querySelectorAll(".fusee,.mot,.bravo,.decompte,.message,.fumee,.image-mot").forEach(e=>e.remove());
   $("nuit").classList.remove("on"); parts=parts.filter(p=>!p.lettre);
   const [mot,cle,nc]=partie.mots[partie.i], syl=mot.split("-");
@@ -569,7 +580,8 @@ function afficherMot(taille){
   if(taille) d.style.fontSize=taille+"px";
   scene.appendChild(d);
   if($("opt-dire").checked) setTimeout(()=>dire(mot),350);
-  setTimeout(()=>{ const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Quel feu d'artifice !","Génial !"][Math.floor(Math.random()*5)]; scene.appendChild(b); },900);
+  clearTimeout(minuteurBravo);
+  minuteurBravo=setTimeout(()=>{ const b=document.createElement("div"); b.className="bravo"; b.textContent=["Bravo !","Super !","Bien joué !","Quel feu d'artifice !","Génial !"][Math.floor(Math.random()*5)]; scene.appendChild(b); },900);
   $("lecture").innerHTML = "Le mot : <b>" + mot + "</b>";
   reserve.querySelectorAll(".tuile").forEach(b=>b.classList.add("posee"));
   partie.reussis.push({mot, cle:tour.cle, aide:tour.essais>=2});
@@ -677,6 +689,7 @@ function boucle(){
 
 /* ---------- Fin ---------- */
 function finPartie(){
+  clearTimeout(minuteurBravo); scene.querySelectorAll(".bravo").forEach(e=>e.remove());
   $("ecran-jeu").hidden=true; $("ecran-fin").hidden=false;
   const n=partie.reussis.length, aides=partie.reussis.filter(r=>r.aide).length;
   $("bilan").textContent = `${n} feu${n>1?"x":""} d'artifice tiré${n>1?"s":""} au bal du 14 juillet !` + (aides ? ` (${aides} mot${aides>1?"s":""} trouvé${aides>1?"s":""} avec l'aide, en pointillés)` : "");

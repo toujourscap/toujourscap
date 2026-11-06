@@ -2063,7 +2063,7 @@
   {
    "title": "Les fusées des syllabes",
    "slug": "les-fusees-des-syllabes",
-   "excerpt": "Au bal du 14 juillet, l'image d'un mot apparaît : l'enfant place les bonnes syllabes dans les fusées. Si c'est juste, ces fusées de feu d'artifice s'envolent, se rejoignent et explosent : les étincelles dessinent le mot. Trois niveaux, 36 mots illustrés.",
+   "excerpt": "Au bal du 14 juillet, l'image d'un mot apparaît : l'enfant place les bonnes syllabes dans les fusées. Si c'est juste, ces fusées de feu d'artifice s'envolent, se rejoignent et explosent : les étincelles dessinent le mot. Trois niveaux, 73 mots illustrés.",
    "date": "2026-10-28T13:00:00.000Z",
    "categoryIds": [],
    "media": {
@@ -2071,7 +2071,7 @@
     "custom": false
    },
    "jeu": {
-    "competence": "mots",
+    "competence": ["sons-syllabes", "mots"],
     "niveaux": [
      "GS",
      "CP",
