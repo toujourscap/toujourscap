@@ -60,6 +60,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .medal{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:#fff;font-size:1.2rem;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
 .medal.bronze{background:var(--bronze)} .medal.argent{background:var(--argent)} .medal.or{background:var(--or)}
 .lvl.won{border-color:var(--ok)}
+.lvl[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft);box-shadow:0 0 0 2px var(--me)}
+.tbtn.tout{grid-column:span 2}
+.tbtn.tout b{font-size:1.25rem}
+.partez{display:block;margin:4px auto 0;font-family:var(--display);font-size:1.6rem;padding:14px 46px;border-radius:18px;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+.partez:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
 .lvl .state{font-size:.75rem;color:var(--ok);min-height:1em}
 
 .setting{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
@@ -214,7 +219,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
     </div>
 
     <div class="panel solo-only">
-      <div class="label">2. Choisis ta médaille — table de <span id="selT">2</span></div>
+      <div class="label">2. Choisis ta médaille — <span id="selT">table de 2</span></div>
       <div class="levels" id="levels"></div>
     </div>
 
@@ -223,17 +228,18 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="nteams" id="nteams"></div>
       <div class="teamlist" id="teamlist"></div>
       <p class="sub" style="margin:0">Chaque équipe fait la course à son tour, avec les mêmes 10 additions. Le vélo fantôme montre le meilleur temps. Classement au temps à la fin.</p>
-      <button class="cta go" id="goTeams">Lancer la course →</button>
     </div>
 
     <div class="panel solo-only">
       <div class="label">Réglage (adulte) : temps de l'ordinateur pour la médaille de bronze</div>
       <div class="setting">
-        <input type="range" id="base" min="20" max="180" step="5" value="60" aria-label="Temps bronze en secondes">
-        <output id="baseOut">60 s</output>
+        <input type="range" id="base" min="20" max="180" step="5" value="95" aria-label="Temps bronze en secondes">
+        <output id="baseOut">95 s</output>
       </div>
       <p class="sub" style="margin:0">Argent = 75 % de ce temps, Or = 55 % (jamais moins de 10 s). 10 additions par course.</p>
     </div>
+
+    <button class="cta partez" id="partez">Partez ! 🚴</button>
   </section>
 
   <!-- COURSE -->
@@ -277,11 +283,14 @@ const LEVELS = [
 const $ = id => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-let store = {base:60, table:2, medals:{}, mode:"solo", nTeams:4};
+let store = {base:95, table:2, medals:{}, mode:"solo", nTeams:4, niveau:"bronze"};
 const TEAMS = [{name:"Rouges",c:"#e9462f"},{name:"Bleus",c:"#3a6fb0"},{name:"Verts",c:"#2f9b4f"},
   {name:"Jaunes",c:"#d9a400"},{name:"Violets",c:"#8e44ad"},{name:"Roses",c:"#e0558f"}];
 let T = null; // partie par équipes en cours
 try { Object.assign(store, JSON.parse(localStorage.getItem("courseAdd")||"{}")); } catch(e){}
+if(store.v !== 2){ store.base = 95; store.v = 2; }   // nouveau temps par défaut : 95 s
+const nomTable = t => t === "tout" ? "toutes les tables" : "table de " + t;
+const Maj = s => s.charAt(0).toUpperCase() + s.slice(1);
 const save = () => { try{ localStorage.setItem("courseAdd", JSON.stringify(store)); }catch(e){} };
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
@@ -343,16 +352,22 @@ function renderTables(){
     b.onclick = () => { store.table=t; save(); renderTables(); renderLevels(); };
     box.appendChild(b);
   }
-  $("selT").textContent = store.table;
+  // Toutes les tables mélangées
+  const m = store.medals.tout||{}, b = document.createElement("button");
+  b.className="tbtn tout"; b.id="ttout"; b.setAttribute("aria-pressed", store.table==="tout");
+  b.innerHTML = `<small>tables de 0 à 10</small><b>Toutes</b><span class="dots">${LEVELS.map(l=>`<span class="dot ${l.id} ${m[l.id]?"on":""}"></span>`).join("")}</span>`;
+  b.onclick = () => { store.table="tout"; save(); renderTables(); renderLevels(); };
+  box.appendChild(b);
+  $("selT").textContent = nomTable(store.table);
 }
 function renderLevels(){
   const box=$("levels"); box.innerHTML="";
   const m = store.medals[store.table]||{};
   LEVELS.forEach(l=>{
     const b=document.createElement("button");
-    b.className="lvl"+(m[l.id]?" won":""); b.id="lvl-"+l.id;
+    b.className="lvl"+(m[l.id]?" won":""); b.id="lvl-"+l.id; b.setAttribute("aria-pressed", l.id===store.niveau);
     b.innerHTML=`<span class="medal ${l.id}">${l.letter}</span>${l.name}<span class="time">${fmt(lvlTime(l))} s</span><span class="state">${m[l.id]?"Gagnée ✓":""}</span>`;
-    b.onclick=()=>startRace(l);
+    b.onclick=()=>{ store.niveau=l.id; save(); renderLevels(); };
     box.appendChild(b);
   });
 }
@@ -376,7 +391,7 @@ function renderMode(){
 }
 $("mSolo").onclick=()=>{ store.mode="solo"; save(); renderMode(); };
 $("mTeam").onclick=()=>{ store.mode="equipes"; save(); renderMode(); };
-$("goTeams").onclick=()=>startTeams();
+$("partez").onclick=()=>{ if(store.mode==="equipes") startTeams(); else startRace(LEVELS.find(l=>l.id===store.niveau)||LEVELS[0]); };
 
 /* ---------- Pavé ---------- */
 "7 8 9 4 5 6 1 2 3 _ 0 ⌫".split(" ").forEach(k=>{
@@ -461,6 +476,15 @@ sndLabel();
 /* ---------- Course ---------- */
 let R=null, me=null, bot=null, loopOn=false, last=0, sx=0;
 function questions(t){
+  if(t === "tout"){
+    // Toutes les tables : 10 additions tirées au hasard, sans doublon
+    const vues = new Set(), qs = [];
+    while(qs.length < STEPS){
+      const a = Math.floor(Math.random()*11), b = Math.floor(Math.random()*11), cle = Math.min(a,b)+"+"+Math.max(a,b);
+      if(vues.has(cle)) continue; vues.add(cle); qs.push([a,b]);
+    }
+    return qs;
+  }
   const ks=[...Array(11).keys()].sort(()=>Math.random()-.5).slice(0,STEPS);
   return ks.map(k=> Math.random()<.5 ? [t,k] : [k,t]);
 }
@@ -472,7 +496,7 @@ function startRace(level){
   $("menu").hidden=true; $("menu").style.display="none";
   $("race").hidden=false; $("race").style.display="contents";
   $("confetti").hidden=true;
-  $("raceTitle").textContent = team ? `Table de ${R.table} · Équipe des ${team.name} (${T.idx+1}/${T.teams.length})` : `Table de ${R.table} · ${level.name}`;
+  $("raceTitle").textContent = team ? `${Maj(nomTable(R.table))} · Équipe des ${team.name} (${T.idx+1}/${T.teams.length})` : `${Maj(nomTable(R.table))} · ${level.name}`;
   me=makeRider($("bikeMe"), team ? team.c : css("--me"));
   bot=makeRider($("bikeBot"), R.ghost ? R.ghost.c : css("--bot"));
   $("tagMe").textContent = team ? team.name : "Toi"; $("tagMe").style.background = team ? team.c : "";
@@ -592,7 +616,7 @@ function finish(win){
   $("lead").textContent="";
   if(win){ store.medals[R.table]=store.medals[R.table]||{}; store.medals[R.table][l.id]=true; save(); confetti(l); cheerNear(0,1e5,3500); }
   MUS.stop(); jingle(win);
-  try{TDC.note({s:R.good,n:STEPS,g:!!win,niv:({bronze:"Bronze",argent:"Argent",or:"Or"})[l.id]||l.id,d:(win?"Médaille "+({bronze:"de bronze",argent:"d'argent",or:"d'or"})[l.id]+" en "+fmt(el)+" s":"L'ordinateur a gagné : "+R.good+" / "+STEPS)+" · table "+R.table})}catch(e){}
+  try{TDC.note({s:R.good,n:STEPS,g:!!win,niv:({bronze:"Bronze",argent:"Argent",or:"Or"})[l.id]||l.id,d:(win?"Médaille "+({bronze:"de bronze",argent:"d'argent",or:"d'or"})[l.id]+" en "+fmt(el)+" s":"L'ordinateur a gagné : "+R.good+" / "+STEPS)+" · "+nomTable(R.table)})}catch(e){}
   const next = LEVELS[LEVELS.indexOf(l)+1];
   const ov=$("ov"); ov.hidden=false;
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
@@ -639,7 +663,7 @@ function podium(){
   const ov=$("ov"); ov.hidden=false;
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
     <h2>Bravo les <span style="color:${win.c}">${win.name}</span> !</h2>
-    <p>Classement — table de ${store.table}</p>
+    <p>Classement — ${nomTable(store.table)}</p>
     <ol class="rank">${ranked.map((t,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
       <span><span class="sw" style="background:${t.c}"></span>${t.name}<span class="err">${t.errors} erreur${t.errors>1?"s":""}</span></span>
       <span class="tm">${fmt(t.time)} s</span></li>`).join("")}</ol>
