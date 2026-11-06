@@ -2822,7 +2822,7 @@
    "title": "Le Tape-taupe des additions et soustractions",
    "slug": "le-tape-taupe-des-additions",
    "cat": "calcul",
-   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le niveau.",
+   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le niveau, seul ou sur plusieurs tablettes en même temps.",
    "date": "2026-10-26T17:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -2835,7 +2835,7 @@
      "CE1",
      "CE2"
     ],
-    "joueurs": "1 joueur ou la classe",
+    "joueurs": "1 joueur, la classe ou jusqu'à 8 tablettes",
     "supports": [
      "ecran",
      "projetable"
@@ -3095,6 +3095,118 @@
         "type": "TEXT",
         "textData": {
          "text": "Les mauvaises réponses ne sont pas tirées au hasard : ce sont les erreurs que font vraiment les élèves (retenue oubliée, petit chiffre retiré du grand en soustraction, erreur de 10 ou de 100, erreur de 1). Elles obligent à vérifier chaque rang.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sur plusieurs tablettes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le même calcul et les mêmes taupes s'affichent sur toutes les tablettes : chaque élève (ou petite équipe) tape la taupe qui porte le bon résultat. Jusqu'à 8 tablettes connectées à Internet.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur la tablette de l'adulte : faire les réglages, puis « Créer la partie » (en bas de l'écran de réglages). Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur chaque tablette d'élève : taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'adulte appuie sur « Jouer ! ». Sous le dessin, une pastille ✅ montre qui a trouvé. Quand tout le monde a trouvé, toutes les tablettes passent ensemble au calcul suivant ; « ⏭ Passer » permet à l'adulte d'avancer si un élève bloque. Avec l'explication, la méthode s'affiche partout et c'est l'adulte qui passe à la suite.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Classement à la fin : d'abord le nombre de calculs trouvés du premier coup, puis la rapidité. L'adulte peut lancer une revanche avec de nouveaux calculs, ou changer les réglages et relancer la même partie.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Aucun compte : seul le prénom tapé est gardé, le temps de la partie, et il est effacé au bout de 24 heures.",
          "decorations": []
         }
        }

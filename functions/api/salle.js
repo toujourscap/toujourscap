@@ -6,10 +6,11 @@
 //      {a:"arreter", code, hote}                        → fin de la course (classement)
 //      {a:"score", code, id, jeton, bons, erreurs, temps}
 //      {a:"quitter", code, id, jeton}
+//      {a:"avancer", code, hote, etape, delai}         → question suivante pour toute la salle (jeux par étapes)
 import { db, json } from "../../lib/commentaires.js";
 import {
-  SCHEMA_SALLES, JEUX, MAX_JOUEURS, DUREE_VIE, ABSENT, CODE_RE,
-  nouveauCode, jeton, nettoieNom, nettoieReglages,
+  SCHEMA_SALLES, MIGRATIONS, JEUX, MAX_JOUEURS, DUREE_VIE, ABSENT, CODE_RE,
+  nouveauCode, jeton, nettoieNom, nettoieReglages, nettoieDonnees,
 } from "../../lib/salle.js";
 
 let pret = false;
@@ -17,6 +18,7 @@ async function base(env) {
   const b = await db(env);
   if (!pret) {
     for (const q of SCHEMA_SALLES) await b.prepare(q).run();
+    for (const q of MIGRATIONS) { try { await b.prepare(q).run(); } catch { /* colonne déjà là */ } }
     pret = true;
   }
   return b;
@@ -32,17 +34,17 @@ export async function onRequestGet({ request, env }) {
   let b;
   try { b = await base(env); } catch { return json({ erreur: "Parties à plusieurs indisponibles" }, 503); }
   const now = Date.now();
-  const s = await b.prepare("SELECT jeu, statut, reglages, debut, manche FROM salles WHERE code = ?").bind(code).first();
+  const s = await b.prepare("SELECT jeu, statut, reglages, debut, manche, etape, etape_t FROM salles WHERE code = ?").bind(code).first();
   if (!s) return json({ erreur: "Aucune course avec ce code." }, 404);
   if (id) await b.prepare("UPDATE salle_joueurs SET vu = ? WHERE salle = ? AND id = ?").bind(now, code, id).run();
   const { results } = await b.prepare(
-    "SELECT id, nom, bons, erreurs, temps, vu FROM salle_joueurs WHERE salle = ? ORDER BY id").bind(code).all();
+    "SELECT id, nom, bons, erreurs, temps, vu, donnees FROM salle_joueurs WHERE salle = ? ORDER BY id").bind(code).all();
   const joueurs = results
     .filter((j) => s.statut !== "attente" || now - j.vu < ABSENT)
-    .map(({ id, nom, bons, erreurs, temps }) => ({ id, nom, bons, erreurs, temps }));
+    .map(({ id, nom, bons, erreurs, temps, donnees }) => ({ id, nom, bons, erreurs, temps, d: JSON.parse(donnees || "{}") }));
   return json({
     jeu: s.jeu, statut: s.statut, reglages: JSON.parse(s.reglages || "{}"),
-    debut: s.debut, manche: s.manche, joueurs, maintenant: now,
+    debut: s.debut, manche: s.manche, etape: s.etape, etape_t: s.etape_t, joueurs, maintenant: now,
   });
 }
 
@@ -100,17 +102,24 @@ export async function onRequestPost({ request, env }) {
     return json({ erreur: "Réessaie dans un instant." }, 503);
   }
 
-  if (d.a === "partir" || d.a === "arreter") {
+  if (d.a === "partir" || d.a === "arreter" || d.a === "avancer") {
     if (String(d.hote || "") !== s.hote) return json({ erreur: "Seule la tablette qui a créé la course peut faire ça." }, 403);
+    if (d.a === "avancer") {
+      const etape = Math.max(0, Math.min(100, Math.trunc(+d.etape) || 0));
+      const delai = Math.max(0, Math.min(5000, Math.trunc(+d.delai) || 0));
+      await b.prepare("UPDATE salles SET etape = ?, etape_t = ? WHERE code = ? AND etape < ?")
+        .bind(etape, now + delai, code, etape).run();
+      return json({ ok: true });
+    }
     if (d.a === "arreter") {
       await b.prepare("UPDATE salles SET statut = 'fini' WHERE code = ?").bind(code).run();
       return json({ ok: true });
     }
     const reglages = JSON.stringify(nettoieReglages(s.jeu, d.reglages));
     await b.prepare("DELETE FROM salle_joueurs WHERE salle = ? AND vu < ?").bind(code, now - ABSENT).run();
-    await b.prepare("UPDATE salle_joueurs SET bons = 0, erreurs = 0, temps = NULL WHERE salle = ?").bind(code).run();
-    await b.prepare("UPDATE salles SET statut = 'course', reglages = ?, debut = ?, manche = manche + 1 WHERE code = ?")
-      .bind(reglages, now + DEPART, code).run();
+    await b.prepare("UPDATE salle_joueurs SET bons = 0, erreurs = 0, temps = NULL, donnees = '{}' WHERE salle = ?").bind(code).run();
+    await b.prepare("UPDATE salles SET statut = 'course', reglages = ?, debut = ?, manche = manche + 1, etape = 0, etape_t = ? WHERE code = ?")
+      .bind(reglages, now + DEPART, now + DEPART, code).run();
     return json({ ok: true, debut: now + DEPART });
   }
 
@@ -119,8 +128,8 @@ export async function onRequestPost({ request, env }) {
     const bons = Math.max(0, Math.min(50, Math.trunc(+d.bons) || 0));
     const erreurs = Math.max(0, Math.min(999, Math.trunc(+d.erreurs) || 0));
     const temps = d.temps == null ? null : Math.max(0, Math.min(3600000, Math.trunc(+d.temps) || 0));
-    await b.prepare("UPDATE salle_joueurs SET bons = ?, erreurs = ?, temps = ?, vu = ? WHERE salle = ? AND id = ? AND jeton = ?")
-      .bind(bons, erreurs, temps, now, code, id, jt).run();
+    await b.prepare("UPDATE salle_joueurs SET bons = ?, erreurs = ?, temps = ?, donnees = ?, vu = ? WHERE salle = ? AND id = ? AND jeton = ?")
+      .bind(bons, erreurs, temps, nettoieDonnees(d.donnees), now, code, id, jt).run();
     return json({ ok: true });
   }
   if (d.a === "quitter") {
