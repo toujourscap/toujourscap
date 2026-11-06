@@ -1,333 +1,325 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tachistoscope - Lecture sans stress</title>
-    <style>
-        #tachi-container {
-            font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        #word-display {
-            font-size: clamp(4rem, 12vw, 10rem); 
-            font-weight: bold;
-            color: #212529;
-            min-height: 40vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: white;
-            border-radius: 8px;
-            border: 1px dashed #adb5bd;
-            margin-bottom: 20px;
-            overflow: hidden;
-            word-break: break-word;
-            padding: 20px;
-        }
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-        button:hover { opacity: 0.9; }
-        button:active { transform: scale(0.98); }
-        
-        #btn-play { background-color: #198754; }
-        #btn-next { background-color: #0d6efd; }
-        #btn-reset { background-color: #6c757d; }
-        
-        #btn-stop { 
-            background-color: #dc3545; 
-            font-size: 1.4rem; 
-            padding: 15px 30px;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto 20px auto;
-            display: block;
-            box-shadow: 0 4px 0 #a71d2a;
-        }
-        #btn-stop:active {
-            box-shadow: 0 0 0 #a71d2a;
-            transform: translateY(4px);
-        }
-        
-        .settings-panel {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .slider-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        input[type="range"] { width: 250px; }
-        textarea {
-            width: 90%;
-            height: 80px;
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            resize: vertical;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-            color: #495057;
-            cursor: pointer;
-        }
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tachistoscope - Lis le plus de mots sans te tromper</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif}
+  #tachi{background:#f8f9fa;border:2px solid #dee2e6;border-radius:12px;padding:18px;max-width:820px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e9ecef;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#0d6efd;background:#e7f0ff}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.98)}
+  button:disabled{opacity:.4;cursor:default}
+  #go{background:#198754;font-size:1.35rem;padding:14px 34px}
+  #display{font-size:clamp(3.2rem,11vw,9rem);font-weight:bold;color:#212529;min-height:36vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border-radius:8px;border:1px dashed #adb5bd;margin:0 0 14px;padding:16px;word-break:break-word;position:relative}
+  #display.ok{animation:ok .35s}
+  @keyframes ok{0%{background:#d1e7dd}100%{background:#fff}}
+  #compteur{position:absolute;top:8px;left:12px;font-size:1.1rem;color:#198754}
+  #chrono{position:absolute;top:8px;right:12px;font-size:1.1rem;color:#6c757d}
+  #barre{position:absolute;left:0;bottom:0;height:6px;background:#0d6efd;border-radius:0 0 8px 8px;width:0}
+  #msg{min-height:1.6em;font-size:1.1rem;font-weight:600;margin-bottom:10px;color:#495057}
+  #msg.err{color:#dc3545} #msg.warn{color:#d97706} #msg.ok{color:#198754}
+  .jeu{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:12px}
+  #juste{background:#198754;font-size:1.4rem;padding:16px 30px;box-shadow:0 4px 0 #11643d}
+  #faux{background:#dc3545;font-size:1.4rem;padding:16px 30px;box-shadow:0 4px 0 #a71d2a}
+  #stop{background:#6c757d}
+  .petits #juste,.petits #faux{font-size:1rem;padding:10px 18px;box-shadow:none}
+  .fin{font-size:.32em;line-height:1.35;color:#212529}
+  .fin .gros{font-size:3.2em;color:#0d6efd;display:block;line-height:1.1}
+  .fin .rate{color:#dc3545}
+  .fin .record{color:#198754;font-size:.85em}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
+  select{font-size:1rem;padding:4px 6px;border-radius:6px;border:1px solid #ced4da}
+  textarea{width:95%;height:80px;padding:10px;font-size:1rem;border:1px solid #ced4da;border-radius:6px;resize:vertical;margin-top:6px}
+  #perso{display:none}
+  .note{font-size:.85rem;color:#6c757d;margin:6px 0 0}
+  .cache{display:none!important}
+</style>
 <script src="tour-de-controle.js"></script></head>
 <body>
+<div id="tachi">
 
-<div id="tachi-container">
-    <div id="word-display">Prêt ?</div>
-    
-    <button id="btn-stop">🛑 STOP (Je me suis trompé)</button>
-    
-    <div class="controls">
-        <button id="btn-play">▶️ Démarrer</button>
-        <button id="btn-next">⏭️ Mot Suivant</button>
-        <button id="btn-reset">🔄 Recommencer</button>
+  <div id="reglages">
+    <div class="groupe">
+      <h2>1. Choisis ta liste (50 mots)</h2>
+      <div class="choix" id="listes">
+        <button data-l="1">🌱 Niveau 1<small>début de CP</small></button>
+        <button data-l="2">🌿 Niveau 2<small>milieu de CP</small></button>
+        <button data-l="3">🌳 Niveau 3<small>fin de CP</small></button>
+        <button data-l="4">🏔️ Niveau 4<small>fin de CE1</small></button>
+        <button data-l="perso">✏️ Ma liste<small>mes mots</small></button>
+      </div>
+      <div id="perso">
+        <textarea id="mots" placeholder="Écris ou colle tes mots, séparés par des espaces, des virgules ou des retours à la ligne."></textarea>
+        <p class="note">La liste reste enregistrée sur cet ordinateur.</p>
+      </div>
     </div>
 
-    <div class="settings-panel">
-        <div class="slider-container">
-            <label for="audio-slider">Temps de lecture avant l'aide audio : <strong id="audio-val">5.0</strong> s</label>
-            <input type="range" id="audio-slider" min="1.0" max="15.0" step="0.5" value="5.0">
-        </div>
-        
-        <label class="checkbox-container">
-            <input type="checkbox" id="random-mode"> 
-            <strong>Lecture aléatoire</strong> (mélanger l'ordre des mots)
-        </label>
-
-        <p style="margin: 10px 0 5px 0; font-size: 0.9rem; color: #495057;">Liste des mots :</p>
-        <textarea id="word-list">maison poisson château garçon lapin bouton oiseau peinture cloche dragon</textarea>
+    <div class="groupe">
+      <h2>2. Qui vérifie ?</h2>
+      <div class="choix" id="modes">
+        <button data-m="adulte">🧑‍🏫 Un adulte valide<small>✅ juste / ❌ erreur</small></button>
+        <button data-m="micro">🎤 Le micro écoute<small>Chrome ou Edge</small></button>
+      </div>
+      <p class="note" id="noteMode"></p>
     </div>
+
+    <div class="groupe">
+      <label class="opt">⏱️ Temps pour lire chaque mot :
+        <select id="temps">
+          <option value="0">sans limite</option>
+          <option value="2">2 s</option>
+          <option value="3">3 s</option>
+          <option value="5">5 s</option>
+          <option value="8">8 s</option>
+          <option value="10">10 s</option>
+        </select>
+      </label>
+      <label class="opt"><input type="checkbox" id="melange" checked> Mélanger les mots</label>
+      <p class="note">Le temps dépassé compte comme une erreur.</p>
+    </div>
+    <button id="go">▶️ Partez !</button>
+  </div>
+
+  <div id="partie" class="cache">
+    <div id="display"><span id="compteur"></span><span id="chrono"></span><span id="mot">Prêt ?</span><div id="barre"></div></div>
+    <div id="msg"></div>
+    <div class="jeu" id="boutons">
+      <button id="juste">✅ Juste</button>
+      <button id="faux">❌ Erreur</button>
+    </div>
+    <button id="stop">⚙️ Changer de liste</button>
+    <p class="note" id="aideClavier">Clavier : Espace ou → = juste, X ou ← = erreur.</p>
+  </div>
+
 </div>
 
 <script>
-    const wordDisplay = document.getElementById('word-display');
-    const btnPlay = document.getElementById('btn-play');
-    const btnNext = document.getElementById('btn-next');
-    const btnReset = document.getElementById('btn-reset');
-    const btnStop = document.getElementById('btn-stop');
-    
-    const audioSlider = document.getElementById('audio-slider');
-    const audioVal = document.getElementById('audio-val');
-    const randomMode = document.getElementById('random-mode');
-    
-    const wordListInput = document.getElementById('word-list');
+(function(){
+  const LISTES = {
+    1: "la le il lu ma mur rat rue lit sol sur ami île lune rame mule lama lime rire papa pipe pile purée moto vélo tapis tomate tulipe salade malade radis samedi midi lavabo numéro vipère farine sirop futé pédale domino robe note vite tube date épée rapide café animal",
+    2: "chat roi loup pont main lapin mouton maison bateau poule route soupe bouche chameau cadeau chocolat moulin dimanche voiture poisson ballon gâteau lundi enfant maman sapin cochon pantalon bonbon fourmi cheval marché jupon vache mouche oiseau toit noir boîte renard jambe chanson matin train lampe tambour poupée robinet souris marteau",
+    3: "fille feuille soleil travail montagne araignée éléphant pharmacie garçon leçon girafe pigeon cinéma citron glace grenouille crayon tableau brouillard fleur chien loin cuisine écureuil bouteille abeille papillon famille champignon photo dauphin cerise rose valise princesse pieuvre ciseaux taxi guitare bague orange magicien réveil fauteuil nageur gorille plume trompette sorcière cheveux",
+    4: "anniversaire bibliothèque ordinateur hélicoptère dictionnaire crocodile extraordinaire récréation attention addition gentiment rapidement doucement parapluie kangourou aquarium hippopotame orchestre chorale monsieur femme oignon automne album examen parfum second ville tranquille aiguille accident exemple exactement explorateur squelette kilomètre thermomètre rhinocéros yaourt journaliste quatorze vingt cinquante déguisement gymnastique magnifique escargot ascenseur piscine maintenant"
+  };
+  const NOMS = {1:"Niveau 1 (début CP)",2:"Niveau 2 (milieu CP)",3:"Niveau 3 (fin CP)",4:"Niveau 4 (fin CE1)",perso:"Ma liste"};
+  // Ce que la reconnaissance vocale écrit parfois en chiffres ou en abrégé
+  const ECRITS = {"14":"quatorze","20":"vingt","50":"cinquante","2nd":"second","2e":"second","m":"monsieur","mr":"monsieur"};
 
-    let words = [];
-    let currentIndex = 0;
-    let isPlaying = false;
-    let audioTimeout = null;
-    let actionTimeout = null;
+  const $ = id => document.getElementById(id);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const store = {get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 
-    // Charge les mots, les nettoie, et les mélange si l'option est cochée
-    function loadWords() {
-        const rawText = wordListInput.value.replace(/,/g, ' ');
-        words = rawText.split(/\s+/).filter(word => word.trim().length > 0);
-        
-        if (randomMode.checked) {
-            // Algorithme de mélange (Fisher-Yates)
-            for (let i = words.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [words[i], words[j]] = [words[j], words[i]];
-            }
+  let liste = store.get("tachi-liste","1"), mode = store.get("tachi-mode","adulte");
+  if (!LISTES[liste] && liste!=="perso") liste="1";
+  if (mode==="micro" && !SR) mode="adulte";
+  $("mots").value = store.get("tachi-mots","maison poisson château garçon lapin bouton oiseau peinture cloche dragon");
+  $("temps").value = store.get("tachi-temps","5");
+  $("melange").checked = store.get("tachi-melange","1")==="1";
+
+  function marquer(){
+    document.querySelectorAll("#listes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===liste)));
+    document.querySelectorAll("#modes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
+    $("perso").style.display = liste==="perso" ? "block" : "none";
+    $("noteMode").textContent = mode==="micro"
+      ? "L'élève lit à voix haute : le mot suivant arrive dès que le micro l'a reconnu. S'il n'a pas bien entendu, l'élève peut relire une fois. L'adulte peut toujours corriger avec ✅ / ❌."
+      : "L'élève lit, l'adulte clique ✅ si le mot est juste, ❌ au premier mot faux : la partie s'arrête.";
+  }
+  document.querySelectorAll("#listes button").forEach(b=>b.onclick=()=>{liste=b.dataset.l;store.set("tachi-liste",liste);marquer();});
+  document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{
+    if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
+    mode=b.dataset.m;store.set("tachi-mode",mode);marquer();});
+  $("mots").oninput=()=>store.set("tachi-mots",$("mots").value);
+  $("temps").onchange=()=>store.set("tachi-temps",$("temps").value);
+  $("melange").onchange=()=>store.set("tachi-melange",$("melange").checked?"1":"0");
+  marquer();
+
+  // ---------- Comparaison de ce qui est entendu (reprise du téléprompteur à l'écoute) ----------
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’`]/g,"'").replace(/[^a-z0-9']/g,"");
+  const bare = s => s.replace(/'/g,"");
+  function ph(w){
+    let s = bare(w);
+    if (s.length<2) return s;
+    s = s.replace(/^h/,"").replace(/ph/g,"f").replace(/gu(?=[eiy])/g,"g").replace(/g(?=[eiy])/g,"j")
+         .replace(/qu/g,"k").replace(/c(?=[eiy])/g,"s").replace(/ck|c/g,"k").replace(/(?<=[aeiouy])s(?=[aeiouy])/g,"z")
+         .replace(/eaux?|aux?|au/g,"o").replace(/[ae]i[nm](?![aeiouyn])/g,"I").replace(/ai|ei/g,"e").replace(/(er|ez|et|es)$/,"e")
+         .replace(/oi/g,"W").replace(/ou/g,"U").replace(/[ae][nm](?![aeiouyn])/g,"A").replace(/o[nm](?![aeiouyn])/g,"O")
+         .replace(/(ai|ei|i|u)[nm](?![aeiouyn])/g,"I").replace(/y/g,"i").replace(/h/g,"").replace(/(.)\1+/g,"$1");
+    s = s.replace(/gt$/,"t").replace(/(ent|e|s|t|x|d|p)$/,"").replace(/(s|t|x|d)$/,"");
+    return s || w;
+  }
+  function lev(a,b){
+    if (Math.abs(a.length-b.length)>2) return 9;
+    const d=[...Array(b.length+1).keys()];
+    for(let i=1;i<=a.length;i++){ let p=d[0]; d[0]=i;
+      for(let j=1;j<=b.length;j++){ const t=d[j]; d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1)); p=t; } }
+    return d[b.length];
+  }
+  function pareil(entendu, cible){
+    let h = norm(entendu); const t = norm(cible);
+    if (!h || !t) return false;
+    if (ECRITS[h]) h = norm(ECRITS[h]);
+    if (h.includes("'")) h = h.split("'").pop();
+    if (bare(h)===bare(t)) return true;
+    if (t.length>=5 && lev(bare(h),bare(t))<=1) return true;
+    if (t.length>=9 && lev(bare(h),bare(t))<=2) return true;
+    const a=ph(h), b=ph(t);
+    return a===b || (b.length>=4 && lev(a,b)<=1);
+  }
+  // Le mot est-il dans ce que le micro a entendu (l'enfant peut dire « euh… maison », ou « le chat » pour « chat ») ?
+  function trouve(texte, cible){
+    const toks = texte.split(/[\s\-]+/).filter(Boolean);
+    const n = cible.split(/[\s\-]+/).length;
+    for (let i=0;i<toks.length;i++){
+      if (pareil(toks.slice(i,i+n).join(""), cible.replace(/[\s\-]/g,""))) return true;
+    }
+    return pareil(texte.replace(/[\s\-]/g,""), cible.replace(/[\s\-]/g,""));
+  }
+
+  // ---------- Partie ----------
+  let mots=[], i=0, actif=false, tMot=null, tAnim=null, debut=0, chronoInt=null, essai=0, rec=null, ecoute=false, depuis=0;
+
+  function charger(){
+    const src = liste==="perso" ? $("mots").value : LISTES[liste];
+    mots = src.replace(/[,;]/g," ").split(/\s+/).map(m=>m.trim()).filter(Boolean);
+    if ($("melange").checked) for (let k=mots.length-1;k>0;k--){ const j=Math.floor(Math.random()*(k+1)); [mots[k],mots[j]]=[mots[j],mots[k]]; }
+  }
+  function msg(t,c){ $("msg").textContent=t||""; $("msg").className=c||""; }
+
+  $("go").onclick = ()=>{
+    charger();
+    if (!mots.length){ $("noteMode").textContent="⚠️ La liste est vide : écris des mots dans « Ma liste »."; return; }
+    $("reglages").classList.add("cache"); $("partie").classList.remove("cache");
+    $("boutons").classList.toggle("petits", mode==="micro");
+    $("aideClavier").style.display = mode==="micro" ? "none" : "";
+    i=0; essai=0; actif=true; debut=Date.now();
+    clearInterval(chronoInt); chronoInt=setInterval(()=>{ $("chrono").textContent=Math.floor((Date.now()-debut)/1000)+" s"; },250);
+    msg(mode==="micro" ? "🎤 Lis le mot à voix haute." : "");
+    if (mode==="micro") demarrerMicro();
+    montrer();
+  };
+  $("stop").onclick = ()=>{ arreter(); $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); };
+
+  function montrer(){
+    clearTimeout(tMot); essai=0;
+    $("compteur").textContent = "✅ "+i;
+    $("mot").textContent = mots[i];
+    depuis = resultatsVus;   // on n'écoute que ce qui est dit après l'apparition du mot
+    texteEnCours = "";
+    const s = parseFloat($("temps").value);
+    const barre = $("barre");
+    barre.style.transition="none"; barre.style.width="0";
+    if (s>0){
+      void barre.offsetWidth;
+      barre.style.transition="width "+s+"s linear"; barre.style.width="100%";
+      tMot = setTimeout(()=>{ if (actif) finir(false,"⏱️ Temps écoulé"); }, s*1000);
+    }
+  }
+  function juste(){
+    if (!actif) return;
+    const d=$("display"); d.classList.remove("ok"); void d.offsetWidth; d.classList.add("ok");
+    i++;
+    if (mode==="micro") msg("🎤 Lis le mot à voix haute.");
+    if (i>=mots.length) finir(true); else montrer();
+  }
+  $("juste").onclick = juste;
+  $("faux").onclick = ()=>{ if (actif) finir(false); };
+  document.addEventListener("keydown", e=>{
+    if (!actif || mode==="micro") return;
+    if (e.key===" "||e.key==="ArrowRight"||e.key==="Enter"){ e.preventDefault(); juste(); }
+    else if (e.key==="x"||e.key==="X"||e.key==="ArrowLeft"){ e.preventDefault(); finir(false); }
+  });
+
+  function arreter(){
+    actif=false; clearTimeout(tMot); clearInterval(chronoInt);
+    $("barre").style.transition="none"; $("barre").style.width="0";
+    arreterMicro();
+    try{ speechSynthesis.cancel(); }catch(e){}
+  }
+  function dire(m){
+    try{ const u=new SpeechSynthesisUtterance(m); u.lang="fr-FR"; u.rate=.85; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
+  }
+
+  function finir(tout, raison){
+    const rate = mots[i];
+    arreter();
+    const n = i, sec = Math.round((Date.now()-debut)/1000);
+    const cle = "tachi-record-"+liste+(liste==="perso"?"-"+mots.length:"");
+    const ancien = parseInt(store.get(cle,"0"),10)||0;
+    const nouveau = n>ancien && n>0;
+    if (nouveau) store.set(cle,String(n));
+    $("compteur").textContent=""; $("chrono").textContent="";
+    let h = '<div class="fin">';
+    if (tout) h += "🎉 <strong>SUPER BRAVO !</strong> 🎉<br>Tu as lu les";
+    else h += "Tu as lu";
+    h += '<span class="gros">'+n+'</span>mot'+(n>1?"s":"")+" sans te tromper"+(tout?" : toute la liste ! 🏆":" !");
+    h += '<br><small>en '+sec+" s</small>";
+    if (!tout && rate) h += '<br><span class="rate">'+(raison?raison+" sur : ":"Erreur sur : ")+"<u>"+rate.replace(/</g,"&lt;")+"</u></span>";
+    h += '<br><span class="record">'+(nouveau ? "⭐ Nouveau record !" : "Record : "+Math.max(ancien,n)+" mot"+(Math.max(ancien,n)>1?"s":""))+"</span>";
+    h += "</div>";
+    $("mot").innerHTML = h;
+    msg("");
+    $("boutons").classList.add("cache");
+    $("stop").textContent="⚙️ Changer de liste";
+    if (!$("rejouer")){
+      const b=document.createElement("button"); b.id="rejouer"; b.style.background="#198754"; b.style.marginRight="10px";
+      b.textContent="🔄 Rejouer"; b.onclick=()=>{ $("boutons").classList.remove("cache"); b.remove(); $("go").onclick(); };
+      $("stop").before(b);
+    }
+    if (!tout && rate) setTimeout(()=>dire(rate),500);
+    try{TDC.note({s:n,n:mots.length,g:!!tout,niv:NOMS[liste],d:n+" mot"+(n>1?"s":"")+" lu"+(n>1?"s":"")+" sans erreur sur "+mots.length+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")})}catch(e){}
+  }
+  // le bouton Rejouer réaffiche les boutons de jeu
+  const goOrig = $("go").onclick;
+  $("go").onclick = ()=>{ $("boutons").classList.remove("cache"); const r=$("rejouer"); if(r) r.remove(); goOrig(); };
+
+  // ---------- Micro ----------
+  let resultatsVus = 0, texteEnCours = "";
+  function demarrerMicro(){
+    if (!SR) return;
+    arreterMicro();
+    rec = new SR(); rec.lang="fr-FR"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=4;
+    resultatsVus = 0; depuis = 0; ecoute = true;
+    rec.onresult = e=>{
+      if (!actif) return;
+      const cible = mots[i];
+      for (let r=Math.max(e.resultIndex,depuis); r<e.results.length; r++){
+        const res = e.results[r];
+        let ok = false;
+        for (let a=0;a<res.length;a++) if (trouve(res[a].transcript, cible)) ok = true;
+        if (ok){
+          depuis = r+1; resultatsVus = Math.max(resultatsVus, r+1);
+          juste(); return;
         }
-        currentIndex = 0;
-    }
-
-    function stopAllActions() {
-        isPlaying = false;
-        clearTimeout(audioTimeout);
-        clearTimeout(actionTimeout);
-        window.speechSynthesis.cancel();
-        btnPlay.innerHTML = "▶️ Reprendre";
-    }
-    
-    // Fonction dédiée pour afficher l'écran de victoire détaillé
-    function afficherVictoire() {
-        const totalWords = words.length;
-  try{TDC.note({s:totalWords,n:totalWords,g:true,d:"Les "+totalWords+" mots de la liste lus"})}catch(e){}
-        wordDisplay.innerHTML = `
-            <div style="font-size: 0.5em; line-height: 1.4; color: #198754;">
-                🎉 <strong style="font-size: 1.3em;">SUPER BRAVO !</strong> 🎉<br><br>
-                Tu as réussi à lire les <strong style="color: #0d6efd;">${totalWords}</strong> mots de la liste !<br>
-                Champion(ne) de la lecture ! 🏆
-            </div>
-        `;
-        stopAllActions();
-        btnPlay.innerHTML = "▶️ Recommencer";
-        currentIndex = words.length; // Pour forcer la recharge au prochain clic sur démarrer
-    }
-
-    function speakWordAndContinue(word) {
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 0.85; 
-        
-        utterance.onend = () => {
-            if (isPlaying) {
-                // Laisse 1.5s après l'audio avant de passer au mot suivant
-                actionTimeout = setTimeout(() => {
-                    if (isPlaying) {
-                        currentIndex++;
-                        processCurrentWord();
-                    }
-                }, 1500); 
-            }
-        };
-
-        utterance.onerror = () => {
-            if (isPlaying) {
-                currentIndex++;
-                processCurrentWord();
-            }
-        };
-
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function processCurrentWord() {
-        if (!isPlaying) return;
-
-        if (currentIndex < words.length) {
-            wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;
-            
-            const audioMs = parseFloat(audioSlider.value) * 1000;
-            
-            // Lance la voix après le délai choisi
-            audioTimeout = setTimeout(() => {
-                if (isPlaying) {
-                    speakWordAndContinue(words[currentIndex]);
-                }
-            }, audioMs);
-
-        } else {
-            afficherVictoire();
+        if (res.isFinal){
+          depuis = r+1; resultatsVus = Math.max(resultatsVus, r+1);
+          const dit = res[0].transcript.trim();
+          if (!dit) continue;
+          essai++;
+          if (essai===1) msg("🔁 J'ai entendu « "+dit+" ». Relis le mot.","warn");
+          else { finir(false); return; }
         }
-    }
-
-    function startReading() {
-        if (words.length === 0 || currentIndex >= words.length) {
-            loadWords();
-        }
-        
-        isPlaying = true;
-        btnPlay.innerHTML = "⏸️ Pause";
-        
-        window.speechSynthesis.cancel();
-        processCurrentWord();
-    }
-
-    // --- Écouteurs d'événements ---
-
-    btnPlay.addEventListener('click', () => {
-        if (isPlaying) {
-            stopAllActions();
-        } else {
-            startReading();
-        }
-    });
-
-    btnStop.addEventListener('click', () => {
-        stopAllActions();
-        
-        const score = currentIndex; 
-        const currentWord = words[currentIndex] || "";
-        
-        wordDisplay.innerHTML = `
-            <div style="font-size: 0.3em; color: #dc3545; margin-bottom: 15px;">
-                Erreur sur : <span style="text-decoration: underline;">${currentWord}</span>
-            </div>
-            <div style="font-size: 0.4em; color: #198754;">
-                Tu as lu <strong>${score}</strong> mot(s) juste(s) !
-            </div>
-        `;
-    });
-
-    btnNext.addEventListener('click', () => {
-        stopAllActions();
-        if (currentIndex < words.length) {
-            currentIndex++;
-            if (currentIndex < words.length) {
-                wordDisplay.innerHTML = `<span>${words[currentIndex]}</span>`;
-            } else {
-                afficherVictoire();
-            }
-        }
-    });
-
-    btnReset.addEventListener('click', () => {
-        stopAllActions();
-        loadWords();
-        wordDisplay.textContent = "Prêt ?";
-        btnPlay.innerHTML = "▶️ Démarrer";
-    });
-
-    audioSlider.addEventListener('input', () => {
-        audioVal.textContent = parseFloat(audioSlider.value).toFixed(1);
-    });
-
-    // Si on change la liste de mots ou qu'on active/désactive le mode aléatoire, on réinitialise
-    wordListInput.addEventListener('change', () => {
-        stopAllActions();
-        loadWords();
-        wordDisplay.textContent = "Prêt ?";
-        btnPlay.innerHTML = "▶️ Démarrer";
-    });
-
-    randomMode.addEventListener('change', () => {
-        stopAllActions();
-        loadWords();
-        wordDisplay.textContent = "Prêt ?";
-        btnPlay.innerHTML = "▶️ Démarrer";
-    });
+      }
+      resultatsVus = Math.max(resultatsVus, e.results.length);
+    };
+    rec.onerror = e=>{
+      if (e.error==="not-allowed"||e.error==="service-not-allowed"){
+        ecoute=false; msg("Micro refusé par le navigateur : l'adulte valide avec ✅ / ❌.","err");
+        $("boutons").classList.remove("petits");
+      }
+    };
+    rec.onend = ()=>{ if (ecoute && actif){ resultatsVus=0; depuis=0; try{ rec.start(); }catch(_){} } };
+    try{ rec.start(); }catch(_){}
+  }
+  function arreterMicro(){ ecoute=false; if (rec){ try{ rec.abort(); }catch(_){} rec=null; } }
+})();
 </script>
-
 </body>
 </html>
