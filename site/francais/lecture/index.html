@@ -61,7 +61,7 @@
   <h1>Lecture-compréhension</h1>
   <p class="lead">Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage et de compréhension.</p>
   <p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante.</p>
-  <div class="chips filtres" role="group" aria-label="Trier par compétence"><span class="filtres-label">Trier par :</span><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="discrimination-visuelle" aria-pressed="false">Discrimination visuelle</button><button class="chip" data-f="sons-syllabes" aria-pressed="false">Lecture de syllabes</button><button class="chip" data-f="mots" aria-pressed="false">Lecture de mots</button><button class="chip" data-f="phrases-textes" aria-pressed="false">Lecture de phrases</button><button class="chip" data-f="comprehension" aria-pressed="false">Compréhension</button></div><p class="muted filtres-vide" hidden>Les jeux arrivent bientôt&nbsp;!</p><script>
+  <div class="chips filtres" role="group" aria-label="Trier par compétence"><span class="filtres-label">Trier par :</span><button class="chip active" data-f="" aria-pressed="true">Tout</button><button class="chip" data-f="discrimination-visuelle" aria-pressed="false">Discrimination visuelle</button><button class="chip" data-f="sons-syllabes" aria-pressed="false">Syllabes</button><button class="chip" data-f="mots" aria-pressed="false">Mots</button><button class="chip" data-f="phrases-textes" aria-pressed="false">Phrases</button><button class="chip" data-f="comprehension" aria-pressed="false">Compréhension</button></div><p class="muted filtres-vide" hidden>Les jeux arrivent bientôt&nbsp;!</p><script>
 document.querySelectorAll('.filtres button').forEach(function (b) {
   b.addEventListener('click', function () {
     var f = b.dataset.f;
@@ -70,7 +70,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
     });
     var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
-      c.hidden = !!f && c.dataset.comp !== f;
+      c.hidden = !!f && c.dataset.comp.split(' ').indexOf(f) < 0;
       if (!c.hidden) n++;
     });
     var v = document.querySelector('.filtres-vide');
@@ -99,16 +99,25 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/la-minute-des-syllabes/" data-comp="sons-syllabes">
   <div class="card-img"><img src="/images/jeux/la-minute-des-syllabes.jpg" alt="La minute des syllabes" loading="lazy" width="1100" height="740"></div>
   <div class="card-body">
-    <span class="chip">Lecture de syllabes</span>
+    <span class="chip">Syllabes</span>
     <h3>La minute des syllabes</h3>
     <p>Lire le plus de syllabes possible en une minute : le micro valide chaque syllabe bien lue, ou un adulte appuie sur « Bien lu ». Cinq niveaux, des syllabes simples aux syllabes complexes.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur, en binôme ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
     <span class="muted small">25 octobre 2026</span>
   </div>
+</a><a class="card" href="/post/les-fusees-des-syllabes/" data-comp="sons-syllabes mots">
+  <div class="card-img"><img src="/images/jeux/les-fusees-des-syllabes.jpg" alt="Les fusées des syllabes" loading="lazy" width="1100" height="740"></div>
+  <div class="card-body">
+    <span class="chip">Syllabes · Mots</span>
+    <h3>Les fusées des syllabes</h3>
+    <p>Au bal du 14 juillet, l&#x27;image d&#x27;un mot apparaît : l&#x27;enfant place les bonnes syllabes dans les fusées. Si c&#x27;est juste, ces fusées de feu d&#x27;artifice s&#x27;envolent, se rejoignent et explosent : les étincelles dessinent le mot. Trois niveaux, 73 mots illustrés.</p>
+    <div class="reperes"><span class="niv">GS</span><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
+    <span class="muted small">28 octobre 2026</span>
+  </div>
 </a><a class="card" href="/post/puissance-4-syllabiques/" data-comp="sons-syllabes">
   <div class="card-img"><img src="/images/jeux/puissance-4-syllabiques.jpg" alt="Puissance 4 syllabique" loading="lazy" width="1400" height="1050"></div>
   <div class="card-body">
-    <span class="chip">Lecture de syllabes</span>
+    <span class="chip">Syllabes</span>
     <h3>Puissance 4 syllabique</h3>
     <p>Le Puissance 4 qui fait lire : chaque jeton lâché tombe sur une syllabe à lire. À jouer à l&#x27;écran, à deux ou contre l&#x27;ordinateur, avec vérification au micro, ou sur papier avec des jetons de deux couleurs.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 2 joueurs</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>
@@ -117,7 +126,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/le-chemin-des-sons/" data-comp="mots">
   <div class="card-img"><img src="/images/jeux/le-chemin-des-sons.jpg" alt="Le chemin des sons" loading="lazy" width="1100" height="740"></div>
   <div class="card-body">
-    <span class="chip">Lecture de mots</span>
+    <span class="chip">Mots</span>
     <h3>Le chemin des sons</h3>
     <p>Le Petit Chaperon rouge lit les pancartes de la forêt pour arriver chez Mère-Grand avant le loup. Cinq niveaux de mots, des sons simples aux mots longs, pour le CP, et la lecture de l&#x27;élève est enregistrée.</p>
     <div class="reperes"><span class="niv">CP</span><span>👥 1 joueur avec l&#x27;adulte</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
@@ -126,7 +135,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/lecture-rapide-de-mots-tachistoscope/" data-comp="mots">
   <div class="card-img"><img src="/images/jeux/lecture-rapide-de-mots-tachistoscope.jpg" alt="Lecture rapide de mots" loading="lazy" width="760" height="570"></div>
   <div class="card-body">
-    <span class="chip">Lecture de mots</span>
+    <span class="chip">Mots</span>
     <h3>Lecture rapide de mots</h3>
     <p>Un tachistoscope en ligne : les mots apparaissent un par un et l&#x27;élève les lit le plus vite possible. Si le mot résiste, une aide audio le lit après quelques secondes.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
@@ -135,25 +144,16 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/les-formules-du-sorcier/" data-comp="mots">
   <div class="card-img"><img src="/images/jeux/les-formules-du-sorcier.jpg" alt="Les Formules du Sorcier" loading="lazy" width="1400" height="990"></div>
   <div class="card-body">
-    <span class="chip">Lecture de mots</span>
+    <span class="chip">Mots</span>
     <h3>Les Formules du Sorcier</h3>
     <p>Un jeu de plateau pour lire des mots inventés : chaque formule magique bien lue rapproche les joueurs du château, avant que le troll ne remplisse ses fioles.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 à 4 joueurs ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="À imprimer">🖨️ À imprimer</span><span title="Projetable">📽️ Projetable</span></div>
     <span class="muted small">23 octobre 2026</span>
   </div>
-</a><a class="card" href="/post/les-fusees-des-syllabes/" data-comp="mots">
-  <div class="card-img"><img src="/images/jeux/les-fusees-des-syllabes.jpg" alt="Les fusées des syllabes" loading="lazy" width="1100" height="740"></div>
-  <div class="card-body">
-    <span class="chip">Lecture de mots</span>
-    <h3>Les fusées des syllabes</h3>
-    <p>Au bal du 14 juillet, l&#x27;image d&#x27;un mot apparaît : l&#x27;enfant place les bonnes syllabes dans les fusées. Si c&#x27;est juste, ces fusées de feu d&#x27;artifice s&#x27;envolent, se rejoignent et explosent : les étincelles dessinent le mot. Trois niveaux, 36 mots illustrés.</p>
-    <div class="reperes"><span class="niv">GS</span><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
-    <span class="muted small">28 octobre 2026</span>
-  </div>
 </a><a class="card" href="/post/teleprompteur-de-lecture/" data-comp="phrases-textes">
   <div class="card-img"><img src="/images/jeux/teleprompteur-de-lecture.jpg" alt="Fluence sur 5 niveaux de texte du CP au CM2" loading="lazy" width="760" height="570"></div>
   <div class="card-body">
-    <span class="chip">Lecture de phrases</span>
+    <span class="chip">Phrases</span>
     <h3>Fluence sur 5 niveaux de texte du CP au CM2</h3>
     <p>Un téléprompteur de lecture : le texte s&#x27;affiche ligne par ligne et un trait avance sous les mots, à la vitesse choisie en mots par minute.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span class="niv">CE2</span><span class="niv">CM1</span><span class="niv">CM2</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
@@ -162,7 +162,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/images-du-quotidien/" data-comp="phrases-textes">
   <div class="card-img"><img src="/images/jeux/images-du-quotidien.jpg" alt="Images du quotidien" loading="lazy" width="1100" height="740"></div>
   <div class="card-body">
-    <span class="chip">Lecture de phrases</span>
+    <span class="chip">Phrases</span>
     <h3>Images du quotidien</h3>
     <p>Une image, quatre phrases : l&#x27;élève lit et choisit la phrase qui décrit l&#x27;image. Trois niveaux, des pièges de plus en plus proches, pour travailler la compréhension de phrases au CP et au CE1.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span>👥 1 joueur ou la classe</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>
@@ -171,7 +171,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
 </a><a class="card" href="/post/teleprompteur-a-l-ecoute/" data-comp="phrases-textes">
   <div class="card-img"><img src="/images/jeux/teleprompteur-a-l-ecoute.jpg" alt="Texte de fluence à vitesse automatique" loading="lazy" width="760" height="570"></div>
   <div class="card-body">
-    <span class="chip">Lecture de phrases</span>
+    <span class="chip">Phrases</span>
     <h3>Texte de fluence à vitesse automatique</h3>
     <p>L&#x27;élève lit à voix haute : le texte suit sa lecture, même s&#x27;il va vite. Cinq niveaux de textes ou votre propre texte. Bilan à la minute : mots lus et erreurs. Avec Chrome ou Edge.</p>
     <div class="reperes"><span class="niv">CP</span><span class="niv">CE1</span><span class="niv">CE2</span><span class="niv">CM1</span><span class="niv">CM2</span><span title="À l'écran">🖥️ À l'écran</span><span title="Projetable">📽️ Projetable</span></div>

@@ -48,18 +48,24 @@ CATS = {
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
 # Dans posts.json, chaque jeu porte un champ "jeu" :
-#   {"competence": "sons-syllabes", "niveaux": ["CP"], "joueurs": "2 joueurs", "supports": ["ecran", "imprimable", "projetable"]}
+#   {"competence": "sons-syllabes" (ou une liste : ["sons-syllabes", "mots"]), "niveaux": ["CP"], "joueurs": "2 joueurs", "supports": ["ecran", "imprimable", "projetable"]}
 COMPETENCES = {
     "discrimination-visuelle": "Discrimination visuelle",
-    "sons-syllabes": "Lecture de syllabes",
-    "mots": "Lecture de mots",
-    "phrases-textes": "Lecture de phrases",
+    "sons-syllabes": "Syllabes",
+    "mots": "Mots",
+    "phrases-textes": "Phrases",
     "comprehension": "Compréhension",
     "fluence": "Fluence",
     # Jeux de calcul (onglets de la page Calcul)
     "addition": "Addition",
     "multiplication": "Multiplication",
 }
+def comps(q):
+    """Compétences d'un jeu : "competence" peut être une chaîne ou une liste (un jeu dans plusieurs filtres)."""
+    c = (q.get("jeu") or {}).get("competence")
+    return [c] if isinstance(c, str) else list(c or [])
+
+
 SUPPORTS = {"ecran": ("🖥️", "À l'écran"), "imprimable": ("🖨️", "À imprimer"), "projetable": ("📽️", "Projetable")}
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
 
@@ -313,9 +319,10 @@ def reperes(p):
 def card(p):
     img = f'<img src="{esc(p["cover"])}" alt="{esc(p["title"])}" loading="lazy">' if p["cover"] else f'<div class="card-ph">{esc(p["title"][:1])}</div>'
     cat = CATS[p["cat"]]["name"] if p["cat"] else ""
-    comp = (p.get("jeu") or {}).get("competence")
-    if comp:
-        cat = COMPETENCES[comp]
+    cs = comps(p)
+    comp = " ".join(cs)
+    if cs:
+        cat = " · ".join(COMPETENCES[c] for c in cs)
     return f"""<a class="card" href="/post/{p['slug']}/"{f' data-comp="{comp}"' if comp else ''}>
   <div class="card-img">{img}</div>
   <div class="card-body">
@@ -354,7 +361,7 @@ document.querySelectorAll('.filtres button').forEach(function (b) {
     });
     var n = 0;
     document.querySelectorAll('.grid .card[data-comp]').forEach(function (c) {
-      c.hidden = !!f && c.dataset.comp !== f;
+      c.hidden = !!f && c.dataset.comp.split(' ').indexOf(f) < 0;
       if (!c.hidden) n++;
     });
     var v = document.querySelector('.filtres-vide');
@@ -640,9 +647,9 @@ def main():
             ("etude-langue", "Étude de la langue", CATS["etude-langue"]["desc"], edl),
             # Raccourci vers les jeux de discrimination visuelle (ils restent aussi dans Lecture-compréhension)
             ("discrimination-visuelle", "Discrimination visuelle", "Jeux pour bien regarder les lettres et ne plus les confondre (b, d, p, q, m, n, u…) et pour garder plusieurs lettres en tête d'un seul coup d'œil.",
-             sorted([q for q in lec if (q.get("jeu") or {}).get("competence") == "discrimination-visuelle"], key=lambda q: q["date"], reverse=True))]
+             sorted([q for q in lec if "discrimination-visuelle" in comps(q)], key=lambda q: q["date"], reverse=True))]
     # Lecture-compréhension : vignette prise sur un jeu qui n'est pas de discrimination visuelle (ceux-ci ont leur propre vignette)
-    vimg_fr = lambda k, lst: cover_of([q for q in lst if (q.get("jeu") or {}).get("competence") != "discrimination-visuelle"]) if k == "lecture" else cover_of(lst)
+    vimg_fr = lambda k, lst: cover_of([q for q in lst if "discrimination-visuelle" not in comps(q)]) if k == "lecture" else cover_of(lst)
     vignettes = '<div class="grid quatre">' + "".join(f"""<a class="card" href="/francais/{k}/">
   <div class="card-img">{f'<img src="{esc(vimg_fr(k, lst))}" alt="{esc(t)}" loading="lazy">' if vimg_fr(k, lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{t}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -654,10 +661,10 @@ def main():
     for k, t, d, lst in subs:
         filtres = ""
         if k == "lecture":
-            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence", "fluence")), q["title"]))
+            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((comps(q) or ["fluence"])[0]), q["title"]))
             # Les trois filtres « Lecture de… » sont toujours affichés, même sans jeu pour l'instant
             toujours = ("sons-syllabes", "mots", "phrases-textes")
-            presentes = [c for c in COMPETENCES if c in toujours or any((q.get("jeu") or {}).get("competence") == c for q in lst)]
+            presentes = [c for c in COMPETENCES if c in toujours or any(c in comps(q) for q in lst)]
             if len(presentes) > 1:
                 filtres = ('<div class="chips filtres" role="group" aria-label="Trier par compétence">'
                            '<span class="filtres-label">Trier par :</span>'
@@ -687,10 +694,10 @@ def main():
   {mvignettes}
 </section>""", "/maths/", "Maths au cycle 2 : jeux et outils de numération, de calcul mental et de résolution de problèmes pour la GS, le CP et le CE1."))
     for k, t, d, lst in msubs:
-        presentes = [c for c in COMPETENCES if any((q.get("jeu") or {}).get("competence") == c for q in lst)]
+        presentes = [c for c in COMPETENCES if any(c in comps(q) for q in lst)]
         filtres = ""
         if len(presentes) > 1:  # onglets (ex. Addition / Multiplication sur la page Calcul)
-            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((q.get("jeu") or {}).get("competence") or presentes[0]), q["title"]))
+            lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((comps(q) or presentes)[0]), q["title"]))
             filtres = ('<div class="chips filtres" role="group" aria-label="Trier par opération">'
                        '<span class="filtres-label">Trier par :</span>'
                        '<button class="chip active" data-f="" aria-pressed="true">Tout</button>'
