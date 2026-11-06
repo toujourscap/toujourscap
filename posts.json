@@ -4248,7 +4248,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles multiplications.",
+             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles multiplications, sur la même table ou une autre.",
              "decorations": []
             }
            }
@@ -4673,7 +4673,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles additions.",
+             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles additions, sur la même table ou une autre.",
              "decorations": []
             }
            }
