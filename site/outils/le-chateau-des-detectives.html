@@ -202,7 +202,7 @@ mark{background:transparent;color:inherit;border-radius:4px;transition:backgroun
     <div class="opts">
       <div class="opt">
         <h3>🔊 Écouter les messages</h3>
-        <p>Le bouton « Écouter » lit le message et la question à voix haute.</p>
+        <p>Le bouton « Écouter » lit le message et la question à voix haute. Attention : écouter compte comme une erreur (une seule fois par porte).</p>
         <div class="seg" id="audioSeg">
           <button id="audioOn" aria-pressed="true">Oui, on peut écouter</button>
           <button id="audioOff" aria-pressed="false">Non, je lis tout seul</button>
@@ -388,17 +388,38 @@ function loadRoom(){
   p.style.setProperty("--c", `var(--${card.cat})`);
   p.classList.remove("show-clue");
   p.innerHTML = `
-    ${audio ? '<button class="speak" id="spk">🔊 Écouter</button>' : ''}
+    ${audio ? '<button class="speak" id="spk">🔊 Écouter (= 1 erreur)</button>' : ''}
     <span class="tag">${esc(c.nom)}</span>
     <p class="intro">${esc(r.intro)}</p>
     <p class="texte">${highlight(card.texte, card.indice)}</p>
     <p class="q">${esc(card.q)}</p>
     <div class="choices">${opts.map((o,k)=>`<button class="choice" data-k="${k}"><span class="l">${"abc"[k]}</span>${esc(o.t)}</button>`).join("")}</div>
     <div id="after" aria-live="polite"></div>`;
-  if(audio) p.querySelector("#spk").onclick = () => speak(card.texte+" "+card.q+" "+opts.map(o=>o.t).join(", "));
   const btns = [...p.querySelectorAll(".choice")];
+  let ecoute = false;
+  if(audio) p.querySelector("#spk").onclick = () => {
+    if(!ecoute && !btns.some(b=>b.classList.contains("ok"))){
+      ecoute = true;
+      if(perdre()) return;
+      p.querySelector("#after").innerHTML = `<div class="bilan ko"><strong>Tu as écouté : ça compte comme une erreur.</strong> Il te reste ${g.vies} erreur${g.vies>1?"s":""} possible${g.vies>1?"s":""}. Tu peux réécouter cette porte sans perdre d'autre vie.</div>`;
+    }
+    speak(card.texte+" "+card.q+" "+opts.map(o=>o.t).join(", "));
+  };
   btns.forEach(b => b.onclick = () => answer(+b.dataset.k));
   btns[0].focus({preventScroll:true});
+
+  /* une erreur de plus ; renvoie true si c'était la 3ᵉ (fin du chemin) */
+  function perdre(){
+    g.fautes[g.room]++; g.vies--; renderLives();
+    if(g.vies > 0) return false;
+    const after = p.querySelector("#after");
+    btns.forEach((b,j) => { b.disabled = true; if(opts[j].ok) b.classList.add("ok"); });
+    after.innerHTML = `<div class="bilan ko"><strong>C'était ta 3ᵉ erreur.</strong> La bonne réponse est en vert.</div>
+      <div class="actions"><button class="btn" id="stop">Continuer</button></div>`;
+    after.querySelector("#stop").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; gameOver(); };
+    after.querySelector("#stop").focus({preventScroll:true});
+    return true;
+  }
 
   function answer(k){
     const after = p.querySelector("#after");
@@ -414,16 +435,9 @@ function loadRoom(){
       after.querySelector("#next").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; g.room++; g.room>=10 ? finish() : loadRoom(); };
       after.querySelector("#next").focus({preventScroll:true});
     } else {
-      g.fautes[g.room]++; g.vies--; renderLives();
       btns[k].disabled = true; btns[k].classList.add("ko");
       p.classList.add("show-clue");
-      if(g.vies <= 0){
-        btns.forEach((b,j) => { b.disabled = true; if(opts[j].ok) b.classList.add("ok"); });
-        after.innerHTML = `<div class="bilan ko"><strong>C'était ta 3ᵉ erreur.</strong> La bonne réponse est en vert.</div>
-          <div class="actions"><button class="btn" id="stop">Continuer</button></div>`;
-        after.querySelector("#stop").onclick = () => { try{speechSynthesis.cancel()}catch(e){}; gameOver(); };
-        after.querySelector("#stop").focus({preventScroll:true});
-      } else {
+      if(!perdre()){
         after.innerHTML = `<div class="bilan ko"><strong>La porte reste fermée.</strong> Il te reste ${g.vies} erreur${g.vies>1?"s":""} possible${g.vies>1?"s":""}.<br>
           Regarde les mots surlignés dans le message : ils vont t'aider. Essaie encore.</div>`;
       }

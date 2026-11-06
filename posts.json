@@ -11211,7 +11211,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "La page de présentation montre les 5 sortes de messages, avec un exemple pour chacune. L'adulte peut décocher des familles pour cibler une compétence, et choisir si le message peut être écouté à voix haute ou non.",
+             "text": "La page de présentation montre les 5 sortes de messages, avec un exemple pour chacune. L'adulte peut décocher des familles pour cibler une compétence, et choisir si le message peut être écouté à voix haute ou non (écouter compte alors comme une erreur, une fois par porte).",
              "decorations": []
             }
            }
