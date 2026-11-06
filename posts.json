@@ -3910,7 +3910,7 @@
    "title": "La Course des Multiplications",
    "slug": "la-course-des-multiplications",
    "cat": "calcul",
-   "excerpt": "Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l'ordinateur, ou en classe par équipes avec un classement au temps.",
+   "excerpt": "Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l'ordinateur, en classe par équipes, ou sur plusieurs tablettes dans la même course.",
    "date": "2026-10-25T14:20:00.000Z",
    "categoryIds": [],
    "media": {
@@ -3923,7 +3923,7 @@
      "CE1",
      "CE2"
     ],
-    "joueurs": "1 joueur ou la classe par équipes",
+    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 tablettes",
     "supports": [
      "ecran",
      "projetable"
@@ -4155,6 +4155,118 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sur plusieurs tablettes",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une seule course, affichée sur toutes les tablettes : chaque tablette a son coureur et tout le monde voit tous les coureurs avancer. Jusqu'à 8 tablettes connectées à Internet (un élève ou une petite équipe par tablette).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+{
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur la tablette de l'adulte : choisir « 📱 Plusieurs tablettes », choisir la table (ou ★ tables mélangées), puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur chaque tablette d'élève : « 📱 Plusieurs tablettes », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Quand tout le monde est inscrit, l'adulte appuie sur « Partez ! » : même compte à rebours et mêmes 10 multiplications partout.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles multiplications.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+{
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Aucun compte : seul le prénom tapé est gardé, le temps de la partie, et il est effacé au bout de 24 heures.",
+         "decorations": []
+        }
        }
       ]
      },

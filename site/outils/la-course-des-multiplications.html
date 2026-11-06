@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Multiplications</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-multiplications/"><meta name="description" content="Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l&#x27;ordinateur, ou en classe par équipes avec un…"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Multiplications</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-multiplications/"><meta name="description" content="Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l&#x27;ordinateur, en classe par équipes, ou sur plusieurs…"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
 /* Layout : écran unique — en-tête, scène de course en défilement (ciel, collines, 2 couloirs), question + pavé */
@@ -173,7 +173,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .cta{background:var(--me);color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:800;font-size:1rem}
 /* Mode de jeu et équipes */
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .mode{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800;font-size:1.05rem}
 .mode small{font-weight:700;color:var(--muted);font-size:.8rem}
 .mode[aria-pressed="true"]{border-color:var(--me);background:var(--me-soft)}
@@ -189,6 +189,23 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .rank .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
 .rank .tm{font-variant-numeric:tabular-nums}
 .rank .err{display:block;font-size:.75rem;color:var(--muted);font-weight:700}
+/* Plusieurs tablettes */
+.multi{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.mbox{border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.mbox b{font-size:1.05rem}
+.mbox input{font:inherit;font-weight:800;font-size:1.15rem;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--fg);width:100%}
+.mbox input.code{font-family:var(--display);font-size:1.8rem;letter-spacing:.3em;text-transform:uppercase;text-align:center}
+.mbox .cta{align-self:flex-start}
+.merr{color:var(--ko);font-weight:800;min-height:1.2em;margin:0}
+.bigcode{font-family:var(--display);font-weight:800;font-size:clamp(3.4rem,14vw,5.5rem);letter-spacing:.15em;line-height:1;color:var(--me)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:34px}
+.chips .teamchip{font-size:1rem}
+.cta:disabled{opacity:.45;cursor:default}
+.scene.serre .lane{height:58px;margin:5px 0}
+.scene.serre .bike{width:62px;height:51px;top:3px}
+.scene.serre .tag{top:3px;font-size:.62rem}
+.lane.moi{box-shadow:inset 0 0 0 3px #fff}
+.toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:30;background:#2b2b2b;color:#fff;font-weight:800;padding:8px 16px;border-radius:99px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -205,11 +222,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="modes">
         <button class="mode" id="mSolo">🚴 Seul<small>contre l'ordinateur</small></button>
         <button class="mode" id="mTeam">👥 En classe<small>par équipes, au temps</small></button>
+        <button class="mode" id="mMulti">📱 Plusieurs tablettes<small>une course, tous les écrans</small></button>
       </div>
     </div>
 
     <div class="panel">
-      <div class="label">1. Choisis ta table</div>
+      <div class="label" id="labTable">1. Choisis ta table</div>
       <div class="tables" id="tables"></div>
     </div>
 
@@ -234,13 +252,32 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       </div>
       <p class="sub" style="margin:0">Argent = 75 % de ce temps, Or = 55 % (jamais moins de 10 s). 10 multiplications par course.</p>
     </div>
+    <div class="panel multi-only">
+      <div class="label">2. Créer ou rejoindre la course</div>
+      <div class="multi">
+        <div class="mbox">
+          <b>👩‍🏫 Adulte : créer la course</b>
+          <span class="sub" style="margin:0">Avec la table choisie au-dessus. Un code s'affiche : les autres tablettes le tapent.</span>
+          <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde)" aria-label="Prénom ou équipe sur cette tablette (laisser vide pour seulement regarder)">
+          <button class="cta" id="mCreer">Créer la course</button>
+        </div>
+        <div class="mbox">
+          <b>🏃 Rejoindre une course</b>
+          <input id="mCode" class="code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" aria-label="Code de la course">
+          <input id="mNom" maxlength="16" autocomplete="off" placeholder="Prénom ou équipe" aria-label="Prénom ou nom d'équipe">
+          <button class="cta" id="mJoin">Rejoindre</button>
+        </div>
+      </div>
+      <p class="merr" id="mErr" role="alert"></p>
+      <p class="sub" style="margin:0">Jusqu'à 8 tablettes, connectées à Internet. Tout le monde voit tous les coureurs et a les mêmes 10 multiplications. Aucun compte : le prénom est effacé au bout de 24 h. Écrire juste le prénom ou un nom d'équipe.</p>
+    </div>
   </section>
 
   <!-- COURSE -->
   <section id="race" hidden style="display:contents">
     <div class="race-head">
       <h2 id="raceTitle">Table de 2 · Bronze</h2>
-      <div class="row"><button class="ghost" id="snd">🔊 Son</button><button class="ghost" id="quit">← Menu</button></div>
+      <div class="row"><button class="ghost" id="snd">🔊 Son</button><button class="ghost" id="stop" hidden>⏹ Arrêter</button><button class="ghost" id="quit">← Menu</button></div>
     </div>
     <div class="scene" id="scene">
       <div class="sun"></div>
@@ -252,6 +289,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="lead" id="lead"></div>
       <div class="lane" id="laneMe"><span class="tag me" id="tagMe">Toi</span><div class="ticks" id="ticks"></div><div class="finish"></div><div class="bike" id="bikeMe"></div></div>
       <div class="lane" id="laneBot"><span class="tag bot" id="tagBot">Ordinateur</span><div class="finish"></div><div class="bike" id="bikeBot"></div></div>
+      <div id="lanesX" style="display:contents"></div>
     </div>
     <div class="hud"><span id="score">0 / 10</span><span class="streak" id="streak"></span><span id="clock">0,0 s</span></div>
     <div class="panel quiz">
@@ -363,11 +401,15 @@ $("base").value = Math.max(20,store.base); $("baseOut").textContent = store.base
 $("base").oninput = e => { store.base=+e.target.value; $("baseOut").textContent=store.base+" s"; save(); renderLevels(); };
 
 function renderMode(){
-  const team = store.mode==="equipes";
-  $("mSolo").setAttribute("aria-pressed", !team); $("mTeam").setAttribute("aria-pressed", team);
-  document.querySelectorAll(".solo-only").forEach(e=>e.hidden=team);
+  const team = store.mode==="equipes", multi = store.mode==="multi";
+  $("mSolo").setAttribute("aria-pressed", !team && !multi); $("mTeam").setAttribute("aria-pressed", team);
+  $("mMulti").setAttribute("aria-pressed", multi);
+  document.querySelectorAll(".solo-only").forEach(e=>e.hidden=team||multi);
   document.querySelectorAll(".team-only").forEach(e=>e.hidden=!team);
-  $("sub").textContent = team ? "Chaque bonne réponse = une foulée. Quelle équipe sera la plus rapide ?"
+  document.querySelectorAll(".multi-only").forEach(e=>e.hidden=!multi);
+  $("labTable").textContent = multi ? "1. Choisis la table (adulte qui crée la course)" : "1. Choisis ta table";
+  $("sub").textContent = multi ? "Chaque bonne réponse = une foulée. Une seule course sur toutes les tablettes !"
+                       : team ? "Chaque bonne réponse = une foulée. Quelle équipe sera la plus rapide ?"
                               : "Chaque bonne réponse = une foulée. Arrive avant l'ordinateur !";
   const nb=$("nteams"); nb.innerHTML="";
   for(let n=2;n<=6;n++){ const b=document.createElement("button"); b.textContent=n;
@@ -377,6 +419,7 @@ function renderMode(){
 }
 $("mSolo").onclick=()=>{ store.mode="solo"; save(); renderMode(); };
 $("mTeam").onclick=()=>{ store.mode="equipes"; save(); renderMode(); };
+$("mMulti").onclick=()=>{ store.mode="multi"; save(); renderMode(); };
 $("goTeams").onclick=()=>startTeams();
 
 /* ---------- Pavé ---------- */
@@ -476,6 +519,7 @@ function startRace(level){
   const best = T ? T.teams.filter(x=>x.time!=null).sort((a,b)=>a.time-b.time)[0] : null;
   R={level, team, ghost:best, table:store.table, botTime: team ? (best ? best.time : Infinity) : lvlTime(level),
      qs: T ? T.qs : questions(store.table), i:0, input:"", good:0, errors:0, streak:0, t0:0, running:false, done:false};
+  sceneNormale();
   $("menu").hidden=true; $("menu").style.display="none";
   $("race").hidden=false; $("race").style.display="contents";
   $("confetti").hidden=true;
@@ -501,11 +545,12 @@ function countdown(n){
   setTimeout(()=>{ if(R && !R.done) countdown(n-1); },900);
 }
 const BW=92;
-function trackX(frac){ const w=$("laneMe").clientWidth; return 6 + frac*(w-6-BW-20); }
+function trackX(frac){ const sc=$("scene"), w=sc.clientWidth, bw=sc.classList.contains("serre")?62:BW; return 6 + frac*(w-6-bw-20); }
 
 function frame(now){
   if(!R){ loopOn=false; return; }
   const dt=Math.min(.05,(now-last)/1000); last=now;
+  if(R.multi){ frameMulti(now,dt); requestAnimationFrame(frame); return; }
   // Ordinateur : avance régulière
   let botTarget = 0;
   if(R.running){
@@ -546,7 +591,7 @@ function frame(now){
 }
 function puff(r){
   const p=document.createElement("span"); p.className="puff";
-  p.style.left=(trackX(r.pos)+8)+"px"; p.style.top=(56+Math.random()*10)+"px";
+  p.style.left=(trackX(r.pos)+8)+"px"; p.style.top=(($("scene").classList.contains("serre")?36:56)+Math.random()*10)+"px";
   r.el.parentElement.appendChild(p); setTimeout(()=>p.remove(),650);
 }
 function plusOne(){
@@ -564,7 +609,7 @@ function showQ(){
   $("q").innerHTML=`${a} × ${b} = <span class="ans" id="ans">&nbsp;</span>`;
 }
 function press(k){
-  if(!R || !R.running) return;
+  if(!R || !R.running || (R.multi && !R.joue) || (R.multi && R.done)) return;
   if(k==="⌫"){ R.input=R.input.slice(0,-1); }
   else if(R.input.length<3){ R.input+=k; }
   $("ans").textContent = R.input || " ";
@@ -583,6 +628,7 @@ function check(){
     if(!reduce){ const s=$("scene"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); }
     plusOne(); updateScore();
     cheerNear(trackX(R.good/STEPS)+46, R.streak>=3?200:120, 1100);
+    if(R.multi){ if(R.good>=STEPS){ R.tEnd=performance.now(); R.running=false; multiArrive(); return; } envoieScore(); }
     if(R.good>=STEPS){ R.tEnd=performance.now(); setTimeout(()=> R.team ? teamDone() : finish(true),450); R.running=false; return; }
     R.i++; setTimeout(()=>{ if(R && R.running) showQ(); },250);
   } else {
@@ -590,6 +636,7 @@ function check(){
     const q=$("q"); q.className="q"; void q.offsetWidth; q.className="q ko";
     me.el.classList.remove("wobble"); void me.el.offsetWidth; me.el.classList.add("wobble");
     $("hint").textContent="Essaie encore !";
+    if(R.multi) envoieScore();
     R.input=""; setTimeout(()=>{ if($("ans")) $("ans").textContent=" "; },400);
   }
 }
@@ -669,8 +716,260 @@ function confetti(l){
     if(t-t0<3000 && !c.hidden) requestAnimationFrame(draw); else { x.clearRect(0,0,W,H); c.hidden=true; }
   })(t0);
 }
+/* Noms de table pour le mode plusieurs tablettes */
+const Maj = s => s.charAt(0).toUpperCase() + s.slice(1);
+const nomTable = t => { const l=tLabel(t); return l.charAt(0).toLowerCase()+l.slice(1); };
+/* ---------- Plusieurs tablettes (relais /api/salle) ---------- */
+const COUL=["#e9462f","#3a6fb0","#2f9b4f","#d9a400","#8e44ad","#e0558f","#16a3a8","#8a5a2b"];
+const coul = id => COUL[(id-1)%COUL.length];
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const API="/api/salle";
+let M=null; // salle en cours : {code, hote, id, jeton, nom, manche, etat, offset, rtt, vue, echecs, timer}
+async function api(body){
+  const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({erreur:"Le serveur ne répond pas. Vérifie la connexion Internet."}));
+  if(!r.ok||d.erreur) throw new Error(d.erreur||"Erreur "+r.status);
+  return d;
+}
+const heureServeur = () => Date.now() + (M ? M.offset : 0);
+function mErr(t){ $("mErr").textContent=t||""; }
+function toast(t){ let e=$("toast"); if(!t){ if(e) e.remove(); return; }
+  if(!e){ e=document.createElement("div"); e.id="toast"; e.className="toast"; document.body.appendChild(e); } e.textContent=t; }
+const nouvelleSalle = o => ({id:0, jeton:"", nom:"", hote:"", manche:0, offset:0, rtt:1e9, vue:"attente", echecs:0, ...o});
+
+$("mCode").oninput=e=>{ e.target.value=e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,4); };
+if(store.mNom) $("mNom").value=store.mNom;
+$("mCreer").onclick=async()=>{
+  mErr(""); const b=$("mCreer"); b.disabled=true;
+  try{
+    const d=await api({a:"creer", jeu:"course-multiplications", reglages:{table:store.table, qs:questions(store.table)}});
+    M=nouvelleSalle({code:d.code, hote:d.hote});
+    const nom=$("mNomHote").value.trim();
+    if(nom){ const j=await api({a:"rejoindre", code:d.code, nom}); Object.assign(M,{id:j.id, jeton:j.jeton, nom:j.nom}); }
+    salleAttente();
+  }catch(e){ mErr(e.message); M=null; }
+  b.disabled=false;
+};
+$("mJoin").onclick=async()=>{
+  mErr(""); const code=$("mCode").value.trim().toUpperCase(), nom=$("mNom").value.trim();
+  if(code.length!==4) return mErr("Le code a 4 lettres.");
+  if(!nom) return mErr("Écris un prénom ou un nom d'équipe.");
+  const b=$("mJoin"); b.disabled=true;
+  try{
+    const j=await api({a:"rejoindre", code, nom});
+    store.mNom=nom; save();
+    M=nouvelleSalle({code, id:j.id, jeton:j.jeton, nom:j.nom});
+    salleAttente();
+  }catch(e){ mErr(e.message); }
+  b.disabled=false;
+};
+$("mNom").onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); $("mJoin").click(); } };
+$("mCode").onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); $("mNom").focus(); } };
+
+async function poll(){
+  const m=M; if(!m) return;
+  clearTimeout(m.timer);
+  const t1=Date.now();
+  try{
+    const r=await fetch(`${API}?code=${m.code}${m.id?"&id="+m.id:""}`,{cache:"no-store"});
+    const d=await r.json().catch(()=>({erreur:"Réponse illisible"})); const t2=Date.now();
+    if(M!==m) return;
+    if(r.status===404){ finSalle("Cette course n'existe plus."); return; }
+    if(!r.ok) throw new Error(d.erreur);
+    const rtt=t2-t1;   // horloge du serveur : on garde la mesure la plus rapide (la plus précise)
+    if(rtt<=m.rtt*1.3+20){ m.offset=d.maintenant-(t1+t2)/2; m.rtt=Math.min(m.rtt,rtt); }
+    m.echecs=0; toast("");
+    m.etat=d;
+    if(m.aRenvoyer) envoieScore();
+    surEtat(d);
+  }catch(e){ if(M===m && ++m.echecs>=3) toast("Connexion perdue… je réessaie"); }
+  if(M===m) m.timer=setTimeout(poll, m.vue==="course"?800:1500);
+}
+function surEtat(d){
+  if(d.statut==="course" && d.manche>M.manche){ M.manche=d.manche; departMulti(d); return; }
+  if(M.vue==="attente") majAttente(d);
+  else if(M.vue==="course"){
+    majCourse(d);
+    const js=joueursAvecMoi(d);
+    if(d.statut==="fini" || (js.length && js.every(j=>j.temps!=null))) podiumMulti(d);
+  }
+}
+function joueursAvecMoi(d){
+  return d.joueurs.map(j=> j.id===M.id && R && R.multi && R.joue
+    ? {...j, bons:R.good, erreurs:R.errors, temps:R.monTemps ?? j.temps} : j);
+}
+function finSalle(msg){
+  const m=M; M=null; if(m) clearTimeout(m.timer); toast("");
+  if(R){ R.running=false; R.done=true; } MUS.stop();
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog"><h2>Oups</h2><p>${esc(msg)}</p><div class="row"><button class="cta" id="toMenu">Menu</button></div></div>`;
+  $("toMenu").onclick=toMenu;
+}
+function quitteSalle(){
+  const m=M; M=null; clearTimeout(m.timer); toast("");
+  if(m.id) fetch(API,{method:"POST",headers:{"content-type":"application/json"},keepalive:true,
+    body:JSON.stringify({a:"quitter", code:m.code, id:m.id, jeton:m.jeton})}).catch(()=>{});
+}
+addEventListener("pagehide",()=>{ if(M) quitteSalle(); });
+
+/* Salle d'attente */
+function salleAttente(){
+  M.vue="attente"; M.cleAttente="";
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <p>Code de la course</p><div class="bigcode">${M.code}</div>
+    <p id="mInfo">${M.hote?"Sur les autres tablettes : <b>📱 Plusieurs tablettes</b>, puis taper ce code.":""}</p>
+    <div class="chips" id="mChips"></div>
+    ${M.hote?`<button class="cta partez" id="mGo" disabled>Partez ! 🏃</button>`:`<p><strong>En attente du départ…</strong></p>`}
+    <button class="ghost" id="mQuit">Quitter</button></div>`;
+  if(M.hote) $("mGo").onclick=()=>lancer(false);
+  $("mQuit").onclick=toMenu;
+  poll();
+}
+function majAttente(d){
+  const cle=JSON.stringify([d.joueurs.map(j=>[j.id,j.nom]), d.reglages.table]);
+  if(cle===M.cleAttente || !$("mChips")) return; M.cleAttente=cle;
+  const n=d.joueurs.length;
+  $("mChips").innerHTML = n ? d.joueurs.map(j=>`<span class="teamchip" style="background:${coul(j.id)}">${esc(j.nom)}${j.id===M.id?" (toi)":""}</span>`).join("")
+                            : `<span class="sub">Aucune tablette pour l'instant…</span>`;
+  $("mInfo").innerHTML = (M.hote ? "Sur les autres tablettes : <b>📱 Plusieurs tablettes</b>, puis taper ce code.<br>" : "")
+    + `${Maj(nomTable(d.reglages.table))} · ${n} tablette${n>1?"s":""}`;
+  if($("mGo")) $("mGo").disabled = !n;
+}
+async function lancer(nouvelles){
+  if(!M || !M.etat) return;
+  const t=M.etat.reglages.table;
+  const reglages = nouvelles ? {table:t, qs:questions(t)} : M.etat.reglages;
+  document.querySelectorAll("#mGo,#again").forEach(b=>b.disabled=true);
+  try{ await api({a:"partir", code:M.code, hote:M.hote, reglages}); poll(); }
+  catch(e){ toast(e.message); document.querySelectorAll("#mGo,#again").forEach(b=>b.disabled=false); }
+}
+$("stop").onclick=async()=>{ if(!M||!M.hote) return; try{ await api({a:"arreter", code:M.code, hote:M.hote}); poll(); }catch(e){ toast(e.message); } };
+
+/* Course partagée */
+function departMulti(d){
+  const moi=d.joueurs.find(j=>j.id===M.id), joue=!!moi;
+  M.vue="course";
+  R={multi:true, joue, table:d.reglages.table, qs:d.reglages.qs, level:LEVELS[0], autres:[],
+     i:0, input:"", good:0, errors:0, streak:0, t0:0, running:false, done:false, monTemps:null};
+  sceneNormale();
+  $("menu").hidden=true; $("menu").style.display="none";
+  $("race").hidden=false; $("race").style.display="contents";
+  $("confetti").hidden=true;
+  $("raceTitle").textContent=`${Maj(nomTable(R.table))} · Course ${M.code}`;
+  $("scene").classList.toggle("serre", d.joueurs.length>3);
+  $("laneBot").hidden=true; $("laneMe").hidden=!joue;
+  me=null;
+  if(joue){ me=makeRider($("bikeMe"), coul(M.id)); $("laneMe").classList.add("moi");
+    $("tagMe").textContent=moi.nom+" (toi)"; $("tagMe").style.background=coul(M.id); }
+  const box=$("lanesX"); box.innerHTML="";
+  d.joueurs.filter(j=>j.id!==M.id).forEach(j=>{
+    const lane=document.createElement("div"); lane.className="lane";
+    lane.innerHTML=`<span class="tag" style="background:${coul(j.id)}">${esc(j.nom)}</span><div class="finish"></div><div class="bike"></div>`;
+    box.appendChild(lane);
+    R.autres.push({id:j.id, nom:j.nom, bons:0, temps:null, cible:0, r:makeRider(lane.querySelector(".bike"), coul(j.id))});
+  });
+  document.querySelector(".quiz").hidden=!joue;
+  $("stop").hidden=!M.hote;
+  [...$("ticks").children].forEach(t=>t.classList.remove("done"));
+  $("lead").textContent=""; $("streak").textContent=""; $("clock").textContent="0,0 s"; $("hint").textContent="";
+  if(joue){ updateScore(); showQ(); } else $("score").textContent=`${d.joueurs.length} tablette${d.joueurs.length>1?"s":""}`;
+  buildCrowd(); audio();
+  if(!loopOn){ loopOn=true; last=performance.now(); requestAnimationFrame(frame); }
+  decompteMulti(d.debut);
+}
+function decompteMulti(debut){
+  const ov=$("ov"), monR=R; ov.hidden=false; let vu=null;
+  (function tic(){
+    if(R!==monR || R.running) return;
+    const reste=debut-heureServeur();
+    if(reste<=0){
+      R.running=true; R.t0=performance.now()+reste; MUS.start();
+      ov.innerHTML=`<div class="count">Partez !</div>`;
+      setTimeout(()=>{ if(R===monR && !$("ov").querySelector(".result")) ov.hidden=true; },600);
+      return;
+    }
+    const n=Math.ceil(reste/1000), aff = n>3 ? "Prêts ?" : String(n);
+    if(aff!==vu){ vu=aff; ov.innerHTML=`<div class="count"${n>3?' style="font-size:4rem"':""}>${aff}</div>`; }
+    setTimeout(tic, Math.min(100, reste));
+  })();
+}
+function majCourse(d){
+  R.autres.forEach(o=>{ const j=d.joueurs.find(x=>x.id===o.id); if(!j) return;
+    o.bons=j.bons; o.temps=j.temps; o.cible=Math.min(1,j.bons/STEPS); });
+  if(R.done && R.joue){
+    const js=joueursAvecMoi(d), rang=classement(js).findIndex(j=>j.id===M.id)+1, reste=js.filter(j=>j.temps==null).length;
+    $("hint").textContent = `${rang===1?"1ᵉʳ":rang+"ᵉ"} ! ` + (reste ? `Encore ${reste} en course…` : "");
+  }
+}
+function frameMulti(now,dt){
+  if(R.running) $("clock").textContent=fmt((now-R.t0)/1000)+" s";
+  const glisse=(r,cible)=>{ const prev=r.pos; r.pos+=(cible-r.pos)*Math.min(1,dt*5); if(Math.abs(cible-r.pos)<.0005) r.pos=cible;
+    const v=(r.pos-prev)/dt; r.vel+=((v>0.002?9+v*90:(R.running?5.5:0))-r.vel)*Math.min(1,dt*6); r.ang+=r.vel*dt;
+    r.el.style.transform=`translateX(${trackX(r.pos)}px)`; drawRider(r); return v; };
+  let vM=0, vA=0;
+  if(me) vM=glisse(me, R.good/STEPS);
+  R.autres.forEach(o=>{ vA+=glisse(o.r, o.cible); });
+  if(R.running){ sx+=dt*(70+(vM+vA)*600); $("scene").style.setProperty("--sx", sx.toFixed(1));
+    const tous=[...(me?[{nom:M.nom, b:R.good, moi:true, id:M.id}]:[]), ...R.autres.map(o=>({nom:o.nom, b:o.bons, id:o.id}))];
+    const best=Math.max(0,...tous.map(t=>t.b)), tete=tous.filter(t=>t.b===best);
+    const txt = !best ? "C'est parti !" : tete.length>1 ? "Coude à coude !" : tete[0].moi ? "Tu mènes !" : `${tete[0].nom} mène !`;
+    const L=$("lead"); if(L.textContent!==txt){ L.textContent=txt; L.className="lead tie"; L.style.background = tete.length===1&&best ? coul(tete[0].id) : ""; }
+  }
+  if(me && R.running && vM>0.05) cheerNear(trackX(me.pos)+46,70,600);
+  calmFans(now);
+  if(!reduce && me && R.running && vM>0.05 && Math.random()<dt*25) puff(me);
+}
+function envoieScore(){
+  if(!M || !M.id || !R || !R.multi) return;
+  const m=M, corps={a:"score", code:m.code, id:m.id, jeton:m.jeton, bons:R.good, erreurs:R.errors, temps:R.monTemps};
+  m.aRenvoyer=false;
+  m.envoi=(m.envoi||Promise.resolve()).then(()=>api(corps)).catch(()=>{ m.aRenvoyer=true; });
+}
+function multiArrive(){
+  R.done=true; const el=(R.tEnd-R.t0)/1000; R.monTemps=Math.round(el*1000);
+  envoieScore();
+  MUS.stop(); jingle(true); cheerNear(0,1e5,2500);
+  $("q").className="q ok"; $("q").innerHTML=`🏁 ${fmt(el)} s`;
+  $("hint").style.color="var(--ok)"; $("hint").textContent="Arrivé ! En attente des autres…";
+  $("pad").hidden=true;
+  if(M && M.etat) majCourse(M.etat);
+}
+const classement = js => [...js].sort((a,b)=> ((a.temps==null)-(b.temps==null)) ||
+  (a.temps!=null ? a.temps-b.temps : b.bons-a.bons) || a.erreurs-b.erreurs);
+function podiumMulti(d){
+  if(M.vue==="podium") return; M.vue="podium";
+  R.running=false; R.done=true; MUS.stop();
+  const cl=classement(joueursAvecMoi(d)), medal=["🥇","🥈","🥉"];
+  const rang=cl.findIndex(j=>j.id===M.id)+1;
+  if(R.joue){
+    if(rang===1) confetti({id:"or"});
+    try{TDC.note({s:R.good,n:STEPS,g:rang===1,niv:"Plusieurs tablettes",d:`Course à ${cl.length} tablettes : ${rang===1?"1ᵉʳ":rang+"ᵉ"} · ${nomTable(R.table)}`})}catch(e){}
+  }
+  const gagnant=cl[0];
+  const ov=$("ov"); ov.hidden=false;
+  ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
+    <h2>${gagnant ? `Bravo <span style="color:${coul(gagnant.id)}">${esc(gagnant.nom)}</span> !` : "Course terminée"}</h2>
+    <p>Classement — ${nomTable(R.table)}</p>
+    <ol class="rank">${cl.map((j,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
+      <span><span class="sw" style="background:${coul(j.id)}"></span>${esc(j.nom)}${j.id===M.id?" (toi)":""}<span class="err">${j.erreurs} erreur${j.erreurs>1?"s":""}</span></span>
+      <span class="tm">${j.temps!=null ? fmt(j.temps/1000)+" s" : j.bons+" / "+STEPS}</span></li>`).join("")}</ol>
+    ${M.hote ? "" : "<p>L'adulte peut lancer une revanche : reste sur cet écran.</p>"}
+    <div class="row">${M.hote?`<button class="cta" id="again">Revanche (nouvelles multiplications)</button>`:""}<button class="ghost" id="toMenu">Menu</button></div></div>`;
+  if(M.hote){ $("again").onclick=()=>lancer(true); $("again").focus(); }
+  $("toMenu").onclick=toMenu;
+  $("stop").hidden=true;
+}
+function sceneNormale(){
+  $("lanesX").innerHTML=""; $("scene").classList.remove("serre");
+  $("laneMe").hidden=false; $("laneMe").classList.remove("moi"); $("laneBot").hidden=false;
+  document.querySelector(".quiz").hidden=false; $("pad").hidden=false; $("stop").hidden=true;
+  $("lead").style.background=""; $("hint").style.color="";
+}
 function toMenu(){
+  if(M) quitteSalle();
   if(R){R.running=false; R.done=true;} R=null; T=null; MUS.stop();
+  sceneNormale();
   $("ov").hidden=true; $("confetti").hidden=true;
   $("race").hidden=true; $("race").style.display="none";
   $("menu").hidden=false; $("menu").style.display="contents";
