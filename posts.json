@@ -1,6 +1,393 @@
 {
- "count": 41,
+ "count": 42,
  "posts": [
+  {
+   "title": "Les devinettes de la forêt",
+   "slug": "les-devinettes-de-la-foret",
+   "excerpt": "« Qui suis-je ? » : à l'école de la forêt, l'élève lit des devinettes sur les animaux, les objets du quotidien, les métiers, les fruits et légumes, les transports, puis choisit l'étiquette ou écrit le mot. CP, CE1, CE2.",
+   "date": "2026-11-06T15:00:00.000Z",
+   "cat": "lecture",
+   "categoryIds": [],
+   "jeu": {
+    "competence": "comprehension",
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "À l'école de la forêt, la maîtresse a écrit des devinettes au tableau : « J'ai des piquants sur le dos. Je vis dans la forêt. Qui suis-je ? ». L'élève lit les indices et trouve la réponse, en choisissant la bonne étiquette ou en écrivant le mot.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/les-devinettes-de-la-foret.html",
+       "containerData": {
+        "height": {
+         "custom": "1100"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : CP (2 phrases courtes), CE1 (3 indices), CE2 (plus de vocabulaire et des indices à déduire).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la façon de répondre",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : choisir parmi des étiquettes (3 au CP, 4 au CE1 et au CE2, toutes du même thème), ou écrire le mot comme en dictée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir les thèmes",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : les animaux, les objets du quotidien, les métiers, les fruits et légumes, les transports.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une partie compte 10 devinettes. Chaque devinette trouvée rapporte une châtaigne 🌰.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le bouton « Écouter » lit la devinette à voix haute",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " (l'adulte peut l'enlever). On peut encore trouver la réponse, mais cette devinette ne rapporte pas de châtaigne.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Écrire le mot",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les accents comptent ; les majuscules et les petits mots « le », « la », « un »… ne sont pas obligatoires.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Si le mot est juste mais qu'il manque un accent, le jeu le dit à l'élève.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Après 2 essais, la première lettre et le nombre de lettres s'affichent. Le bouton « Un indice » ajoute une lettre à chaque clic.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les synonymes courants sont acceptés : hibou, docteur, patate, potiron, autobus, maître…",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En classe",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Au tableau, la classe lit ensemble la devinette, puis chacun écrit sa réponse sur l'ardoise avant de valider.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Après la réponse, demander aux élèves quels mots les ont aidés à trouver.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le bouton « Imprimer 10 devinettes » donne une fiche avec les étiquettes à entourer ou une ligne pour écrire, et les réponses en bas de page.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Pour aller plus loin, les élèves inventent leur propre devinette sur le même modèle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "50 devinettes, chacune écrite pour les trois niveaux. Le décor de l'école dans la forêt a été créé avec Canva.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "La tour de contrôle",
    "slug": "la-tour-de-controle",
@@ -2071,7 +2458,10 @@
     "custom": false
    },
    "jeu": {
-    "competence": ["sons-syllabes", "mots"],
+    "competence": [
+     "sons-syllabes",
+     "mots"
+    ],
     "niveaux": [
      "GS",
      "CP",

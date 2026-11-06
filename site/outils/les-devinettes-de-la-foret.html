@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les devinettes de la forêt</title><link rel="canonical" href="https://toujourscap.com/post/les-devinettes-de-la-foret/"><meta name="description" content="« Qui suis-je ? » : à l&#x27;école de la forêt, l&#x27;élève lit des devinettes sur les animaux, les objets du quotidien, les métiers, les fruits et légumes, les…">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* L'école dans la forêt : décor Canva en fond, la devinette écrite à la craie sur un tableau noir */
+:root{
+  --moss:#1F3A2B; --moss-2:#2C5139; --leaf:#5FA35A; --leaf-2:#8CC76F; --bark:#6B4A2B; --bark-2:#8A6238;
+  --cream:#FFF8E8; --paper:#FFFDF6; --ink:#2B2418; --muted:#6E6250; --board:#24392E; --chalk:#F6F3E8;
+  --sun:#F4B73E; --ok:#3FA45E; --ok-bg:#E3F4E6; --ko:#D2503C; --ko-bg:#FBE4DF;
+  --ani:#E0873A; --obj:#4F86C6; --met:#B05FC6; --fru:#D4483F; --tra:#2E9C8F;
+  --f-display:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-read:"Andika","Verdana",system-ui,sans-serif;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{margin:0;font-family:var(--f-read);font-size:17px;line-height:1.45;color:var(--ink);background:var(--moss)}
+.bg{position:fixed;inset:0;z-index:-1;background:url(/images/devinettes/ecole-foret.jpg) center/cover no-repeat}
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(#0E1F1588,#0E1F15CC)}
+.wrap{max-width:1100px;margin:0 auto;padding:18px max(14px,env(safe-area-inset-right,0px)) 40px max(14px,env(safe-area-inset-left,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;text-wrap:balance}
+.card{background:var(--cream);border-radius:20px;padding:18px 20px;box-shadow:0 10px 30px #0006}
+.btn{font:inherit;font-family:var(--f-display);font-weight:800;font-size:19px;border:0;border-radius:14px;padding:12px 22px;cursor:pointer;
+  background:var(--sun);color:#3A2706;box-shadow:0 4px 0 #A97A16}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #A97A16}
+.btn.ghost{background:var(--paper);color:var(--ink);box-shadow:0 4px 0 #CFC3A6;border:2px solid #E4D9BE}
+.btn.small{font-size:16px;padding:8px 14px}
+.btn:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+
+/* Accueil */
+.home{display:grid;gap:18px}
+.hero{border-radius:22px;overflow:hidden;position:relative;aspect-ratio:16/9;max-height:440px;width:100%;box-shadow:0 10px 30px #0008;
+  background:url(/images/devinettes/ecole-foret.jpg) center/cover}
+.hero h1{position:absolute;left:0;right:0;bottom:0;padding:40px 20px 16px;color:#fff;font-size:clamp(30px,5.5vw,54px);text-align:center;
+  background:linear-gradient(transparent,#0E1F15DD);text-shadow:0 3px 8px #000a}
+.lead{margin:0;font-size:18px}
+.reglages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.reglages h2{font-size:20px;color:var(--moss-2);margin-bottom:8px}
+.reglages p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:inline-block;font-weight:700;font-size:17px;padding:9px 14px;border-radius:12px;background:var(--paper);border:2px solid #E4D9BE}
+.seg input:checked+span{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.seg input:focus-visible+span{outline:3px solid var(--sun);outline-offset:2px}
+.seg b{font-family:var(--f-display)}
+.themes{display:flex;flex-wrap:wrap;gap:8px}
+.themes label{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--paper);border:2px solid var(--c);cursor:pointer;font-weight:700}
+.themes input{width:20px;height:20px;accent-color:var(--c)}
+.warn{color:var(--ko);font-weight:700;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.center{justify-content:center}
+
+/* Partie */
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;color:#fff}
+.top h2{font-size:20px;text-shadow:0 2px 6px #000a}
+.score{font-family:var(--f-display);font-weight:800;font-size:20px;background:#0E1F15AA;border-radius:999px;padding:6px 14px;font-variant-numeric:tabular-nums}
+.path{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.path span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:700;background:#0E1F15AA;color:#cfe3c8;border:2px solid #ffffff33}
+.path .here{border-color:var(--sun);color:var(--sun)}
+.path .won{background:var(--leaf);color:#fff;border-color:var(--leaf)}
+.path .lu{background:#7C8A80;color:#fff;border-color:#7C8A80}
+.path .rate{background:var(--bark-2);color:#fff;border-color:var(--bark-2)}
+
+.board{background:var(--board);color:var(--chalk);border-radius:12px;padding:22px 24px 20px;position:relative;
+  border:14px solid var(--bark);box-shadow:inset 0 0 40px #0008,0 10px 30px #0008}
+.board::after{content:"";position:absolute;left:12%;right:12%;bottom:-14px;height:8px;background:var(--bark-2);border-radius:0 0 6px 6px}
+.board .tag{display:inline-block;font-family:var(--f-display);font-weight:800;font-size:15px;color:#fff;background:var(--c);border-radius:999px;padding:3px 12px}
+.board .num{float:right;color:#C9D6C9;font-size:15px}
+.dev{font-size:clamp(22px,3.3vw,30px);line-height:1.5;margin:14px 0 6px}
+.qsj{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,3vw,28px);color:var(--sun);margin:0}
+.speak{font:inherit;font-weight:700;font-size:16px;background:transparent;color:var(--chalk);border:2px dashed #ffffff66;border-radius:999px;padding:5px 14px;cursor:pointer;margin-top:12px}
+.speak.used{border-style:solid;border-color:var(--sun);color:var(--sun)}
+
+.answer{margin-top:22px}
+.labels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:10px}
+.label{font:inherit;font-size:clamp(20px,2.6vw,24px);font-weight:700;padding:14px 12px;border-radius:14px;cursor:pointer;background:var(--paper);color:var(--ink);
+  border:3px solid #E4D9BE;box-shadow:0 4px 0 #CFC3A6}
+.label:hover:not(:disabled){border-color:var(--leaf)}
+.label:disabled{cursor:default}
+.label.ok{background:var(--ok-bg);border-color:var(--ok)}
+.label.ko{background:var(--ko-bg);border-color:var(--ko);text-decoration:line-through;opacity:.7}
+.write{display:grid;gap:10px}
+.write .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#saisie{font:inherit;font-size:clamp(22px,3vw,28px);padding:10px 14px;border-radius:14px;border:3px solid #E4D9BE;background:#fff;color:var(--ink);flex:1 1 240px;min-width:0}
+#saisie.bad{border-color:var(--ko);background:var(--ko-bg)}
+#saisie.good{border-color:var(--ok);background:var(--ok-bg)}
+.accents{display:flex;flex-wrap:wrap;gap:6px}
+.accents button{font:inherit;font-size:20px;font-weight:700;width:42px;height:42px;border-radius:10px;border:2px solid #E4D9BE;background:var(--paper);cursor:pointer}
+.aide{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.18em;color:var(--moss-2)}
+.bilan{margin-top:14px;border-radius:14px;padding:12px 16px;font-size:18px}
+.bilan.ok{background:var(--ok-bg);border:2px solid var(--ok)}
+.bilan.ko{background:var(--ko-bg);border:2px solid var(--ko)}
+.bilan.info{background:#FFF3D6;border:2px solid var(--sun)}
+.bilan strong{font-family:var(--f-display)}
+.reveal{display:flex;align-items:center;gap:16px;margin-top:4px}
+.reveal .e{font-size:64px;line-height:1}
+.reveal .w{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,36px)}
+
+/* Fin */
+.end{display:grid;gap:16px;justify-items:center;text-align:center}
+.end h1{font-size:clamp(30px,5vw,48px);color:#fff;text-shadow:0 3px 8px #000a}
+.glands{font-size:34px;letter-spacing:4px}
+.recap{text-align:left;width:min(640px,100%)}
+.recap ul{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:6px}
+.recap li{display:flex;gap:10px;align-items:center}
+.recap li .e{font-size:26px}
+.leaves{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.leaf{position:absolute;top:-40px;font-size:28px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Fiche à imprimer */
+#print{display:none}
+@media print{
+  body{background:#fff}
+  .bg,.wrap,.leaves{display:none!important}
+  #print{display:block;font-size:15pt;color:#000}
+  #print h1{font-size:22pt;margin-bottom:4pt}
+  #print .sous{margin:0 0 12pt;color:#444}
+  #print ol{padding-left:22pt;margin:0}
+  #print li{margin:0 0 12pt;break-inside:avoid}
+  #print .ligne{display:block;border-bottom:1px dotted #555;height:22pt;width:70%}
+  #print .etiq{display:flex;flex-wrap:wrap;gap:8pt;margin-top:4pt}
+  #print .etiq span{border:1.5px solid #000;border-radius:6pt;padding:2pt 9pt}
+  #print .sol{margin-top:16pt;font-size:11pt;color:#444;break-before:avoid}
+}
+</style>
+<script src="tour-de-controle.js"></script></head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+
+<div class="wrap">
+  <!-- Accueil -->
+  <section class="home" id="home">
+    <div class="hero" role="img" aria-label="L'école dans la forêt"><h1>Les devinettes de la forêt</h1></div>
+    <div class="card"><p class="lead">Bienvenue à l'école de la forêt ! Ce matin, la maîtresse a écrit des devinettes au tableau. Lis-les bien et trouve qui se cache derrière. Chaque devinette trouvée sans l'écouter te rapporte une châtaigne 🌰.</p></div>
+    <div class="reglages">
+      <div class="card">
+        <h2>Le niveau</h2>
+        <div class="seg" id="segNiv">
+          <label><input type="radio" name="niveau" value="cp" checked><span><b>CP</b></span></label>
+          <label><input type="radio" name="niveau" value="ce1"><span><b>CE1</b></span></label>
+          <label><input type="radio" name="niveau" value="ce2"><span><b>CE2</b></span></label>
+        </div>
+        <p>CP : 2 phrases courtes. CE1 : 3 indices. CE2 : plus de vocabulaire et des indices à déduire.</p>
+      </div>
+      <div class="card">
+        <h2>Pour répondre</h2>
+        <div class="seg">
+          <label><input type="radio" name="mode" value="etiq" checked><span>🏷️ Je choisis l'étiquette</span></label>
+          <label><input type="radio" name="mode" value="ecrire"><span>✏️ J'écris le mot</span></label>
+        </div>
+        <p>En écrivant, les accents comptent ; « le », « la », « un »… ne sont pas obligatoires.</p>
+      </div>
+      <div class="card">
+        <h2>Écouter la devinette</h2>
+        <div class="seg">
+          <label><input type="radio" name="audio" value="oui" checked><span>🔊 Oui, on peut écouter</span></label>
+          <label><input type="radio" name="audio" value="non"><span>Non, je lis tout seul</span></label>
+        </div>
+        <p>Si tu écoutes une devinette, tu peux encore la trouver, mais elle ne rapporte pas de châtaigne.</p>
+      </div>
+      <div class="card">
+        <h2>Les thèmes</h2>
+        <div class="themes" id="themes"></div>
+        <p class="warn" id="themeWarn" hidden>Choisis au moins un thème.</p>
+      </div>
+    </div>
+    <div class="actions center">
+      <button class="btn ghost" id="printBtn">🖨️ Imprimer 10 devinettes</button>
+      <button class="btn" id="startBtn">Entrer dans la classe 🌳</button>
+    </div>
+  </section>
+
+  <!-- Partie -->
+  <section id="game" hidden>
+    <div class="top">
+      <h2 id="niveauTxt"></h2>
+      <div class="score" id="score" aria-live="polite"></div>
+    </div>
+    <div class="path" id="path" aria-label="Devinettes de la partie"></div>
+    <div class="board" id="board"></div>
+    <div class="card answer" id="answer"></div>
+  </section>
+
+  <!-- Fin -->
+  <section class="end" id="end" hidden></section>
+</div>
+<div class="leaves" id="leaves"></div>
+<div id="print"></div>
+
+<script>
+const THEMES = [
+  {id:"ani", nom:"Les animaux"}, {id:"obj", nom:"Les objets du quotidien"}, {id:"met", nom:"Les métiers"},
+  {id:"fru", nom:"Les fruits et légumes"}, {id:"tra", nom:"Les transports"}];
+/* d = déterminant affiché, m = mot attendu, alt = autres réponses acceptées, e = image (emoji) */
+const DEV = [
+  // Animaux
+  {t:"ani",d:"le",m:"hérisson",e:"🦔",cp:"J'ai des piquants sur le dos. Je vis dans la forêt.",ce1:"Je suis un petit animal. J'ai des piquants sur le dos. Quand j'ai peur, je me roule en boule.",ce2:"La nuit, je cherche des vers et des limaces sous les feuilles mortes. Si un renard approche, je me transforme en boule piquante."},
+  {t:"ani",d:"l'",m:"écureuil",e:"🐿️",cp:"J'ai une grande queue rousse. Je mange des noisettes.",ce1:"Je saute d'arbre en arbre. Ma queue est grande et touffue. Je cache des noisettes pour l'hiver.",ce2:"Agile, je grimpe jusqu'au sommet des chênes. À l'automne, j'enterre des glands et des noisettes, mais j'oublie souvent où je les ai cachés."},
+  {t:"ani",d:"la",m:"chouette",alt:["hibou"],e:"🦉",cp:"J'ai de grands yeux ronds. Je vole la nuit.",ce1:"Je suis un oiseau. Le jour, je dors dans un arbre creux. La nuit, je chasse les souris.",ce2:"Mes grands yeux voient dans le noir et ma tête tourne presque complètement. Silencieuse, je chasse les mulots au clair de lune."},
+  {t:"ani",d:"le",m:"renard",e:"🦊",cp:"J'ai le poil roux. Je suis très rusé.",ce1:"J'ai le poil roux et une queue touffue. Je suis malin. Dans la fable, je vole le fromage du corbeau.",ce2:"Avec mon pelage roux et ma queue en panache, je rôde la nuit près des poulaillers. On dit que je suis le plus rusé des animaux."},
+  {t:"ani",d:"le",m:"lapin",e:"🐰",cp:"J'ai de grandes oreilles. J'aime les carottes.",ce1:"J'ai de longues oreilles et une petite queue blanche. Je saute vite. Je vis dans un terrier.",ce2:"Je creuse des terriers sous la terre pour me cacher. Mes longues oreilles entendent le moindre bruit, et mes pattes arrière me font bondir très loin."},
+  {t:"ani",d:"la",m:"vache",e:"🐄",cp:"Je vis à la ferme. Je donne du lait.",ce1:"Je vis dans un pré. Je mange de l'herbe toute la journée. Le fermier me trait pour avoir du lait.",ce2:"Je rumine l'herbe du pré pendant des heures. Avec mon lait, on fabrique le beurre, la crème et le fromage de comté."},
+  {t:"ani",d:"la",m:"poule",e:"🐔",cp:"Je vis à la ferme. Je ponds des œufs.",ce1:"J'ai des plumes et deux pattes. Je picore des graines. Chaque matin, je ponds un œuf.",ce2:"Dans le poulailler, je gratte la terre pour trouver des graines. Je ne sais presque pas voler, mais je ponds des œufs pour ton petit déjeuner."},
+  {t:"ani",d:"l'",m:"escargot",e:"🐌",cp:"Je vais très lentement. J'ai une maison sur le dos.",ce1:"J'ai deux cornes sur la tête. Je porte ma maison sur mon dos. J'aime sortir après la pluie.",ce2:"Je laisse derrière moi une trace de bave brillante. Quand il fait sec, je m'enferme dans ma coquille en spirale et j'attends la pluie."},
+  {t:"ani",d:"l'",m:"abeille",e:"🐝",cp:"Je vole de fleur en fleur. Je fais du miel.",ce1:"Je suis un insecte jaune et noir. Je vis dans une ruche. Avec les fleurs, je fabrique du miel.",ce2:"Je butine le nectar des fleurs et je le rapporte à la ruche, où vit notre reine. Attention : si on m'embête, je peux piquer !"},
+  {t:"ani",d:"la",m:"grenouille",e:"🐸",cp:"Je suis verte. Je saute dans la mare.",ce1:"Je vis près de la mare. Je saute très loin. Je chante « croâ, croâ ».",ce2:"Avant, j'étais un têtard qui nageait avec une queue. Maintenant, j'attrape les mouches avec ma longue langue collante."},
+  // Objets du quotidien
+  {t:"obj",d:"la",m:"fourchette",e:"🍴",cp:"J'ai des dents, mais je ne mords pas. On me tient pour manger.",ce1:"Je suis posée à côté de l'assiette. J'ai trois ou quatre dents pointues. Je pique les frites et les pâtes.",ce2:"Je n'ai pas de bouche et pourtant j'ai des dents. À table, je m'installe à gauche de l'assiette et je pique les aliments pour les porter à ta bouche."},
+  {t:"obj",d:"la",m:"cuillère",alt:["cuiller"],e:"🥄",cp:"Je suis ronde et creuse. On me prend pour manger la soupe.",ce1:"Je suis ronde et creuse. Je suis rangée avec les fourchettes. Avec moi, on mange la soupe et le yaourt.",ce2:"Grande, je sers la soupe ; petite, je tourne le sucre dans le café. Mon bout est creux pour ne rien renverser."},
+  {t:"obj",d:"la",m:"casserole",e:"🍲",cp:"Je vais sur le feu. Je fais chauffer l'eau des pâtes.",ce1:"J'ai un long manche. Je vais sur la cuisinière. On fait cuire les pâtes et le riz dedans.",ce2:"Posée sur la plaque brûlante, je fais bouillir l'eau des pâtes. Attention à mon manche quand je suis chaude !"},
+  {t:"obj",d:"le",m:"parapluie",e:"☂️",cp:"On m'ouvre quand il pleut.",ce1:"Quand il fait beau, je reste fermé. Quand il pleut, on m'ouvre au-dessus de la tête.",ce2:"Fermé, je ressemble à une canne. Ouvert, je forme un toit de tissu qui te protège des gouttes. Gare au vent qui me retourne !"},
+  {t:"obj",d:"la",m:"brosse à dents",alt:["brosse à dent"],e:"🪥",cp:"On met du dentifrice sur moi. Je lave les dents.",ce1:"J'ai un long manche et des poils. Le matin et le soir, je frotte tes dents avec le dentifrice.",ce2:"Deux fois par jour, je vais dans ta bouche avec un peu de pâte. Mes poils chassent les miettes pour éviter les caries."},
+  {t:"obj",d:"les",m:"ciseaux",alt:["ciseau"],e:"✂️",cp:"Je coupe le papier. J'ai deux lames.",ce1:"J'ai deux trous pour mettre les doigts et deux lames qui coupent. On me range dans la trousse.",ce2:"Mes deux lames se croisent comme une bouche qui s'ouvre et se ferme. En classe, je découpe le papier en suivant le trait."},
+  {t:"obj",d:"la",m:"clé",alt:["clef"],e:"🔑",cp:"Je suis petite. J'ouvre la porte.",ce1:"Je suis petite et en métal. Je vis dans ta poche. Sans moi, la porte reste fermée.",ce2:"Je tourne dans la serrure pour ouvrir ou fermer la porte. Si tu me perds, tu restes dehors !"},
+  {t:"obj",d:"la",m:"lampe",e:"💡",cp:"Je fais de la lumière. On m'allume le soir.",ce1:"On m'allume quand il fait noir. Je suis posée sur la table de nuit. J'ai une ampoule.",ce2:"Avec mon ampoule et mon abat-jour, j'éclaire ton lit pour lire le soir. Il suffit d'appuyer sur mon bouton."},
+  {t:"obj",d:"le",m:"balai",e:"🧹",cp:"Je nettoie le sol. J'ai un long manche.",ce1:"J'ai un long manche et des poils au bout. Je pousse la poussière et les miettes.",ce2:"On me passe dans la cuisine après le repas pour ramasser les miettes. Dans les contes, les sorcières montent sur moi pour voler !"},
+  {t:"obj",d:"le",m:"réveil",e:"⏰",cp:"Je sonne le matin. Je donne l'heure.",ce1:"Je suis posé près du lit. Je donne l'heure. Le matin, je sonne fort pour te sortir du lit.",ce2:"Tic-tac… Toute la nuit, je compte les minutes. Au petit matin, je sonne pour que tu ne sois pas en retard à l'école."},
+  // Métiers
+  {t:"met",d:"le",m:"boulanger",alt:["boulangère"],e:"🥖",cp:"Je fais le pain. Je travaille la nuit.",ce1:"Je me lève très tôt. Je fais cuire le pain et les croissants dans mon four.",ce2:"Pendant que tu dors, je pétris la farine, l'eau et le sel. Au lever du jour, les baguettes dorées sortent de mon four."},
+  {t:"met",d:"le",m:"pompier",alt:["pompière"],e:"🚒",cp:"J'éteins le feu. J'ai un camion rouge.",ce1:"Je porte un casque. Je monte dans un camion rouge avec une grande échelle. J'éteins les incendies.",ce2:"Quand la sirène retentit, j'enfile mon casque et je fonce. J'éteins les incendies, mais je secours aussi les blessés."},
+  {t:"met",d:"le",m:"médecin",alt:["docteur"],e:"🩺",cp:"Je soigne les malades. Je dis : « Ouvre la bouche ! »",ce1:"Quand tu es malade, tu viens me voir. J'écoute ton cœur. Je te donne des médicaments.",ce2:"Dans mon cabinet, j'examine ta gorge et j'écoute ton cœur avec mon stéthoscope. Puis j'écris une ordonnance pour la pharmacie."},
+  {t:"met",d:"le",m:"facteur",alt:["factrice"],e:"✉️",cp:"J'apporte les lettres. Je passe tous les jours.",ce1:"Je passe dans ta rue avec mon vélo ou ma voiture jaune. Je mets les lettres dans la boîte.",ce2:"Qu'il pleuve ou qu'il vente, je distribue le courrier : lettres, colis et cartes postales. Je connais toutes les adresses du quartier."},
+  {t:"met",d:"le",m:"cuisinier",alt:["cuisinière","chef"],e:"👨‍🍳",cp:"Je fais à manger. J'ai une toque.",ce1:"Je porte une toque blanche. Je travaille dans la cuisine du restaurant. Je prépare de bons plats.",ce2:"Derrière les fourneaux du restaurant, je coupe, je mélange et je goûte. Ma grande toque blanche montre que c'est moi le chef !"},
+  {t:"met",d:"le",m:"coiffeur",alt:["coiffeuse"],e:"💇",cp:"Je coupe les cheveux.",ce1:"J'ai des ciseaux et un peigne. Je lave et je coupe les cheveux. Je les sèche avec un séchoir.",ce2:"Installé dans mon fauteuil, tu me regardes dans le miroir pendant que je coupe, que je brosse et que je sèche tes cheveux."},
+  {t:"met",d:"le",m:"vétérinaire",alt:["véto"],e:"🐶",cp:"Je soigne les animaux.",ce1:"Je suis un docteur, mais je ne soigne pas les enfants. Je soigne les chiens, les chats et les lapins.",ce2:"Le chien de Léo s'est blessé à la patte : il l'amène dans mon cabinet. Je soigne les animaux de la maison et de la ferme."},
+  {t:"met",d:"le",m:"fermier",alt:["fermière","agriculteur","agricultrice","paysan","paysanne"],e:"🚜",cp:"Je vis à la ferme. Je donne à manger aux vaches.",ce1:"J'ai un tracteur. Je m'occupe des vaches, des poules et des cochons. Je travaille dans les champs.",ce2:"Je me lève à l'aube pour traire mes vaches. Ensuite, sur mon tracteur, je laboure les champs et je sème le blé."},
+  {t:"met",d:"la",m:"maîtresse",alt:["maître","maitresse","maitre","enseignant","enseignante","professeur","professeure"],e:"👩‍🏫",cp:"Je travaille à l'école. J'apprends à lire aux enfants.",ce1:"Je travaille dans une classe. J'écris au tableau. J'apprends aux élèves à lire, à écrire et à compter.",ce2:"Chaque matin, j'accueille les élèves dans la classe. Je corrige les cahiers avec mon stylo rouge et je prépare les leçons."},
+  {t:"met",d:"le",m:"jardinier",alt:["jardinière"],e:"🌷",cp:"Je plante des fleurs. J'ai un arrosoir.",ce1:"Avec ma pelle et mon râteau, je plante des fleurs et des légumes. Je les arrose quand il fait sec.",ce2:"Je taille les haies, je tonds la pelouse et je sème les graines au printemps. Grâce à moi, le parc est plein de fleurs."},
+  // Fruits et légumes
+  {t:"fru",d:"la",m:"pomme",e:"🍎",cp:"Je suis un fruit rouge ou vert. Je pousse sur un arbre.",ce1:"Je pousse sur un arbre du verger. Je peux être rouge, jaune ou verte. On fait de la compote avec moi.",ce2:"Dans le conte, la sorcière m'empoisonne pour Blanche-Neige. Croquante et sucrée, je sers aussi à faire de bonnes tartes."},
+  {t:"fru",d:"la",m:"banane",e:"🍌",cp:"Je suis un fruit jaune. Les singes m'aiment.",ce1:"Je suis jaune et longue. Avant de me manger, il faut enlever ma peau. Les singes m'adorent.",ce2:"Je pousse en régimes dans les pays chauds. Ma peau jaune se couvre de taches brunes quand je suis bien mûre."},
+  {t:"fru",d:"la",m:"carotte",e:"🥕",cp:"Je suis orange. Le lapin me mange.",ce1:"Je suis un légume orange et long. Je pousse sous la terre. Le lapin m'aime beaucoup.",ce2:"Je grandis cachée sous la terre ; seules mes feuilles vertes dépassent. Râpée en salade, je suis croquante. Le bonhomme de neige m'utilise comme nez !"},
+  {t:"fru",d:"la",m:"fraise",e:"🍓",cp:"Je suis un petit fruit rouge. J'ai des petits grains.",ce1:"Je suis un petit fruit rouge. J'ai des petits grains sur la peau. On me mange avec de la crème.",ce2:"Je mûris au début de l'été, cachée sous mes feuilles près du sol. Rouge et sucrée, je suis couverte de minuscules grains."},
+  {t:"fru",d:"la",m:"tomate",e:"🍅",cp:"Je suis rouge et ronde. On me met dans la salade.",ce1:"Je suis rouge et ronde. Je pousse dans le potager en été. Avec moi, on fait du ketchup.",ce2:"Suis-je un fruit ou un légume ? On se pose souvent la question ! Ce qui est sûr, c'est qu'on me met sur les pizzas et dans la sauce des pâtes."},
+  {t:"fru",d:"le",m:"citron",e:"🍋",cp:"Je suis jaune. Je suis très acide.",ce1:"Je suis un fruit jaune. Si tu me croques, tu fais la grimace, car je suis très acide.",ce2:"Mon jus acide fait plisser les yeux. On me presse pour faire de la limonade ou on m'ajoute sur le poisson."},
+  {t:"fru",d:"la",m:"cerise",e:"🍒",cp:"Je suis petite et rouge. J'ai un noyau.",ce1:"Je suis un petit fruit rouge avec une longue queue. J'ai un noyau. On m'accroche parfois aux oreilles !",ce2:"Je pousse souvent par deux sur un grand arbre, au début de l'été. Attention à mon noyau quand tu me croques ! On me cuit dans le clafoutis."},
+  {t:"fru",d:"la",m:"poire",e:"🍐",cp:"Je suis un fruit. Je suis grosse en bas et fine en haut.",ce1:"Je suis un fruit vert ou jaune. Je suis grosse en bas et fine en haut. Je suis très juteuse.",ce2:"Ma forme ressemble à une ampoule ou à une goutte d'eau. Bien mûre, ma chair fondante coule sur le menton."},
+  {t:"fru",d:"la",m:"pomme de terre",alt:["patate"],e:"🥔",cp:"Je pousse sous la terre. On fait des frites avec moi.",ce1:"Je suis un légume. Je pousse sous la terre. Avec moi, on fait des frites et de la purée.",ce2:"Frites, purée, gratin ou chips : on me cuisine de mille façons. Mon nom parle d'un fruit… mais je pousse sous la terre !"},
+  {t:"fru",d:"la",m:"citrouille",alt:["potiron"],e:"🎃",cp:"Je suis grosse et orange. Je suis un légume.",ce1:"Je suis un gros légume orange et rond. À Halloween, on me creuse et on met une bougie dedans.",ce2:"Dans le conte de Cendrillon, la fée me transforme en carrosse. En automne, on me cuisine en soupe bien orange."},
+  // Transports
+  {t:"tra",d:"le",m:"vélo",alt:["bicyclette"],e:"🚲",cp:"J'ai deux roues. Il faut pédaler.",ce1:"J'ai deux roues, un guidon et des pédales. Pour avancer, il faut pédaler.",ce2:"Pour garder l'équilibre sur moi, il ne faut pas s'arrêter de pédaler. Au début, on m'ajoute parfois deux petites roues."},
+  {t:"tra",d:"le",m:"bus",alt:["autobus","car"],e:"🚌",cp:"Je transporte beaucoup de gens. Je m'arrête souvent.",ce1:"Je suis très long. Je roule en ville et je m'arrête aux arrêts. Les gens montent et descendent.",ce2:"Je suis un grand véhicule qui suit toujours le même trajet. À chaque arrêt, mes portes s'ouvrent pour laisser monter les passagers avec leur ticket."},
+  {t:"tra",d:"le",m:"train",e:"🚆",cp:"Je roule sur des rails.",ce1:"J'ai beaucoup de wagons. Je roule sur des rails. On me prend à la gare.",ce2:"Ma locomotive tire une longue file de wagons. Je file sur les rails d'une gare à l'autre, parfois très vite."},
+  {t:"tra",d:"l'",m:"avion",e:"✈️",cp:"Je vole dans le ciel. J'ai des ailes.",ce1:"J'ai deux grandes ailes, mais je ne suis pas un oiseau. Je vole très haut dans le ciel.",ce2:"À l'aéroport, je prends de la vitesse sur la piste, puis je décolle. Mes passagers attachent leur ceinture et regardent les nuages par le hublot."},
+  {t:"tra",d:"le",m:"bateau",e:"⛵",cp:"Je flotte sur l'eau.",ce1:"Je vais sur la mer ou sur la rivière. Je flotte sur l'eau. Parfois, j'ai une voile.",ce2:"Le capitaine me conduit d'un port à l'autre. Quand la mer est agitée, je tangue et les passagers ont parfois mal au cœur."},
+  {t:"tra",d:"la",m:"voiture",e:"🚗",cp:"J'ai quatre roues. Je roule sur la route.",ce1:"J'ai quatre roues et un volant. Je roule sur la route. Il faut attacher sa ceinture.",ce2:"Le conducteur tient mon volant et s'arrête au feu rouge. De temps en temps, il faut remplir mon réservoir à la station-service."},
+  {t:"tra",d:"le",m:"tracteur",e:"🚜",cp:"Je roule dans les champs.",ce1:"J'ai de très grosses roues à l'arrière. Je roule dans les champs. Le fermier me conduit.",ce2:"Avec mes énormes roues crantées, je ne crains pas la boue. Je tire la charrue pour labourer les champs du fermier."},
+  {t:"tra",d:"la",m:"fusée",e:"🚀",cp:"Je vais dans l'espace.",ce1:"Je monte très haut, plus haut que les avions. Je vais dans l'espace. Il y a du feu sous moi.",ce2:"Trois, deux, un… partez ! Dans un nuage de fumée, je décolle vers l'espace avec les astronautes."},
+  {t:"tra",d:"la",m:"trottinette",e:"🛴",cp:"J'ai deux petites roues. On pousse avec le pied.",ce1:"J'ai deux petites roues et un guidon. Un pied est sur moi, l'autre pousse sur le sol.",ce2:"Je n'ai ni pédales ni moteur… sauf si je suis électrique. Debout sur ma planche, tu me fais avancer en poussant avec un pied."},
+  {t:"tra",d:"l'",m:"hélicoptère",e:"🚁",cp:"Je vole. J'ai une grande hélice.",ce1:"Je vole dans le ciel, mais je n'ai pas d'ailes. J'ai une grande hélice qui tourne sur mon toit.",ce2:"Grâce à mes pales qui tournent très vite, je peux rester immobile dans les airs. Je vais parfois sauver les gens en montagne."},
+];
+const NB = 10, NIV = {cp:"CP", ce1:"CE1", ce2:"CE2"};
+const THEME = Object.fromEntries(THEMES.map(t => [t.id, t]));
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function avecDet(x){ return x.d === "l'" ? "l'" + x.m : x.d + " " + x.m; }
+const ARTICLES = /^(le|la|les|un|une|des|l|du|de la|mon|ma|mes)\s+|^(l|d)['’]\s*/;
+/* sans majuscules, articles, espaces, tirets ni apostrophes ; les accents comptent */
+function normer(s){ return s.toLowerCase().normalize("NFC").trim().replace(/œ/g,"oe").replace(ARTICLES,"").replace(/[\s\-'’.!]/g,""); }
+function sansAccents(s){ return s.normalize("NFD").replace(/[̀-ͯ]/g,""); }
+function reponses(x){ return [x.m].concat(x.alt || []).map(normer); }
+function val(name){ return document.querySelector(`input[name=${name}]:checked`).value; }
+function speak(t){ try{ const s=window.speechSynthesis; if(!s) return; s.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.85; s.speak(u);}catch(e){} }
+function taire(){ try{ speechSynthesis.cancel(); }catch(e){} }
+
+// ---- Accueil
+const themesEl = document.getElementById("themes");
+themesEl.innerHTML = THEMES.map(t => `<label style="--c:var(--${t.id})"><input type="checkbox" value="${t.id}" checked> ${esc(t.nom)}</label>`).join("");
+function themesChoisis(){ return [...themesEl.querySelectorAll("input:checked")].map(i => i.value); }
+themesEl.onchange = () => { document.getElementById("themeWarn").hidden = themesChoisis().length > 0; };
+
+/* 10 devinettes, réparties entre les thèmes choisis */
+function tirer(){
+  const th = themesChoisis();
+  const paquets = Object.fromEntries(th.map(t => [t, shuffle(DEV.filter(x => x.t === t))]));
+  let ordre = []; while(ordre.length < NB) ordre = ordre.concat(shuffle(th));
+  return shuffle(ordre.slice(0, NB).map(t => paquets[t].pop()));
+}
+function etiquettes(x, n){
+  const autres = shuffle(DEV.filter(y => y.t === x.t && y !== x)).slice(0, n - 1);
+  return shuffle([x].concat(autres));
+}
+
+document.getElementById("startBtn").onclick = () => { if(!themesChoisis().length){ document.getElementById("themeWarn").hidden = false; return; } start(); };
+document.getElementById("printBtn").onclick = () => {
+  if(!themesChoisis().length){ document.getElementById("themeWarn").hidden = false; return; }
+  const niv = val("niveau"), mode = val("mode"), liste = tirer();
+  document.getElementById("print").innerHTML = `<h1>Les devinettes de la forêt</h1>
+    <p class="sous">Niveau ${NIV[niv]} · Prénom : ……………………………… · Lis chaque devinette, puis ${mode==="etiq" ? "entoure la bonne étiquette" : "écris la réponse"}.</p>
+    <ol>${liste.map(x => `<li>${esc(x[niv])} <b>Qui suis-je ?</b>
+      ${mode==="etiq" ? `<div class="etiq">${etiquettes(x, niv==="cp"?3:4).map(y=>`<span>${esc(avecDet(y))}</span>`).join("")}</div>` : `<span class="ligne"></span>`}</li>`).join("")}</ol>
+    <p class="sol">Réponses : ${liste.map((x,i) => (i+1)+". "+esc(avecDet(x))).join(" · ")}</p>`;
+  window.print();
+};
+
+// ---- Partie
+let g;
+function show(id){ ["home","game","end"].forEach(s => document.getElementById(s).hidden = s!==id); window.scrollTo(0,0); }
+function start(){
+  document.getElementById("leaves").innerHTML = "";
+  g = {niv:val("niveau"), mode:val("mode"), audio:val("audio")==="oui", liste:tirer(), i:0, res:[]};
+  document.getElementById("niveauTxt").textContent = `🌳 Les devinettes · ${NIV[g.niv]} · ${g.mode==="etiq" ? "étiquettes" : "j'écris le mot"}`;
+  show("game");
+  charger();
+}
+function renderTop(){
+  const glands = g.res.filter(r => r.gland).length;
+  document.getElementById("score").textContent = `🌰 ${glands} châtaigne${glands>1?"s":""}`;
+  document.getElementById("path").innerHTML = g.liste.map((x,i) => {
+    const r = g.res[i];
+    const cl = !r ? (i===g.i ? "here" : "") : r.gland ? "won" : r.trouve ? "lu" : "rate";
+    return `<span class="${cl}" title="Devinette ${i+1}">${r ? (r.gland ? "🌰" : r.trouve ? "✓" : "–") : i+1}</span>`;
+  }).join("");
+}
+
+function charger(){
+  renderTop();
+  const x = g.liste[g.i];
+  const st = {ecoute:false, essais:0, fini:false};
+  const board = document.getElementById("board");
+  board.style.setProperty("--c", `var(--${x.t})`);
+  board.innerHTML = `<span class="tag">${esc(THEME[x.t].nom)}</span><span class="num">Devinette ${g.i+1} sur ${NB}</span>
+    <p class="dev">${esc(x[g.niv])}</p>
+    <p class="qsj">Qui suis-je ?</p>
+    ${g.audio ? `<button class="speak" id="spk">🔊 Écouter (pas de châtaigne)</button>` : ""}`;
+  const ans = document.getElementById("answer");
+
+  if(g.mode === "etiq"){
+    const choix = etiquettes(x, g.niv==="cp" ? 3 : 4);
+    ans.innerHTML = `<div class="labels">${choix.map((y,k) => `<button class="label" data-k="${k}">${esc(avecDet(y))}</button>`).join("")}</div><div id="after" aria-live="polite"></div>`;
+    const btns = [...ans.querySelectorAll(".label")];
+    btns.forEach((b,k) => b.onclick = () => {
+      if(st.fini) return;
+      st.essais++;
+      if(choix[k] === x){ b.classList.add("ok"); btns.forEach(z => z.disabled = true); gagne(); }
+      else { b.classList.add("ko"); b.disabled = true; rate(`Ce n'est pas ${esc(avecDet(choix[k]))}. Relis bien chaque indice.`); }
+    });
+    btns[0].focus({preventScroll:true});
+  } else {
+    ans.innerHTML = `<div class="write">
+        <label for="saisie" style="font-weight:700">Écris le mot :</label>
+        <div class="row"><input id="saisie" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
+          <button class="btn" id="valider">Valider</button></div>
+        <div class="accents" aria-label="Lettres avec accent">${"é è ê à â ç î ô û ù".split(" ").map(c => `<button type="button" tabindex="-1">${c}</button>`).join("")}</div>
+        <div id="aide" class="aide" aria-live="polite"></div>
+        <div class="actions"><button class="btn ghost small" id="indice">💡 Un indice</button><button class="btn ghost small" id="donne">🐱 Je donne ma langue au chat</button></div>
+      </div><div id="after" aria-live="polite"></div>`;
+    const inp = ans.querySelector("#saisie");
+    ans.querySelectorAll(".accents button").forEach(b => b.onclick = () => {
+      const s = inp.selectionStart ?? inp.value.length, e = inp.selectionEnd ?? s;
+      inp.value = inp.value.slice(0,s) + b.textContent + inp.value.slice(e);
+      inp.focus(); inp.setSelectionRange(s+1, s+1);
+    });
+    inp.oninput = () => inp.classList.remove("bad");
+    inp.onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); verifier(); } };
+    ans.querySelector("#valider").onclick = verifier;
+    ans.querySelector("#indice").onclick = () => { st.aide = Math.min((st.aide || 0) + 1, x.m.length); montrerAide(st.aide); };
+    ans.querySelector("#donne").onclick = () => { if(!st.fini) perdu(); };
+    inp.focus({preventScroll:true});
+
+    function verifier(){
+      if(st.fini) return;
+      const v = normer(inp.value);
+      if(!v){ inp.focus(); return; }
+      st.essais++;
+      if(reponses(x).includes(v)){ inp.classList.add("good"); inp.disabled = true; gagne(); return; }
+      inp.classList.add("bad");
+      if(reponses(x).map(sansAccents).includes(sansAccents(v)))
+        rate(`<strong>Presque !</strong> C'est le bon mot, mais regarde bien les accents.`, true);
+      else rate(`Ce n'est pas « ${esc(inp.value.trim())} ». Relis bien chaque indice.`);
+      if(st.essais >= 2 && !st.aide) montrerAide(st.aide = 1);
+      inp.focus(); inp.select();
+    }
+    function montrerAide(n){
+      const lettres = [...x.m];
+      let k = 0;
+      document.getElementById("aide").textContent = lettres.map(c => c === " " ? "  " : (k++ < n ? c : "_")).join(" ");
+    }
+  }
+
+  if(g.audio) board.querySelector("#spk").onclick = e => {
+    if(!st.ecoute && !st.fini){ st.ecoute = true; e.currentTarget.classList.add("used"); e.currentTarget.textContent = "🔊 Réécouter"; }
+    speak(x[g.niv] + " Qui suis-je ?");
+  };
+
+  function rate(msg, accent){
+    document.getElementById("after").innerHTML = `<div class="bilan ${accent ? "info" : "ko"}">${msg}${accent ? "" : " Essaie encore."}</div>`;
+  }
+  function gagne(){
+    st.fini = true; taire();
+    const gland = !st.ecoute;
+    g.res[g.i] = {trouve:true, gland, premier:st.essais===1};
+    termine(`<div class="bilan ok"><div class="reveal"><span class="e" aria-hidden="true">${x.e}</span><div>
+      <strong>${st.essais===1 ? "Bravo, tu as trouvé du premier coup !" : "Bravo, tu as trouvé !"}</strong><br>
+      <span class="w">${esc(avecDet(x))}</span><br>${gland ? "Tu gagnes une châtaigne 🌰" : "Tu as écouté la devinette : pas de châtaigne cette fois."}</div></div></div>`);
+  }
+  function perdu(){
+    st.fini = true; taire();
+    g.res[g.i] = {trouve:false, gland:false};
+    const inp = document.getElementById("saisie"); if(inp) inp.disabled = true;
+    termine(`<div class="bilan info"><div class="reveal"><span class="e" aria-hidden="true">${x.e}</span><div>
+      C'était <span class="w">${esc(avecDet(x))}</span><br>Relis la devinette : retrouves-tu les indices ?</div></div></div>`);
+  }
+  function termine(html){
+    renderTop();
+    const last = g.i === NB - 1;
+    document.getElementById("after").innerHTML = html + `<div class="actions" style="margin-top:12px"><button class="btn" id="next">${last ? "Voir mes châtaignes 🌰" : "Devinette suivante ➜"}</button></div>`;
+    const nx = document.getElementById("next");
+    nx.onclick = () => { taire(); g.i++; g.i >= NB ? fin() : charger(); };
+    setTimeout(() => nx.focus({preventScroll:true}), 350);  // délai : la touche Entrée qui valide ne doit pas cliquer aussi sur « suivante »
+  }
+}
+
+function fin(){
+  const glands = g.res.filter(r => r.gland).length, trouves = g.res.filter(r => r.trouve).length, premiers = g.res.filter(r => r.premier).length;
+  try{ TDC.note({s:glands, n:NB, g:glands >= 7, niv:NIV[g.niv] + (g.mode==="etiq" ? " · étiquettes" : " · écrit"),
+    d:`${glands} châtaignes sur ${NB} (${trouves} trouvées, ${premiers} du premier coup)`}); }catch(e){}
+  const msg = glands === NB ? "Incroyable : toutes les châtaignes sont à toi !" : glands >= 7 ? "Bravo, ton panier est bien rempli !" : glands >= 4 ? "Joli panier ! Tu peux encore faire mieux." : "Courage, rejoue pour remplir ton panier !";
+  const end = document.getElementById("end");
+  end.innerHTML = `<h1>${msg}</h1>
+    <div class="card recap">
+      <div class="glands" aria-label="${glands} châtaignes">${"🌰".repeat(glands) || "🍂"}</div>
+      <p style="margin:6px 0 0"><b>${glands} châtaigne${glands>1?"s":""} sur ${NB}</b> · ${trouves} devinette${trouves>1?"s":""} trouvée${trouves>1?"s":""}, dont ${premiers} du premier coup.</p>
+      <ul>${g.liste.map((x,i) => { const r = g.res[i]; return `<li><span class="e" aria-hidden="true">${x.e}</span><span>${esc(avecDet(x))}</span><span>${r.gland ? "🌰" : r.trouve ? "✓ (écoutée)" : "– à revoir"}</span></li>`; }).join("")}</ul>
+    </div>
+    <div class="actions center"><button class="btn" id="again">Rejouer avec d'autres devinettes</button><button class="btn ghost" id="home2">Changer les réglages</button></div>`;
+  end.querySelector("#again").onclick = start;
+  end.querySelector("#home2").onclick = () => show("home");
+  show("end");
+  if(glands && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const box = document.getElementById("leaves"); box.innerHTML = "";
+    for(let i=0;i<30;i++){ const s=document.createElement("span"); s.className="leaf"; s.textContent = ["🍂","🍁","🌰","🍃"][i%4];
+      s.style.left=Math.random()*100+"vw"; s.style.animationDuration=(3+Math.random()*3)+"s"; s.style.animationDelay=Math.random()*1.5+"s"; box.appendChild(s); }
+    setTimeout(() => box.innerHTML = "", 7000);
+  }
+}
+</script>
+</body>
+</html>

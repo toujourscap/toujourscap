@@ -107,6 +107,7 @@
     "le-puzzle-du-chateau": { b: "#finNouveau" },
     "le-secret-de-la-pyramide": { b: "#finBoutons button" },
     "le-tape-taupe-des-additions": { b: "#again" },
+    "les-devinettes-de-la-foret": { b: "#again" },
     "les-explorateurs-du-cerveau": { b: "#rejouer", menu: 1 },
     "les-fleches-de-robin": { b: "#b-rejouer" },
     "les-formules-du-sorcier": { b: "#again" },
