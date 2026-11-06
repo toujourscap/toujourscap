@@ -2124,7 +2124,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "L'adulte choisit le niveau, le nombre de mots, le nombre de syllabes en trop (0 à 3) et le nombre de fusées (2, 3 ou un mélange).",
+             "text": "L'adulte choisit le niveau, ce que fait l'élève (placer les syllabes ou écrire le mot), le nombre de mots, le nombre de syllabes en trop (0 à 3) et le nombre de fusées (2, 3 ou un mélange).",
              "decorations": []
             }
            }
@@ -2291,6 +2291,23 @@
      {
       "type": "BULLETED_LIST",
       "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Mode « l'élève écrit le mot », à tous les niveaux : plus de syllabes à placer, il tape le mot entier au clavier (des boutons é, è, ê, à, ç… aident sur tablette). Les majuscules ne comptent pas. Si c'est juste, les syllabes montent dans les fusées et le feu d'artifice part ; sinon, le mot est redit et il corrige son écriture.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
        {
         "type": "LIST_ITEM",
         "nodes": [
