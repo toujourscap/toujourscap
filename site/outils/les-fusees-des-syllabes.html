@@ -137,6 +137,13 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .commandes .btn{font-size:clamp(14px,2.2cqw,20px);padding:.5em .8em;white-space:nowrap}
 .lecture{flex:0 0 15%;margin:0;color:var(--sable);font-size:clamp(12px,1.9cqw,18px);line-height:1.3;min-width:0}
 .lecture b{display:block;font-size:1.35em;color:#fff;letter-spacing:.02em}
+.ecrire{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.ecrire input{font:700 clamp(20px,4.2cqw,40px)/1.1 var(--f-lecture);color:var(--encre);background:#fff;border:3px solid #c9b49a;border-radius:.4em;padding:.15em .5em;width:min(100%,12em);text-align:center;outline:none}
+.ecrire input:focus{border-color:var(--jaune)}
+.ecrire input.faux{border-color:var(--err);animation:tremble .35s}
+@keyframes tremble{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.accents{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.accents button{font:700 clamp(15px,2.4cqw,22px)/1 var(--f-lecture);background:var(--sable);color:var(--encre);border:none;border-radius:.35em;padding:.25em .5em;cursor:pointer}
 .fin{text-align:center}
 .fin h2{font-size:clamp(28px,5vw,44px);color:var(--mars)}
 .fin .liste{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0}
@@ -144,7 +151,7 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
 .fin .liste figure img{width:64px;height:64px;object-fit:contain}
 .fin .liste figure.aide{border-style:dashed}
 @media (max-height:740px){.wrap{padding-top:6px;padding-bottom:6px}.carte{padding:12px 18px}.entete{margin-bottom:8px}.niveaux{margin-bottom:8px}fieldset{padding:8px 14px}.apercu figure{width:auto;background:#fff;border:1px solid #ecd9c0;border-radius:8px;padding:2px 6px}.apercu figure img{display:none}.niv small{font-size:13px}}
-@media (max-width:640px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.barre{flex-wrap:wrap}.reserve{order:-1;flex-basis:100%;gap:8px}.lecture{flex:1 1 0}}
+@media (max-width:640px){.carte{padding:16px}.btn{font-size:17px;padding:11px 18px}.barre{flex-wrap:wrap}.reserve{order:-1;flex-basis:100%;gap:8px}.ecrire{order:-1;flex-basis:100%}.lecture{flex:1 1 0}}
 @media (prefers-reduced-motion:reduce){.allume .flamme,.vibre,.hublot:empty::after{animation:none}}
 </style>
 <script src="tour-de-controle.js"></script></head>
@@ -177,12 +184,19 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
         <label class="chip"><input type="radio" name="nb" value="8"><span>8</span></label>
         <label class="chip"><input type="radio" name="nb" value="12"><span>12</span></label>
       </div>
+      <p class="etiq">L'élève…</p>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="mode" value="placer"><span>place les syllabes</span></label>
+        <label class="chip"><input type="radio" name="mode" value="ecrire"><span>✏️ écrit le mot</span></label>
+      </div>
+      <div id="bloc-intrus">
       <p class="etiq">Syllabes en trop (intrus)</p>
       <div class="choix">
         <label class="chip"><input type="radio" name="intrus" value="0"><span>0</span></label>
         <label class="chip"><input type="radio" name="intrus" value="1"><span>1</span></label>
         <label class="chip"><input type="radio" name="intrus" value="2"><span>2</span></label>
         <label class="chip"><input type="radio" name="intrus" value="3"><span>3</span></label>
+      </div>
       </div>
       <p class="etiq">Nombre de fusées</p>
       <div class="choix">
@@ -227,6 +241,10 @@ textarea{width:100%;font:inherit;font-size:17px;padding:8px 10px;border:2px soli
   <div class="barre">
     <p class="lecture" id="lecture" aria-live="polite"></p>
     <div class="reserve" id="reserve" aria-label="Syllabes à placer"></div>
+    <div class="ecrire" id="ecrire" hidden>
+      <input id="saisie" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Écris le mot" placeholder="Écris le mot">
+      <div class="accents" id="accents"></div>
+    </div>
     <div class="commandes">
       <button class="btn btn-sec" id="ecouter" hidden>🔊 Écouter</button>
       <button class="btn btn-go" id="decollage" disabled>🎆 Mise à feu !</button>
@@ -316,7 +334,8 @@ majLogo();
 
 /* ---------- Réglages ---------- */
 function radio(name,def){ const v=store.get(name)||def; const el=document.querySelector(`input[name=${name}][value="${v}"]`)||document.querySelector(`input[name=${name}][value="${def}"]`); el.checked=true; }
-radio("niveau","1"); radio("nb","8"); radio("intrus","2"); radio("nbsyl","23");
+radio("niveau","1"); radio("nb","8"); radio("intrus","2"); radio("nbsyl","23"); radio("mode","placer");
+const ecrit = () => val("mode")==="ecrire";
 const OPTS = {dire:true, ecouter:false, aide:true, sons:true};
 for(const k in OPTS){ const v=store.get(k); $("opt-"+k).checked = v===null ? OPTS[k] : v==="1"; }
 $("perso").value = store.get("perso") || "ra-quet-te\nca-na-pé\nmou-ton\nva-li-se";
@@ -332,7 +351,7 @@ function motsDispo(){
   return liste.filter(([m])=>{ const p=m.split("-"); return ns==="23" || p.length===+ns; });
 }
 function majApercu(){
-  const niv=val("niveau"); $("bloc-perso").hidden = niv!=="perso";
+  const niv=val("niveau"); $("bloc-perso").hidden = niv!=="perso"; $("bloc-intrus").hidden = ecrit();
   const l=motsDispo();
   $("apercu").innerHTML = !l.length ? `<p>${niv==="perso"?"Écrivez vos mots, par exemple : ra-quet-te":"Aucun mot pour ce réglage."}</p>`
     : l.map(([m,c,nc],k)=> (nc && (k===0 || l[k-1][2]!==nc) ? `<p style="flex-basis:100%;margin:4px 0 0">${nc===1?"D'abord 1 syllabe avec un son complexe :":"Puis 2 syllabes avec un son complexe :"}</p>` : "")
@@ -409,7 +428,7 @@ async function nouveauTour(){
   $("nuit").classList.remove("on"); parts=parts.filter(p=>!p.lettre);
   const [mot,cle,nc]=partie.mots[partie.i], syl=mot.split("-");
   $("titre-niveau").textContent = NOMS_NIV[val("niveau")] + (nc ? (nc===1 ? " · 1 son complexe" : " · 2 sons complexes") : "");
-  const tuiles = melanger(syl.concat(choisirIntrus(syl,+val("intrus")))).map((s,id)=>({id,s}));
+  const tuiles = melanger(syl.concat(choisirIntrus(syl, ecrit() ? 0 : +val("intrus")))).map((s,id)=>({id,s}));
   tour={mot,cle,syl,tuiles,cases:syl.map(()=>null),essais:0,verrou:true,fusees:[]};
   // fusées vides
   const x=slots(syl.length);
@@ -422,6 +441,8 @@ async function nouveauTour(){
   // réserve
   reserve.innerHTML = tour.tuiles.map(t=>`<button class="tuile" data-id="${t.id}">${t.s}</button>`).join("");
   reserve.querySelectorAll(".tuile").forEach(brancheTuile);
+  reserve.hidden = ecrit(); $("ecrire").hidden = !ecrit(); $("saisie").value=""; $("saisie").classList.remove("faux");
+  $("consigne").textContent = ecrit() ? "Écris le mot de l'image" : "Mets les syllabes dans les fusées";
   $("consigne").style.opacity = 1;
   $("decollage").hidden=false; $("decollage").disabled=true; $("suivant").hidden=true;
   majProgres(); majLecture();
@@ -437,9 +458,11 @@ async function nouveauTour(){
     await pause(500);
   }
   tour.verrou=false;
+  if(ecrit()){ majCases(); $("saisie").focus({preventScroll:true}); }
 }
 
 function majLecture(){
+  if(ecrit()){ $("lecture").innerHTML = tour.cases.some(c=>c!==null) ? "J'ai écrit : <b>" + tour.syl.join(" ") + "</b>" : "Écris le mot, puis mise à feu !"; return; }
   const t = tour.cases.map(id=> id===null ? "…" : tour.tuiles[id].s);
   $("lecture").innerHTML = tour.cases.some(c=>c!==null) ? "Je lis : <b>" + t.join(" ") + "</b>" : "Place les syllabes";
 }
@@ -453,7 +476,7 @@ function majCases(){
     else { const s=tour.tuiles[id].s; h.innerHTML=`<span class="syl l${Math.min(7,[...s].length)}">${s}</span>`; h.setAttribute("aria-label",`Fusée ${i+1} : ${s}`); }
   });
   reserve.querySelectorAll(".tuile").forEach(b=>b.classList.toggle("posee", tour.cases.includes(+b.dataset.id)));
-  $("decollage").disabled = tour.verrou || tour.cases.includes(null);
+  $("decollage").disabled = tour.verrou || (ecrit() ? !$("saisie").value.trim() : tour.cases.includes(null));
   majLecture();
 }
 function poser(id,i){
@@ -502,11 +525,26 @@ function hublotSous(x,y){
 }
 
 /* ---------- Mise à feu ---------- */
+/* mode « écrire » : on compare le mot tapé (sans tenir compte des majuscules, espaces et tirets) */
+const normer = t => t.normalize("NFC").toLowerCase().replace(/[\s\-–'’]/g,"");
 async function decoller(){
-  if(tour.verrou || tour.cases.includes(null)) return;
+  if(tour.verrou) return;
+  if(ecrit() ? !$("saisie").value.trim() : tour.cases.includes(null)) return;
   tour.verrou=true; $("decollage").disabled=true; $("consigne").style.opacity=0;
-  const lu = tour.cases.map(id=>tour.tuiles[id].s);
-  const bon = lu.join("") === tour.syl.join("");
+  let lu, bon;
+  if(ecrit()){
+    lu = [$("saisie").value.trim()];
+    bon = normer(lu[0]) === normer(tour.syl.join(""));
+    $("saisie").blur();
+    if(bon){ // les bonnes syllabes montent dans les fusées
+      const pris=new Set();
+      tour.cases = tour.syl.map(x=>{ const t=tour.tuiles.find(t=>t.s===x && !pris.has(t.id)); pris.add(t.id); return t.id; });
+      majCases(); clic();
+    }
+  } else {
+    lu = tour.cases.map(id=>tour.tuiles[id].s);
+    bon = lu.join("") === tour.syl.join("");
+  }
   const els = tour.fusees;
   const dc=document.createElement("div"); dc.className="decompte"; scene.appendChild(dc);
   for(const t of ["3","2","1"]){ dc.textContent=t; dc.classList.remove("anim"); void dc.offsetWidth; dc.classList.add("anim"); bip(t==="1"?880:660,.18); await pause(650); }
@@ -553,7 +591,19 @@ async function echec(els, lu){
   els.forEach(e=>{ e.classList.remove("non"); void e.offsetWidth; e.classList.add("non"); });
   rate(); reagir("boude");
   tour.essais++;
-  const m=document.createElement("div"); m.className="message"; m.textContent="Ce n'est pas le bon mot : regarde l'image et relis !"; scene.appendChild(m);
+  const m=document.createElement("div"); m.className="message"; m.textContent = ecrit() ? "Ce n'est pas tout à fait ça : écoute le mot et corrige !" : "Ce n'est pas le bon mot : regarde l'image et relis !"; scene.appendChild(m);
+  if(ecrit()){
+    $("saisie").classList.add("faux");
+    if($("opt-dire").checked) setTimeout(()=>dire(tour.syl.join("")),400);
+    await pause(1100);
+    // aide : après 2 essais, la 1re syllabe est écrite
+    if(tour.essais>=2 && $("opt-aide").checked && !normer($("saisie").value).startsWith(normer(tour.syl[0]))) $("saisie").value = tour.syl[0];
+    tour.verrou=false; majCases();
+    const z=$("saisie"); z.focus({preventScroll:true}); z.setSelectionRange(z.value.length,z.value.length);
+    await pause(700); m.remove(); z.classList.remove("faux");
+    els.forEach(e=>e.classList.remove("non"));
+    return;
+  }
   await pause(1100);
   // toutes les syllabes retournent dans la réserve (même les bonnes) : l'enfant reconstruit le mot en entier
   tour.cases = tour.cases.map(()=>null);
@@ -700,6 +750,16 @@ function finPartie(){
 /* ---------- Boutons ---------- */
 $("go").onclick=lancerPartie;
 $("decollage").onclick=decoller;
+/* saisie du mot + boutons d'accents (claviers de tablette) */
+$("saisie").addEventListener("input",()=>{ $("saisie").classList.remove("faux"); if(tour) majCases(); });
+$("saisie").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); decoller(); } });
+$("accents").innerHTML = ["é","è","ê","à","â","ç","î","ô","û","ù"].map(a=>`<button type="button" tabindex="-1">${a}</button>`).join("");
+$("accents").querySelectorAll("button").forEach(b=>{
+  b.addEventListener("pointerdown",e=>e.preventDefault()); // garde le clavier ouvert
+  b.addEventListener("click",()=>{ const z=$("saisie"); if(z.disabled) return;
+    const a=z.selectionStart??z.value.length, f=z.selectionEnd??a;
+    z.value = z.value.slice(0,a) + b.textContent + z.value.slice(f); z.setSelectionRange(a+1,a+1); z.focus({preventScroll:true}); z.dispatchEvent(new Event("input")); });
+});
 $("suivant").onclick=()=>{ if(partie.i>=partie.mots.length) finPartie(); else nouveauTour(); };
 $("ecouter").onclick=()=>dire(tour.syl.join(""));
 $("quitter").onclick=()=>{ $("ecran-jeu").hidden=true; $("ecran-reglages").hidden=false; if("speechSynthesis" in window) speechSynthesis.cancel(); };
