@@ -205,6 +205,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .scene.serre .bike{width:62px;height:51px;top:3px}
 .scene.serre .tag{top:3px;font-size:.62rem}
 .lane.moi{box-shadow:inset 0 0 0 3px #fff}
+.revt{font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.revt select{font:inherit;font-weight:800;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--fg)}
 .toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:30;background:#2b2b2b;color:#fff;font-weight:800;padding:8px 16px;border-radius:99px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -836,13 +838,14 @@ function majAttente(d){
     + `${Maj(nomTable(d.reglages.table))} · ${n} tablette${n>1?"s":""}`;
   if($("mGo")) $("mGo").disabled = !n;
 }
-async function lancer(nouvelles){
+const TABLES_REV=[1,2,3,4,5,6,7,8,9,10,"mix"];
+async function lancer(nouvelles, table){
   if(!M || !M.etat) return;
-  const t=M.etat.reglages.table;
+  const t = table===undefined ? M.etat.reglages.table : table;
   const reglages = nouvelles ? {table:t, qs:questions(t)} : M.etat.reglages;
-  document.querySelectorAll("#mGo,#again").forEach(b=>b.disabled=true);
+  document.querySelectorAll("#mGo,#again,#revT").forEach(b=>b.disabled=true);
   try{ await api({a:"partir", code:M.code, hote:M.hote, reglages}); poll(); }
-  catch(e){ toast(e.message); document.querySelectorAll("#mGo,#again").forEach(b=>b.disabled=false); }
+  catch(e){ toast(e.message); document.querySelectorAll("#mGo,#again,#revT").forEach(b=>b.disabled=false); }
 }
 $("stop").onclick=async()=>{ if(!M||!M.hote) return; try{ await api({a:"arreter", code:M.code, hote:M.hote}); poll(); }catch(e){ toast(e.message); } };
 
@@ -955,8 +958,9 @@ function podiumMulti(d){
       <span><span class="sw" style="background:${coul(j.id)}"></span>${esc(j.nom)}${j.id===M.id?" (toi)":""}<span class="err">${j.erreurs} erreur${j.erreurs>1?"s":""}</span></span>
       <span class="tm">${j.temps!=null ? fmt(j.temps/1000)+" s" : j.bons+" / "+STEPS}</span></li>`).join("")}</ol>
     ${M.hote ? "" : "<p>L'adulte peut lancer une revanche : reste sur cet écran.</p>"}
-    <div class="row">${M.hote?`<button class="cta" id="again">Revanche (nouvelles multiplications)</button>`:""}<button class="ghost" id="toMenu">Menu</button></div></div>`;
-  if(M.hote){ $("again").onclick=()=>lancer(true); $("again").focus(); }
+    ${M.hote?`<label class="revt">Table de la revanche : <select id="revT">${TABLES_REV.map(t=>`<option value="${t}"${String(t)===String(R.table)?" selected":""}>${Maj(nomTable(t))}</option>`).join("")}</select></label>`:""}
+    <div class="row">${M.hote?`<button class="cta" id="again">Revanche 🏃</button>`:""}<button class="ghost" id="toMenu">Menu</button></div></div>`;
+  if(M.hote){ $("again").onclick=()=>{ const v=$("revT").value; lancer(true, /^\d+$/.test(v)?+v:v); }; $("again").focus(); }
   $("toMenu").onclick=toMenu;
   $("stop").hidden=true;
 }
