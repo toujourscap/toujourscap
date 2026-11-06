@@ -237,7 +237,7 @@ def render(n, ctx):
 
 # ---------- Gabarit ----------
 NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/francais/", "Français"),
-       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/post/la-tour-de-controle/", "🗼 La tour de contrôle"), ("/qui-suis-je/", "Qui suis-je ?")]
+       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
 DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
@@ -249,6 +249,7 @@ FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "
 
 def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
     fond = FONDS.get(active, "canopee")
+    tc_actif = ' aria-current="page"' if active == "/post/la-tour-de-controle/" else ""
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
     full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Outils pédagogiques cycle 2 : GS, CP, CE1"
     desc = meta_desc(desc) or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
@@ -286,6 +287,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
     <a class="logo" href="/" aria-label="Toujours cap ! Accueil">{LOGO_BANDEAU}</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="nav" onclick="this.setAttribute('aria-expanded', document.getElementById('nav').classList.toggle('open'))">Menu</button>
     <nav id="nav" class="nav">{nav}<a class="nav-admin" href="/admin/commentaires" hidden>🔒 Admin</a></nav>
+    <a class="tc-cadre" href="/post/la-tour-de-controle/"{tc_actif} title="Les résultats de chaque élève dans tous les jeux"><span aria-hidden="true">🗼</span> <span class="tc-txt">La tour de contrôle</span></a>
     <script>if(document.cookie.indexOf("tc_moi=1")>-1)document.querySelector(".nav-admin").hidden=false</script>
   </div>
 </header>
