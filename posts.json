@@ -280,7 +280,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le lien « Jouer seul sur cet écran » affiche les calculs à côté du puzzle (10 pièces) : pratique pour s'entraîner seul, ou pour jouer collectivement au tableau en passant à tour de rôle.",
+         "text": "Le cadre « Jouer seul sur cet écran », en bas du menu, affiche les calculs à côté du puzzle : 20 bonnes réponses pour reconstituer l'animal. Pratique pour s'entraîner seul, ou pour jouer collectivement au tableau en passant à tour de rôle.",
          "decorations": []
         }
        }
@@ -568,7 +568,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le lien « Jouer seul sur cet écran » affiche les calculs à côté du puzzle (10 pièces) : pratique pour s'entraîner seul, ou pour jouer collectivement au tableau en passant à tour de rôle.",
+         "text": "Le cadre « Jouer seul sur cet écran », en bas du menu, affiche les calculs à côté du puzzle : 20 bonnes réponses pour reconstituer l'animal. Pratique pour s'entraîner seul, ou pour jouer collectivement au tableau en passant à tour de rôle.",
          "decorations": []
         }
        }
