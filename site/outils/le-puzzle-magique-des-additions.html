@@ -51,8 +51,9 @@ h1{font-family:var(--display);font-weight:400;color:var(--violet-dark);margin:0;
 .champ{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .champ input{font:inherit;font-size:1.3rem;padding:8px 12px;border:2px solid var(--violet);border-radius:12px;background:#fff;width:100%}
 #jCode{text-transform:uppercase;letter-spacing:.3em;font-family:var(--display);font-size:1.8rem;text-align:center}
-.solo{text-align:center;color:var(--muted)}
-.solo button{background:none;border:0;color:var(--violet-dark);text-decoration:underline;font-weight:700;padding:4px}
+.carte.seul{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px 20px;border-color:var(--sun);box-shadow:0 6px 0 rgba(217,164,0,.3)}
+.carte.seul .txt{flex:1 1 280px;display:flex;flex-direction:column;gap:8px}
+.carte.seul .btn{flex:0 0 auto}
 
 /* ---------- écran du tableau ---------- */
 #tableau{display:flex;flex-direction:column;gap:8px;height:100%}
@@ -147,8 +148,15 @@ svg#puzzle{display:block;width:100%;max-width:100%;height:auto;border-radius:18p
       <button type="button" class="btn gros" id="rejoindre">Rejoindre</button>
       <p class="err" id="errEl" aria-live="polite"></p>
     </section>
+    <section class="carte seul" aria-labelledby="tSeul">
+      <div class="txt">
+        <h2 id="tSeul">🙋 Jouer seul sur cet écran</h2>
+        <p>Pas d'autres écrans&nbsp;? Les calculs s'affichent à côté du puzzle : <b>20 bonnes réponses</b> pour reconstituer l'animal extraordinaire.</p>
+        <div class="pills" id="tablesSeul" role="radiogroup" aria-label="Table pour jouer seul"></div>
+      </div>
+      <button type="button" class="btn gros" id="seul">Jouer seul</button>
+    </section>
   </div>
-  <p class="solo">Pas d'autres écrans&nbsp;? <button type="button" id="seul">Jouer seul sur cet écran</button> (10 pièces, les calculs s'affichent à côté du puzzle).</p>
 </main>
 
 <!-- ============ TABLEAU (puzzle) ============ -->
@@ -191,6 +199,7 @@ const JEU = MUL ? "puzzle-multiplications" : "puzzle-additions";
 const SIGNE = MUL ? "×" : "+";
 const NOM_JEU = MUL ? "Le puzzle magique des multiplications" : "Le puzzle magique des additions";
 const PAR_ECRAN = 10;   // bonnes réponses (= pièces) par écran
+const SEUL = 20;        // bonnes réponses (= pièces) pour jouer seul
 document.title = NOM_JEU;
 $("titre").textContent = NOM_JEU;
 $("sousTitre").textContent = MUL
@@ -223,10 +232,13 @@ $("vignettes").innerHTML = melange([0, 1, 2, 3, 4, 5]).slice(0, 4).map(i => `<im
 const TABLES = MUL ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 $("tables").innerHTML = TABLES.map(t => `<label class="pill"><input type="radio" name="table" value="${t}"${t === 2 ? " checked" : ""}><span>${t}</span></label>`).join("")
   + `<label class="pill"><input type="radio" name="table" value="tout"><span>Toutes</span></label>`;
-try { const t = localStorage.getItem(JEU + "-table"); const r = t && document.querySelector(`input[name=table][value="${t}"]`); if (r) r.checked = true; } catch (e) {}
-function tableChoisie() {
-  const t = document.querySelector("input[name=table]:checked").value;
-  try { localStorage.setItem(JEU + "-table", t); } catch (e) {}
+$("tablesSeul").innerHTML = $("tables").innerHTML.replace(/name="table"/g, 'name="tableSeul"');
+try {
+  for (const n of ["table", "tableSeul"]) { const t = localStorage.getItem(JEU + "-" + n); const r = t && document.querySelector(`input[name=${n}][value="${t}"]`); if (r) r.checked = true; }
+} catch (e) {}
+function tableChoisie(n = "table") {
+  const t = document.querySelector(`input[name=${n}]:checked`).value;
+  try { localStorage.setItem(JEU + "-" + n, t); } catch (e) {}
   return t === "tout" ? "tout" : +t;
 }
 const nomTable = t => t === "tout" ? "Toutes les tables" : "Table de " + t;
@@ -596,7 +608,7 @@ async function valide() {
     if (SOLO) { posePiece(0, ""); if (P.posees >= P.total) setTimeout(complet, 1100); }
     else { $("ePieces").textContent = `🧩 ${S.bons} / ${PAR_ECRAN}`; envoie(); }
     await wait(800);
-    if (S.bons >= PAR_ECRAN) {
+    if (S.bons >= (SOLO ? SEUL : PAR_ECRAN)) {
       if (!SOLO && M && !M.fin) attenteEleve("Tes 10 pièces sont au tableau !", "Bravo ! On attend les autres pour voir l'animal extraordinaire…");
       return;
     }
@@ -623,9 +635,9 @@ document.addEventListener("keydown", e => {
 /* ========== SEUL SUR CET ÉCRAN ========== */
 let SOLO = null;
 $("seul").addEventListener("click", () => {
-  const table = tableChoisie();
+  const table = tableChoisie("tableSeul");
   quitte(); SOLO = { table, bons: 0, err: 0, fini: false };
-  vueTableau(table, PAR_ECRAN, tireAnimal()); ov.hidden = true;
+  vueTableau(table, SEUL, tireAnimal()); ov.hidden = true;
   $("bCode").hidden = true; $("bArreter").hidden = false; $("bChips").innerHTML = "";
   $("soloPanneau").hidden = false; ajuste();
   E.prochain = fabrique(table); zoneCalcul($("soloPanneau"), true); nouveauCalcul();
@@ -634,7 +646,7 @@ function finSolo(complet) {
   if (!SOLO || SOLO.fini) return;
   SOLO.fini = true; E.actif = false; $("bArreter").hidden = true;
   if (complet) revele();
-  try { TDC.note({ s: SOLO.bons, n: PAR_ECRAN, d: `${SOLO.bons} / ${PAR_ECRAN} pièces, seul (${nomTable(SOLO.table).toLowerCase()})${SOLO.err ? ` · ${pl(SOLO.err, "erreur")}` : ""}`, g: complet, niv: nomTable(SOLO.table) }); } catch (e) {}
+  try { TDC.note({ s: SOLO.bons, n: SEUL, d: `${SOLO.bons} / ${SEUL} pièces, seul (${nomTable(SOLO.table).toLowerCase()})${SOLO.err ? ` · ${pl(SOLO.err, "erreur")}` : ""}`, g: complet, niv: nomTable(SOLO.table) }); } catch (e) {}
   setTimeout(() => {
     montre(`<div class="boite bas" role="dialog" aria-live="polite">
       <h2>${complet ? `🎉 Bravo ! Voici ${esc(ANIMAUX[P.animal].nom)} !` : "Partie arrêtée"}</h2>
