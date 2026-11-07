@@ -1,4 +1,4 @@
-// Parties à plusieurs tablettes (voir lib/salle.js).
+// Parties à plusieurs écrans (voir lib/salle.js).
 // GET  /api/salle?code=ABCD[&id=n]  → état de la salle (statut, réglages, départ, joueurs, heure du serveur)
 // POST /api/salle {a:"creer", jeu, reglages}            → {code, hote}
 //      {a:"rejoindre", code, nom}                       → {id, jeton}
@@ -24,7 +24,7 @@ async function base(env) {
   return b;
 }
 
-const DEPART = 4000; // ms entre « Partez ! » et le vrai départ (le temps que toutes les tablettes l'apprennent)
+const DEPART = 4000; // ms entre « Partez ! » et le vrai départ (le temps que tous les écrans l'apprennent)
 
 export async function onRequestGet({ request, env }) {
   const u = new URL(request.url);
@@ -84,8 +84,8 @@ export async function onRequestPost({ request, env }) {
     const presents = results.filter((j) => now - j.vu < ABSENT);
     if (presents.some((j) => j.nom.toLowerCase() === nom.toLowerCase()))
       return json({ erreur: `« ${nom} » est déjà pris : choisis un autre nom.` }, 409);
-    if (presents.length >= MAX_JOUEURS) return json({ erreur: `Pas plus de ${MAX_JOUEURS} tablettes par course.` }, 409);
-    // Les tablettes parties avant le départ libèrent leur place
+    if (presents.length >= MAX_JOUEURS) return json({ erreur: `Pas plus de ${MAX_JOUEURS} écrans par course.` }, 409);
+    // Les écrans partis avant le départ libèrent leur place
     if (s.statut === "attente")
       await b.prepare("DELETE FROM salle_joueurs WHERE salle = ? AND vu < ?").bind(code, now - ABSENT).run();
     const j = jeton();
@@ -103,7 +103,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (d.a === "partir" || d.a === "arreter" || d.a === "avancer") {
-    if (String(d.hote || "") !== s.hote) return json({ erreur: "Seule la tablette qui a créé la course peut faire ça." }, 403);
+    if (String(d.hote || "") !== s.hote) return json({ erreur: "Seul l'écran qui a créé la course peut faire ça." }, 403);
     if (d.a === "avancer") {
       const etape = Math.max(0, Math.min(100, Math.trunc(+d.etape) || 0));
       const delai = Math.max(0, Math.min(5000, Math.trunc(+d.delai) || 0));

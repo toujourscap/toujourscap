@@ -81,7 +81,7 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
 .expl .res{color:#2e7a2a}
 #suivant{align-self:flex-end;font-size:1.15rem;padding:6px 18px}
 @media (max-width:640px){.setup .deco{display:none}.setup{min-height:0}}
-/* Plusieurs tablettes */
+/* Plusieurs écrans */
 .multi{border-top:3px dashed #e2c49c;padding-top:12px;display:flex;flex-direction:column;gap:10px}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
 .mbox{border:2px solid var(--wood);border-radius:14px;background:#fff;padding:12px;display:flex;flex-direction:column;gap:8px}
@@ -165,12 +165,12 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
       </fieldset>
       <button type="button" id="play">Jouer !</button>
       <div class="multi" id="multi">
-        <span class="reg-t" id="mTitre">📱 Jouer sur plusieurs tablettes</span>
+        <span class="reg-t" id="mTitre">📱 Jouer sur plusieurs écrans</span>
         <div class="mgrid">
           <div class="mbox" id="mBoxCreer">
             <b>Adulte : créer la partie</b>
-            <span class="hint">Avec les réglages ci-dessus. Un code s'affiche : les autres tablettes le tapent.</span>
-            <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde)" aria-label="Prénom ou équipe sur cette tablette (laisser vide pour seulement regarder)">
+            <span class="hint">Avec les réglages ci-dessus. Un code s'affiche : les autres écrans le tapent.</span>
+            <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde)" aria-label="Prénom ou équipe sur cet écran (laisser vide pour seulement regarder)">
             <button type="button" class="btn2 fort" id="mCreer">Créer la partie</button>
           </div>
           <div class="mbox" id="mBoxJoin">
@@ -181,7 +181,7 @@ svg#game{display:block;width:100%;height:auto;user-select:none;-webkit-user-sele
           </div>
         </div>
         <p class="merr" id="mErr" role="alert"></p>
-        <p class="hint">Jusqu'à 8 tablettes connectées à Internet : le même calcul et les mêmes taupes sur tous les écrans. Aucun compte : le prénom est effacé au bout de 24 h.</p>
+        <p class="hint">Jusqu'à 8 écrans connectés à Internet : le même calcul et les mêmes taupes sur tous les écrans. Aucun compte : le prénom est effacé au bout de 24 h.</p>
       </div>
     </form>
     <img class="deco taupe" src="/images/tape-taupe/taupe.png" alt="">
@@ -572,7 +572,7 @@ async function finish() {
   $("again").hidden = false;
 }
 
-/* ---------- Plusieurs tablettes (relais /api/salle) ---------- */
+/* ---------- Plusieurs écrans (relais /api/salle) ---------- */
 const COUL = ["#e9462f","#3a6fb0","#2f9b4f","#d9a400","#8e44ad","#e0558f","#16a3a8","#8a5a2b"];
 const coul = id => COUL[(id - 1) % COUL.length];
 const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -631,7 +631,7 @@ $("mJoin").addEventListener("click", async () => {
   b.disabled = false;
 });
 function modeReglages(salle) { // l'adulte modifie les réglages d'une partie déjà créée
-  $("mTitre").textContent = salle ? `📱 Partie ${salle} : change les réglages, puis relance` : "📱 Jouer sur plusieurs tablettes";
+  $("mTitre").textContent = salle ? `📱 Partie ${salle} : change les réglages, puis relance` : "📱 Jouer sur plusieurs écrans";
   $("mCreer").textContent = salle ? `Relancer la partie ${salle}` : "Créer la partie";
   $("mNomHote").hidden = !!salle; $("mBoxJoin").hidden = !!salle; $("play").hidden = !!salle;
 }
@@ -682,7 +682,7 @@ function salleAttente() {
   M.vue = "attente"; M.cle = "";
   montre(`<div class="boite" role="dialog" aria-live="polite">
     <p>Code de la partie</p><div class="bigcode">${M.code}</div>
-    <p id="mInfo">${M.hote ? "Sur les autres tablettes : <b>📱 Rejoindre une partie</b>, puis taper ce code." : ""}</p>
+    <p id="mInfo">${M.hote ? "Sur les autres écrans : <b>📱 Rejoindre une partie</b>, puis taper ce code." : ""}</p>
     <div class="chips" id="mChips"></div>
     ${M.hote ? `<button type="button" class="btn2 fort" id="mGo" disabled>Jouer !</button>` : `<p><b>En attente du départ…</b></p>`}
     <button type="button" class="btn2" id="mQuit">Quitter</button></div>`);
@@ -695,10 +695,10 @@ function majAttente(d) {
   if (cle === M.cle || !$("mChips")) return; M.cle = cle;
   const n = d.joueurs.length;
   $("mChips").innerHTML = n ? d.joueurs.map(j => `<span class="cj" style="background:${coul(j.id)}">${esc(j.nom)}${j.id === M.id ? " (toi)" : ""}</span>`).join("")
-    : `<span class="hint">Aucune tablette pour l'instant…</span>`;
+    : `<span class="hint">Aucun écran pour l'instant…</span>`;
   const r = d.reglages;
-  $("mInfo").innerHTML = (M.hote ? "Sur les autres tablettes : <b>📱 Rejoindre une partie</b>, puis taper ce code.<br>" : "")
-    + `${{ add: "Additions", sub: "Soustractions", mix: "Additions et soustractions" }[r.op] || ""} de ${r.min} à ${r.max} · ${r.qs.length} questions · ${n} tablette${n > 1 ? "s" : ""}`;
+  $("mInfo").innerHTML = (M.hote ? "Sur les autres écrans : <b>📱 Rejoindre une partie</b>, puis taper ce code.<br>" : "")
+    + `${{ add: "Additions", sub: "Soustractions", mix: "Additions et soustractions" }[r.op] || ""} de ${r.min} à ${r.max} · ${r.qs.length} questions · ${n} écran${n > 1 ? "s" : ""}`;
   if ($("mGo")) $("mGo").disabled = !n;
 }
 async function lancer(reglages) {
@@ -806,7 +806,7 @@ function podiumMulti(d) {
   $("expl").hidden = true; $("mPasse").hidden = true;
   const js = d.joueurs.map(j => j.id === M.id ? { ...j, bons: M.bons || 0, erreurs: M.err, d: { f: M.f, t: Math.round(M.tCum) } } : j);
   const cl = classement(js), rang = cl.findIndex(j => j.id === M.id) + 1, med = ["🥇", "🥈", "🥉"];
-  if (M.joue) { sWin(); try { TDC.note({ s: M.bons || 0, n: Q.length, g: rang === 1, d: `Partie à ${cl.length} tablettes : ${rang === 1 ? "1ᵉʳ" : rang + "ᵉ"} · ${M.bons || 0} / ${Q.length} du premier coup` }); } catch (e) {} }
+  if (M.joue) { sWin(); try { TDC.note({ s: M.bons || 0, n: Q.length, g: rang === 1, d: `Partie à ${cl.length} écrans : ${rang === 1 ? "1ᵉʳ" : rang + "ᵉ"} · ${M.bons || 0} / ${Q.length} du premier coup` }); } catch (e) {} }
   eq.setAttribute("font-size", "62"); eq.setAttribute("fill", "#2e7a2a"); eq.textContent = "Partie terminée !";
   moles.forEach(m => setValue(m, null));
   const g = cl[0];
