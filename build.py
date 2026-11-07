@@ -134,9 +134,13 @@ function pleinEcran(b){
 </script>"""
 
 
+# Jeux publiés sous deux noms à partir d'un seul fichier (le jeu se règle d'après son nom)
+COPIES = {"le-puzzle-magique-des-multiplications.html": "le-puzzle-magique-des-additions.html"}
+
+
 def embed(src, height, title, lazy=False, large=False):
     # Empreinte du fichier dans l'adresse : le navigateur recharge le jeu dès qu'il change.
-    local = os.path.join(ROOT, "assets", os.path.basename(src)) if src.startswith("/outils/") else ""
+    local = os.path.join(ROOT, "assets", COPIES.get(os.path.basename(src), os.path.basename(src))) if src.startswith("/outils/") else ""
     if local and os.path.exists(local) and "?" not in src:
         import hashlib
         src += "?v=" + hashlib.md5(open(local, "rb").read()).hexdigest()[:8]
@@ -557,8 +561,10 @@ def main():
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     shutil.copytree(os.path.join(ROOT, "assets", "audio"), os.path.join(OUT, "audio"))  # voix enregistrées des jeux
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "tour-de-controle.js"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "tour-de-controle.js"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
+    for copie, source in COPIES.items():
+        shutil.copy(os.path.join(ROOT, "assets", source), os.path.join(OUT, "outils", copie))
 
     data = json.load(open(os.path.join(ROOT, "posts.json")))
     posts = []

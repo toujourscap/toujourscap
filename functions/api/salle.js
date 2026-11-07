@@ -9,7 +9,7 @@
 //      {a:"avancer", code, hote, etape, delai}         → question suivante pour toute la salle (jeux par étapes)
 import { db, json } from "../../lib/commentaires.js";
 import {
-  SCHEMA_SALLES, MIGRATIONS, JEUX, MAX_JOUEURS, DUREE_VIE, ABSENT, CODE_RE,
+  SCHEMA_SALLES, MIGRATIONS, JEUX, REJOINDRE_EN_COURS, MAX_JOUEURS, DUREE_VIE, ABSENT, CODE_RE,
   nouveauCode, jeton, nettoieNom, nettoieReglages, nettoieDonnees,
 } from "../../lib/salle.js";
 
@@ -79,7 +79,7 @@ export async function onRequestPost({ request, env }) {
   if (d.a === "rejoindre") {
     const nom = nettoieNom(d.nom);
     if (!nom) return json({ erreur: "Écris un prénom ou un nom d'équipe." }, 400);
-    if (s.statut === "course") return json({ erreur: "La course a déjà commencé : attends la prochaine !" }, 409);
+    if (s.statut === "course" && !REJOINDRE_EN_COURS.has(s.jeu)) return json({ erreur: "La course a déjà commencé : attends la prochaine !" }, 409);
     const { results } = await b.prepare("SELECT id, nom, vu FROM salle_joueurs WHERE salle = ?").bind(code).all();
     const presents = results.filter((j) => now - j.vu < ABSENT);
     if (presents.some((j) => j.nom.toLowerCase() === nom.toLowerCase()))
