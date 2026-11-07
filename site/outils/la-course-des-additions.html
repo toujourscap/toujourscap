@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Additions</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-additions/"><meta name="description" content="Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l&#x27;ordinateur, ou en classe par équipes, ou sur plusieurs tablettes dans la…"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>La Course des Additions</title><link rel="canonical" href="https://toujourscap.com/post/la-course-des-additions/"><meta name="description" content="Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l&#x27;ordinateur, ou en classe par équipes, ou sur plusieurs écrans dans la même…"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script src="tour-de-controle.js"></script></head><body>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
 /* Layout : écran unique — en-tête, scène de course en défilement (ciel, collines, 2 couloirs), question + pavé */
@@ -194,7 +194,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
 .rank .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
 .rank .tm{font-variant-numeric:tabular-nums}
 .rank .err{display:block;font-size:.75rem;color:var(--muted);font-weight:700}
-/* Plusieurs tablettes */
+/* Plusieurs écrans */
 .multi{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .mbox{border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
 .mbox b{font-size:1.05rem}
@@ -229,7 +229,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="modes">
         <button class="mode" id="mSolo">🚴 Seul<small>contre l'ordinateur</small></button>
         <button class="mode" id="mTeam">👥 En classe<small>par équipes, au temps</small></button>
-        <button class="mode" id="mMulti">📱 Plusieurs tablettes<small>une course, tous les écrans</small></button>
+        <button class="mode" id="mMulti">📱 Plusieurs écrans<small>une course, tous les écrans</small></button>
       </div>
     </div>
 
@@ -264,8 +264,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
       <div class="multi">
         <div class="mbox">
           <b>👩‍🏫 Adulte : créer la course</b>
-          <span class="sub" style="margin:0">Avec la table choisie au-dessus. Un code s'affiche : les autres tablettes le tapent.</span>
-          <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde)" aria-label="Prénom ou équipe sur cette tablette (laisser vide pour seulement regarder)">
+          <span class="sub" style="margin:0">Avec la table choisie au-dessus. Un code s'affiche : les autres écrans le tapent.</span>
+          <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde)" aria-label="Prénom ou équipe sur cet écran (laisser vide pour seulement regarder)">
           <button class="cta" id="mCreer">Créer la course</button>
         </div>
         <div class="mbox">
@@ -276,7 +276,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
         </div>
       </div>
       <p class="merr" id="mErr" role="alert"></p>
-      <p class="sub" style="margin:0">Jusqu'à 8 tablettes, connectées à Internet. Tout le monde voit tous les vélos et a les mêmes 10 additions. Aucun compte : le prénom est effacé au bout de 24 h. Écrire juste le prénom ou un nom d'équipe.</p>
+      <p class="sub" style="margin:0">Jusqu'à 8 écrans, connectés à Internet. Tout le monde voit tous les vélos et a les mêmes 10 additions. Aucun compte : le prénom est effacé au bout de 24 h. Écrire juste le prénom ou un nom d'équipe.</p>
     </div>
 
     <button class="cta partez" id="partez">Partez ! 🚴</button>
@@ -426,7 +426,7 @@ function renderMode(){
   document.querySelectorAll(".multi-only").forEach(e=>e.hidden=!multi);
   $("partez").hidden = multi;
   $("labTable").textContent = multi ? "1. Choisis la table (adulte qui crée la course)" : "1. Choisis ta table";
-  $("sub").textContent = multi ? "Chaque bonne réponse = un coup de pédale. Une seule course sur toutes les tablettes !"
+  $("sub").textContent = multi ? "Chaque bonne réponse = un coup de pédale. Une seule course sur tous les écrans !"
                        : team ? "Chaque bonne réponse = un coup de pédale. Quelle équipe sera la plus rapide ?"
                               : "Chaque bonne réponse = un coup de pédale. Arrive avant l'ordinateur !";
   const nb=$("nteams"); nb.innerHTML="";
@@ -736,7 +736,7 @@ function confetti(l){
     if(t-t0<3000 && !c.hidden) requestAnimationFrame(draw); else { x.clearRect(0,0,W,H); c.hidden=true; }
   })(t0);
 }
-/* ---------- Plusieurs tablettes (relais /api/salle) ---------- */
+/* ---------- Plusieurs écrans (relais /api/salle) ---------- */
 const COUL=["#e9462f","#3a6fb0","#2f9b4f","#d9a400","#8e44ad","#e0558f","#16a3a8","#8a5a2b"];
 const coul = id => COUL[(id-1)%COUL.length];
 const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
@@ -835,7 +835,7 @@ function salleAttente(){
   const ov=$("ov"); ov.hidden=false;
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
     <p>Code de la course</p><div class="bigcode">${M.code}</div>
-    <p id="mInfo">${M.hote?"Sur les autres tablettes : <b>📱 Plusieurs tablettes</b>, puis taper ce code.":""}</p>
+    <p id="mInfo">${M.hote?"Sur les autres écrans : <b>📱 Plusieurs écrans</b>, puis taper ce code.":""}</p>
     <div class="chips" id="mChips"></div>
     ${M.hote?`<button class="cta partez" id="mGo" disabled>Partez ! 🚴</button>`:`<p><strong>En attente du départ…</strong></p>`}
     <button class="ghost" id="mQuit">Quitter</button></div>`;
@@ -848,9 +848,9 @@ function majAttente(d){
   if(cle===M.cleAttente || !$("mChips")) return; M.cleAttente=cle;
   const n=d.joueurs.length;
   $("mChips").innerHTML = n ? d.joueurs.map(j=>`<span class="teamchip" style="background:${coul(j.id)}">${esc(j.nom)}${j.id===M.id?" (toi)":""}</span>`).join("")
-                            : `<span class="sub">Aucune tablette pour l'instant…</span>`;
-  $("mInfo").innerHTML = (M.hote ? "Sur les autres tablettes : <b>📱 Plusieurs tablettes</b>, puis taper ce code.<br>" : "")
-    + `${Maj(nomTable(d.reglages.table))} · ${n} tablette${n>1?"s":""}`;
+                            : `<span class="sub">Aucun écran pour l'instant…</span>`;
+  $("mInfo").innerHTML = (M.hote ? "Sur les autres écrans : <b>📱 Plusieurs écrans</b>, puis taper ce code.<br>" : "")
+    + `${Maj(nomTable(d.reglages.table))} · ${n} écran${n>1?"s":""}`;
   if($("mGo")) $("mGo").disabled = !n;
 }
 const TABLES_REV=[0,1,2,3,4,5,6,7,8,9,10,"tout"];
@@ -891,7 +891,7 @@ function departMulti(d){
   $("stop").hidden=!M.hote;
   [...$("ticks").children].forEach(t=>t.classList.remove("done"));
   $("lead").textContent=""; $("streak").textContent=""; $("clock").textContent="0,0 s"; $("hint").textContent="";
-  if(joue){ updateScore(); showQ(); } else $("score").textContent=`${d.joueurs.length} tablette${d.joueurs.length>1?"s":""}`;
+  if(joue){ updateScore(); showQ(); } else $("score").textContent=`${d.joueurs.length} écran${d.joueurs.length>1?"s":""}`;
   buildCrowd(); audio();
   if(!loopOn){ loopOn=true; last=performance.now(); requestAnimationFrame(frame); }
   decompteMulti(d.debut);
@@ -962,7 +962,7 @@ function podiumMulti(d){
   const rang=cl.findIndex(j=>j.id===M.id)+1;
   if(R.joue){
     if(rang===1) confetti({id:"or"});
-    try{TDC.note({s:R.good,n:STEPS,g:rang===1,niv:"Plusieurs tablettes",d:`Course à ${cl.length} tablettes : ${rang===1?"1ᵉʳ":rang+"ᵉ"} · ${nomTable(R.table)}`})}catch(e){}
+    try{TDC.note({s:R.good,n:STEPS,g:rang===1,niv:"Plusieurs écrans",d:`Course à ${cl.length} écrans : ${rang===1?"1ᵉʳ":rang+"ᵉ"} · ${nomTable(R.table)}`})}catch(e){}
   }
   const gagnant=cl[0];
   const ov=$("ov"); ov.hidden=false;

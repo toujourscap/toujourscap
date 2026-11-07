@@ -2822,7 +2822,7 @@
    "title": "Le Tape-taupe des additions et soustractions",
    "slug": "le-tape-taupe-des-additions",
    "cat": "calcul",
-   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le niveau, seul ou sur plusieurs tablettes en même temps.",
+   "excerpt": "Des taupes moqueuses brandissent chacune un résultat : il faut taper celle qui a la bonne réponse au calcul. Calcul mental de 0 à 1000, réglable selon le niveau, seul ou sur plusieurs écrans en même temps.",
    "date": "2026-10-26T17:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -2835,7 +2835,7 @@
      "CE1",
      "CE2"
     ],
-    "joueurs": "1 joueur, la classe ou jusqu'à 8 tablettes",
+    "joueurs": "1 joueur, la classe ou jusqu'à 8 écrans",
     "supports": [
      "ecran",
      "projetable"
@@ -3109,7 +3109,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Sur plusieurs tablettes",
+         "text": "Sur plusieurs écrans",
          "decorations": []
         }
        }
@@ -3121,7 +3121,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le même calcul et les mêmes taupes s'affichent sur toutes les tablettes : chaque élève (ou petite équipe) tape la taupe qui porte le bon résultat. Jusqu'à 8 tablettes connectées à Internet.",
+         "text": "Le même calcul et les mêmes taupes s'affichent sur tous les écrans : chaque élève (ou petite équipe) tape la taupe qui porte le bon résultat. Jusqu'à 8 écrans connectés à Internet.",
          "decorations": []
         }
        }
@@ -3139,7 +3139,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur la tablette de l'adulte : faire les réglages, puis « Créer la partie » (en bas de l'écran de réglages). Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder.",
+             "text": "Sur l'écran de l'adulte : faire les réglages, puis « Créer la partie » (en bas de l'écran de réglages). Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder.",
              "decorations": []
             }
            }
@@ -3156,7 +3156,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur chaque tablette d'élève : taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "text": "Sur chaque écran d'élève : taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
              "decorations": []
             }
            }
@@ -3173,7 +3173,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "L'adulte appuie sur « Jouer ! ». Sous le dessin, une pastille ✅ montre qui a trouvé. Quand tout le monde a trouvé, toutes les tablettes passent ensemble au calcul suivant ; « ⏭ Passer » permet à l'adulte d'avancer si un élève bloque. Avec l'explication, la méthode s'affiche partout et c'est l'adulte qui passe à la suite.",
+             "text": "L'adulte appuie sur « Jouer ! ». Sous le dessin, une pastille ✅ montre qui a trouvé. Quand tout le monde a trouvé, tous les écrans passent ensemble au calcul suivant ; « ⏭ Passer » permet à l'adulte d'avancer si un élève bloque. Avec l'explication, la méthode s'affiche partout et c'est l'adulte qui passe à la suite.",
              "decorations": []
             }
            }
@@ -4022,7 +4022,7 @@
    "title": "La Course des Multiplications",
    "slug": "la-course-des-multiplications",
    "cat": "calcul",
-   "excerpt": "Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l'ordinateur, en classe par équipes, ou sur plusieurs tablettes dans la même course.",
+   "excerpt": "Un jeu pour apprendre les tables de multiplication : chaque bonne réponse est une foulée. Seul contre l'ordinateur, en classe par équipes, ou sur plusieurs écrans dans la même course.",
    "date": "2026-10-25T14:20:00.000Z",
    "categoryIds": [],
    "media": {
@@ -4035,7 +4035,7 @@
      "CE1",
      "CE2"
     ],
-    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 tablettes",
+    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 écrans",
     "supports": [
      "ecran",
      "projetable"
@@ -4279,7 +4279,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Sur plusieurs tablettes",
+         "text": "Sur plusieurs écrans",
          "decorations": []
         }
        }
@@ -4291,7 +4291,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Une seule course, affichée sur toutes les tablettes : chaque tablette a son coureur et tout le monde voit tous les coureurs avancer. Jusqu'à 8 tablettes connectées à Internet (un élève ou une petite équipe par tablette).",
+         "text": "Une seule course, affichée sur tous les écrans : chaque écran a son coureur et tout le monde voit tous les coureurs avancer. Jusqu'à 8 écrans connectés à Internet (un élève ou une petite équipe par écran).",
          "decorations": []
         }
        }
@@ -4309,7 +4309,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur la tablette de l'adulte : choisir « 📱 Plusieurs tablettes », choisir la table (ou ★ tables mélangées), puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
+             "text": "Sur l'écran de l'adulte : choisir « 📱 Plusieurs écrans », choisir la table (ou ★ tables mélangées), puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
              "decorations": []
             }
            }
@@ -4326,7 +4326,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur chaque tablette d'élève : « 📱 Plusieurs tablettes », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "text": "Sur chaque écran d'élève : « 📱 Plusieurs écrans », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
              "decorations": []
             }
            }
@@ -4360,7 +4360,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles multiplications, sur la même table ou une autre.",
+             "text": "Classement à l'arrivée sur tous les écrans. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles multiplications, sur la même table ou une autre.",
              "decorations": []
             }
            }
@@ -4435,7 +4435,7 @@
    "title": "La Course des Additions",
    "slug": "la-course-des-additions",
    "cat": "calcul",
-   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l'ordinateur, ou en classe par équipes, ou sur plusieurs tablettes dans la même course.",
+   "excerpt": "Un jeu de calcul mental : chaque bonne réponse fait avancer le vélo. Seul contre l'ordinateur, ou en classe par équipes, ou sur plusieurs écrans dans la même course.",
    "date": "2026-10-25T13:10:00.000Z",
    "categoryIds": [],
    "media": {
@@ -4447,7 +4447,7 @@
      "CP",
      "CE1"
     ],
-    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 tablettes",
+    "joueurs": "1 joueur, la classe par équipes ou jusqu'à 8 écrans",
     "supports": [
      "ecran",
      "projetable"
@@ -4704,7 +4704,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Sur plusieurs tablettes",
+         "text": "Sur plusieurs écrans",
          "decorations": []
         }
        }
@@ -4716,7 +4716,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Une seule course, affichée sur toutes les tablettes : chaque tablette a son vélo et tout le monde voit tous les vélos avancer. Jusqu'à 8 tablettes connectées à Internet (un élève ou une petite équipe par tablette).",
+         "text": "Une seule course, affichée sur tous les écrans : chaque écran a son vélo et tout le monde voit tous les vélos avancer. Jusqu'à 8 écrans connectés à Internet (un élève ou une petite équipe par écran).",
          "decorations": []
         }
        }
@@ -4734,7 +4734,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur la tablette de l'adulte : choisir « 📱 Plusieurs tablettes », choisir la table, puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
+             "text": "Sur l'écran de l'adulte : choisir « 📱 Plusieurs écrans », choisir la table, puis « Créer la course ». Un code de 4 lettres s'affiche. Écrire un prénom pour jouer aussi, ou laisser vide pour seulement regarder (pratique au tableau).",
              "decorations": []
             }
            }
@@ -4751,7 +4751,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Sur chaque tablette d'élève : « 📱 Plusieurs tablettes », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
+             "text": "Sur chaque écran d'élève : « 📱 Plusieurs écrans », taper le code et un prénom ou un nom d'équipe, puis « Rejoindre ».",
              "decorations": []
             }
            }
@@ -4785,7 +4785,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Classement à l'arrivée sur toutes les tablettes. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles additions, sur la même table ou une autre.",
+             "text": "Classement à l'arrivée sur tous les écrans. L'adulte peut arrêter la course avant la fin (« ⏹ Arrêter ») ou lancer une revanche avec de nouvelles additions, sur la même table ou une autre.",
              "decorations": []
             }
            }
