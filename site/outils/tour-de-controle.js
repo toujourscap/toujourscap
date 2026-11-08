@@ -97,6 +97,7 @@
     "la-course-des-additions": { b: "#again" },
     "la-course-des-multiplications": { b: "#again" },
     "la-dictee-de-la-feuille-pliee": { b: "#refaire" },
+    "la-machine-a-conjuguer": { b: "#again" },
     "la-maison-de-briques": { b: "#reglages" },
     "la-minute-des-syllabes": { b: "#btnRejouer" },
     "la-roue-du-magicien": { b: "#b-rejouer" },

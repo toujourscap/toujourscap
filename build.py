@@ -37,7 +37,7 @@ JACKPOT_URL = "https://b0bbbd46-7a7a-40c3-ab1e-0aebb386faeb.filesusr.com/html/5e
 CATS = {
     "cercle-conteur": {"name": "Langage oral", "desc": "Outils et contes pour mener des cercles conteurs en GS et CP.", "domain": "francais"},
     "lecture": {"name": "Lecture-compréhension", "desc": "Jeux et outils numériques pour lire plus vite et avec plaisir au CP et au CE1 : tachistoscope, téléprompteurs, jeux de déchiffrage et de compréhension.", "domain": "francais"},
-    "etude-langue": {"name": "Étude de la langue", "desc": "Jeux et outils pour travailler l'orthographe, la grammaire et le vocabulaire au cycle 2 : dictées, mots à retenir.", "domain": "francais"},
+    "etude-langue": {"name": "Étude de la langue", "desc": "Jeux et outils pour travailler l'orthographe, la grammaire, la conjugaison et le vocabulaire au cycle 2 : dictées, mots à retenir, machine à conjuguer.", "domain": "francais"},
     "numeration": {"name": "Numération", "desc": "Activités et outils pour lire, dire et manipuler les nombres au cycle 2.", "domain": "maths"},
     "problemes": {"name": "Résolution de problèmes", "desc": "Jeux pour apprendre à résoudre des problèmes au CP et au CE1 : lire l'énoncé, se représenter la situation, choisir l'opération, trouver la réponse.", "domain": "maths"},
     "maitre-e": {"name": "Enseignant spécialisé à dominante pédagogique (Maître E)", "desc": "Synthèses de recherche et pistes pratiques pour l'aide pédagogique spécialisée en RASED.", "domain": "divers"},
@@ -484,6 +484,7 @@ SEO_TITRES = {
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
     "/post/le-chateau-des-detectives/": "Le Château des Détectives : jeu de compréhension de texte CP-CE1",
     "/post/la-bibliotheque-des-contes/": "La Bibliothèque des contes : compréhension de texte CP, CE1, CE2",
+    "/post/la-machine-a-conjuguer/": "La machine à conjuguer : radical et terminaison, CE1 et CE2",
     "/post/les-devinettes-de-la-foret/": "Les devinettes de la forêt : jeu de compréhension « Qui suis-je ? » CP, CE1, CE2",
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
@@ -561,7 +562,7 @@ def main():
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     shutil.copytree(os.path.join(ROOT, "assets", "audio"), os.path.join(OUT, "audio"))  # voix enregistrées des jeux
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "tour-de-controle.js"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "la-machine-a-conjuguer.html", "tour-de-controle.js"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
     for copie, source in COPIES.items():
         shutil.copy(os.path.join(ROOT, "assets", source), os.path.join(OUT, "outils", copie))
