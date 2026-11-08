@@ -4,13 +4,13 @@
   {
    "title": "La machine à conjuguer",
    "slug": "la-machine-a-conjuguer",
-   "excerpt": "À l'usine des verbes, le radical reste serré dans la machine : l'élève choisit sur le tapis roulant la bonne terminaison, qui vient se coller au radical. Présent, futur, imparfait, passé simple, impératif, conditionnel des verbes en -er et en -ir : 10 niveaux du CE1 au CM2, seul ou sur plusieurs écrans.",
+   "excerpt": "À l'usine des verbes, le radical reste serré dans la machine : l'élève choisit sur le tapis roulant la bonne terminaison, qui vient se coller au radical. Présent, futur, imparfait, passé simple, impératif, conditionnel des verbes en -er et en -ir : 10 niveaux du CE1 au CM2, seul, en équipes sur un écran ou sur plusieurs écrans.",
    "date": "2026-11-08T13:30:00.000Z",
    "cat": "etude-langue",
    "categoryIds": [],
    "jeu": {
     "niveaux": ["CE1", "CE2", "CM1", "CM2"],
-    "joueurs": "1 élève, la classe ou jusqu'à 8 écrans",
+    "joueurs": "1 élève, des équipes sur un écran ou jusqu'à 8 écrans",
     "supports": ["ecran", "projetable"]
    },
    "richContent": {
@@ -196,6 +196,63 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Jouer en équipes sur un seul écran",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Dans « Qui joue ? », choisir ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "« En équipes, chacun son tour »",
+         "decorations": [
+          {
+           "type": "BOLD"
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ", le nombre d'équipes (de 2 à 6 : Rouges, Bleus, Verts, Jaunes, Violets, Roses) et le nombre de commandes par équipe (3, 5 ou 10). Toute la classe partage un seul écran, par exemple le tableau numérique. Avant chaque commande, un grand écran de la couleur de l'équipe annonce « Au tour des Bleus ! » : un élève de l'équipe vient devant l'écran et touche « C'est parti ».",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les étoiles de chaque équipe s'affichent en haut de l'usine. À la fin, le classement compte les étoiles (verbes justes du premier coup), puis le moins d'erreurs, et montre tous les verbes fabriqués par chaque équipe.",
+         "decorations": []
+        }
        }
       ]
      },
