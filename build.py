@@ -389,8 +389,13 @@ NIVEAUX_ARBRE = ["GS", "CP", "CE1", "CE2", "CM1", "CM2"]
 DOMAINES = [("francais", "Français"), ("maths", "Maths"), ("divers", "Divers")]
 
 
+POUR_ENSEIGNANTS = {"ce-que-le-site-propose-aux-enseignants"}  # articles réservés aux adultes
+
+
 def niveaux_de(p):
     """Niveaux d'un article : ceux du jeu, sinon ceux de sa rubrique (contes : GS-CP ; Maître E : enseignants)."""
+    if p.get("slug") in POUR_ENSEIGNANTS:
+        return ["Enseignants"]
     n = (p.get("jeu") or {}).get("niveaux") or {"cercle-conteur": ["GS", "CP"], "maitre-e": ["Enseignants"]}.get(p["cat"], ["CP", "CE1"])
     # tous les articles « Divers » servent aussi aux enseignants
     if CATS.get(p.get("cat"), {}).get("domain") == "divers" and "Enseignants" not in n:

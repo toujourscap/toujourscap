@@ -1,6 +1,22 @@
 {
- "count": 45,
+ "count": 46,
  "posts": [
+  {
+   "title": "Ce que le site propose aux enseignants",
+   "slug": "ce-que-le-site-propose-aux-enseignants",
+   "cat": "methode",
+   "excerpt": "Suivre les progrès de chaque élève avec la tour de contrôle, jouer avec toute la classe au tableau ou sur plusieurs écrans, mettre vos propres mots et textes, imprimer, utiliser le micro : tout ce que le site permet aux enseignants, en un coup d'œil.",
+   "date": "2026-11-08T19:45:00.000Z",
+   "categoryIds": [],
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "ce-que-le-site-propose-aux-enseignants.html"
+     }
+    ]
+   }
+  },
   {
    "title": "La machine à conjuguer",
    "slug": "la-machine-a-conjuguer",
