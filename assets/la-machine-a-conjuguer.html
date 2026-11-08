@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La machine à conjuguer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* L'usine des verbes : le radical est serré dans la machine, la terminaison arrive sur le tapis roulant. */
+:root{
+  --wall:#2E3B44; --wall-2:#38474F; --metal:#9AA5B1; --metal-2:#6C7883; --metal-3:#C9D1D9; --steel:#4A5661;
+  --sun:#F4B73E; --sun-d:#A97A16; --cream:#FFF8E8; --paper:#FFFDF6; --ink:#24292E; --muted:#5E6670;
+  --rad:#2F6FB5; --rad-d:#1F4F86; --ter:#E07A2E; --ter-d:#A4521A; --suj:#5B6B78;
+  --ok:#3FA45E; --ok-bg:#E3F4E6; --ko:#D2503C; --ko-bg:#FBE4DF; --wood:#C98B4B; --wood-d:#94612D;
+  --f-display:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-read:"Andika","Verdana",system-ui,sans-serif;
+}
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{margin:0;font-family:var(--f-read);font-size:17px;line-height:1.45;color:var(--ink);
+  background:
+    linear-gradient(#0000 0 96%,#0002 96%) 0 0/100% 46px,
+    repeating-linear-gradient(90deg,#0000 0 92px,#00000018 92px 94px) 0 0/188px 46px,
+    repeating-linear-gradient(90deg,#0000 0 45px,#00000018 45px 47px) 0 23px/188px 46px,
+    var(--wall)}
+.wrap{max-width:1120px;margin:0 auto;padding:18px max(12px,env(safe-area-inset-right,0px)) 40px max(12px,env(safe-area-inset-left,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;text-wrap:balance}
+.card{background:var(--cream);border-radius:18px;padding:16px 18px;box-shadow:0 8px 24px #0005}
+.btn{font:inherit;font-family:var(--f-display);font-weight:800;font-size:19px;border:0;border-radius:14px;padding:12px 22px;cursor:pointer;
+  background:var(--sun);color:#3A2706;box-shadow:0 4px 0 var(--sun-d)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--sun-d)}
+.btn.ghost{background:var(--paper);color:var(--ink);box-shadow:0 4px 0 #CFC3A6;border:2px solid #E4D9BE}
+.btn.small{font-size:16px;padding:8px 14px}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.center{justify-content:center}
+.stripes{background:repeating-linear-gradient(-45deg,var(--sun) 0 14px,#2B2B2B 14px 28px)}
+
+/* ---------- Accueil ---------- */
+.home{display:grid;gap:16px}
+.hero{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(#3D4F5A,#2A363E);box-shadow:0 10px 30px #0008;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:10px;padding:18px 18px 0;min-height:250px}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px}
+.hero img{height:220px;width:auto;display:block;position:relative;z-index:1}
+.hero .titre{align-self:center;text-align:center;color:#fff;padding-bottom:20px}
+.hero h1{font-size:clamp(30px,5.5vw,56px);text-shadow:0 3px 8px #000a;line-height:1.1}
+.hero .demo{display:inline-flex;align-items:stretch;margin-top:14px;font-family:var(--f-display);font-weight:800;font-size:clamp(24px,4vw,36px)}
+.hero .demo span{padding:4px 14px}
+.hero .demo .r{background:var(--rad);color:#fff;border-radius:10px 0 0 10px}
+.hero .demo .t{background:var(--ter);color:#fff;border-radius:0 10px 10px 0;animation:colle 2.6s ease-in-out infinite}
+@keyframes colle{0%,15%{transform:translate(40px,30px) rotate(8deg);opacity:0}45%,85%{transform:none;opacity:1}100%{transform:none;opacity:1}}
+.hero .sous{margin:10px 0 0;font-size:17px;color:#E4ECF2}
+.lead{margin:0;font-size:18px}
+.niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.niv{position:relative;cursor:pointer;display:block}
+.niv input{position:absolute;opacity:0;pointer-events:none}
+.niv .boite{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;height:100%;background:var(--paper);border:3px solid #E4D9BE;border-radius:16px;padding:12px 14px}
+.niv .num{grid-row:span 3;font-family:var(--f-display);font-weight:800;font-size:28px;width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:var(--metal-3);color:var(--ink)}
+.niv b{font-family:var(--f-display);font-size:19px}
+.niv .classe{font-size:14px;font-weight:700;color:#fff;background:var(--suj);border-radius:999px;padding:1px 10px;justify-self:start}
+.niv .ex{font-size:15px;color:var(--muted)}
+.niv .ex em{font-style:normal;font-weight:700;color:var(--rad)} .niv .ex i{font-style:normal;font-weight:700;color:var(--ter)}
+.niv input:checked+.boite{border-color:var(--ter);background:#FFF1E4}
+.niv input:checked+.boite .num{background:var(--ter);color:#fff}
+.niv input:focus-visible+.boite{outline:3px solid var(--sun);outline-offset:2px}
+.reglages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.reglages h2{font-size:19px;margin-bottom:8px}
+.reglages p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:inline-block;font-weight:700;font-size:16px;padding:8px 13px;border-radius:12px;background:var(--paper);border:2px solid #E4D9BE}
+.seg input:checked+span{background:var(--rad);border-color:var(--rad);color:#fff}
+.seg input:focus-visible+span{outline:3px solid var(--sun);outline-offset:2px}
+.source{font-size:14px;color:#C9D4DC;margin:0;text-align:center}
+
+/* ---------- L'usine ---------- */
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;color:#fff}
+.top h2{font-size:19px;text-shadow:0 2px 6px #000a}
+.score{font-family:var(--f-display);font-weight:800;font-size:19px;background:#0006;border-radius:999px;padding:5px 14px;font-variant-numeric:tabular-nums}
+.path{display:flex;gap:5px;flex-wrap:wrap}
+.path span{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:14px;font-weight:700;background:#0005;color:#cfd8de;border:2px solid #ffffff33}
+.path .here{border-color:var(--sun);color:var(--sun)}
+.path .won{background:var(--ok);color:#fff;border-color:var(--ok)}
+.path .lu{background:var(--metal-2);color:#fff;border-color:var(--metal-2)}
+
+.usine{position:relative;background:linear-gradient(#45565F,#3A4A52 70%,#2F3C43);border-radius:20px;box-shadow:0 10px 30px #0008, inset 0 0 0 4px #ffffff10;
+  padding:14px 14px 0;overflow:hidden}
+.ligne1{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.bon{background:#FFFCEF;border-radius:6px;padding:10px 14px 12px;box-shadow:0 4px 12px #0006;position:relative;transform:rotate(-1deg);max-width:100%;
+  border-top:10px solid var(--ter)}
+.bon::before{content:"";position:absolute;top:-17px;left:50%;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#C33;box-shadow:0 2px 3px #0008}
+.bon .h{font-family:var(--f-display);font-weight:800;font-size:15px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.bon .cmd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;font-size:clamp(20px,2.6vw,26px);font-weight:700}
+.bon .cmd .lbl{font-size:13px;color:var(--muted);display:block;line-height:1;font-weight:700}
+.bon .cmd > span{display:inline-block}
+.bon .cmd .v{color:var(--rad-d)}
+.bon .cmd .tps{color:var(--ter-d)}
+.bon .ecoute{font:inherit;font-size:22px;border:2px solid #E4D9BE;background:#fff;border-radius:12px;width:46px;height:46px;cursor:pointer}
+.affiche{background:#F4EBD0;border:3px solid #7B6A4C;border-radius:8px;padding:6px 12px 8px;box-shadow:0 4px 10px #0006;font-size:17px;min-width:190px}
+.affiche h3{font-size:15px;color:#5A4A2F;text-align:center;margin-bottom:2px}
+.affiche table{border-collapse:collapse;width:100%}
+.affiche td{padding:0 6px;line-height:1.35}
+.affiche td:first-child{color:var(--suj);text-align:right}
+.affiche td.t{color:var(--ter-d);font-weight:700}
+.affiche td.moi{background:#FFE0A8}
+.affiche td:nth-child(3){padding-left:14px}
+.affiche.cachee{display:none}
+@media (min-width:721px){.affiche{position:absolute;top:14px;right:14px;z-index:2}}
+
+.atelier{display:grid;grid-template-columns:minmax(80px,170px) 1fr minmax(80px,170px);align-items:end;gap:6px;margin-top:6px;position:relative;z-index:1}
+.perso{position:relative;align-self:end}
+.perso img{display:block;width:100%;height:auto;max-height:270px;object-fit:contain;object-position:bottom;filter:drop-shadow(0 6px 6px #0006)}
+.bulle{position:absolute;bottom:calc(100% - 150px);left:80%;width:290px;background:#fff;border-radius:16px;padding:9px 13px;font-size:16px;line-height:1.35;
+  box-shadow:0 6px 16px #0007;z-index:5;opacity:0;transform:translateY(8px) scale(.96);transition:.25s;pointer-events:none}
+.bulle.on{opacity:1;transform:none}
+.bulle::after{content:"";position:absolute;top:100%;left:14px;border:10px solid transparent;border-top-color:#fff;border-left-color:#fff}
+#persoD .bulle{left:auto;right:80%}
+.parole{display:none}
+#persoD .bulle::after{left:auto;right:14px;border-left-color:transparent;border-right-color:#fff}
+.bulle b{color:var(--ter-d)} .bulle .r{color:var(--rad)}
+
+.machine{position:relative;margin:0 auto 0;width:min(100%,560px);padding-top:70px}
+.potence{position:absolute;top:0;left:12%;right:12%;height:22px;border-radius:8px 8px 0 0;background:linear-gradient(var(--metal-3),var(--metal))}
+.potence::before,.potence::after{content:"";position:absolute;top:18px;width:18px;height:150px;background:linear-gradient(90deg,var(--metal-2),var(--metal-3),var(--metal-2))}
+.potence::before{left:0}.potence::after{right:0}
+.presse{position:absolute;top:18px;left:50%;width:150px;margin-left:-75px;height:44px;z-index:3;transition:transform .18s ease-in}
+.presse .tige{position:absolute;left:50%;top:0;width:22px;margin-left:-11px;height:22px;background:linear-gradient(90deg,#888,#ddd,#888)}
+.presse .tete{position:absolute;left:0;right:0;top:20px;height:24px;border-radius:6px;box-shadow:0 3px 0 #0005}
+.presse.bas{transform:translateY(38px)}
+.poste{position:relative;z-index:2;background:linear-gradient(var(--steel),#3B4650);border-radius:14px;padding:16px 14px 18px;border:4px solid var(--metal-2);
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;box-shadow:inset 0 0 18px #0007}
+.voyant{position:absolute;top:8px;right:10px;width:16px;height:16px;border-radius:50%;background:#555;box-shadow:inset 0 0 4px #000}
+.voyant.vert{background:#5EE07A;box-shadow:0 0 12px #5EE07A}
+.voyant.rouge{background:#FF5A47;box-shadow:0 0 12px #FF5A47}
+.sujet{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,40px);color:#E7EDF2;padding:0 4px}
+.mot{display:flex;align-items:stretch}
+.piece{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.15;padding:8px 14px;color:#fff;position:relative}
+.piece .etq{position:absolute;left:0;right:0;top:100%;margin-top:4px;font-family:var(--f-read);font-size:13px;font-weight:700;text-align:center;color:#D7E1E8;white-space:nowrap}
+.radical{background:var(--rad);border-radius:12px 0 0 12px;box-shadow:inset 0 -5px 0 var(--rad-d)}
+.radical::before{content:"";position:absolute;left:-10px;top:12%;bottom:12%;width:10px;border-radius:4px 0 0 4px;background:var(--metal)}
+.fente{min-width:96px;border:3px dashed #ffffff88;border-left:0;border-radius:0 12px 12px 0;color:#ffffff88;display:grid;place-items:center;background:#0002}
+.fente.pose{background:var(--ter);border:0;color:#fff;box-shadow:inset 0 -5px 0 var(--ter-d);animation:clac .35s}
+@keyframes clac{0%{transform:scaleX(1.25)}60%{transform:scaleX(.92)}100%{transform:none}}
+.mot.fini{animation:brille 1s}
+@keyframes brille{0%,100%{filter:none}40%{filter:drop-shadow(0 0 14px #FFE38A) brightness(1.15)}}
+.etincelles{position:absolute;inset:0;pointer-events:none;z-index:4}
+.etincelles i{position:absolute;width:7px;height:7px;border-radius:50%;background:#FFD54A;animation:etinc .6s ease-out forwards}
+@keyframes etinc{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+
+.tapis-zone{position:relative;margin:30px -14px 0;padding:0 0 10px}
+.tapis-zone .goulotte{position:absolute;left:50%;top:-30px;width:120px;margin-left:-60px;height:30px;background:linear-gradient(90deg,var(--metal-2),var(--metal-3),var(--metal-2));
+  clip-path:polygon(20% 0,80% 0,100% 100%,0 100%);opacity:.8}
+.tapis{position:relative;height:118px;background:
+   repeating-linear-gradient(90deg,#2C2C2C 0 3px,#3A3A3A 3px 40px);border-top:8px solid #222;border-bottom:8px solid #222;overflow:hidden;touch-action:manipulation}
+.rouleaux{height:20px;background:radial-gradient(circle at 20px 10px,#9AA5B1 0 8px,#5A6570 8px 10px,transparent 10px) 0 0/40px 20px repeat-x,#1E2429}
+.tapis.arret{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:10px;height:auto;min-height:118px;padding:12px}
+.caisse{position:absolute;top:16px;left:0;width:112px;height:80px;border:0;padding:0;cursor:pointer;border-radius:8px;font:inherit;
+  background:
+    linear-gradient(90deg,var(--wood-d) 0 6px,transparent 6px calc(100% - 6px),var(--wood-d) calc(100% - 6px)),
+    repeating-linear-gradient(var(--wood) 0 24px,var(--wood-d) 24px 26px);
+  box-shadow:0 5px 0 #5E3D1C,0 8px 10px #0007;will-change:transform}
+.tapis.arret .caisse{position:relative;top:auto;transform:none!important}
+.caisse span{display:grid;place-items:center;position:absolute;inset:14px 12px;background:#FFF7E8;border-radius:6px;
+  font-family:var(--f-display);font-weight:800;font-size:30px;color:var(--ter-d);letter-spacing:.02em}
+.caisse:hover span{background:#fff}
+.caisse.refuse{opacity:.35;cursor:not-allowed}
+.caisse.refuse span{text-decoration:line-through}
+.caisse.indice span{animation:clign 1s infinite}
+@keyframes clign{50%{background:#FFE38A}}
+.caisse.parti{visibility:hidden}
+.vol{position:fixed;z-index:50;pointer-events:none;margin:0}
+.poubelle{position:absolute;right:10px;bottom:150px;font-size:30px;opacity:.8;z-index:1}
+
+.stock{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:#E4ECF2;min-height:40px}
+.stock .h{font-family:var(--f-display);font-weight:800}
+.stock .m{font-family:var(--f-display);font-weight:800;font-size:18px;background:#fff;border-radius:8px;padding:2px 8px;color:var(--ink)}
+.m .r{color:var(--rad)} .m .t{color:var(--ter-d)}
+.barre{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+/* ---------- Fin ---------- */
+.end{display:grid;gap:16px;justify-items:center;text-align:center}
+.end h1{font-size:clamp(30px,5vw,48px);color:#fff;text-shadow:0 3px 8px #000a}
+.etoiles{font-size:34px;letter-spacing:4px}
+.recap{text-align:left;width:min(680px,100%)}
+.recap ul{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:6px 14px}
+.recap li{font-size:19px}
+.recap li .m{font-family:var(--f-display);font-weight:800}
+.fin-persos{display:flex;gap:20px;justify-content:center;align-items:end}
+.fin-persos img{height:170px;width:auto}
+.confettis{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confettis i{position:absolute;top:-30px;width:10px;height:16px;animation:tombe linear forwards}
+@keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:720px){
+  .atelier{grid-template-columns:70px 1fr 70px}
+  .perso .bulle{display:none}
+  .parole{display:block;background:#fff;border-radius:14px;padding:8px 12px;font-size:15px;line-height:1.35;margin-top:8px;box-shadow:0 4px 12px #0006}
+  .parole:empty{display:none}
+  .parole b{color:var(--ter-d)} .parole .r{color:var(--rad)}
+  .piece .etq{font-size:11px}
+  .machine{padding-top:56px}
+  .presse{width:110px;margin-left:-55px}
+  .hero{grid-template-columns:1fr;padding-bottom:16px}
+  .hero img{display:none}
+  .affiche{font-size:15px;min-width:150px}
+}
+@media (max-width:460px){
+  .atelier{grid-template-columns:52px 1fr 52px}
+  .piece{padding:6px 9px}
+  .fente{min-width:70px}
+  .caisse{width:92px;height:70px}
+  .caisse span{font-size:24px;inset:12px 9px}
+}
+@media (max-height:520px) and (min-width:600px){
+  .perso img{max-height:170px}
+  .machine{padding-top:46px}
+  .potence::before,.potence::after{height:110px}
+  .tapis-zone{margin-top:16px}
+  .tapis-zone .goulotte{display:none}
+  .perso .bulle{display:none}
+  .parole{display:block;background:#fff;border-radius:14px;padding:6px 12px;font-size:15px;line-height:1.35;margin-top:6px;box-shadow:0 4px 12px #0006}
+  .parole:empty{display:none}
+  .parole b{color:var(--ter-d)} .parole .r{color:var(--rad)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script src="tour-de-controle.js"></script></head>
+<body>
+<div class="wrap">
+
+  <!-- Accueil -->
+  <section class="home" id="home">
+    <div class="hero">
+      <img src="/images/machine-a-conjuguer/ouvriere.png" alt="" width="224" height="480">
+      <div class="titre">
+        <h1>La machine à conjuguer</h1>
+        <div class="demo" aria-hidden="true"><span class="r">chant</span><span class="t">ons</span></div>
+        <p class="sous">Le radical ne bouge pas. C'est toi qui choisis la terminaison !</p>
+      </div>
+      <img src="/images/machine-a-conjuguer/ouvrier.png" alt="" width="200" height="480">
+    </div>
+    <div class="card"><p class="lead">Bienvenue à l'usine des verbes ! Lina et Tom, les deux ouvriers, ont reçu 10 commandes. Dans la machine, le <b style="color:var(--rad)">radical</b> est bien serré : il ne bouge pas. Sur le tapis roulant arrivent des caisses de <b style="color:var(--ter-d)">terminaisons</b>. Touche la bonne caisse au bon moment : elle vient se coller au radical et la machine fabrique le verbe conjugué.</p></div>
+
+    <div class="card">
+      <h2 style="font-size:20px;margin-bottom:10px">Choisis ton niveau</h2>
+      <div class="niveaux" id="niveaux"></div>
+    </div>
+
+    <div class="reglages">
+      <div class="card">
+        <h2>Le tapis roulant</h2>
+        <div class="seg">
+          <label><input type="radio" name="vitesse" value="0"><span>⏸️ Arrêté</span></label>
+          <label><input type="radio" name="vitesse" value="45" checked><span>🐢 Lent</span></label>
+          <label><input type="radio" name="vitesse" value="85"><span>🐇 Rapide</span></label>
+        </div>
+        <p>« Arrêté » : toutes les caisses attendent sur le tapis, l'élève prend son temps.</p>
+      </div>
+      <div class="card">
+        <h2>L'affiche des terminaisons</h2>
+        <div class="seg">
+          <label><input type="radio" name="affiche" value="erreur" checked><span>Après une erreur</span></label>
+          <label><input type="radio" name="affiche" value="toujours"><span>Toujours affichée</span></label>
+        </div>
+        <p>L'affiche du temps est accrochée au mur de l'usine. La ligne de la personne demandée est surlignée.</p>
+      </div>
+      <div class="card">
+        <h2>La voix</h2>
+        <div class="seg">
+          <label><input type="radio" name="voix" value="oui" checked><span>🔊 Lire la commande</span></label>
+          <label><input type="radio" name="voix" value="non"><span>🔇 Sans voix</span></label>
+        </div>
+        <p>La voix lit chaque commande, puis le verbe fabriqué. Le bouton 🔊 la relit à tout moment.</p>
+      </div>
+    </div>
+    <div class="actions center"><button class="btn" id="startBtn">🏭 Mettre la machine en route</button></div>
+    <p class="source">Niveaux d'après les repères annuels de progression du cycle 2 (Eduscol) : au CE1, présent, futur et imparfait des verbes en -er ; au CE2, verbes en -ir comme finir.</p>
+  </section>
+
+  <!-- Partie -->
+  <section id="game" hidden>
+    <div class="top">
+      <h2 id="niveauTxt"></h2>
+      <div class="path" id="path" aria-label="Commandes de la partie"></div>
+      <div class="score" id="score" aria-live="polite"></div>
+    </div>
+    <div class="usine" id="usine">
+      <div class="ligne1">
+        <div class="bon" id="bon"></div>
+        <div class="affiche cachee" id="affiche" aria-live="polite"></div>
+      </div>
+      <div class="parole" id="parole" role="status"></div>
+      <div class="atelier">
+        <div class="perso" id="persoG"><div class="bulle" id="bulleG" role="status"></div><img src="/images/machine-a-conjuguer/ouvriere.png" alt="Lina, l'ouvrière" width="224" height="480"></div>
+        <div class="machine">
+          <div class="potence" aria-hidden="true"></div>
+          <div class="presse" id="presse" aria-hidden="true"><div class="tige"></div><div class="tete stripes"></div></div>
+          <div class="poste" id="poste">
+            <span class="voyant" id="voyant"></span>
+            <span class="sujet" id="sujet"></span>
+            <div class="mot" id="mot"><span class="piece radical" id="radical"></span><span class="piece fente" id="fente">?</span></div>
+            <div class="etincelles" id="etinc"></div>
+          </div>
+        </div>
+        <div class="perso" id="persoD"><div class="bulle" id="bulleD" role="status"></div><img src="/images/machine-a-conjuguer/ouvrier.png" alt="Tom, l'ouvrier" width="200" height="480"></div>
+      </div>
+      <div class="tapis-zone">
+        <div class="goulotte" aria-hidden="true"></div>
+        <div class="tapis" id="tapis" aria-label="Tapis roulant des terminaisons"></div>
+        <div class="rouleaux" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="stock" id="stock"></div>
+    <div class="barre"><button class="btn ghost small" id="quitter">⬅️ Changer de niveau</button></div>
+  </section>
+
+  <!-- Fin -->
+  <section class="end" id="end" hidden></section>
+</div>
+<div class="confettis" id="confettis"></div>
+
+<script>
+/* ---------- Les verbes ----------
+   Verbes en -er sans changement d'orthographe (pas de manger, commencer, appeler, acheter…) ;
+   verbes en -ir du 2e groupe (finir, choisir…). */
+const VERBES = {
+  er: ["chanter","danser","jouer","parler","marcher","regarder","sauter","dessiner","porter","chercher","aimer","écouter","arriver","habiter","demander","tomber","fermer","laver","monter","rentrer","travailler","donner","coller"],
+  ir: ["finir","choisir","grandir","remplir","réfléchir","rougir","applaudir","obéir","bâtir","salir","ralentir","atterrir"]
+};
+/* Personnes : s = sujet, i = rang dans le tableau des terminaisons */
+const PERS = [{s:"je",i:0},{s:"tu",i:1},{s:"il",i:2},{s:"elle",i:2},{s:"on",i:2},{s:"nous",i:3},{s:"vous",i:4},{s:"ils",i:5},{s:"elles",i:5}];
+const RANGS = ["je","tu","il, elle, on","nous","vous","ils, elles"];
+const TEMPS = {
+  pres_er:{nom:"présent", a:"au présent", g:"er", t:["e","es","e","ons","ez","ent"], rad:v=>v.slice(0,-2), etq:"radical"},
+  fut_er: {nom:"futur", a:"au futur", g:"er", t:["ai","as","a","ons","ez","ont"], rad:v=>v, etq:"radical = infinitif"},
+  imp_er: {nom:"imparfait", a:"à l'imparfait", g:"er", t:["ais","ais","ait","ions","iez","aient"], rad:v=>v.slice(0,-2), etq:"radical"},
+  pres_ir:{nom:"présent", a:"au présent", g:"ir", t:["is","is","it","issons","issez","issent"], rad:v=>v.slice(0,-2), etq:"radical"},
+  fut_ir: {nom:"futur", a:"au futur", g:"ir", t:["ai","as","a","ons","ez","ont"], rad:v=>v, etq:"radical = infinitif"},
+  imp_ir: {nom:"imparfait", a:"à l'imparfait", g:"ir", t:["issais","issais","issait","issions","issiez","issaient"], rad:v=>v.slice(0,-2), etq:"radical"}
+};
+const NIVEAUX = [
+  {n:1, classe:"CE1", titre:"Le présent des verbes en -er", ex:"je, tu, il, elle, on, ils, elles", demo:["chant","es"], temps:["pres_er"], pers:[0,1,2,3,4,7,8]},
+  {n:2, classe:"CE1", titre:"Le présent des verbes en -er", ex:"toutes les personnes, avec nous et vous", demo:["chant","ons"], temps:["pres_er"]},
+  {n:3, classe:"CE1", titre:"Le futur des verbes en -er", ex:"le radical, c'est l'infinitif entier", demo:["chanter","ai"], temps:["fut_er"]},
+  {n:4, classe:"CE1", titre:"L'imparfait des verbes en -er", ex:"ais, ais, ait, ions, iez, aient", demo:["chant","ait"], temps:["imp_er"]},
+  {n:5, classe:"CE2", titre:"Le présent des verbes en -ir comme finir", ex:"is, is, it, issons, issez, issent", demo:["fin","issons"], temps:["pres_ir"]},
+  {n:6, classe:"CE2", titre:"Le grand mélange", ex:"présent, futur, imparfait · -er et -ir", demo:["fin","issait"], temps:["pres_er","fut_er","imp_er","pres_ir","fut_ir","imp_ir"], melange:true}
+];
+const NB = 10;
+const NOMS = {g:"Lina", d:"Tom"};
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function val(name){ return document.querySelector(`input[name=${name}]:checked`).value; }
+function voyelle(m){ return /^[aeiouyéèêâîôûh]/i.test(m); }
+function sujetDe(p, mot){ return p.s === "je" && voyelle(mot) ? "j'" : p.s; }
+function forme(c){ return {rad:TEMPS[c.temps].rad(c.verbe), ter:TEMPS[c.temps].t[c.p.i]}; }
+function phrase(c){ const f = forme(c), m = f.rad + f.ter, s = sujetDe(c.p, m); return s === "j'" ? s + m : s + " " + m; }
+let voixOn = true;
+function speak(t){ if(!voixOn) return; try{ const s=window.speechSynthesis; if(!s) return; s.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.85; s.speak(u);}catch(e){} }
+function taire(){ try{ speechSynthesis.cancel(); }catch(e){} }
+const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Accueil ---------- */
+document.getElementById("niveaux").innerHTML = NIVEAUX.map((v,k) => `<label class="niv"><input type="radio" name="niveau" value="${v.n}"${k===0?" checked":""}>
+  <span class="boite"><span class="num">${v.n}</span><b>${esc(v.titre)}</b><span class="classe">${v.classe}</span>
+  <span class="ex"><em>${v.demo[0]}</em><i>${v.demo[1]}</i> · ${esc(v.ex)}</span></span></label>`).join("");
+document.getElementById("startBtn").onclick = () => start(+val("niveau"));
+document.getElementById("quitter").onclick = () => { stopTapis(); taire(); show("home"); };
+
+/* ---------- Commandes ---------- */
+function commandes(niv){
+  const L = [], pers = niv.pers || PERS.map((_,k)=>k);
+  let tas = [];
+  for(let k=0;k<NB;k++){
+    if(!tas.length) tas = shuffle(pers);
+    const temps = niv.temps[k % niv.temps.length];
+    const verbes = VERBES[TEMPS[temps].g];
+    let verbe; do { verbe = verbes[Math.floor(Math.random()*verbes.length)]; } while(L.some(c => c.verbe === verbe));
+    L.push({verbe, temps, p:PERS[tas.pop()]});
+  }
+  return niv.melange ? shuffle(L) : L;
+}
+/* Les terminaisons posées sur le tapis : celles du temps demandé (+ quelques pièges d'un autre temps au niveau 6) */
+function piecesTapis(c){
+  const T = TEMPS[c.temps];
+  let set = [...new Set(T.t)];
+  if(g.niv.melange){
+    const autres = Object.entries(TEMPS).filter(([k,x]) => k !== c.temps && x.g === T.g).flatMap(([,x]) => x.t).filter(t => !set.includes(t));
+    set = set.concat(shuffle([...new Set(autres)]).slice(0,3));
+  }
+  return shuffle(set);
+}
+function indice(c){
+  const T = TEMPS[c.temps], i = c.p.i, s = c.p.s;
+  if(i === 1) return `Avec <b>tu</b>, le verbe se termine toujours par un <b>s</b>.`;
+  if(i === 3) return `Avec <b>nous</b>, on entend « on » à la fin : la terminaison finit par <b>-ons</b>.`;
+  if(i === 4) return `Avec <b>vous</b>, la terminaison finit par <b>-ez</b>.`;
+  if(i === 5) return `Avec <b>${s}</b>, la terminaison finit par <b>-nt</b>.`;
+  if(i === 0) return `Avec <b>je</b>, ${T.a}, regarde l'affiche : la terminaison n'est pas la même qu'avec tu.`;
+  return `Avec <b>${s}</b>, ${T.a}, le verbe ne finit jamais par <b>s</b>. Regarde l'affiche !`;
+}
+
+/* ---------- Partie ---------- */
+let g;
+function show(id){ ["home","game","end"].forEach(s => document.getElementById(s).hidden = s!==id); window.scrollTo(0,0); }
+function start(n){
+  const niv = NIVEAUX.find(x => x.n === n);
+  voixOn = val("voix") === "oui";
+  g = {niv, liste:commandes(niv), k:0, res:[], vitesse:+val("vitesse"), affiche:val("affiche")};
+  document.getElementById("confettis").innerHTML = "";
+  document.getElementById("niveauTxt").textContent = `🏭 Niveau ${niv.n} · ${niv.titre}`;
+  document.getElementById("stock").innerHTML = `<span class="h">📦 Verbes fabriqués :</span>`;
+  show("game");
+  charger();
+}
+function renderTop(){
+  const et = g.res.filter(r => r.etoile).length;
+  document.getElementById("score").textContent = `⭐ ${et}`;
+  document.getElementById("path").innerHTML = g.liste.map((c,i) => {
+    const r = g.res[i]; const cl = !r ? (i===g.k ? "here" : "") : r.etoile ? "won" : "lu";
+    return `<span class="${cl}" title="Commande ${i+1}">${r ? (r.etoile ? "⭐" : "✓") : i+1}</span>`;
+  }).join("");
+}
+function charger(){
+  renderTop();
+  const c = g.liste[g.k], T = TEMPS[c.temps], f = forme(c);
+  g.cur = {c, erreurs:0, fini:false, occupe:false};
+  document.getElementById("bon").innerHTML = `<div class="h">Bon de commande n° ${g.k+1} / ${NB}</div>
+    <div class="cmd"><span><span class="lbl">sujet</span>${esc(c.p.s)}</span><span>+</span>
+      <span class="v"><span class="lbl">verbe</span>${esc(c.verbe)}</span><span>+</span>
+      <span class="tps"><span class="lbl">temps</span>${esc(T.a)}</span>
+      <button class="ecoute" id="ecoute" aria-label="Écouter la commande">🔊</button></div>`;
+  document.getElementById("ecoute").onclick = () => { const v = voixOn; voixOn = true; lireCommande(); voixOn = v; };
+  // affiche du temps
+  const aff = document.getElementById("affiche");
+  aff.innerHTML = `<h3>📋 ${T.nom[0].toUpperCase()+T.nom.slice(1)} · verbes en -${T.g}</h3><table>${[0,1,2].map(i =>
+    `<tr>${[i,i+3].map(j => `<td${j===c.p.i?' class="moi"':""}>${RANGS[j]}</td><td class="t${j===c.p.i?' moi':""}">-${T.t[j]}</td>`).join("")}</tr>`).join("")}</table>`;
+  aff.classList.toggle("cachee", g.affiche !== "toujours");
+  // machine
+  document.getElementById("sujet").textContent = sujetDe(c.p, f.rad);
+  const rad = document.getElementById("radical");
+  rad.innerHTML = `${esc(f.rad)}<span class="etq">${esc(T.etq)}</span>`;
+  const fente = document.getElementById("fente");
+  fente.className = "piece fente"; fente.innerHTML = `?<span class="etq">terminaison</span>`;
+  document.getElementById("mot").classList.remove("fini");
+  voyant("");
+  bulle("g", g.k === 0 ? `Le radical <span class="r">${esc(f.rad)}</span> est serré dans la machine. Choisis la bonne terminaison sur le tapis !` : "");
+  bulle("d", "");
+  remplirTapis(piecesTapis(c));
+  setTimeout(lireCommande, 300);
+}
+function lireCommande(){ const c = g.cur.c; speak(`${c.p.s}… ${c.verbe}… ${TEMPS[c.temps].a}.`); }
+function voyant(cl){ document.getElementById("voyant").className = "voyant " + cl; }
+let minuteurs = {};
+function bulle(cote, html, duree){
+  const b = document.getElementById(cote === "g" ? "bulleG" : "bulleD"), pa = document.getElementById("parole");
+  clearTimeout(minuteurs[cote]);
+  if(!html){ b.classList.remove("on"); if(pa.dataset.cote === cote) pa.innerHTML = ""; return; }
+  b.innerHTML = `<b style="color:var(--ink)">${NOMS[cote]} :</b> ${html}`; b.classList.add("on");
+  pa.innerHTML = (cote === "g" ? "👷‍♀️ " : "👷 ") + b.innerHTML; pa.dataset.cote = cote;
+  if(duree) minuteurs[cote] = setTimeout(() => bulle(cote, ""), duree);
+}
+
+/* ---------- Le tapis roulant ---------- */
+const tapis = document.getElementById("tapis");
+let caisses = [], raf = 0, tAvant = 0, enPause = false, total = 0;
+function remplirTapis(set){
+  stopTapis();
+  tapis.innerHTML = ""; caisses = [];
+  const arret = g.vitesse === 0 || reduit;
+  tapis.classList.toggle("arret", arret);
+  let liste = set;
+  const larg = largTapis = tapis.clientWidth || 800, l = larg < 500 ? 92 : 112, pas = l + 44;
+  if(!arret){
+    const n = Math.max(set.length * 2, Math.ceil((larg + pas * 2) / pas));
+    liste = []; while(liste.length < n){ let s = shuffle(set); if(liste.length && s[0] === liste[liste.length-1]) s.reverse(); liste = liste.concat(s); }
+    liste = liste.slice(0, n);
+    total = n * pas;
+  }
+  liste.forEach((t,i) => {
+    const b = document.createElement("button");
+    b.className = "caisse"; b.type = "button"; b.dataset.t = t;
+    b.setAttribute("aria-label", "Terminaison " + t);
+    b.innerHTML = `<span>${esc(t)}</span>`;
+    b.onclick = () => choisir(b);
+    tapis.appendChild(b);
+    caisses.push({b, x: i * pas});
+  });
+  if(!arret){
+    caisses.forEach(o => { while(o.x < -pas) o.x += total; place(o); });
+    enPause = false; tAvant = performance.now(); raf = requestAnimationFrame(tourne);
+  }
+  function place(o){ o.b.style.transform = `translateX(${o.x}px)`; }
+  function tourne(t){
+    const dt = Math.min(.05, (t - tAvant) / 1000); tAvant = t;
+    if(!enPause){
+      const v = g.vitesse;
+      for(const o of caisses){ o.x -= v * dt; if(o.x < -pas) o.x += total; place(o); }
+      tapis.style.backgroundPositionX = (parseFloat(tapis.style.backgroundPositionX || 0) - v * dt) % 40 + "px";
+    }
+    raf = requestAnimationFrame(tourne);
+  }
+}
+function stopTapis(){ cancelAnimationFrame(raf); raf = 0; }
+
+/* ---------- Choisir une caisse ---------- */
+function rect(el){ return el.getBoundingClientRect(); }
+function choisir(b){
+  const cur = g.cur;
+  if(cur.fini || cur.occupe || b.classList.contains("refuse")) return;
+  cur.occupe = true; enPause = true;
+  const t = b.dataset.t, bon = t === TEMPS[cur.c.temps].t[cur.c.p.i];
+  const fente = document.getElementById("fente");
+  const a = rect(b.querySelector("span")), z = rect(fente);
+  const vol = document.createElement("span");
+  vol.className = "piece vol"; vol.textContent = t;
+  vol.style.cssText = `left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px;background:var(--ter);border-radius:8px;display:grid;place-items:center;font-size:30px;padding:0`;
+  document.body.appendChild(vol);
+  b.classList.add("parti");
+  const dx = z.left - a.left + (z.width - a.width) / 2, dy = z.top - a.top + (z.height - a.height) / 2;
+  const anim = vol.animate([
+    {transform:"translate(0,0)"},
+    {transform:`translate(${dx*.5}px,${dy*.5 - 60}px) rotate(-6deg)`, offset:.55},
+    {transform:`translate(${dx}px,${dy}px)`}], {duration: reduit ? 1 : 650, easing:"ease-in-out", fill:"forwards"});
+  anim.onfinish = () => bon ? reussi(b, vol, t) : rate(b, vol, t, dx, dy);
+}
+function reussi(b, vol, t){
+  const cur = g.cur, c = cur.c;
+  vol.remove(); b.classList.remove("parti");
+  cur.fini = true;
+  const fente = document.getElementById("fente");
+  fente.className = "piece fente pose"; fente.innerHTML = `${esc(t)}<span class="etq">terminaison</span>`;
+  const presse = document.getElementById("presse");
+  presse.classList.add("bas"); setTimeout(() => presse.classList.remove("bas"), 260);
+  setTimeout(() => { document.getElementById("mot").classList.add("fini"); etincelles(); voyant("vert"); }, 200);
+  const etoile = cur.erreurs === 0, f = forme(c), mot = phrase(c);
+  g.res[g.k] = {c, etoile, erreurs:cur.erreurs};
+  const bravo = etoile ? ["Parfait, du premier coup !","Bien collé !","Super, la machine ronronne !","Bravo, c'est solide !"][g.k % 4] : "Voilà, c'est réparé !";
+  bulle("d", `${bravo} <span class="r">${esc(f.rad)}</span>+<b>${esc(f.ter)}</b> → « ${esc(mot)} »`);
+  bulle("g", "");
+  speak(mot);
+  const st = document.getElementById("stock");
+  st.insertAdjacentHTML("beforeend", `<span class="m">${etoile ? "⭐ " : ""}${esc(sujetDe(c.p, f.rad))}${sujetDe(c.p, f.rad) === "j'" ? "" : " "}<span class="r">${esc(f.rad)}</span><span class="t">${esc(f.ter)}</span></span>`);
+  renderTop();
+  setTimeout(() => { g.k++; if(g.k < NB) charger(); else fin(); }, reduit ? 1800 : 2400);
+}
+function rate(b, vol, t, dx, dy){
+  const cur = g.cur;
+  cur.erreurs++;
+  voyant("rouge");
+  const anim = vol.animate([
+    {transform:`translate(${dx}px,${dy}px)`},
+    {transform:`translate(${dx-8}px,${dy}px)`, offset:.15},{transform:`translate(${dx+8}px,${dy}px)`, offset:.3},
+    {transform:`translate(${dx+40}px,${dy+260}px) rotate(70deg)`, opacity:0}], {duration: reduit ? 1 : 900, easing:"ease-in", fill:"forwards"});
+  anim.onfinish = () => {
+    vol.remove(); b.classList.remove("parti");
+    tapis.querySelectorAll(".caisse").forEach(x => { if(x.dataset.t === t) x.classList.add("refuse"); });
+    if(cur.erreurs >= 1) document.getElementById("affiche").classList.remove("cachee");
+    if(cur.erreurs >= 2){
+      const r = TEMPS[cur.c.temps].t[cur.c.p.i];
+      tapis.querySelectorAll(".caisse").forEach(x => { if(x.dataset.t === r) x.classList.add("indice"); });
+    }
+    const f = forme(cur.c);
+    bulle("g", `Oups, <b>${esc(f.rad)}${esc(t)}</b> ne colle pas ! ${indice(cur.c)}`);
+    cur.occupe = false; enPause = false; voyant("");
+  };
+}
+function etincelles(){
+  if(reduit) return;
+  const e = document.getElementById("etinc"), f = rect(document.getElementById("fente")), p = rect(document.getElementById("poste"));
+  const x = f.left - p.left, y = f.top - p.top + f.height / 2;
+  e.innerHTML = Array.from({length:14}, () => { const a = Math.random()*Math.PI*2, d = 30 + Math.random()*50;
+    return `<i style="left:${x}px;top:${y}px;--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px"></i>`; }).join("");
+  setTimeout(() => e.innerHTML = "", 700);
+}
+
+/* ---------- Fin ---------- */
+function fin(){
+  stopTapis();
+  const et = g.res.filter(r => r.etoile).length;
+  const msg = et === NB ? "Production parfaite !" : et >= 7 ? "Belle journée à l'usine !" : et >= 4 ? "Les commandes sont livrées !" : "Toutes les commandes sont prêtes !";
+  document.getElementById("end").innerHTML = `
+    <h1>${msg}</h1>
+    <div class="fin-persos"><img src="/images/machine-a-conjuguer/ouvriere.png" alt=""><div class="card"><div class="etoiles">${"⭐".repeat(et)}${"☆".repeat(NB-et)}</div>
+      <p style="margin:6px 0 0;font-size:19px"><b>${et}</b> verbe${et>1?"s":""} fabriqué${et>1?"s":""} du premier coup sur ${NB}.</p></div>
+      <img src="/images/machine-a-conjuguer/ouvrier.png" alt=""></div>
+    <div class="card recap"><b>📦 Le stock de l'usine</b> <span style="color:var(--muted);font-size:15px">(en bleu le radical, en orange la terminaison)</span>
+      <ul>${g.res.map(r => { const f = forme(r.c), s = sujetDe(r.c.p, f.rad);
+        return `<li>${r.etoile ? "⭐" : "🔧"} <span class="m">${esc(s)}${s==="j'"?"":" "}<span class="r" style="color:var(--rad)">${esc(f.rad)}</span><span class="t" style="color:var(--ter-d)">${esc(f.ter)}</span></span> <span style="color:var(--muted);font-size:15px">(${esc(r.c.verbe)}, ${esc(TEMPS[r.c.temps].nom)})</span></li>`; }).join("")}</ul></div>
+    <div class="actions center">
+      <button class="btn" id="again">🔁 Nouvelles commandes</button>
+      ${g.niv.n < NIVEAUX.length ? `<button class="btn ghost" id="suivant">Niveau ${g.niv.n + 1} ➜</button>` : ""}
+      <button class="btn ghost" id="menu">Changer de niveau</button>
+    </div>`;
+  show("end");
+  document.getElementById("again").onclick = () => start(g.niv.n);
+  const s = document.getElementById("suivant");
+  if(s) s.onclick = () => { document.querySelector(`input[name=niveau][value="${g.niv.n + 1}"]`).checked = true; start(g.niv.n + 1); };
+  document.getElementById("menu").onclick = () => show("home");
+  if(et >= 7 && !reduit){
+    const cols = ["#F4B73E","#E07A2E","#2F6FB5","#3FA45E","#D2503C"];
+    document.getElementById("confettis").innerHTML = Array.from({length:60}, (_,i) =>
+      `<i style="left:${Math.random()*100}vw;background:${cols[i%5]};animation-duration:${2.5+Math.random()*2}s;animation-delay:${Math.random()}s"></i>`).join("");
+  }
+  speak(msg);
+  try{ TDC.note({s:et, n:NB, g:et >= 7, niv:`Niveau ${g.niv.n} · ${g.niv.titre}`, d:`${et} verbe${et>1?"s":""} sur ${NB} conjugué${et>1?"s":""} du premier coup`}); }catch(e){}
+}
+let largTapis = 0, tRes = 0;
+addEventListener("resize", () => { clearTimeout(tRes); tRes = setTimeout(() => {
+  if(!g || document.getElementById("game").hidden || g.cur.fini || g.cur.occupe || Math.abs(tapis.clientWidth - largTapis) < 40) return;
+  const refus = [...tapis.querySelectorAll(".refuse")].map(x => x.dataset.t);
+  remplirTapis(piecesTapis(g.cur.c)); tapis.querySelectorAll(".caisse").forEach(x => { if(refus.includes(x.dataset.t)) x.classList.add("refuse"); }); }, 300); });
+</script>
+</body>
+</html>

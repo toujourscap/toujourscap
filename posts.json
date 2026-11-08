@@ -1,6 +1,434 @@
 {
- "count": 44,
+ "count": 45,
  "posts": [
+  {
+   "title": "La machine à conjuguer",
+   "slug": "la-machine-a-conjuguer",
+   "excerpt": "À l'usine des verbes, le radical reste serré dans la machine : l'élève choisit sur le tapis roulant la bonne terminaison, qui vient se coller au radical. Présent, futur, imparfait des verbes en -er et en -ir, 6 niveaux, CE1 et CE2.",
+   "date": "2026-11-08T13:30:00.000Z",
+   "cat": "etude-langue",
+   "categoryIds": [],
+   "jeu": {
+    "niveaux": ["CE1", "CE2"],
+    "joueurs": "1 élève ou la classe",
+    "supports": ["ecran", "projetable"]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Lina et Tom travaillent à l'usine des verbes. Dans la machine, le radical est bien serré : il ne bouge pas. Sur le tapis roulant arrivent des caisses de terminaisons. L'élève touche la bonne caisse : elle monte, vient se coller au radical, la presse descend… et le verbe conjugué sort de la machine.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-machine-a-conjuguer.html",
+       "containerData": {
+        "height": {
+         "custom": "1150"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " (de 1 à 6, voir plus bas), la vitesse du tapis (arrêté, lent ou rapide) et le moment où l'affiche des terminaisons apparaît.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lire le bon de commande",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : un sujet, un verbe et un temps, par exemple « nous + chanter + au présent ». La voix peut le lire.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Toucher la bonne caisse",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " sur le tapis roulant : la terminaison vient se coller au radical « chant » et la machine fabrique « nous chantons ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "En cas d'erreur",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": ", la pièce tombe de la machine, l'affiche du temps apparaît et Lina donne un indice (« Avec tu, le verbe se termine toujours par un s »). Après deux erreurs, la bonne caisse clignote.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "10 commandes par partie",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : une étoile pour chaque verbe fabriqué du premier coup. À la fin, le stock de l'usine montre tous les verbes avec le radical en bleu et la terminaison en orange.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 6 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 (CE1)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le présent des verbes en -er avec je, tu, il, elle, on, ils, elles, les terminaisons qu'on n'entend pas (e, es, ent).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 (CE1)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le présent des verbes en -er à toutes les personnes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 (CE1)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le futur des verbes en -er. Ici, le radical est l'infinitif entier : chanter + ai.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 4 (CE1)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : l'imparfait des verbes en -er (ais, ais, ait, ions, iez, aient).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 5 (CE2)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le présent des verbes en -ir comme finir (fin + issons).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 6 (CE2)",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": " : le grand mélange des trois temps, verbes en -er et en -ir, avec des caisses pièges venues d'un autre temps.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pourquoi une machine ?",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La machine rend visible la fabrication du verbe conjugué : une partie qui ne bouge pas, le radical, et une partie qui change selon la personne et le temps, la terminaison. Les niveaux suivent les repères annuels de progression du cycle 2 (Eduscol) : au CE1, présent, futur et imparfait des verbes en -er ; au CE2, verbes en -ir comme finir. Les verbes choisis gardent un radical régulier (pas de « nous mangeons » ni d'« il appelle »), et les indices de Lina reprennent les régularités à retenir : un s avec tu, -ons avec nous, -ez avec vous, -nt avec ils et elles.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Avec le tapis arrêté, toutes les caisses attendent sagement : l'élève prend le temps de lire chaque terminaison. Le jeu peut aussi être projeté au tableau pour une séance collective, la classe choisissant ensemble la caisse.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Le puzzle magique des multiplications",
    "slug": "le-puzzle-magique-des-multiplications",
