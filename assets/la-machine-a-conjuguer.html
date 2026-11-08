@@ -196,6 +196,24 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
 .confettis i{position:absolute;top:-30px;width:10px;height:16px;animation:tombe linear forwards}
 @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
 
+/* ---------- En équipes sur un écran ---------- */
+.sous-titre{margin:10px 0 6px!important;font-weight:700;color:var(--ink)!important;font-size:15px}
+.eqchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.eqchip{color:#fff;font-weight:800;border-radius:999px;padding:3px 12px;font-size:15px;white-space:nowrap}
+.eqchip.actif{outline:3px solid #fff;box-shadow:0 0 0 6px var(--c)}
+.eqscore{display:flex;flex-wrap:wrap;gap:8px}
+.relais{position:fixed;inset:0;z-index:65;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 85%,#000);color:#fff;text-align:center;padding:20px}
+.relais h2{font-size:clamp(36px,8vw,72px);text-shadow:0 4px 12px #0006}
+.relais p{font-size:20px;margin:8px 0 18px}
+.relais .btn{font-size:24px;padding:14px 30px}
+.usine.eq{box-shadow:0 10px 30px #0008, inset 0 0 0 6px var(--c)}
+.tour{display:inline-block;color:#fff;background:var(--c);font-family:var(--f-display);font-weight:800;border-radius:999px;padding:4px 16px;font-size:18px;margin-bottom:8px}
+.classement{width:min(680px,100%);text-align:left}
+.classement table{width:100%;border-collapse:collapse;font-size:19px}
+.classement td{padding:8px 6px;border-bottom:1px solid #E4D9BE;vertical-align:top}
+.classement .pos{font-size:26px;width:44px;text-align:center}
+.classement .verbes{font-size:15px;color:var(--muted)}
+
 /* ---------- Plusieurs écrans ---------- */
 .petit{font-size:15px;color:var(--muted)}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
@@ -295,6 +313,25 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
     </div>
 
     <div class="reglages">
+      <div class="card">
+        <h2>Qui joue ?</h2>
+        <div class="seg">
+          <label><input type="radio" name="qui" value="seul" checked><span>🙋 Seul</span></label>
+          <label><input type="radio" name="qui" value="equipes"><span>👥 En équipes, chacun son tour</span></label>
+        </div>
+        <div id="eqReglages" hidden>
+          <p class="sous-titre">Nombre d'équipes</p>
+          <div class="seg" id="nbEq"></div>
+          <p class="sous-titre">Commandes par équipe</p>
+          <div class="seg">
+            <label><input type="radio" name="pareq" value="3"><span>3</span></label>
+            <label><input type="radio" name="pareq" value="5" checked><span>5</span></label>
+            <label><input type="radio" name="pareq" value="10"><span>10</span></label>
+          </div>
+          <div class="eqchips" id="eqChips"></div>
+        </div>
+        <p id="quiAide"></p>
+      </div>
       <div class="card">
         <h2>Le tapis roulant</h2>
         <div class="seg">
@@ -407,6 +444,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
 </div>
 <div class="confettis" id="confettis"></div>
 <div class="compte" id="compte" hidden></div>
+<div class="relais" id="relais" hidden role="dialog" aria-live="polite"></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -448,6 +486,8 @@ const NIVEAUX = [
   {n:10, classe:"CM2", titre:"Le grand mélange du cycle 3", ex:"futur, imparfait, conditionnel, passé simple · -er et -ir", demo:["finir","aient"], temps:["fut_er","imp_er","cond_er","ps_er","fut_ir","imp_ir","cond_ir","ps_ir"], melange:true}
 ];
 const NB = 10;
+const EQUIPES = [{nom:"Rouges",c:"#e9462f"},{nom:"Bleus",c:"#3a6fb0"},{nom:"Verts",c:"#2f9b4f"},
+  {nom:"Jaunes",c:"#c99400"},{nom:"Violets",c:"#8e44ad"},{nom:"Roses",c:"#e0558f"}];
 const NOMS = {g:"Lina", d:"Tom"};
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
@@ -474,19 +514,32 @@ const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.getElementById("niveaux").innerHTML = NIVEAUX.map((v,k) => `<label class="niv"><input type="radio" name="niveau" value="${v.n}"${k===0?" checked":""}>
   <span class="boite"><span class="num">${v.n}</span><b>${esc(v.titre).replace(/ -(er|ir)\b/g, "\u00a0\u2011$1")}</b><span class="classe">${v.classe}</span>
   <span class="ex"><em>${v.demo[0]}</em><i>${v.demo[1]}</i> · ${esc(v.ex)}</span></span></label>`).join("");
+document.getElementById("nbEq").innerHTML = [2,3,4,5,6].map(n => `<label><input type="radio" name="nbeq" value="${n}"${n===2?" checked":""}><span>${n}</span></label>`).join("");
+function majEquipes(){
+  const eq = val("qui") === "equipes";
+  document.getElementById("eqReglages").hidden = !eq;
+  document.getElementById("quiAide").textContent = eq
+    ? "Un seul écran pour toute la classe : chaque équipe vient fabriquer un verbe à son tour. Classement : les étoiles, puis le moins d'erreurs."
+    : "Un élève (ou la classe devant le tableau) fabrique les 10 verbes. Pour une partie par équipes sur un seul écran, choisis « En équipes ».";
+  document.getElementById("eqChips").innerHTML = EQUIPES.slice(0, +val("nbeq")).map(e => `<span class="eqchip" style="background:${e.c}">${e.nom}</span>`).join("");
+}
+document.querySelectorAll("input[name=qui],input[name=nbeq]").forEach(i => i.onchange = majEquipes);
+majEquipes();
 document.getElementById("startBtn").onclick = () => start(+val("niveau"));
-document.getElementById("quitter").onclick = () => { if(g) g.stop = true; stopTapis(); taire(); if(M) quitteSalle(); show("home"); };
+document.getElementById("quitter").onclick = () => { document.getElementById("relais").hidden = true; if(g) g.stop = true; stopTapis(); taire(); if(M) quitteSalle(); show("home"); };
 
 /* ---------- Commandes ---------- */
-function commandes(niv){
+function commandes(niv, nb = NB){
   const L = [], pers = niv.pers || PERS.map((_,k)=>k), vus = {};
-  const ordre = shuffle(Array.from({length:NB}, (_,k) => niv.temps[k % niv.temps.length]));
-  for(let k=0;k<NB;k++){
+  const ordre = shuffle(Array.from({length:nb}, (_,k) => niv.temps[k % niv.temps.length]));
+  for(let k=0;k<nb;k++){
     const temps = niv.melange ? ordre[k] : niv.temps[k % niv.temps.length], T = TEMPS[temps];
     const ok = shuffle(pers.filter(q => T.t[PERS[q].i] != null));
     const q = ok.sort((a,b) => (vus[a]||0) - (vus[b]||0))[0]; vus[q] = (vus[q]||0) + 1;
     const verbes = VERBES[T.g];
-    let verbe; do { verbe = verbes[Math.floor(Math.random()*verbes.length)]; } while(L.some(c => c.verbe === verbe));
+    // pas deux fois le même verbe (sauf s'il n'y en a plus assez : longues parties en équipes)
+    const dispo = verbes.filter(v => !L.some(c => c.verbe === v)), tas = dispo.length ? dispo : verbes;
+    const verbe = tas[Math.floor(Math.random()*tas.length)];
     L.push({verbe, temps, p:PERS[q]});
   }
   return niv.melange ? shuffle(L) : L;
@@ -533,9 +586,13 @@ function deCmds(cmds){
 function start(n, cfg){
   const niv = NIVEAUX.find(x => x.n === n) || NIVEAUX[0];
   voixOn = val("voix") === "oui";
-  const liste = cfg ? deCmds(cfg.cmds) : commandes(niv);
+  const equipes = !cfg && val("qui") === "equipes";
+  const nEq = equipes ? +val("nbeq") : 0, parEq = equipes ? +val("pareq") : 0;
+  const liste = cfg ? deCmds(cfg.cmds) : commandes(niv, equipes ? nEq * parEq : NB);
   g = {niv, liste, k:0, res:[], vitesse: cfg ? cfg.v : +val("vitesse"), affiche: cfg ? (cfg.af ? "toujours" : "erreur") : val("affiche"),
-       multi:!!cfg, erreurs:0, stop:false};
+       multi:!!cfg, erreurs:0, stop:false,
+       eq: equipes ? EQUIPES.slice(0, nEq).map(e => ({...e, et:0, err:0, fait:0, mots:[]})) : null, relaisOk:false};
+  document.getElementById("usine").classList.toggle("eq", !!g.eq);
   document.getElementById("autres").hidden = !cfg;
   document.getElementById("quitter").textContent = cfg ? "⬅️ Quitter la partie" : "⬅️ Changer de niveau";
   document.getElementById("confettis").innerHTML = "";
@@ -544,20 +601,27 @@ function start(n, cfg){
   show("game");
   charger();
 }
+const equipeDe = k => g.eq[k % g.eq.length];
 function renderTop(){
   const et = g.res.filter(r => r.etoile).length;
-  document.getElementById("score").textContent = `⭐ ${et}`;
+  const sc = document.getElementById("score");
+  if(g.eq) sc.innerHTML = `<span class="eqscore">${g.eq.map(e => `<span class="eqchip${g.k < g.liste.length && equipeDe(g.k) === e ? " actif" : ""}" style="background:${e.c};--c:${e.c}">${e.nom} ⭐ ${e.et}</span>`).join("")}</span>`;
+  else sc.textContent = `⭐ ${et}`;
   document.getElementById("path").innerHTML = g.liste.map((c,i) => {
     const r = g.res[i]; const cl = !r ? (i===g.k ? "here" : "") : r.etoile ? "won" : "lu";
-    return `<span class="${cl}" title="Commande ${i+1}">${r ? (r.etoile ? "⭐" : "✓") : i+1}</span>`;
+    return `<span class="${cl}" title="Commande ${i+1}"${g.eq && !r && i !== g.k ? ` style="border-color:${equipeDe(i).c}"` : ""}>${r ? (r.etoile ? "⭐" : "✓") : i+1}</span>`;
   }).join("");
 }
 function charger(){
   if(g.stop) return;
+  if(g.eq && !g.relaisOk){ relais(); return; }
+  g.relaisOk = false;
   renderTop();
   const c = g.liste[g.k], T = TEMPS[c.temps], f = forme(c);
   g.cur = {c, erreurs:0, fini:false, occupe:false};
-  document.getElementById("bon").innerHTML = `<div class="h">Bon de commande n° ${g.k+1} / ${g.liste.length}</div>
+  const eqC = g.eq ? equipeDe(g.k) : null;
+  if(eqC) document.getElementById("usine").style.setProperty("--c", eqC.c);
+  document.getElementById("bon").innerHTML = (eqC ? `<span class="tour" style="--c:${eqC.c}">👥 Au tour des ${eqC.nom}</span>` : "") + `<div class="h">Bon de commande n° ${g.k+1} / ${g.liste.length}</div>
     <div class="cmd"><span><span class="lbl">${T.imper ? "personne" : "sujet"}</span>${T.imper ? "(" + esc(c.p.s) + ")" : esc(c.p.s)}</span><span>+</span>
       <span class="v"><span class="lbl">verbe</span>${esc(c.verbe)}</span><span>+</span>
       <span class="tps"><span class="lbl">temps</span>${esc(T.a)}</span>
@@ -582,6 +646,21 @@ function charger(){
   bulle("d", "");
   remplirTapis(piecesTapis(c));
   setTimeout(lireCommande, 300);
+}
+function relais(){
+  stopTapis(); tapis.innerHTML = "";
+  const e = equipeDe(g.k), r = document.getElementById("relais");
+  const tour = Math.floor(g.k / g.eq.length) + 1, tours = g.liste.length / g.eq.length;
+  r.style.setProperty("--c", e.c);
+  r.innerHTML = `<div><h2>Au tour des ${e.nom} !</h2>
+    <p>Commande ${tour} sur ${tours} pour les ${e.nom}. Un élève de l'équipe vient devant l'écran.</p>
+    <button class="btn" id="relaisGo">C'est parti ▶</button>
+    <div class="eqchips" style="justify-content:center;margin-top:18px">${g.eq.map(x => `<span class="eqchip" style="background:${x.c};border:2px solid #fff">${x.nom} ⭐ ${x.et}</span>`).join("")}</div></div>`;
+  r.hidden = false;
+  speak(`Au tour des ${e.nom} !`);
+  const go = document.getElementById("relaisGo");
+  go.onclick = () => { r.hidden = true; g.relaisOk = true; charger(); };
+  go.focus();
 }
 function lireCommande(){ const c = g.cur.c, T = TEMPS[c.temps]; speak(T.imper ? `${c.verbe}… ${T.a}… avec ${c.p.s}.` : `${c.p.s}… ${c.verbe}… ${T.a}.`); }
 function voyant(cl){ document.getElementById("voyant").className = "voyant " + cl; }
@@ -669,16 +748,19 @@ function reussi(b, vol, t){
   setTimeout(() => { document.getElementById("mot").classList.add("fini"); etincelles(); voyant("vert"); }, 200);
   const etoile = cur.erreurs === 0, f = forme(c), mot = phrase(c);
   g.res[g.k] = {c, etoile, erreurs:cur.erreurs};
+  const eqR = g.eq ? equipeDe(g.k) : null;
+  if(eqR){ eqR.et += etoile ? 1 : 0; eqR.err += cur.erreurs; eqR.fait++; eqR.mots.push(c); }
   const bravo = etoile ? ["Parfait, du premier coup !","Bien collé !","Super, la machine ronronne !","Bravo, c'est solide !"][g.k % 4] : "Voilà, c'est réparé !";
   bulle("d", `${bravo} <span class="r">${esc(f.rad)}</span>+<b>${esc(f.ter)}</b> → « ${esc(mot)} »`);
   bulle("g", "");
   speak(mot);
   const st = document.getElementById("stock");
-  st.insertAdjacentHTML("beforeend", `<span class="m">${etoile ? "⭐ " : ""}${couleurs(c)}</span>`);
+  st.insertAdjacentHTML("beforeend", `<span class="m"${eqR ? ` style="box-shadow:inset 5px 0 0 ${eqR.c};padding-left:12px"` : ""}>${etoile ? "⭐ " : ""}${couleurs(c)}</span>`);
+  if(eqR) bulle("d", `Bravo les <b style="color:${eqR.c}">${eqR.nom}</b> ! <span class="r">${esc(f.rad)}</span>+<b>${esc(f.ter)}</b> → « ${esc(mot)} »`);
   renderTop();
   if(g.multi) envoieScore();
   const monG = g;
-  setTimeout(() => { if(g !== monG || g.stop) return; g.k++; if(g.k < g.liste.length) charger(); else if(g.multi) multiFini(); else fin(); }, reduit ? 1800 : 2400);
+  setTimeout(() => { if(g !== monG || g.stop) return; g.k++; if(g.k < g.liste.length) charger(); else if(g.multi) multiFini(); else if(g.eq) finEquipes(); else fin(); }, reduit ? 1800 : 2400);
 }
 function rate(b, vol, t, dx, dy){
   const cur = g.cur;
@@ -708,6 +790,38 @@ function etincelles(){
   e.innerHTML = Array.from({length:14}, () => { const a = Math.random()*Math.PI*2, d = 30 + Math.random()*50;
     return `<i style="left:${x}px;top:${y}px;--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px"></i>`; }).join("");
   setTimeout(() => e.innerHTML = "", 700);
+}
+
+/* ---------- Fin en équipes ---------- */
+function finEquipes(){
+  stopTapis();
+  const cl = [...g.eq].sort((a,b) => b.et - a.et || a.err - b.err);
+  const egal = cl.length > 1 && cl[0].et === cl[1].et && cl[0].err === cl[1].err;
+  const titre = egal ? "Égalité en tête !" : `Bravo les <span style="color:${cl[0].c}">${cl[0].nom}</span> !`;
+  let rang = 0;
+  document.getElementById("end").innerHTML = `
+    <h1>${titre}</h1>
+    <div class="card classement"><table>${cl.map((e,i) => {
+      if(i === 0 || e.et !== cl[i-1].et || e.err !== cl[i-1].err) rang = i;
+      return `<tr><td class="pos">${["🥇","🥈","🥉"][rang] || rang + 1}</td>
+        <td><span class="eqchip" style="background:${e.c}">${e.nom}</span>
+          <div class="verbes">${e.mots.map(c => couleurs(c)).join(" · ")}</div></td>
+        <td style="white-space:nowrap">⭐ <b>${e.et}</b> / ${e.fait}<br><span class="verbes">${e.err} erreur${e.err > 1 ? "s" : ""}</span></td></tr>`; }).join("")}</table>
+      <p class="petit" style="margin:10px 0 0">Classement : les étoiles (verbes justes du premier coup), puis le moins d'erreurs.</p></div>
+    <div class="fin-persos"><img src="/images/machine-a-conjuguer/ouvriere.png" alt=""><img src="/images/machine-a-conjuguer/ouvrier.png" alt=""></div>
+    <div class="actions center">
+      <button class="btn" id="again">🔁 Nouvelles commandes</button>
+      <button class="btn ghost" id="menu">Changer de niveau</button>
+    </div>`;
+  show("end");
+  document.getElementById("again").onclick = () => start(g.niv.n);
+  document.getElementById("menu").onclick = () => show("home");
+  if(!reduit){
+    const cols = ["#F4B73E","#E07A2E","#2F6FB5","#3FA45E","#D2503C"];
+    document.getElementById("confettis").innerHTML = Array.from({length:60}, (_,i) =>
+      `<i style="left:${Math.random()*100}vw;background:${egal ? cols[i%5] : cl[0].c};animation-duration:${2.5+Math.random()*2}s;animation-delay:${Math.random()}s"></i>`).join("");
+  }
+  speak(egal ? "Égalité en tête !" : `Bravo les ${cl[0].nom} !`);
 }
 
 /* ---------- Fin ---------- */

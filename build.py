@@ -399,39 +399,53 @@ def niveaux_de(p):
 
 
 def arbre(posts):
-    def lien(p, badges=True):
-        niv = "".join(f'<span class="niv">{esc(n)}</span>' for n in niveaux_de(p)) if badges else ""
-        return f'<li><a href="/post/{p["slug"]}/">{esc(p["title"])}</a>{f" <span class=\"arbre-niv\">{niv}</span>" if niv else ""}</li>'
+    """Carte mentale : racine → niveaux (ou domaines) → catégories → articles (liens). Un clic ouvre une branche."""
+    COULEURS = ["#2f9b4f", "#3a6fb0", "#e07a2e", "#8e44ad", "#d2503c", "#16a3a8", "#c99400"]
 
-    def branches(lst, badges, ouvert=False):
+    def feuille(p, badges):
+        niv = "".join(f'<span class="niv">{esc(n)}</span>' for n in niveaux_de(p)) if badges else ""
+        return f'<li class="mm-f"><a class="mm-n" href="/post/{p["slug"]}/">{esc(p["title"])}{f" <span class=\"arbre-niv\">{niv}</span>" if niv else ""}</a></li>'
+
+    def branche(nom, n, enfants, style=""):
+        return (f'<li{style}><button class="mm-n" type="button" aria-expanded="false">{nom} <span class="compte">{n}</span></button>'
+                f'<ul>{enfants}</ul></li>')
+
+    def cats_de(lst, badges, domaine=None):
         h = ""
-        for d, dn in DOMAINES:
-            cats = [(k, v) for k, v in CATS.items() if v["domain"] == d]
-            sous = ""
-            nd = 0
-            for k, v in cats:
-                q = sorted([p for p in lst if p["cat"] == k], key=lambda p: p["title"].lower())
-                if q:
-                    nd += len(q)
-                    sous += f'<details><summary>{esc(v["name"])} <span class="compte">{len(q)}</span></summary><ul>{"".join(lien(p, badges) for p in q)}</ul></details>'
-            if nd:
-                h += f'<details{" open" if ouvert else ""}><summary>{dn} <span class="compte">{nd}</span></summary><div class="arbre-sous">{sous}</div></details>'
+        for k, v in CATS.items():
+            if domaine and v["domain"] != domaine:
+                continue
+            q = sorted([p for p in lst if p["cat"] == k], key=lambda p: p["title"].lower())
+            if q:
+                h += branche(esc(v["name"]), len(q), "".join(feuille(p, badges) for p in q))
         return h
 
-    par_niveau = ""
+    def carte(racine, branches):
+        return (f'<div class="mm"><ul class="mm-racine"><li class="ouvert"><span class="mm-n mm-r">{racine}</span>'
+                f'<ul>{branches}</ul></li></ul></div>')
+
+    par_niveau, i = "", 0
     for n in NIVEAUX_ARBRE + ["Enseignants"]:
         lst = [p for p in posts if n in niveaux_de(p)]
         if lst:
             nom = "Pour les enseignants" if n == "Enseignants" else n
-            par_niveau += f'<details><summary>{nom} <span class="compte">{len(lst)}</span></summary><div class="arbre-sous">{branches(lst, False, True)}</div></details>'
+            par_niveau += branche(nom, len(lst), cats_de(lst, False), f' style="--b:{COULEURS[i % len(COULEURS)]}"')
+            i += 1
+    par_cat, i = "", 0
+    for d, dn in DOMAINES:
+        lst = [p for p in posts if CATS.get(p["cat"], {}).get("domain") == d]
+        if lst:
+            par_cat += branche(dn, len(lst), cats_de(lst, True, d), f' style="--b:{COULEURS[i % len(COULEURS)]}"')
+            i += 1
     return f"""<details class="arbre" id="tri">
   <summary class="arbre-titre">🔎 Trouver un article <span class="muted">par niveau ou par catégorie</span></summary>
   <div class="chips arbre-choix" role="group" aria-label="Trier les articles">
     <button class="chip active" type="button" aria-pressed="true" data-arbre="niveau">Par niveau</button>
     <button class="chip" type="button" aria-pressed="false" data-arbre="categorie">Par catégorie</button>
   </div>
-  <div class="arbre-liste" data-vue="niveau">{par_niveau}</div>
-  <div class="arbre-liste" data-vue="categorie" hidden>{branches(posts, True, True)}</div>
+  <p class="mm-aide muted">Clique sur une bulle pour ouvrir sa branche, puis sur un article pour le lire.</p>
+  <div class="arbre-liste" data-vue="niveau">{carte("🎓 Par niveau", par_niveau)}</div>
+  <div class="arbre-liste" data-vue="categorie" hidden>{carte("📚 Par catégorie", par_cat)}</div>
 </details>
 <script>
 document.querySelectorAll('.arbre-choix button').forEach(function (b) {{
@@ -440,6 +454,28 @@ document.querySelectorAll('.arbre-choix button').forEach(function (b) {{
       x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b);
     }});
     document.querySelectorAll('.arbre-liste').forEach(function (l) {{ l.hidden = l.dataset.vue !== b.dataset.arbre; }});
+  }});
+}});
+document.querySelectorAll('.mm button.mm-n').forEach(function (b) {{
+  b.addEventListener('click', function () {{
+    var li = b.parentNode, ouvrir = !li.classList.contains('ouvert');
+    // une seule branche ouverte par étage : la carte reste lisible
+    Array.prototype.forEach.call(li.parentNode.children, function (x) {{
+      if (x !== li) {{
+        x.classList.remove('ouvert');
+        x.querySelectorAll('.ouvert').forEach(function (y) {{ y.classList.remove('ouvert'); }});
+        x.querySelectorAll('[aria-expanded]').forEach(function (y) {{ y.setAttribute('aria-expanded', 'false'); }});
+        var bx = x.querySelector(':scope > .mm-n'); if (bx && bx.hasAttribute('aria-expanded')) bx.setAttribute('aria-expanded', 'false');
+      }}
+    }});
+    li.classList.toggle('ouvert', ouvrir); b.setAttribute('aria-expanded', ouvrir);
+    if (ouvrir) {{
+      var ul = li.querySelector(':scope > ul'), mm = li.closest('.mm');
+      if (ul && mm && mm.scrollWidth > mm.clientWidth) {{
+        var r = ul.getBoundingClientRect(), m = mm.getBoundingClientRect();
+        if (r.right > m.right) mm.scrollBy({{ left: r.right - m.right + 16, behavior: 'smooth' }});
+      }}
+    }}
   }});
 }});
 </script>"""
