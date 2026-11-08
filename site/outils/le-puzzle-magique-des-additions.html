@@ -8,7 +8,7 @@
 <style>
 /* Un seul fichier pour deux jeux : « le-puzzle-magique-des-additions » et « le-puzzle-magique-des-multiplications » (copie faite par build.py).
    L'écran du tableau montre un puzzle vide ; chaque bonne réponse d'un écran élève y pose une pièce (10 pièces par écran).
-   Puzzle complet : un animal extraordinaire apparaît (6 images créées sur Canva, tirées au hasard). */
+   Puzzle complet : un vrai animal apparaît (6 photos libres Unsplash, tirées au hasard). */
 :root{
   --page:#efeaf8; --ink:#241d3a; --violet:#6a4bc4; --violet-dark:#45308a; --paper:#fffdf8; --muted:#5f5878;
   --red:#d6453a; --sun:#ffc93c; --nuit:#1c1838;
@@ -135,7 +135,7 @@ svg#puzzle{display:block;width:100%;max-width:100%;height:auto;border-radius:18p
   <div class="cartes">
     <section class="carte" aria-labelledby="tTab">
       <h2 id="tTab">🖥️ Écran du tableau</h2>
-      <p>L'adulte choisit la table et crée le puzzle. Chaque bonne réponse d'un élève pose une pièce au tableau : <b>10 pièces par écran</b>. Quand le puzzle est complet, un animal extraordinaire apparaît&nbsp;!</p>
+      <p>L'adulte choisit la table et crée le puzzle. Chaque bonne réponse d'un élève pose une pièce au tableau : <b>10 pièces par écran</b>. Quand le puzzle est complet, un animal apparaît&nbsp;!</p>
       <div><div class="reg-t">Table</div><div class="pills" id="tables" role="radiogroup" aria-label="Table"></div></div>
       <button type="button" class="btn gros" id="creer">Créer le puzzle</button>
       <p class="err" id="errTab" aria-live="polite"></p>
@@ -151,7 +151,7 @@ svg#puzzle{display:block;width:100%;max-width:100%;height:auto;border-radius:18p
     <section class="carte seul" aria-labelledby="tSeul">
       <div class="txt">
         <h2 id="tSeul">🙋 Jouer seul sur cet écran</h2>
-        <p>Pas d'autres écrans&nbsp;? Les calculs s'affichent à côté du puzzle : <b>20 bonnes réponses</b> pour reconstituer l'animal extraordinaire.</p>
+        <p>Pas d'autres écrans&nbsp;? Les calculs s'affichent à côté du puzzle : <b>20 bonnes réponses</b> pour reconstituer la photo de l'animal.</p>
         <div class="pills" id="tablesSeul" role="radiogroup" aria-label="Table pour jouer seul"></div>
       </div>
       <button type="button" class="btn gros" id="seul">Jouer seul</button>
@@ -203,8 +203,8 @@ const SEUL = 20;        // bonnes réponses (= pièces) pour jouer seul
 document.title = NOM_JEU;
 $("titre").textContent = NOM_JEU;
 $("sousTitre").textContent = MUL
-  ? "Tous ensemble, reconstituons l'animal extraordinaire avec les tables de multiplication !"
-  : "Tous ensemble, reconstituons l'animal extraordinaire avec les tables d'addition !";
+  ? "Tous ensemble, reconstituons la photo d'un animal avec les tables de multiplication !"
+  : "Tous ensemble, reconstituons la photo d'un animal avec les tables d'addition !";
 
 const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const COUL = ["#e9462f", "#3a6fb0", "#e0558f", "#d9a400", "#2f9b4f", "#f07c1e", "#16a3a8", "#8e44ad"];
@@ -214,14 +214,16 @@ const melange = a => { for (let i = a.length - 1; i > 0; i--) { const j = hasard
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const pl = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
 
-/* ---------- les animaux extraordinaires (images créées sur Canva) ---------- */
+/* ---------- les animaux (vraies photos, licence Unsplash) ----------
+   renard : Nathan Anderson · éléphants : Photos By Beks · baleine : Todd Cravens
+   tigre : Srivenkata Subramanian · caméléon : Pierre Bamin · tortue : Oleksandr Sushko */
 const ANIMAUX = [
-  { f: "elephant-papillon", nom: "l'éléphant-papillon" },
-  { f: "baleine-volante", nom: "la baleine volante" },
-  { f: "tigre-de-lave", nom: "le tigre de lave" },
-  { f: "cameleon-cristal", nom: "le caméléon aux cornes de cristal" },
-  { f: "pieuvre-cristal", nom: "la pieuvre de cristal" },
-  { f: "renard-neuf-queues", nom: "le renard aux neuf queues" },
+  { f: "elephant", nom: "l'éléphant d'Afrique" },
+  { f: "baleine", nom: "la baleine à bosse" },
+  { f: "tigre", nom: "le tigre" },
+  { f: "cameleon", nom: "le caméléon panthère" },
+  { f: "tortue-de-mer", nom: "la tortue de mer" },
+  { f: "renard", nom: "le renard roux" },
 ];
 const imgSrc = i => `/images/puzzle-magique/${ANIMAUX[i].f}.jpg`;
 let dernierAnimal = -1;
@@ -609,7 +611,7 @@ async function valide() {
     else { $("ePieces").textContent = `🧩 ${S.bons} / ${PAR_ECRAN}`; envoie(); }
     await wait(800);
     if (S.bons >= (SOLO ? SEUL : PAR_ECRAN)) {
-      if (!SOLO && M && !M.fin) attenteEleve("Tes 10 pièces sont au tableau !", "Bravo ! On attend les autres pour voir l'animal extraordinaire…");
+      if (!SOLO && M && !M.fin) attenteEleve("Tes 10 pièces sont au tableau !", "Bravo ! On attend les autres pour voir l'animal…");
       return;
     }
     if (SOLO ? SOLO.fini : !M || M.fin) return;

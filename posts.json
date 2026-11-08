@@ -5,7 +5,7 @@
    "title": "Le puzzle magique des multiplications",
    "slug": "le-puzzle-magique-des-multiplications",
    "cat": "calcul",
-   "excerpt": "Un jeu coopératif pour toute la classe : chaque bonne réponse sur un écran d'élève pose une pièce du puzzle projeté au tableau, 10 pièces par écran. Puzzle complet : un animal extraordinaire apparaît ! Tables de multiplication.",
+   "excerpt": "Un jeu coopératif pour toute la classe : chaque bonne réponse sur un écran d'élève pose une pièce du puzzle projeté au tableau, 10 pièces par écran. Puzzle complet : la photo d'un animal apparaît ! Tables de multiplication.",
    "date": "2026-11-07T17:00:00.000Z",
    "categoryIds": [],
    "media": {
@@ -26,7 +26,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jeu coopératif pour réviser les tables de multiplication tous ensemble. Le tableau numérique montre un puzzle encore vide, sous un ciel étoilé. Sur les écrans des élèves apparaissent les calculs de la table choisie : chaque bonne réponse envoie une pièce au tableau, qui vient se poser à sa place, entourée de la couleur de l'élève. Chaque écran doit gagner 10 pièces. Quand le puzzle est complet, un animal extraordinaire apparaît : un éléphant-papillon, une baleine volante, un tigre de lave… six images créées sur Canva, tirées au hasard.",
+         "text": "Un jeu coopératif pour réviser les tables de multiplication tous ensemble. Le tableau numérique montre un puzzle encore vide, sous un ciel étoilé. Sur les écrans des élèves apparaissent les calculs de la table choisie : chaque bonne réponse envoie une pièce au tableau, qui vient se poser à sa place, entourée de la couleur de l'élève. Chaque écran doit gagner 10 pièces. Quand le puzzle est complet, la photo d'un vrai animal apparaît : un éléphant, une baleine à bosse, un tigre, un caméléon, une tortue de mer ou un renard (six photos libres de droits, tirées au hasard).",
          "decorations": []
         }
        }
@@ -253,7 +253,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le puzzle complet laisse place à l'image entière de l'animal extraordinaire, qui s'affiche aussi sur chaque écran d'élève. Le tableau montre le nombre de pièces posées par chacun. L'adulte peut lancer un « Nouveau puzzle » (avec un autre animal) ou changer de table. Chaque élève inscrit dans « La tour de contrôle » retrouve son résultat dans son carnet de vol.",
+         "text": "Le puzzle complet laisse place à la photo entière de l'animal, qui s'affiche aussi sur chaque écran d'élève. Le tableau montre le nombre de pièces posées par chacun. L'adulte peut lancer un « Nouveau puzzle » (avec un autre animal) ou changer de table. Chaque élève inscrit dans « La tour de contrôle » retrouve son résultat dans son carnet de vol.",
          "decorations": []
         }
        }
@@ -293,7 +293,7 @@
    "title": "Le puzzle magique des additions",
    "slug": "le-puzzle-magique-des-additions",
    "cat": "calcul",
-   "excerpt": "Un jeu coopératif pour toute la classe : chaque bonne réponse sur un écran d'élève pose une pièce du puzzle projeté au tableau, 10 pièces par écran. Puzzle complet : un animal extraordinaire apparaît ! Tables d'addition.",
+   "excerpt": "Un jeu coopératif pour toute la classe : chaque bonne réponse sur un écran d'élève pose une pièce du puzzle projeté au tableau, 10 pièces par écran. Puzzle complet : la photo d'un animal apparaît ! Tables d'addition.",
    "date": "2026-11-07T16:55:00.000Z",
    "categoryIds": [],
    "media": {
@@ -314,7 +314,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un jeu coopératif pour réviser les tables d'addition tous ensemble. Le tableau numérique montre un puzzle encore vide, sous un ciel étoilé. Sur les écrans des élèves apparaissent les calculs de la table choisie : chaque bonne réponse envoie une pièce au tableau, qui vient se poser à sa place, entourée de la couleur de l'élève. Chaque écran doit gagner 10 pièces. Quand le puzzle est complet, un animal extraordinaire apparaît : un éléphant-papillon, une baleine volante, un tigre de lave… six images créées sur Canva, tirées au hasard.",
+         "text": "Un jeu coopératif pour réviser les tables d'addition tous ensemble. Le tableau numérique montre un puzzle encore vide, sous un ciel étoilé. Sur les écrans des élèves apparaissent les calculs de la table choisie : chaque bonne réponse envoie une pièce au tableau, qui vient se poser à sa place, entourée de la couleur de l'élève. Chaque écran doit gagner 10 pièces. Quand le puzzle est complet, la photo d'un vrai animal apparaît : un éléphant, une baleine à bosse, un tigre, un caméléon, une tortue de mer ou un renard (six photos libres de droits, tirées au hasard).",
          "decorations": []
         }
        }
@@ -541,7 +541,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Le puzzle complet laisse place à l'image entière de l'animal extraordinaire, qui s'affiche aussi sur chaque écran d'élève. Le tableau montre le nombre de pièces posées par chacun. L'adulte peut lancer un « Nouveau puzzle » (avec un autre animal) ou changer de table. Chaque élève inscrit dans « La tour de contrôle » retrouve son résultat dans son carnet de vol.",
+         "text": "Le puzzle complet laisse place à la photo entière de l'animal, qui s'affiche aussi sur chaque écran d'élève. Le tableau montre le nombre de pièces posées par chacun. L'adulte peut lancer un « Nouveau puzzle » (avec un autre animal) ou changer de table. Chaque élève inscrit dans « La tour de contrôle » retrouve son résultat dans son carnet de vol.",
          "decorations": []
         }
        }
