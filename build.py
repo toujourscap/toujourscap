@@ -484,7 +484,7 @@ SEO_TITRES = {
     "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
     "/post/le-chateau-des-detectives/": "Le Château des Détectives : jeu de compréhension de texte CP-CE1",
     "/post/la-bibliotheque-des-contes/": "La Bibliothèque des contes : compréhension de texte CP, CE1, CE2",
-    "/post/la-machine-a-conjuguer/": "La machine à conjuguer : radical et terminaison, CE1 et CE2",
+    "/post/la-machine-a-conjuguer/": "La machine à conjuguer : jeu de conjugaison du CE1 au CM2",
     "/post/les-devinettes-de-la-foret/": "Les devinettes de la forêt : jeu de compréhension « Qui suis-je ? » CP, CE1, CE2",
     "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",

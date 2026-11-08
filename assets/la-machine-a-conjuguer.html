@@ -136,6 +136,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
 .voyant.rouge{background:#FF5A47;box-shadow:0 0 12px #FF5A47}
 .sujet{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,40px);color:#E7EDF2;padding:0 4px}
 .mot{display:flex;align-items:stretch}
+.sujet.absent{opacity:.45;font-size:clamp(20px,3vw,30px)}
 .piece{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.15;padding:8px 14px;color:#fff;position:relative}
 .piece .etq{position:absolute;left:0;right:0;top:100%;margin-top:4px;font-family:var(--f-read);font-size:13px;font-weight:700;text-align:center;color:#D7E1E8;white-space:nowrap}
 .radical{background:var(--rad);border-radius:12px 0 0 12px;box-shadow:inset 0 -5px 0 var(--rad-d)}
@@ -165,6 +166,8 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
 .caisse span{display:grid;place-items:center;position:absolute;inset:14px 12px;background:#FFF7E8;border-radius:6px;
   font-family:var(--f-display);font-weight:800;font-size:30px;color:var(--ter-d);letter-spacing:.02em}
 .caisse:hover span{background:#fff}
+.caisse span.l6{font-size:24px;letter-spacing:0}
+.caisse span.l8{font-size:19px;letter-spacing:0}
 .caisse.refuse{opacity:.35;cursor:not-allowed}
 .caisse.refuse span{text-decoration:line-through}
 .caisse.indice span{animation:clign 1s infinite}
@@ -193,6 +196,39 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
 .confettis i{position:absolute;top:-30px;width:10px;height:16px;animation:tombe linear forwards}
 @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
 
+/* ---------- Plusieurs écrans ---------- */
+.petit{font-size:15px;color:var(--muted)}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.mbox{display:grid;gap:8px;align-content:start;background:var(--paper);border:2px solid #E4D9BE;border-radius:14px;padding:12px}
+.mbox input{font:inherit;font-size:18px;padding:9px 12px;border-radius:10px;border:2px solid #D9CDB0;background:#fff;min-width:0}
+.mbox input.code{font-family:var(--f-display);font-weight:800;letter-spacing:.3em;text-transform:uppercase;font-size:24px;text-align:center}
+.merr{color:var(--ko);font-weight:700;margin:8px 0;min-height:1em}
+.merr:empty{display:none}
+.salle{text-align:center;max-width:560px;margin:30px auto}
+.bigcode{font-family:var(--f-display);font-weight:800;font-size:clamp(56px,14vw,96px);letter-spacing:.15em;color:var(--rad-d);line-height:1.1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{color:#fff;font-weight:700;border-radius:999px;padding:4px 14px}
+.compte{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:#1E272DCC;color:#fff;
+  font-family:var(--f-display);font-weight:800;font-size:clamp(70px,18vw,160px);text-shadow:0 6px 20px #000}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:80;background:#222;color:#fff;border-radius:999px;padding:8px 18px;font-weight:700}
+.autres{margin-top:12px;padding:10px 14px}
+.autres h3,.tab h3{font-size:16px;margin:0 0 6px}
+.tab{width:100%;border-collapse:collapse}
+.tab td{padding:4px 6px;vertical-align:middle}
+.tab .nom{font-weight:700;white-space:nowrap}
+.tab .nom i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
+.tab .chaine{display:flex;gap:3px}
+.tab .chaine span{width:22px;height:22px;border-radius:5px;background:#E8E1CE;display:grid;place-items:center;font-size:13px}
+.tab .chaine .ok{background:var(--ok-bg);border:1.5px solid var(--ok)}
+.tab .chaine .st{background:#FFE9A8;border:1.5px solid var(--sun)}
+.tab .info{color:var(--muted);font-size:15px;white-space:nowrap}
+.tab tr.moi{background:#FFF1E4}
+.tab.grand .chaine span{width:min(48px,6vw);height:min(48px,6vw);font-size:min(24px,3vw)}
+.tab.grand td{padding:8px;font-size:clamp(17px,2.2vw,24px)}
+.tab .pos{font-family:var(--f-display);font-weight:800;font-size:22px;text-align:center;width:44px}
+#tableau .top h2{font-size:22px}
+#tableau select{font:inherit;font-size:16px;padding:8px;border-radius:10px}
+#tableau .actions label{color:#fff;font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
 @media (max-width:720px){
   .atelier{grid-template-columns:70px 1fr 70px}
   .perso .bulle{display:none}
@@ -206,12 +242,22 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
   .hero img{display:none}
   .affiche{font-size:15px;min-width:150px}
 }
+@media (max-width:720px){
+  .tab tr{display:grid;grid-template-columns:auto 1fr;gap:3px 8px;padding:6px 4px;border-bottom:1px solid #E4D9BE}
+  .tab td{padding:0!important}
+  .tab td:has(.chaine),.tab .info{grid-column:1/-1}
+  .tab .info{white-space:normal;font-size:15px!important}
+  .tab.grand .chaine span{width:24px;height:24px;font-size:13px}
+  .tab .pos{width:auto;font-size:18px;text-align:left}
+}
 @media (max-width:460px){
   .atelier{grid-template-columns:52px 1fr 52px}
   .piece{padding:6px 9px}
   .fente{min-width:70px}
   .caisse{width:92px;height:70px}
   .caisse span{font-size:24px;inset:12px 9px}
+  .caisse span.l6{font-size:19px}
+  .caisse span.l8{font-size:15px}
 }
 @media (max-height:520px) and (min-width:600px){
   .perso img{max-height:170px}
@@ -276,7 +322,27 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
       </div>
     </div>
     <div class="actions center"><button class="btn" id="startBtn">🏭 Mettre la machine en route</button></div>
-    <p class="source">Niveaux d'après les repères annuels de progression du cycle 2 (Eduscol) : au CE1, présent, futur et imparfait des verbes en -er ; au CE2, verbes en -ir comme finir.</p>
+
+    <div class="card" id="multiBloc">
+      <h2 style="font-size:20px;margin-bottom:6px">📱 Jouer sur plusieurs écrans</h2>
+      <p class="petit" style="margin:0 0 10px">Tous les écrans reçoivent <b>les mêmes 10 commandes</b> (le niveau et les réglages choisis au-dessus par l'adulte) et démarrent ensemble. Chacun avance à son rythme ; le classement compte d'abord les étoiles (verbes justes du premier coup), puis le temps.</p>
+      <div class="mgrid">
+        <div class="mbox">
+          <b>👩‍🏫 Adulte : créer la partie</b>
+          <input id="mNomHote" maxlength="16" autocomplete="off" placeholder="Prénom (vide = je regarde le tableau)" aria-label="Prénom ou équipe sur cet écran (laisser vide pour seulement regarder le tableau)">
+          <button class="btn" id="mCreer">Créer la partie</button>
+        </div>
+        <div class="mbox">
+          <b>👷 Rejoindre une partie</b>
+          <input id="mCode" class="code" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" aria-label="Code de la partie">
+          <input id="mNom" maxlength="16" autocomplete="off" placeholder="Prénom ou équipe" aria-label="Prénom ou nom d'équipe">
+          <button class="btn" id="mJoin">Rejoindre</button>
+        </div>
+      </div>
+      <p class="merr" id="mErr" role="alert"></p>
+      <p class="petit" style="margin:10px 0 0">Jusqu'à 8 écrans connectés à Internet. Aucun compte : le prénom est effacé au bout de 24 h. Écrire juste le prénom ou un nom d'équipe.</p>
+    </div>
+    <p class="source">Niveaux d'après les repères de progression (Eduscol) et les programmes : au CE1, présent, futur et imparfait des verbes en -er ; au CE2, verbes en -ir comme finir ; au CM1, passé simple aux 3ᵉˢ personnes et impératif présent ; au CM2, conditionnel présent.</p>
   </section>
 
   <!-- Partie -->
@@ -313,13 +379,35 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
       </div>
     </div>
     <div class="stock" id="stock"></div>
+    <div class="card autres" id="autres" hidden></div>
     <div class="barre"><button class="btn ghost small" id="quitter">⬅️ Changer de niveau</button></div>
   </section>
 
   <!-- Fin -->
   <section class="end" id="end" hidden></section>
+
+  <!-- Plusieurs écrans : salle d'attente, puis tableau des usines -->
+  <section id="salle" hidden>
+    <div class="card salle" aria-live="polite">
+      <p style="margin:0">Code de la partie</p>
+      <div class="bigcode" id="sCode"></div>
+      <p id="sInfo" style="margin:6px 0"></p>
+      <div class="chips" id="sChips"></div>
+      <div class="actions center" style="margin-top:14px">
+        <button class="btn" id="sGo" hidden disabled>Partez ! 🏭</button>
+        <button class="btn ghost" id="sQuit">Quitter</button>
+      </div>
+    </div>
+  </section>
+  <section id="tableau" hidden>
+    <div class="top"><h2 id="tTitre"></h2><button class="btn small" id="tStop" hidden>⏹ Arrêter la partie</button></div>
+    <div class="card" id="tCorps" aria-live="polite"></div>
+    <div class="actions center" id="tActions" style="margin-top:14px"></div>
+  </section>
 </div>
 <div class="confettis" id="confettis"></div>
+<div class="compte" id="compte" hidden></div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
 /* ---------- Les verbes ----------
@@ -338,7 +426,14 @@ const TEMPS = {
   imp_er: {nom:"imparfait", a:"à l'imparfait", g:"er", t:["ais","ais","ait","ions","iez","aient"], rad:v=>v.slice(0,-2), etq:"radical"},
   pres_ir:{nom:"présent", a:"au présent", g:"ir", t:["is","is","it","issons","issez","issent"], rad:v=>v.slice(0,-2), etq:"radical"},
   fut_ir: {nom:"futur", a:"au futur", g:"ir", t:["ai","as","a","ons","ez","ont"], rad:v=>v, etq:"radical = infinitif"},
-  imp_ir: {nom:"imparfait", a:"à l'imparfait", g:"ir", t:["issais","issais","issait","issions","issiez","issaient"], rad:v=>v.slice(0,-2), etq:"radical"}
+  imp_ir: {nom:"imparfait", a:"à l'imparfait", g:"ir", t:["issais","issais","issait","issions","issiez","issaient"], rad:v=>v.slice(0,-2), etq:"radical"},
+  /* Cycle 3. null = personne qui n'existe pas pour ce temps dans le jeu ; pieges = caisses pièges toujours sur le tapis */
+  ps_er:   {nom:"passé simple", a:"au passé simple", g:"er", t:[null,null,"a",null,null,"èrent"], rad:v=>v.slice(0,-2), etq:"radical", pieges:["ait","e","ent","aient"]},
+  ps_ir:   {nom:"passé simple", a:"au passé simple", g:"ir", t:[null,null,"it",null,null,"irent"], rad:v=>v.slice(0,-2), etq:"radical", pieges:["issait","is","issent","issaient"]},
+  ipt_er:  {nom:"impératif présent", a:"à l'impératif présent", g:"er", t:[null,"e",null,"ons","ez",null], rad:v=>v.slice(0,-2), etq:"radical", pieges:["es","ent"], imper:true},
+  ipt_ir:  {nom:"impératif présent", a:"à l'impératif présent", g:"ir", t:[null,"is",null,"issons","issez",null], rad:v=>v.slice(0,-2), etq:"radical", pieges:["it","issent"], imper:true},
+  cond_er: {nom:"conditionnel présent", a:"au conditionnel présent", g:"er", t:["ais","ais","ait","ions","iez","aient"], rad:v=>v, etq:"radical = infinitif", pieges:["ai","a","ont"]},
+  cond_ir: {nom:"conditionnel présent", a:"au conditionnel présent", g:"ir", t:["ais","ais","ait","ions","iez","aient"], rad:v=>v, etq:"radical = infinitif", pieges:["ai","a","ont"]}
 };
 const NIVEAUX = [
   {n:1, classe:"CE1", titre:"Le présent des verbes en -er", ex:"je, tu, il, elle, on, ils, elles", demo:["chant","es"], temps:["pres_er"], pers:[0,1,2,3,4,7,8]},
@@ -346,7 +441,11 @@ const NIVEAUX = [
   {n:3, classe:"CE1", titre:"Le futur des verbes en -er", ex:"le radical, c'est l'infinitif entier", demo:["chanter","ai"], temps:["fut_er"]},
   {n:4, classe:"CE1", titre:"L'imparfait des verbes en -er", ex:"ais, ais, ait, ions, iez, aient", demo:["chant","ait"], temps:["imp_er"]},
   {n:5, classe:"CE2", titre:"Le présent des verbes en -ir comme finir", ex:"is, is, it, issons, issez, issent", demo:["fin","issons"], temps:["pres_ir"]},
-  {n:6, classe:"CE2", titre:"Le grand mélange", ex:"présent, futur, imparfait · -er et -ir", demo:["fin","issait"], temps:["pres_er","fut_er","imp_er","pres_ir","fut_ir","imp_ir"], melange:true}
+  {n:6, classe:"CE2", titre:"Le grand mélange", ex:"présent, futur, imparfait · -er et -ir", demo:["fin","issait"], temps:["pres_er","fut_er","imp_er","pres_ir","fut_ir","imp_ir"], melange:true},
+  {n:7, classe:"CM1", titre:"Le passé simple (il, elle, on, ils, elles)", ex:"a, èrent · it, irent", demo:["chant","èrent"], temps:["ps_er","ps_ir","ps_er","ps_ir","ps_er"]},
+  {n:8, classe:"CM1", titre:"L'impératif présent", ex:"pas de sujet ! chante, chantons, chantez · finis", demo:["chant","e !"], temps:["ipt_er","ipt_er","ipt_ir"]},
+  {n:9, classe:"CM2", titre:"Le conditionnel présent", ex:"l'infinitif + les terminaisons de l'imparfait", demo:["chanter","ais"], temps:["cond_er","cond_ir","cond_er"]},
+  {n:10, classe:"CM2", titre:"Le grand mélange du cycle 3", ex:"futur, imparfait, conditionnel, passé simple · -er et -ir", demo:["finir","aient"], temps:["fut_er","imp_er","cond_er","ps_er","fut_ir","imp_ir","cond_ir","ps_ir"], melange:true}
 ];
 const NB = 10;
 const NOMS = {g:"Lina", d:"Tom"};
@@ -355,9 +454,17 @@ function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 function val(name){ return document.querySelector(`input[name=${name}]:checked`).value; }
 function voyelle(m){ return /^[aeiouyéèêâîôûh]/i.test(m); }
-function sujetDe(p, mot){ return p.s === "je" && voyelle(mot) ? "j'" : p.s; }
+function sujetDe(p, mot, temps){ return temps && TEMPS[temps].imper ? "" : p.s === "je" && voyelle(mot) ? "j'" : p.s; }
+/* sujet + verbe pour l'affichage : « j'aime », « nous chantons », « chante ! » (impératif) */
+function avecSujet(c, mot){ const s = sujetDe(c.p, mot, c.temps); return TEMPS[c.temps].imper ? mot + " !" : s === "j'" ? s + mot : s + " " + mot; }
 function forme(c){ return {rad:TEMPS[c.temps].rad(c.verbe), ter:TEMPS[c.temps].t[c.p.i]}; }
-function phrase(c){ const f = forme(c), m = f.rad + f.ter, s = sujetDe(c.p, m); return s === "j'" ? s + m : s + " " + m; }
+/* même chose en HTML, radical en bleu, terminaison en orange */
+function couleurs(c){
+  const f = forme(c), T = TEMPS[c.temps], s = sujetDe(c.p, f.rad, c.temps);
+  const mot = `<span class="r" style="color:var(--rad)">${esc(f.rad)}</span><span class="t" style="color:var(--ter-d)">${esc(f.ter)}</span>`;
+  return T.imper ? mot + " !" : esc(s) + (s === "j'" ? "" : " ") + mot;
+}
+function phrase(c){ const f = forme(c); return avecSujet(c, f.rad + f.ter); }
 let voixOn = true;
 function speak(t){ if(!voixOn) return; try{ const s=window.speechSynthesis; if(!s) return; s.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.85; s.speak(u);}catch(e){} }
 function taire(){ try{ speechSynthesis.cancel(); }catch(e){} }
@@ -365,36 +472,47 @@ const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- Accueil ---------- */
 document.getElementById("niveaux").innerHTML = NIVEAUX.map((v,k) => `<label class="niv"><input type="radio" name="niveau" value="${v.n}"${k===0?" checked":""}>
-  <span class="boite"><span class="num">${v.n}</span><b>${esc(v.titre)}</b><span class="classe">${v.classe}</span>
+  <span class="boite"><span class="num">${v.n}</span><b>${esc(v.titre).replace(/ -(er|ir)\b/g, "\u00a0\u2011$1")}</b><span class="classe">${v.classe}</span>
   <span class="ex"><em>${v.demo[0]}</em><i>${v.demo[1]}</i> · ${esc(v.ex)}</span></span></label>`).join("");
 document.getElementById("startBtn").onclick = () => start(+val("niveau"));
-document.getElementById("quitter").onclick = () => { stopTapis(); taire(); show("home"); };
+document.getElementById("quitter").onclick = () => { if(g) g.stop = true; stopTapis(); taire(); if(M) quitteSalle(); show("home"); };
 
 /* ---------- Commandes ---------- */
 function commandes(niv){
-  const L = [], pers = niv.pers || PERS.map((_,k)=>k);
-  let tas = [];
+  const L = [], pers = niv.pers || PERS.map((_,k)=>k), vus = {};
+  const ordre = shuffle(Array.from({length:NB}, (_,k) => niv.temps[k % niv.temps.length]));
   for(let k=0;k<NB;k++){
-    if(!tas.length) tas = shuffle(pers);
-    const temps = niv.temps[k % niv.temps.length];
-    const verbes = VERBES[TEMPS[temps].g];
+    const temps = niv.melange ? ordre[k] : niv.temps[k % niv.temps.length], T = TEMPS[temps];
+    const ok = shuffle(pers.filter(q => T.t[PERS[q].i] != null));
+    const q = ok.sort((a,b) => (vus[a]||0) - (vus[b]||0))[0]; vus[q] = (vus[q]||0) + 1;
+    const verbes = VERBES[T.g];
     let verbe; do { verbe = verbes[Math.floor(Math.random()*verbes.length)]; } while(L.some(c => c.verbe === verbe));
-    L.push({verbe, temps, p:PERS[tas.pop()]});
+    L.push({verbe, temps, p:PERS[q]});
   }
   return niv.melange ? shuffle(L) : L;
 }
 /* Les terminaisons posées sur le tapis : celles du temps demandé (+ quelques pièges d'un autre temps au niveau 6) */
 function piecesTapis(c){
   const T = TEMPS[c.temps];
-  let set = [...new Set(T.t)];
+  let set = [...new Set(T.t.filter(Boolean))];
+  if(T.pieges) set = set.concat(T.pieges.filter(t => !set.includes(t)));
   if(g.niv.melange){
     const autres = Object.entries(TEMPS).filter(([k,x]) => k !== c.temps && x.g === T.g).flatMap(([,x]) => x.t).filter(t => !set.includes(t));
-    set = set.concat(shuffle([...new Set(autres)]).slice(0,3));
+    set = set.concat([...new Set(autres)].sort((a,b) => hache(a + c.verbe) - hache(b + c.verbe)).slice(0,3));
   }
   return shuffle(set);
 }
+function hache(s){ let x = 7; for(const ch of s) x = (x * 31 + ch.charCodeAt(0)) | 0; return x; }
 function indice(c){
   const T = TEMPS[c.temps], i = c.p.i, s = c.p.s;
+  if(T.imper){
+    if(i === 1) return T.g === "er" ? `À l'impératif, les verbes en -er n'ont <b>pas de s</b> avec tu : « chante ! », « regarde ! ».`
+                                     : `À l'impératif, les verbes en -ir comme finir gardent le <b>s</b> : « finis ! ».`;
+    return `À l'impératif, la terminaison est la même qu'au présent avec <b>${s}</b>, mais on n'écrit pas le sujet.`;
+  }
+  if(c.temps.startsWith("ps_")) return i === 2 ? `Au passé simple, avec <b>${s}</b>, les verbes en -${T.g} finissent par <b>-${T.t[2]}</b>.`
+                                               : `Au passé simple, avec <b>${s}</b>, les verbes en -${T.g} finissent par <b>-${T.t[5]}</b>.`;
+  if(c.temps.startsWith("cond_") && i !== 1 && i !== 3 && i !== 4) return `Au conditionnel, on prend l'<b>infinitif</b> et les terminaisons de l'<b>imparfait</b>. Regarde l'affiche !`;
   if(i === 1) return `Avec <b>tu</b>, le verbe se termine toujours par un <b>s</b>.`;
   if(i === 3) return `Avec <b>nous</b>, on entend « on » à la fin : la terminaison finit par <b>-ons</b>.`;
   if(i === 4) return `Avec <b>vous</b>, la terminaison finit par <b>-ez</b>.`;
@@ -405,11 +523,21 @@ function indice(c){
 
 /* ---------- Partie ---------- */
 let g;
-function show(id){ ["home","game","end"].forEach(s => document.getElementById(s).hidden = s!==id); window.scrollTo(0,0); }
-function start(n){
-  const niv = NIVEAUX.find(x => x.n === n);
+const TKEYS = Object.keys(TEMPS);
+function show(id){ ["home","game","end","salle","tableau"].forEach(s => document.getElementById(s).hidden = s!==id); window.scrollTo(0,0); }
+/* cfg (parties à plusieurs écrans) : {niv, v, af, cmds:[[temps, verbe, personne]…]} reçu du relais */
+function deCmds(cmds){
+  return (cmds || []).map(([t,v,p]) => { const temps = TKEYS[t]; return temps && {temps, verbe:VERBES[TEMPS[temps].g][v], p:PERS[p]}; })
+    .filter(c => c && c.verbe && c.p);
+}
+function start(n, cfg){
+  const niv = NIVEAUX.find(x => x.n === n) || NIVEAUX[0];
   voixOn = val("voix") === "oui";
-  g = {niv, liste:commandes(niv), k:0, res:[], vitesse:+val("vitesse"), affiche:val("affiche")};
+  const liste = cfg ? deCmds(cfg.cmds) : commandes(niv);
+  g = {niv, liste, k:0, res:[], vitesse: cfg ? cfg.v : +val("vitesse"), affiche: cfg ? (cfg.af ? "toujours" : "erreur") : val("affiche"),
+       multi:!!cfg, erreurs:0, stop:false};
+  document.getElementById("autres").hidden = !cfg;
+  document.getElementById("quitter").textContent = cfg ? "⬅️ Quitter la partie" : "⬅️ Changer de niveau";
   document.getElementById("confettis").innerHTML = "";
   document.getElementById("niveauTxt").textContent = `🏭 Niveau ${niv.n} · ${niv.titre}`;
   document.getElementById("stock").innerHTML = `<span class="h">📦 Verbes fabriqués :</span>`;
@@ -425,22 +553,25 @@ function renderTop(){
   }).join("");
 }
 function charger(){
+  if(g.stop) return;
   renderTop();
   const c = g.liste[g.k], T = TEMPS[c.temps], f = forme(c);
   g.cur = {c, erreurs:0, fini:false, occupe:false};
-  document.getElementById("bon").innerHTML = `<div class="h">Bon de commande n° ${g.k+1} / ${NB}</div>
-    <div class="cmd"><span><span class="lbl">sujet</span>${esc(c.p.s)}</span><span>+</span>
+  document.getElementById("bon").innerHTML = `<div class="h">Bon de commande n° ${g.k+1} / ${g.liste.length}</div>
+    <div class="cmd"><span><span class="lbl">${T.imper ? "personne" : "sujet"}</span>${T.imper ? "(" + esc(c.p.s) + ")" : esc(c.p.s)}</span><span>+</span>
       <span class="v"><span class="lbl">verbe</span>${esc(c.verbe)}</span><span>+</span>
       <span class="tps"><span class="lbl">temps</span>${esc(T.a)}</span>
       <button class="ecoute" id="ecoute" aria-label="Écouter la commande">🔊</button></div>`;
   document.getElementById("ecoute").onclick = () => { const v = voixOn; voixOn = true; lireCommande(); voixOn = v; };
   // affiche du temps
   const aff = document.getElementById("affiche");
-  aff.innerHTML = `<h3>📋 ${T.nom[0].toUpperCase()+T.nom.slice(1)} · verbes en -${T.g}</h3><table>${[0,1,2].map(i =>
-    `<tr>${[i,i+3].map(j => `<td${j===c.p.i?' class="moi"':""}>${RANGS[j]}</td><td class="t${j===c.p.i?' moi':""}">-${T.t[j]}</td>`).join("")}</tr>`).join("")}</table>`;
+  aff.innerHTML = `<h3>📋 ${T.nom[0].toUpperCase()+T.nom.slice(1)} · verbes en -${T.g}${T.imper ? " · pas de sujet" : ""}</h3><table>${[0,1,2].filter(i => T.t[i] != null || T.t[i+3] != null).map(i =>
+    `<tr>${[i,i+3].map(j => T.t[j] == null ? `<td></td><td></td>` : `<td${j===c.p.i?' class="moi"':""}>${T.imper ? "(" + RANGS[j] + ")" : RANGS[j]}</td><td class="t${j===c.p.i?' moi':""}">-${T.t[j]}</td>`).join("")}</tr>`).join("")}</table>`;
   aff.classList.toggle("cachee", g.affiche !== "toujours");
   // machine
-  document.getElementById("sujet").textContent = sujetDe(c.p, f.rad);
+  const sj = document.getElementById("sujet");
+  sj.textContent = T.imper ? `(${c.p.s})` : sujetDe(c.p, f.rad);
+  sj.classList.toggle("absent", !!T.imper);
   const rad = document.getElementById("radical");
   rad.innerHTML = `${esc(f.rad)}<span class="etq">${esc(T.etq)}</span>`;
   const fente = document.getElementById("fente");
@@ -452,7 +583,7 @@ function charger(){
   remplirTapis(piecesTapis(c));
   setTimeout(lireCommande, 300);
 }
-function lireCommande(){ const c = g.cur.c; speak(`${c.p.s}… ${c.verbe}… ${TEMPS[c.temps].a}.`); }
+function lireCommande(){ const c = g.cur.c, T = TEMPS[c.temps]; speak(T.imper ? `${c.verbe}… ${T.a}… avec ${c.p.s}.` : `${c.p.s}… ${c.verbe}… ${T.a}.`); }
 function voyant(cl){ document.getElementById("voyant").className = "voyant " + cl; }
 let minuteurs = {};
 function bulle(cote, html, duree){
@@ -484,7 +615,7 @@ function remplirTapis(set){
     const b = document.createElement("button");
     b.className = "caisse"; b.type = "button"; b.dataset.t = t;
     b.setAttribute("aria-label", "Terminaison " + t);
-    b.innerHTML = `<span>${esc(t)}</span>`;
+    b.innerHTML = `<span class="${t.length >= 8 ? "l8" : t.length >= 6 ? "l6" : ""}">${esc(t)}</span>`;
     b.onclick = () => choisir(b);
     tapis.appendChild(b);
     caisses.push({b, x: i * pas});
@@ -543,13 +674,15 @@ function reussi(b, vol, t){
   bulle("g", "");
   speak(mot);
   const st = document.getElementById("stock");
-  st.insertAdjacentHTML("beforeend", `<span class="m">${etoile ? "⭐ " : ""}${esc(sujetDe(c.p, f.rad))}${sujetDe(c.p, f.rad) === "j'" ? "" : " "}<span class="r">${esc(f.rad)}</span><span class="t">${esc(f.ter)}</span></span>`);
+  st.insertAdjacentHTML("beforeend", `<span class="m">${etoile ? "⭐ " : ""}${couleurs(c)}</span>`);
   renderTop();
-  setTimeout(() => { g.k++; if(g.k < NB) charger(); else fin(); }, reduit ? 1800 : 2400);
+  if(g.multi) envoieScore();
+  const monG = g;
+  setTimeout(() => { if(g !== monG || g.stop) return; g.k++; if(g.k < g.liste.length) charger(); else if(g.multi) multiFini(); else fin(); }, reduit ? 1800 : 2400);
 }
 function rate(b, vol, t, dx, dy){
   const cur = g.cur;
-  cur.erreurs++;
+  cur.erreurs++; g.erreurs++;
   voyant("rouge");
   const anim = vol.animate([
     {transform:`translate(${dx}px,${dy}px)`},
@@ -588,8 +721,8 @@ function fin(){
       <p style="margin:6px 0 0;font-size:19px"><b>${et}</b> verbe${et>1?"s":""} fabriqué${et>1?"s":""} du premier coup sur ${NB}.</p></div>
       <img src="/images/machine-a-conjuguer/ouvrier.png" alt=""></div>
     <div class="card recap"><b>📦 Le stock de l'usine</b> <span style="color:var(--muted);font-size:15px">(en bleu le radical, en orange la terminaison)</span>
-      <ul>${g.res.map(r => { const f = forme(r.c), s = sujetDe(r.c.p, f.rad);
-        return `<li>${r.etoile ? "⭐" : "🔧"} <span class="m">${esc(s)}${s==="j'"?"":" "}<span class="r" style="color:var(--rad)">${esc(f.rad)}</span><span class="t" style="color:var(--ter-d)">${esc(f.ter)}</span></span> <span style="color:var(--muted);font-size:15px">(${esc(r.c.verbe)}, ${esc(TEMPS[r.c.temps].nom)})</span></li>`; }).join("")}</ul></div>
+      <ul>${g.res.map(r => { const f = forme(r.c);
+        return `<li>${r.etoile ? "⭐" : "🔧"} <span class="m">${couleurs(r.c)}</span> <span style="color:var(--muted);font-size:15px">(${esc(r.c.verbe)}, ${esc(TEMPS[r.c.temps].nom)})</span></li>`; }).join("")}</ul></div>
     <div class="actions center">
       <button class="btn" id="again">🔁 Nouvelles commandes</button>
       ${g.niv.n < NIVEAUX.length ? `<button class="btn ghost" id="suivant">Niveau ${g.niv.n + 1} ➜</button>` : ""}
@@ -608,6 +741,232 @@ function fin(){
   speak(msg);
   try{ TDC.note({s:et, n:NB, g:et >= 7, niv:`Niveau ${g.niv.n} · ${g.niv.titre}`, d:`${et} verbe${et>1?"s":""} sur ${NB} conjugué${et>1?"s":""} du premier coup`}); }catch(e){}
 }
+/* ---------- Plusieurs écrans (relais /api/salle, comme la course des additions) ---------- */
+const API = "/api/salle", JEU = "machine-conjuguer";
+const COUL = ["#e9462f","#3a6fb0","#2f9b4f","#d9a400","#8e44ad","#e0558f","#16a3a8","#8a5a2b"];
+const coul = id => COUL[(id - 1) % COUL.length];
+const $ = id => document.getElementById(id);
+let M = null; // {code, hote, id, jeton, nom, manche, vue, etat, offset, rtt, echecs, timer, debut}
+async function api(body){
+  const r = await fetch(API, {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(body)});
+  const d = await r.json().catch(() => ({erreur:"Le serveur ne répond pas. Vérifie la connexion Internet."}));
+  if(!r.ok || d.erreur) throw new Error(d.erreur || "Erreur " + r.status);
+  return d;
+}
+const heureServeur = () => Date.now() + (M ? M.offset : 0);
+function mErr(t){ $("mErr").textContent = t || ""; }
+function toast(t){ const e = $("toast"); e.hidden = !t; e.textContent = t || ""; }
+const nouvelleSalle = o => ({id:0, jeton:"", nom:"", hote:"", manche:0, offset:0, rtt:1e9, vue:"attente", echecs:0, ...o});
+function reglagesPour(n, v, af){
+  const niv = NIVEAUX.find(x => x.n === n) || NIVEAUX[0];
+  return {niv:niv.n, v, af, cmds: commandes(niv).map(c => [TKEYS.indexOf(c.temps), VERBES[TEMPS[c.temps].g].indexOf(c.verbe), PERS.indexOf(c.p)])};
+}
+try{ const n = localStorage.getItem("mac-nom"); if(n) $("mNom").value = n; }catch(e){}
+$("mCode").oninput = e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,4); };
+$("mCode").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); $("mNom").focus(); } };
+$("mNom").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); $("mJoin").click(); } };
+$("mCreer").onclick = async () => {
+  mErr(""); const b = $("mCreer"); b.disabled = true;
+  try{
+    const d = await api({a:"creer", jeu:JEU, reglages:reglagesPour(+val("niveau"), +val("vitesse"), val("affiche") === "toujours")});
+    M = nouvelleSalle({code:d.code, hote:d.hote});
+    const nom = $("mNomHote").value.trim();
+    if(nom){ const j = await api({a:"rejoindre", code:d.code, nom}); Object.assign(M, {id:j.id, jeton:j.jeton, nom:j.nom}); }
+    salleAttente();
+  }catch(e){ mErr(e.message); M = null; }
+  b.disabled = false;
+};
+$("mJoin").onclick = async () => {
+  mErr(""); const code = $("mCode").value.trim().toUpperCase(), nom = $("mNom").value.trim();
+  if(code.length !== 4) return mErr("Le code a 4 lettres.");
+  if(!nom) return mErr("Écris un prénom ou un nom d'équipe.");
+  const b = $("mJoin"); b.disabled = true;
+  try{
+    const j = await api({a:"rejoindre", code, nom});
+    try{ localStorage.setItem("mac-nom", nom); }catch(e){}
+    M = nouvelleSalle({code, id:j.id, jeton:j.jeton, nom:j.nom});
+    salleAttente();
+  }catch(e){ mErr(e.message); }
+  b.disabled = false;
+};
+
+async function poll(){
+  const m = M; if(!m) return;
+  clearTimeout(m.timer);
+  const t1 = Date.now();
+  try{
+    const r = await fetch(`${API}?code=${m.code}${m.id ? "&id=" + m.id : ""}`, {cache:"no-store"});
+    const d = await r.json().catch(() => ({erreur:"Réponse illisible"})); const t2 = Date.now();
+    if(M !== m) return;
+    if(r.status === 404){ finSalle("Cette partie n'existe plus."); return; }
+    if(!r.ok) throw new Error(d.erreur);
+    const rtt = t2 - t1;   // horloge du serveur : on garde la mesure la plus rapide
+    if(rtt <= m.rtt * 1.3 + 20){ m.offset = d.maintenant - (t1 + t2) / 2; m.rtt = Math.min(m.rtt, rtt); }
+    m.echecs = 0; toast("");
+    if(d.jeu !== JEU){ finSalle("Ce code est celui d'un autre jeu."); return; }
+    m.etat = d;
+    if(m.aRenvoyer) envoieScore();
+    surEtat(d);
+  }catch(e){ if(M === m && ++m.echecs >= 3) toast("Connexion perdue… je réessaie"); }
+  if(M === m) m.timer = setTimeout(poll, m.vue === "attente" || m.vue === "podium" ? 1500 : 1000);
+}
+function toutFini(d){ const js = avecMoi(d); return js.length > 0 && js.every(j => j.temps != null); }
+function surEtat(d){
+  if(d.statut === "course" && d.manche > M.manche){ M.manche = d.manche; departMulti(d); return; }
+  if(M.vue === "attente") majAttente(d);
+  else if(M.vue === "jeu"){ majAutres(d); if(d.statut === "fini" || toutFini(d)) podium(d); }
+  else if(M.vue === "fini" || M.vue === "regarde"){ if(d.statut === "fini" || toutFini(d)) podium(d); else majTableau(d); }
+}
+/* ma ligne vient de mon écran (plus à jour que le relais) */
+function avecMoi(d){
+  return d.joueurs.map(j => j.id === M.id && g && g.multi ? {...j, bons:fabriques(), erreurs:g.erreurs, temps:g.monTemps ?? j.temps, d:{e:masque()}} : j);
+}
+const fabriques = () => g.res.filter(Boolean).length;
+const masque = () => g.res.reduce((m, r, i) => r && r.etoile ? m | (1 << i) : m, 0);
+const etoilesDe = j => { let n = 0, e = (j.d && j.d.e) || 0; while(e){ n += e & 1; e >>= 1; } return n; };
+const classement = js => [...js].sort((a,b) => etoilesDe(b) - etoilesDe(a) || b.bons - a.bons ||
+  ((a.temps == null) - (b.temps == null)) || (a.temps ?? 0) - (b.temps ?? 0) || a.erreurs - b.erreurs);
+const duree = ms => { const s = Math.round(ms / 1000); return s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}`; };
+
+function finSalle(msg){
+  const m = M; M = null; if(m) clearTimeout(m.timer); toast("");
+  if(g){ g.stop = true; } stopTapis(); $("compte").hidden = true;
+  show("home"); mErr(msg);
+}
+function quitteSalle(){
+  const m = M; M = null; if(!m) return; clearTimeout(m.timer); toast("");
+  if(m.id) fetch(API, {method:"POST", headers:{"content-type":"application/json"}, keepalive:true,
+    body:JSON.stringify({a:"quitter", code:m.code, id:m.id, jeton:m.jeton})}).catch(() => {});
+}
+addEventListener("pagehide", () => { if(M) quitteSalle(); });
+
+/* Salle d'attente */
+function salleAttente(){
+  M.vue = "attente"; M.cle = "";
+  $("sCode").textContent = M.code;
+  $("sGo").hidden = !M.hote; $("sGo").disabled = true;
+  $("sChips").innerHTML = ""; $("sInfo").textContent = "";
+  show("salle");
+  poll();
+}
+$("sGo").onclick = () => lancer(false);
+$("sQuit").onclick = () => { quitteSalle(); show("home"); };
+function majAttente(d){
+  const cle = JSON.stringify([d.joueurs.map(j => [j.id, j.nom]), d.reglages.niv]);
+  if(cle === M.cle) return; M.cle = cle;
+  const n = d.joueurs.length, niv = NIVEAUX.find(x => x.n === d.reglages.niv) || NIVEAUX[0];
+  $("sChips").innerHTML = n ? d.joueurs.map(j => `<span class="chip" style="background:${coul(j.id)}">${esc(j.nom)}${j.id === M.id ? " (toi)" : ""}</span>`).join("")
+                            : `<span class="petit">Aucun écran pour l'instant…</span>`;
+  $("sInfo").innerHTML = (M.hote ? "Sur les autres écrans : <b>📱 Jouer sur plusieurs écrans</b>, puis taper ce code.<br>" : "")
+    + `Niveau ${niv.n} · ${esc(niv.titre)} · ${n} écran${n > 1 ? "s" : ""}` + (M.hote ? "" : "<br><b>En attente du départ…</b>");
+  $("sGo").disabled = !n;
+}
+async function lancer(nouvelles, n){
+  if(!M || !M.etat) return;
+  const r = M.etat.reglages;
+  const reglages = nouvelles ? reglagesPour(n ?? r.niv, r.v, r.af) : r;
+  document.querySelectorAll("#sGo,#again").forEach(b => b.disabled = true);
+  try{ await api({a:"partir", code:M.code, hote:M.hote, reglages}); poll(); }
+  catch(e){ toast(e.message); document.querySelectorAll("#sGo,#again").forEach(b => b.disabled = false); }
+}
+$("tStop").onclick = async () => { if(!M || !M.hote) return; try{ await api({a:"arreter", code:M.code, hote:M.hote}); poll(); }catch(e){ toast(e.message); } };
+
+/* Départ : compte à rebours sur l'heure du serveur, puis tout le monde reçoit les mêmes commandes */
+function departMulti(d){
+  const moi = d.joueurs.find(j => j.id === M.id);
+  M.debut = d.debut; M.joue = !!moi;
+  if(g){ g.stop = true; } stopTapis(); taire();
+  M.vue = moi ? "prepa" : "regarde";
+  if(!moi){ majTableau(d); show("tableau"); }
+  const c = $("compte"), monM = M; let vu = null;
+  c.hidden = false;
+  (function tic(){
+    if(M !== monM) { c.hidden = true; return; }
+    const reste = M.debut - heureServeur();
+    if(reste <= 0){
+      c.textContent = "Partez !";
+      setTimeout(() => { c.hidden = true; }, 600);
+      if(moi){ M.vue = "jeu"; start(d.reglages.niv, d.reglages); g.erreurs = 0; envoieScore(); majAutres(d); }
+      return;
+    }
+    const n = Math.ceil(reste / 1000), aff = n > 3 ? "Prêts ?" : String(n);
+    if(aff !== vu){ vu = aff; c.textContent = aff; }
+    setTimeout(tic, Math.min(100, reste));
+  })();
+}
+function envoieScore(){
+  if(!M || !M.id || !g || !g.multi) return;
+  const m = M, corps = {a:"score", code:m.code, id:m.id, jeton:m.jeton, bons:fabriques(), erreurs:g.erreurs, temps:g.monTemps ?? null, donnees:{e:masque()}};
+  m.aRenvoyer = false;
+  m.envoi = (m.envoi || Promise.resolve()).then(() => api(corps)).catch(() => { m.aRenvoyer = true; });
+}
+function multiFini(){
+  g.monTemps = Math.max(0, Math.round(heureServeur() - M.debut));
+  stopTapis();
+  envoieScore();
+  M.vue = "fini";
+  majTableau(M.etat);
+  show("tableau");
+  speak("Bravo, tes commandes sont prêtes !");
+}
+
+/* Le tableau des usines : une ligne par écran, une case par commande */
+function lignes(js, final){
+  const n = (M.etat && M.etat.reglages.cmds || []).length || 10;
+  return js.map((j, i) => {
+    const e = (j.d && j.d.e) || 0;
+    const cases = Array.from({length:n}, (_, k) => k < j.bons ? (e >> k & 1 ? `<span class="st">⭐</span>` : `<span class="ok">✓</span>`) : `<span></span>`).join("");
+    const info = j.temps != null ? `🏁 ${duree(j.temps)}` : final ? `${j.bons} / ${n}` : "…";
+    return `<tr${j.id === M.id ? ' class="moi"' : ""}>${final ? `<td class="pos">${["🥇","🥈","🥉"][i] || i + 1}</td>` : ""}
+      <td class="nom"><i style="background:${coul(j.id)}"></i>${esc(j.nom)}${j.id === M.id ? " (toi)" : ""}</td>
+      <td><div class="chaine">${cases}</div></td>
+      <td class="info">⭐ ${etoilesDe(j)} · ${info}${final ? ` · ${j.erreurs} erreur${j.erreurs > 1 ? "s" : ""}` : ""}</td></tr>`;
+  }).join("");
+}
+function majAutres(d){
+  if(!d || !g || !g.multi) return;
+  $("autres").innerHTML = `<h3>🏭 Les usines de la classe · partie ${M.code}</h3><table class="tab">${lignes(classement(avecMoi(d)), false)}</table>`;
+}
+function majTableau(d){
+  if(!d) return;
+  const niv = NIVEAUX.find(x => x.n === d.reglages.niv) || NIVEAUX[0];
+  const js = classement(avecMoi(d)), reste = js.filter(j => j.temps == null).length;
+  $("tTitre").textContent = `🏭 Partie ${M.code} · Niveau ${niv.n} · ${niv.titre}`;
+  $("tStop").hidden = !M.hote;
+  $("tCorps").innerHTML = (M.vue === "fini" ? `<p style="margin:0 0 8px;font-size:19px"><b>Tu as fini !</b> ${reste ? `Encore ${reste} usine${reste > 1 ? "s" : ""} au travail…` : ""}</p>` : "")
+    + `<table class="tab grand">${lignes(js, false)}</table>`;
+  $("tActions").innerHTML = "";
+}
+function podium(d){
+  if(M.vue === "podium") return;
+  const avait = M.vue;
+  M.vue = "podium";
+  if(g){ g.stop = true; } stopTapis(); $("compte").hidden = true;
+  const js = classement(avecMoi(d)), niv = NIVEAUX.find(x => x.n === d.reglages.niv) || NIVEAUX[0];
+  const rang = js.findIndex(j => j.id === M.id) + 1, gagnant = js[0];
+  $("tTitre").textContent = `🏁 Partie ${M.code} · Niveau ${niv.n} · ${niv.titre}`;
+  $("tStop").hidden = true;
+  $("tCorps").innerHTML = `<h2 style="text-align:center;font-size:clamp(24px,4vw,36px);margin-bottom:10px">${gagnant ? `Bravo <span style="color:${coul(gagnant.id)}">${esc(gagnant.nom)}</span> !` : "Partie terminée"}</h2>
+    <table class="tab grand">${lignes(js, true)}</table>
+    <p class="petit" style="margin:10px 0 0">Classement : d'abord les étoiles (verbes justes du premier coup), puis le nombre de verbes fabriqués, puis le temps.</p>
+    ${M.hote ? "" : `<p style="margin:8px 0 0">L'adulte peut lancer une revanche : reste sur cet écran.</p>`}`;
+  $("tActions").innerHTML = (M.hote ? `<label>Niveau de la revanche : <select id="revN">${NIVEAUX.map(x => `<option value="${x.n}"${x.n === niv.n ? " selected" : ""}>${x.n} · ${esc(x.titre)}</option>`).join("")}</select></label>
+      <button class="btn" id="again">🔁 Revanche (nouvelles commandes)</button>` : "")
+    + `<button class="btn ghost" id="tMenu">Menu</button>`;
+  if(M.hote) $("again").onclick = () => lancer(true, +$("revN").value);
+  $("tMenu").onclick = () => { quitteSalle(); show("home"); };
+  show("tableau");
+  if(M.joue && g && g.multi){
+    if(rang === 1 && !reduit){
+      const cols = ["#F4B73E","#E07A2E","#2F6FB5","#3FA45E","#D2503C"];
+      $("confettis").innerHTML = Array.from({length:60}, (_, i) =>
+        `<i style="left:${Math.random()*100}vw;background:${cols[i%5]};animation-duration:${2.5+Math.random()*2}s;animation-delay:${Math.random()}s"></i>`).join("");
+    }
+    try{ TDC.note({s:etoilesDe(js[rang - 1]), n:g.liste.length, g:rang === 1, niv:`Plusieurs écrans · niveau ${niv.n}`,
+      d:`Partie à ${js.length} écrans : ${rang === 1 ? "1ᵉʳ" : rang + "ᵉ"} · ${etoilesDe(js[rang - 1])} verbes du premier coup`}); }catch(e){}
+  }
+}
+
 let largTapis = 0, tRes = 0;
 addEventListener("resize", () => { clearTimeout(tRes); tRes = setTimeout(() => {
   if(!g || document.getElementById("game").hidden || g.cur.fini || g.cur.occupe || Math.abs(tapis.clientWidth - largTapis) < 40) return;
