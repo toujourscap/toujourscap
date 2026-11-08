@@ -391,10 +391,11 @@ DOMAINES = [("francais", "Français"), ("maths", "Maths"), ("divers", "Divers")]
 
 def niveaux_de(p):
     """Niveaux d'un article : ceux du jeu, sinon ceux de sa rubrique (contes : GS-CP ; Maître E : enseignants)."""
-    n = (p.get("jeu") or {}).get("niveaux")
-    if n:
-        return n
-    return {"cercle-conteur": ["GS", "CP"], "maitre-e": ["Enseignants"]}.get(p["cat"], ["CP", "CE1"])
+    n = (p.get("jeu") or {}).get("niveaux") or {"cercle-conteur": ["GS", "CP"], "maitre-e": ["Enseignants"]}.get(p["cat"], ["CP", "CE1"])
+    # tous les articles « Divers » servent aussi aux enseignants
+    if CATS.get(p.get("cat"), {}).get("domain") == "divers" and "Enseignants" not in n:
+        n = list(n) + ["Enseignants"]
+    return n
 
 
 def arbre(posts):
