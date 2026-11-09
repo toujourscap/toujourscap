@@ -932,17 +932,17 @@ function majType(){
   if(AIDE_PH===null)AIDE_PH=$("ensAidePhrases").innerHTML;
   $("ensPhrasesLabel").textContent=ensMots?"Les mots de la dictée":"Les phrases de la dictée (8 au maximum)";
   $("ensPhrases").placeholder=ensMots?"Exemple :\nchien\nle chat\nune tomate\npartir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
-  if(ensMots)$("ensAidePhrases").textContent="Écrivez en minuscules, une ligne par mot ou par groupe de mots à travailler ensemble (chien, le chat…). Chaque ligne est proposée seule à l'enfant, qui choisit laquelle travailler (20 au maximum). Une virgule sépare aussi deux mots. Pas de majuscule ni de point.";
+  if(ensMots)$("ensAidePhrases").textContent="Une ligne par mot ou groupe de mots à travailler ensemble (20 lignes au maximum). Majuscule et point possibles.";
   else $("ensAidePhrases").innerHTML=AIDE_PH;
-  ["maj","pt"].forEach(function(id){var i=$("cat-"+id);if(i&&ensMots)i.checked=false;});majNiveaux();
+  majNiveaux();
 }
 document.querySelectorAll("#ensType button").forEach(function(b){b.onclick=function(){ensMots=b.dataset.m==="1";majType();};});
 // Niveau : coche les catégories adaptées (l'enseignant peut ensuite ajuster)
 var NIVEAUX={CP:["voy","cons","acc","muet","maj","pt","plur"],
   CE1:["voy","cons","val","mbp","acc","dbl","muet","maj","pt","fem","plur","conj","homo"]};
-// liste de mots : ni majuscule ni point, et les verbes à l'infinitif (conjugaison) dès le CP
+// liste de mots : les verbes à l'infinitif (conjugaison) dès le CP
 function listeNiveau(n){var l=NIVEAUX[n]||CHOIX.map(function(c){return c.id;});
-  if(typeof ensMots!=="undefined"&&ensMots){l=l.filter(function(x){return x!=="maj"&&x!=="pt";});if(l.indexOf("conj")<0)l=l.concat("conj");}return l;}
+  if(typeof ensMots!=="undefined"&&ensMots){if(l.indexOf("conj")<0)l=l.concat("conj");}return l;}
 function majNiveaux(){var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
   document.querySelectorAll("#ensNiveaux button").forEach(function(b){var l=listeNiveau(b.dataset.n);
     b.setAttribute("aria-pressed",String(c.length===l.length&&l.every(function(x){return c.indexOf(x)>=0;})));});}
@@ -996,9 +996,8 @@ $("creerLien").onclick=function(){
 };
 // Liste de mots : par paquets de 5 au plus (un mot par ligne, ou séparés par des espaces / virgules)
 function creerLienMots(){
-  // chaque ligne (ou ce qui est entre deux virgules) est proposé seul à l'enfant
-  var p=[];$("ensPhrases").value.replace(/[’‘]/g,"'").split(/[\n,;]+/).forEach(function(l){
-    l=normaliser(l.replace(/[.!?]+/g," "));if(l)p.push(l);});
+  // chaque ligne (mot ou groupe de mots à travailler ensemble) est proposée seule à l'enfant
+  var p=[];$("ensPhrases").value.split(/\n+/).forEach(function(l){l=normaliser(l);if(l)p.push(l);});
   if(!p.length){$("ensErreur").textContent="Tapez d'abord les mots de la dictée dans le grand cadre.";$("ensPhrases").focus();return;}
   var trop=p.length>20;if(trop)p=p.slice(0,20);
   $("ensPhrases").value=p.join("\n");
@@ -1008,7 +1007,7 @@ function creerLienMots(){
   if(c.length<CHOIX.length)o.c=c;
   var n=$("ensNote").value.trim();if(n)o.n=n.slice(0,200);
   $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
-  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=trop?"Seuls les 20 premiers mots (ou groupes de mots) sont gardés.":"";
+  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=trop?"Seules les 20 premières lignes sont gardées.":"";
   dessinerQR($("lienTexte").value,o.t);
   $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
 }
