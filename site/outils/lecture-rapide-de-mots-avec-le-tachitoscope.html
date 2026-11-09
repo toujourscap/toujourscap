@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tachistoscope - Lis le plus de mots sans te tromper</title><link rel="canonical" href="https://toujourscap.com/post/lecture-rapide-de-mots-tachistoscope/"><meta name="description" content="Un tachistoscope en ligne : l&#x27;élève lit le plus de mots possible sans se tromper. Un adulte valide, ou le micro écoute. Quatre listes de 50 mots, du début du…">
+<title>Tachistoscope - Lis le plus de mots sans te tromper</title><link rel="canonical" href="https://toujourscap.com/post/lecture-rapide-de-mots-tachistoscope/"><meta name="description" content="Un tachistoscope en ligne : l&#x27;élève lit le plus de mots possible en 1 minute, ou sans faute jusqu&#x27;à la première erreur. Un adulte valide, ou le micro écoute…">
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif}
@@ -21,6 +21,10 @@
   #display{font-size:clamp(3.2rem,11vw,9rem);font-weight:bold;color:#212529;min-height:36vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border-radius:8px;border:1px dashed #adb5bd;margin:0 0 14px;padding:16px;word-break:break-word;position:relative}
   #display.ok{animation:ok .35s}
   @keyframes ok{0%{background:#d1e7dd}100%{background:#fff}}
+  #display.ko{animation:ko .45s}
+  @keyframes ko{0%{background:#f8d7da}100%{background:#fff}}
+  #chrono.vite{color:#dc3545;font-weight:bold}
+  .fin .erreurs{color:#6c757d;font-size:.75em}
   #compteur{position:absolute;top:8px;left:12px;font-size:1.1rem;color:#198754}
   #chrono{position:absolute;top:8px;right:12px;font-size:1.1rem;color:#6c757d}
   #barre{position:absolute;left:0;bottom:0;height:6px;background:#0d6efd;border-radius:0 0 8px 8px;width:0}
@@ -53,7 +57,8 @@
         <button data-l="1">🌱 Niveau 1<small>début de CP</small></button>
         <button data-l="2">🌿 Niveau 2<small>milieu de CP</small></button>
         <button data-l="3">🌳 Niveau 3<small>fin de CP</small></button>
-        <button data-l="4">🏔️ Niveau 4<small>fin de CE1</small></button>
+        <button data-l="5">🍀 Niveau 4<small>début de CE1</small></button>
+        <button data-l="4">🏔️ Niveau 5<small>fin de CE1</small></button>
         <button data-l="perso">✏️ Ma liste<small>mes mots</small></button>
       </div>
       <div id="perso">
@@ -63,7 +68,16 @@
     </div>
 
     <div class="groupe">
-      <h2>2. Qui vérifie ?</h2>
+      <h2>2. Choisis ton défi</h2>
+      <div class="choix" id="defis">
+        <button data-d="minute">⏱️ 1 minute<small>le plus de mots justes</small></button>
+        <button data-d="sansfaute">🎯 Sans faute<small>stop à la 1ʳᵉ erreur</small></button>
+      </div>
+      <p class="note" id="noteDefi"></p>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Qui vérifie ?</h2>
       <div class="choix" id="modes">
         <button data-m="adulte">🧑‍🏫 Un adulte valide<small>✅ juste / ❌ erreur</small></button>
         <button data-m="micro">🎤 Le micro écoute<small>Chrome ou Edge</small></button>
@@ -107,9 +121,10 @@
     1: "la le il lu ma mur rat rue lit sol sur ami île lune rame mule lama lime rire papa pipe pile purée moto vélo tapis tomate tulipe salade malade radis samedi midi lavabo numéro vipère farine sirop futé pédale domino robe note vite tube date épée rapide café animal",
     2: "chat roi loup pont main lapin mouton maison bateau poule route soupe bouche chameau cadeau chocolat moulin dimanche voiture poisson ballon gâteau lundi enfant maman sapin cochon pantalon bonbon fourmi cheval marché jupon vache mouche oiseau toit noir boîte renard jambe chanson matin train lampe tambour poupée robinet souris marteau",
     3: "fille feuille soleil travail montagne araignée éléphant pharmacie garçon leçon girafe pigeon cinéma citron glace grenouille crayon tableau brouillard fleur chien loin cuisine écureuil bouteille abeille papillon famille champignon photo dauphin cerise rose valise princesse pieuvre ciseaux taxi guitare bague orange magicien réveil fauteuil nageur gorille plume trompette sorcière cheveux",
+    5: "peinture ceinture copain plein frein sommeil corbeille chevreuil fenêtre forêt tempête bougie nuage orage genou caillou hibou cartable trousse cahier escalier panier tablier sanglier jardin requin pingouin coussin histoire armoire mouchoir couloir étoile brosse chaussure chaussette ruisseau pinceau couteau chapeau tortue cheminée épaule autruche boulanger lumière rivière pluie fruit juillet",
     4: "anniversaire bibliothèque ordinateur hélicoptère dictionnaire crocodile extraordinaire récréation attention addition gentiment rapidement doucement parapluie kangourou aquarium hippopotame orchestre chorale monsieur femme oignon automne album examen parfum second ville tranquille aiguille accident exemple exactement explorateur squelette kilomètre thermomètre rhinocéros yaourt journaliste quatorze vingt cinquante déguisement gymnastique magnifique escargot ascenseur piscine maintenant"
   };
-  const NOMS = {1:"Niveau 1 (début CP)",2:"Niveau 2 (milieu CP)",3:"Niveau 3 (fin CP)",4:"Niveau 4 (fin CE1)",perso:"Ma liste"};
+  const NOMS = {1:"Niveau 1 (début CP)",2:"Niveau 2 (milieu CP)",3:"Niveau 3 (fin CP)",5:"Niveau 4 (début CE1)",4:"Niveau 5 (fin CE1)",perso:"Ma liste"};
   // Ce que la reconnaissance vocale écrit parfois en chiffres ou en abrégé
   const ECRITS = {"14":"quatorze","20":"vingt","50":"cinquante","2nd":"second","2e":"second","m":"monsieur","mr":"monsieur"};
 
@@ -118,6 +133,9 @@
   const store = {get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 
   let liste = store.get("tachi-liste","1"), mode = store.get("tachi-mode","adulte");
+  let defi = store.get("tachi-defi","minute");
+  if (defi!=="minute" && defi!=="sansfaute") defi="minute";
+  const DUREE = 60;
   if (!LISTES[liste] && liste!=="perso") liste="1";
   if (mode==="micro" && !SR) mode="adulte";
   $("mots").value = store.get("tachi-mots","maison poisson château garçon lapin bouton oiseau peinture cloche dragon");
@@ -127,12 +145,17 @@
   function marquer(){
     document.querySelectorAll("#listes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===liste)));
     document.querySelectorAll("#modes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
+    document.querySelectorAll("#defis button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.d===defi)));
+    $("noteDefi").textContent = defi==="minute"
+      ? "L'élève lit le plus de mots possible en 1 minute. Une erreur ne l'arrête pas : on passe au mot suivant. À la fin, son score s'affiche."
+      : "L'élève lit le plus de mots possible, sans limite de temps. À la première erreur, c'est stop et le score s'affiche.";
     $("perso").style.display = liste==="perso" ? "block" : "none";
     $("noteMode").textContent = mode==="micro"
       ? "L'élève lit à voix haute : le mot suivant arrive dès que le micro l'a reconnu. S'il n'a pas bien entendu, l'élève peut relire une fois. L'adulte peut toujours corriger avec ✅ / ❌."
-      : "L'élève lit, l'adulte clique ✅ si le mot est juste, ❌ au premier mot faux : la partie s'arrête.";
+      : "L'élève lit, l'adulte clique ✅ si le mot est juste, ❌ s'il est faux.";
   }
   document.querySelectorAll("#listes button").forEach(b=>b.onclick=()=>{liste=b.dataset.l;store.set("tachi-liste",liste);marquer();});
+  document.querySelectorAll("#defis button").forEach(b=>b.onclick=()=>{defi=b.dataset.d;store.set("tachi-defi",defi);marquer();});
   document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{
     if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
     mode=b.dataset.m;store.set("tachi-mode",mode);marquer();});
@@ -184,7 +207,7 @@
   }
 
   // ---------- Partie ----------
-  let mots=[], i=0, actif=false, tMot=null, tAnim=null, debut=0, chronoInt=null, essai=0, rec=null, ecoute=false, depuis=0;
+  let mots=[], i=0, bons=0, erreurs=[], actif=false, tMot=null, tAnim=null, debut=0, chronoInt=null, essai=0, rec=null, ecoute=false, depuis=0;
 
   function charger(){
     const src = liste==="perso" ? $("mots").value : LISTES[liste];
@@ -199,8 +222,17 @@
     $("reglages").classList.add("cache"); $("partie").classList.remove("cache");
     $("boutons").classList.toggle("petits", mode==="micro");
     $("aideClavier").style.display = mode==="micro" ? "none" : "";
-    i=0; essai=0; actif=true; debut=Date.now();
-    clearInterval(chronoInt); chronoInt=setInterval(()=>{ $("chrono").textContent=Math.floor((Date.now()-debut)/1000)+" s"; },250);
+    i=0; bons=0; erreurs=[]; essai=0; actif=true; debut=Date.now();
+    $("chrono").classList.remove("vite");
+    const tic=()=>{
+      const e=Math.floor((Date.now()-debut)/1000);
+      if (defi==="minute"){
+        const reste=Math.max(0,DUREE-e);
+        $("chrono").textContent="⏱️ "+reste+" s"; $("chrono").classList.toggle("vite", reste<=10);
+        if (reste<=0 && actif) finir(false,"fin");
+      } else $("chrono").textContent=e+" s";
+    };
+    clearInterval(chronoInt); tic(); chronoInt=setInterval(tic,250);
     msg(mode==="micro" ? "🎤 Lis le mot à voix haute." : "");
     if (mode==="micro") demarrerMicro();
     montrer();
@@ -209,7 +241,7 @@
 
   function montrer(){
     clearTimeout(tMot); essai=0;
-    $("compteur").textContent = "✅ "+i;
+    $("compteur").textContent = "✅ "+bons+(defi==="minute" && erreurs.length ? "   ❌ "+erreurs.length : "");
     $("mot").textContent = mots[i];
     depuis = resultatsVus;   // on n'écoute que ce qui est dit après l'apparition du mot
     texteEnCours = "";
@@ -219,22 +251,33 @@
     if (s>0){
       void barre.offsetWidth;
       barre.style.transition="width "+s+"s linear"; barre.style.width="100%";
-      tMot = setTimeout(()=>{ if (actif) finir(false,"⏱️ Temps écoulé"); }, s*1000);
+      tMot = setTimeout(()=>{ if (actif) rater("⏱️ Temps écoulé"); }, s*1000);
     }
   }
   function juste(){
     if (!actif) return;
     const d=$("display"); d.classList.remove("ok"); void d.offsetWidth; d.classList.add("ok");
-    i++;
+    i++; bons++;
     if (mode==="micro") msg("🎤 Lis le mot à voix haute.");
-    if (i>=mots.length) finir(true); else montrer();
+    suivant();
+  }
+  function suivant(){ if (i>=mots.length) finir(true); else montrer(); }
+  // Mot faux (ou temps dépassé) : en « Sans faute » la partie s'arrête ; en « 1 minute » on passe au mot suivant
+  function rater(raison){
+    if (!actif) return;
+    if (defi!=="minute"){ finir(false, raison); return; }
+    erreurs.push(mots[i]);
+    const d=$("display"); d.classList.remove("ok","ko"); void d.offsetWidth; d.classList.add("ko");
+    i++;
+    msg(mode==="micro" ? "🎤 Mot suivant : lis-le à voix haute." : "");
+    suivant();
   }
   $("juste").onclick = juste;
-  $("faux").onclick = ()=>{ if (actif) finir(false); };
+  $("faux").onclick = ()=>rater();
   document.addEventListener("keydown", e=>{
     if (!actif || mode==="micro") return;
     if (e.key===" "||e.key==="ArrowRight"||e.key==="Enter"){ e.preventDefault(); juste(); }
-    else if (e.key==="x"||e.key==="X"||e.key==="ArrowLeft"){ e.preventDefault(); finir(false); }
+    else if (e.key==="x"||e.key==="X"||e.key==="ArrowLeft"){ e.preventDefault(); rater(); }
   });
 
   function arreter(){
@@ -248,21 +291,33 @@
   }
 
   function finir(tout, raison){
-    const rate = mots[i];
+    const minute = defi==="minute";
+    const rate = (!tout && !minute) ? mots[i] : null;
     arreter();
-    const n = i, sec = Math.round((Date.now()-debut)/1000);
-    const cle = "tachi-record-"+liste+(liste==="perso"?"-"+mots.length:"");
+    const n = bons, sec = Math.min(Math.round((Date.now()-debut)/1000), minute?DUREE:1e9);
+    const cle = "tachi-record-"+(minute?"minute-":"")+liste+(liste==="perso"?"-"+mots.length:"");
     const ancien = parseInt(store.get(cle,"0"),10)||0;
     const nouveau = n>ancien && n>0;
     if (nouveau) store.set(cle,String(n));
-    $("compteur").textContent=""; $("chrono").textContent="";
+    $("compteur").textContent=""; $("chrono").textContent=""; $("chrono").classList.remove("vite");
     let h = '<div class="fin">';
-    if (tout) h += "🎉 <strong>SUPER BRAVO !</strong> 🎉<br>Tu as lu les";
-    else h += "Tu as lu";
-    h += '<span class="gros">'+n+'</span>mot'+(n>1?"s":"")+" sans te tromper"+(tout?" : toute la liste ! 🏆":" !");
-    h += '<br><small>en '+sec+" s</small>";
-    if (!tout && rate) h += '<br><span class="rate">'+(raison?raison+" sur : ":"Erreur sur : ")+"<u>"+rate.replace(/</g,"&lt;")+"</u></span>";
-    h += '<br><span class="record">'+(nouveau ? "⭐ Nouveau record !" : "Record : "+Math.max(ancien,n)+" mot"+(Math.max(ancien,n)>1?"s":""))+"</span>";
+    if (minute){
+      if (tout) h += "🎉 <strong>SUPER BRAVO !</strong> 🎉<br>Toute la liste en "+sec+" s !<br>Tu as lu";
+      else h += "⏱️ <strong>Temps écoulé !</strong><br>En 1 minute, tu as lu";
+      h += '<span class="gros">'+n+'</span>mot'+(n>1?"s":"")+" juste"+(n>1?"s":"")+" !";
+      if (erreurs.length){
+        const liste_e = erreurs.slice(0,12).map(m=>m.replace(/</g,"&lt;")).join(", ")+(erreurs.length>12?"…":"");
+        h += '<br><span class="erreurs">'+erreurs.length+" erreur"+(erreurs.length>1?"s":"")+" : "+liste_e+"</span>";
+      } else h += '<br><span class="erreurs">Aucune erreur 👏</span>';
+    } else {
+      if (tout) h += "🎉 <strong>SUPER BRAVO !</strong> 🎉<br>Tu as lu les";
+      else h += "Tu as lu";
+      h += '<span class="gros">'+n+'</span>mot'+(n>1?"s":"")+" sans te tromper"+(tout?" : toute la liste ! 🏆":" !");
+      h += '<br><small>en '+sec+" s</small>";
+      if (rate) h += '<br><span class="rate">'+(raison?raison+" sur : ":"Erreur sur : ")+"<u>"+rate.replace(/</g,"&lt;")+"</u></span>";
+    }
+    const rec_n = Math.max(ancien,n);
+    h += '<br><span class="record">'+(nouveau ? "⭐ Nouveau record !" : "Record"+(minute?" en 1 minute":"")+" : "+rec_n+" mot"+(rec_n>1?"s":""))+"</span>";
     h += "</div>";
     $("mot").innerHTML = h;
     msg("");
@@ -274,7 +329,9 @@
       $("stop").before(b);
     }
     if (!tout && rate) setTimeout(()=>dire(rate),500);
-    try{TDC.note({s:n,n:mots.length,g:!!tout,niv:NOMS[liste],d:n+" mot"+(n>1?"s":"")+" lu"+(n>1?"s":"")+" sans erreur sur "+mots.length+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")})}catch(e){}
+    try{TDC.note({s:n,n:mots.length,g:!!tout,niv:NOMS[liste],d: minute
+      ? n+" mot"+(n>1?"s":"")+" juste"+(n>1?"s":"")+" en 1 minute, "+erreurs.length+" erreur"+(erreurs.length>1?"s":"")+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")
+      : n+" mot"+(n>1?"s":"")+" lu"+(n>1?"s":"")+" sans erreur sur "+mots.length+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")})}catch(e){}
   }
   // le bouton Rejouer réaffiche les boutons de jeu
   const goOrig = $("go").onclick;
@@ -304,7 +361,7 @@
           if (!dit) continue;
           essai++;
           if (essai===1) msg("🔁 J'ai entendu « "+dit+" ». Relis le mot.","warn");
-          else { finir(false); return; }
+          else { rater(); return; }
         }
       }
       resultatsVus = Math.max(resultatsVus, e.results.length);
