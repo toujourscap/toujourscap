@@ -11526,7 +11526,7 @@
    "cat": "lecture",
    "title": "Lecture rapide de mots",
    "slug": "lecture-rapide-de-mots-tachistoscope",
-   "excerpt": "Un tachistoscope en ligne : l'élève lit le plus de mots possible sans se tromper. Un adulte valide, ou le micro écoute. Quatre listes de 50 mots, du début du CP à la fin du CE1.",
+   "excerpt": "Un tachistoscope en ligne : l'élève lit le plus de mots possible en 1 minute, ou sans faute jusqu'à la première erreur. Un adulte valide, ou le micro écoute. Cinq listes de 50 mots, du début du CP à la fin du CE1.",
    "date": "2026-05-21T11:09:15Z",
    "jeu": {
     "competence": "mots",
@@ -11547,7 +11547,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les mots apparaissent un par un : l'élève en lit le plus possible sans se tromper. À la fin, le nombre de mots lus sans erreur s'affiche, avec le record de la liste.",
+         "text": "Les mots apparaissent un par un et l'élève en lit le plus possible. Deux défis : « 1 minute » (par défaut) : le plus de mots justes en une minute, une erreur fait seulement passer au mot suivant ; « Sans faute » : sans limite de temps, la partie s'arrête à la première erreur. À la fin, le score s'affiche, avec le record de la liste.",
          "decorations": []
         }
        }
@@ -11565,7 +11565,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Quatre listes de 50 mots : niveau 1 (début de CP, sons simples), niveau 2 (milieu de CP : ou, on, an, in, ch, oi, eau…), niveau 3 (fin de CP : ill, gn, ph, ç, g/j, c/s…), niveau 4 (fin de CE1 : mots longs, lettres muettes, mots irréguliers). Ou « Ma liste » avec ses propres mots.",
+             "text": "Cinq listes de 50 mots : niveau 1 (début de CP, sons simples), niveau 2 (milieu de CP : ou, on, an, in, ch, oi, eau…), niveau 3 (fin de CP : ill, gn, ph, ç, g/j, c/s…), niveau 4 (début de CE1 : ein, ain, eil, ier, oir, ss, mots de 2 ou 3 syllabes), niveau 5 (fin de CE1 : mots longs, lettres muettes, mots irréguliers). Ou « Ma liste » avec ses propres mots.",
              "decorations": []
             }
            }
@@ -11582,7 +11582,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Un adulte valide : il clique ✅ (ou Espace) quand le mot est juste, ❌ (ou X) au premier mot faux, et la partie s'arrête.",
+             "text": "Un adulte valide : il clique ✅ (ou Espace) quand le mot est juste, ❌ (ou X) quand il est faux.",
              "decorations": []
             }
            }
@@ -11599,7 +11599,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le micro écoute (Chrome ou Edge) : le mot suivant arrive dès que le micro a reconnu le mot. S'il entend autre chose, l'élève peut relire une fois ; à la deuxième erreur, la partie s'arrête. L'adulte peut toujours corriger avec ✅ / ❌.",
+             "text": "Le micro écoute (Chrome ou Edge) : le mot suivant arrive dès que le micro a reconnu le mot. S'il entend autre chose, l'élève peut relire une fois ; la deuxième fois, le mot compte comme une erreur. L'adulte peut toujours corriger avec ✅ / ❌.",
              "decorations": []
             }
            }
@@ -11616,7 +11616,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Temps pour lire chaque mot : sans limite, ou de 2 à 10 secondes ; le temps dépassé compte comme une erreur. À la fin, le mot manqué est lu à voix haute.",
+             "text": "Temps pour lire chaque mot : sans limite, ou de 2 à 10 secondes ; le temps dépassé compte comme une erreur. En « Sans faute », le mot manqué est lu à voix haute à la fin ; en « 1 minute », la liste des mots manqués s'affiche.",
              "decorations": []
             }
            }
