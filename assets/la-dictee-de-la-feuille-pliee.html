@@ -369,7 +369,7 @@ function ecrire(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
 /* ---------- Dictée transmise dans le lien ---------- */
 function encoder(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";b.forEach(function(x){s+=String.fromCharCode(x);});return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
-function decoder(s){try{s=s.replace(/-/g,"+").replace(/_/g,"/");var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);var o=JSON.parse(new TextDecoder().decode(b));if(o&&Array.isArray(o.p)&&o.p.length){var r={t:String(o.t||"Ma dictée").slice(0,60),p:o.p.map(String).filter(Boolean).slice(0,8)};
+function decoder(s){try{s=s.replace(/-/g,"+").replace(/_/g,"/");var bin=atob(s),b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);var o=JSON.parse(new TextDecoder().decode(b));if(o&&Array.isArray(o.p)&&o.p.length){var r={t:String(o.t||"Ma dictée").slice(0,60),p:o.p.map(String).filter(Boolean).slice(0,o.m?20:8)};
   if(Array.isArray(o.c)){var c=o.c.filter(function(x){return NOMCAT[x]&&!NOMCAT[x].cache;});if(c.length)r.c=c;}
   if(o.n)r.n=String(o.n).slice(0,200);if(o.m)r.m=1;return r;}}catch(e){}return null;}
 function dicteeDuLien(){var m=location.hash.match(/[#&]d=([^&]+)/);return (m&&decoder(m[1]))||null;}
@@ -908,7 +908,7 @@ $("imgFille").src=IMG.fille; $("imgGarcon").src=IMG.garcon;
 function majPerso(){document.querySelectorAll(".perso").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.p===perso?"true":"false");});}
 document.querySelectorAll(".perso").forEach(function(b){b.onclick=function(){perso=b.dataset.p;ecrire("dictee-pliee-perso",perso);majPerso();};});
 majPerso();
-function majTitre(){var t=$("titreDictee"),n=dictee.p.length+(dictee.m?" liste":" phrase")+(dictee.p.length>1?"s":"")+(dictee.m?" de mots":"");
+function majTitre(){var t=$("titreDictee"),n=dictee.p.length+(dictee.m?" mot":" phrase")+(dictee.p.length>1?"s":"");
   if(estExemple){
     t.textContent="Avec un adulte, écris toi-même la phrase modèle sur l'ardoise verte, ou essaie la dictée d'exemple.";
     $("libre").className="btn vert";$("libre").textContent="J'écris le modèle moi-même";
@@ -931,8 +931,8 @@ function majType(){
   document.querySelectorAll("#ensType button").forEach(function(b){b.setAttribute("aria-pressed",String((b.dataset.m==="1")===ensMots));});
   if(AIDE_PH===null)AIDE_PH=$("ensAidePhrases").innerHTML;
   $("ensPhrasesLabel").textContent=ensMots?"Les mots de la dictée":"Les phrases de la dictée (8 au maximum)";
-  $("ensPhrases").placeholder=ensMots?"Exemple :\nchien vache cochon\ntomate envoyer partir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
-  if(ensMots)$("ensAidePhrases").textContent="Écrivez les mots en minuscules, séparés par des espaces ou un par ligne. Chaque ligne forme une liste à travailler (5 mots au plus, 8 listes au maximum). Pas de majuscule ni de point.";
+  $("ensPhrases").placeholder=ensMots?"Exemple :\nchien, vache, le cochon, une tomate, partir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
+  if(ensMots)$("ensAidePhrases").textContent="Écrivez les mots en minuscules, séparés par des virgules (ou un par ligne). Ce qui est entre deux virgules est proposé seul à l'enfant : un mot (chien) ou un petit groupe de mots (le chat). L'enfant choisit ensuite lequel travailler, un à la fois (20 au maximum). Pas de majuscule ni de point.";
   else $("ensAidePhrases").innerHTML=AIDE_PH;
   ["maj","pt"].forEach(function(id){var i=$("cat-"+id);if(i&&ensMots)i.checked=false;});majNiveaux();
 }
@@ -953,7 +953,7 @@ $("ensCats").addEventListener("change",majNiveaux);
 function ouvrirEnseignant(){
   if(window.self!==window.top){var a=document.createElement("a");a.href=location.href.split("#")[0].split("?")[0]+"#enseignant"+(estExemple?"":"&"+location.hash.slice(1));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();return;}
   montrer("enseignant");
-  if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
+  if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join(dictee.m?", ":"\n");$("ensNote").value=dictee.n||"";
     document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
   ensMots=!estExemple&&!!dictee.m;majType();
   $("ensTitre").focus();}
@@ -996,20 +996,19 @@ $("creerLien").onclick=function(){
 };
 // Liste de mots : par paquets de 5 au plus (un mot par ligne, ou séparés par des espaces / virgules)
 function creerLienMots(){
-  // chaque ligne forme une liste (coupée par paquets de 5 mots si elle est plus longue)
-  var p=[];$("ensPhrases").value.replace(/[’‘]/g,"'").split(/\n+/).forEach(function(l){
-    var mots=l.split(/[\s,;.!?]+/).map(function(w){return w.trim();}).filter(Boolean);
-    for(var i=0;i<mots.length;i+=5)p.push(mots.slice(i,i+5).join(" "));});
+  // chaque mot ou groupe de mots entre deux virgules (ou sur sa ligne) est proposé seul à l'enfant
+  var p=[];$("ensPhrases").value.replace(/[’‘]/g,"'").split(/[\n,;]+/).forEach(function(l){
+    l=normaliser(l.replace(/[.!?]+/g," "));if(l)p.push(l);});
   if(!p.length){$("ensErreur").textContent="Tapez d'abord les mots de la dictée dans le grand cadre.";$("ensPhrases").focus();return;}
-  var trop=p.length>8;if(trop)p=p.slice(0,8);
-  $("ensPhrases").value=p.join("\n");
+  var trop=p.length>20;if(trop)p=p.slice(0,20);
+  $("ensPhrases").value=p.join(", ");
   var o={t:($("ensTitre").value.trim()||"Mes mots").slice(0,60),p:p,m:1};
   var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
   if(!c.length){$("ensErreur").textContent="Cochez au moins un type d'erreur à vérifier.";return;}
   if(c.length<CHOIX.length)o.c=c;
   var n=$("ensNote").value.trim();if(n)o.n=n.slice(0,200);
   $("lienTexte").value=location.href.split("#")[0].split("?")[0]+"#d="+encoder(o);
-  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=trop?"Seuls les 40 premiers mots sont gardés.":"";
+  $("lienCree").style.display="block";$("copieOk").textContent="";$("ensErreur").textContent=trop?"Seuls les 20 premiers mots (ou groupes de mots) sont gardés.":"";
   dessinerQR($("lienTexte").value,o.t);
   $("lienCree").scrollIntoView({block:"center",behavior:"smooth"});
 }
@@ -1093,8 +1092,8 @@ function faites(){return lire(cle()+"-"+aujourdhui(),{});}
 function choixPhrase(){
   var f=faites(),z=$("listePhrases");z.innerHTML="";
   $("choixTitre").textContent=estExemple?"Dictée d'exemple":dictee.t;
-  $("choixH1").textContent=PH("Je choisis ma phrase","Je choisis ma liste de mots");
-  $("choixAide").textContent=PH("Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.","Une liste à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.");
+  $("choixH1").textContent=PH("Je choisis ma phrase","Je choisis mon mot");
+  $("choixAide").textContent=PH("Une phrase à la fois : tu peux en faire une seule aujourd'hui, et une autre demain.","Un mot à la fois : tu peux en faire un seul aujourd'hui, et un autre demain.");
   dictee.p.forEach(function(ph,i){
     var b=document.createElement("button");b.type="button";b.className="phrase-choix"+(f[i]!==undefined?" faite":"");
     var n=document.createElement("span");n.className="n";n.textContent=i+1;b.appendChild(n);
@@ -1113,8 +1112,8 @@ function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   fermerBulle();
   etat.essais=[];etat.regarde=false;etat.regarde1=false;etat.cats1=null;etat.pieges=[];etat.correction=null;
-  $("compteur").textContent=PH("Phrase ","Liste ")+(etat.i+1)+(etat.libre?"":" sur "+dictee.p.length);
-  $("quitter").textContent=etat.libre?"Accueil":PH("Mes phrases","Mes listes");
+  $("compteur").textContent=PH("Phrase ","Mot ")+(etat.i+1)+(etat.libre?"":" sur "+dictee.p.length);
+  $("quitter").textContent=etat.libre?"Accueil":PH("Mes phrases","Mes mots");
   $("saisie").setAttribute("aria-label",PH("J'écris ma phrase ici","J'écris mes mots ici"));
   $("rangees").innerHTML="";$("pieges").innerHTML="";$("pieges").style.display="flex";$("verif").classList.remove("vue");$("explications").innerHTML="";
   rabat(0);
