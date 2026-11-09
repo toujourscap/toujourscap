@@ -1,6 +1,222 @@
 {
- "count": 46,
+ "count": 47,
  "posts": [
+  {
+   "title": "La fiole de la grenouille",
+   "slug": "la-fiole-de-la-grenouille",
+   "cat": "lecture",
+   "excerpt": "Un jeu de lecture rapide de mots coopératif : chaque mot bien lu fait tomber une goutte dans la fiole. Quand elle est pleine, la grenouille la boit et redevient princesse ! Toute la classe sur un seul écran, du CP au CE1.",
+   "date": "2026-11-09T09:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": "mots",
+    "niveaux": ["CP", "CE1"],
+    "joueurs": "La classe ensemble, sur un seul écran",
+    "supports": ["ecran", "projetable"]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une version coopérative de la lecture rapide de mots : les élèves ne se comparent plus, ils lisent ensemble pour une même histoire. Chaque mot bien lu fait tomber une goutte de potion magique dans la fiole. Quand la fiole est pleine, la grenouille la boit… et se transforme en princesse !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-fiole-de-la-grenouille.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la liste de mots : cinq niveaux de 50 mots (début de CP, milieu de CP, fin de CP, début de CE1, fin de CE1) ou « Ma liste » avec ses propres mots.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la taille de la fiole : 20, 50, 100 ou 200 gouttes. La fiole garde ses gouttes sur l'ordinateur : on peut la remplir en plusieurs séances avec « Continuer la fiole ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un adulte valide (✅ juste, ➡️ mot suivant ; ou Espace / X au clavier), ou le micro écoute (Chrome ou Edge) : la goutte tombe dès que le mot est reconnu.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un mot faux ou trop long à lire ne fait rien perdre : on passe simplement au mot suivant.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le relais : chaque élève lit 3, 5 ou 10 mots, puis l'écran « Au suivant ! » passe la main au camarade suivant. Tout le monde contribue, sans classement.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Temps pour lire chaque mot : sans limite, ou de 3 à 10 secondes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les images de la grenouille et de la princesse, façon papier découpé, ont été créées avec Canva.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Pour s'entraîner seul et battre son record : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Lecture rapide de mots",
+         "decorations": [
+          {
+           "type": "LINK",
+           "linkData": {
+            "link": {
+             "url": "/post/lecture-rapide-de-mots-tachistoscope/"
+            }
+           }
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ".",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ],
+    "documentStyle": {}
+   }
+  },
   {
    "title": "Ce que le site propose aux enseignants",
    "slug": "ce-que-le-site-propose-aux-enseignants",
