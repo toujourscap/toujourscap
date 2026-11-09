@@ -931,8 +931,8 @@ function majType(){
   document.querySelectorAll("#ensType button").forEach(function(b){b.setAttribute("aria-pressed",String((b.dataset.m==="1")===ensMots));});
   if(AIDE_PH===null)AIDE_PH=$("ensAidePhrases").innerHTML;
   $("ensPhrasesLabel").textContent=ensMots?"Les mots de la dictée":"Les phrases de la dictée (8 au maximum)";
-  $("ensPhrases").placeholder=ensMots?"Exemple :\nchien, vache, le cochon, une tomate, partir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
-  if(ensMots)$("ensAidePhrases").textContent="Écrivez les mots en minuscules, séparés par des virgules (ou un par ligne). Ce qui est entre deux virgules est proposé seul à l'enfant : un mot (chien) ou un petit groupe de mots (le chat). L'enfant choisit ensuite lequel travailler, un à la fois (20 au maximum). Pas de majuscule ni de point.";
+  $("ensPhrases").placeholder=ensMots?"Exemple :\nchien\nle chat\nune tomate\npartir":"Exemple :\nIl prend ses affaires.\nLe chat dort sur le canapé.";
+  if(ensMots)$("ensAidePhrases").textContent="Écrivez en minuscules, une ligne par mot ou par groupe de mots à travailler ensemble (chien, le chat…). Chaque ligne est proposée seule à l'enfant, qui choisit laquelle travailler (20 au maximum). Une virgule sépare aussi deux mots. Pas de majuscule ni de point.";
   else $("ensAidePhrases").innerHTML=AIDE_PH;
   ["maj","pt"].forEach(function(id){var i=$("cat-"+id);if(i&&ensMots)i.checked=false;});majNiveaux();
 }
@@ -953,7 +953,7 @@ $("ensCats").addEventListener("change",majNiveaux);
 function ouvrirEnseignant(){
   if(window.self!==window.top){var a=document.createElement("a");a.href=location.href.split("#")[0].split("?")[0]+"#enseignant"+(estExemple?"":"&"+location.hash.slice(1));a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();return;}
   montrer("enseignant");
-  if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join(dictee.m?", ":"\n");$("ensNote").value=dictee.n||"";
+  if(!estExemple){$("ensTitre").value=dictee.t;$("ensPhrases").value=dictee.p.join("\n");$("ensNote").value=dictee.n||"";
     document.querySelectorAll("#ensCats input").forEach(function(i){i.checked=!dictee.c||dictee.c.indexOf(i.value)>=0;});}
   ensMots=!estExemple&&!!dictee.m;majType();
   $("ensTitre").focus();}
@@ -996,12 +996,12 @@ $("creerLien").onclick=function(){
 };
 // Liste de mots : par paquets de 5 au plus (un mot par ligne, ou séparés par des espaces / virgules)
 function creerLienMots(){
-  // chaque mot ou groupe de mots entre deux virgules (ou sur sa ligne) est proposé seul à l'enfant
+  // chaque ligne (ou ce qui est entre deux virgules) est proposé seul à l'enfant
   var p=[];$("ensPhrases").value.replace(/[’‘]/g,"'").split(/[\n,;]+/).forEach(function(l){
     l=normaliser(l.replace(/[.!?]+/g," "));if(l)p.push(l);});
   if(!p.length){$("ensErreur").textContent="Tapez d'abord les mots de la dictée dans le grand cadre.";$("ensPhrases").focus();return;}
   var trop=p.length>20;if(trop)p=p.slice(0,20);
-  $("ensPhrases").value=p.join(", ");
+  $("ensPhrases").value=p.join("\n");
   var o={t:($("ensTitre").value.trim()||"Mes mots").slice(0,60),p:p,m:1};
   var c=[];document.querySelectorAll("#ensCats input:checked").forEach(function(i){c.push(i.value);});
   if(!c.length){$("ensErreur").textContent="Cochez au moins un type d'erreur à vérifier.";return;}
