@@ -28,13 +28,18 @@
   .go.second{background:#6c757d;font-size:1.05rem}
 
   /* ---------- Partie ---------- */
-  #partie{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:stretch}
-  #gauche{display:flex;flex-direction:column}
-  #display{flex:1;font-size:clamp(2.8rem,8vw,7rem);font-weight:bold;color:#212529;min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border-radius:10px;border:2px dashed #b7d3aa;margin:0 0 12px;padding:16px;word-break:break-word;position:relative}
-  #display.ok{animation:ok .4s} @keyframes ok{0%{background:#d9f2df}100%{background:#fff}}
+  #partie{display:flex;flex-direction:column;gap:10px}
+  #commandes{display:flex;flex-direction:column;align-items:center}
+  /* Le mot à lire, en grand sur le dessin */
+  #display{position:absolute;left:4%;right:4%;top:4%;height:33%;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);border-radius:18px;border:3px dashed #b7d3aa;box-shadow:0 6px 14px rgba(0,0,0,.08);overflow:hidden;transition:opacity .4s}
+  #display.fini{opacity:0;pointer-events:none}
+  #mot{font-weight:bold;color:#212529;white-space:nowrap;line-height:1;font-size:6rem}
+  #mot.arrive{animation:arrive .25s ease-out}
+  @keyframes arrive{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+  #display.ok{animation:ok .4s} @keyframes ok{0%{background:#d9f2df}100%{background:rgba(255,255,255,.9)}}
   #display.ko{animation:ko .4s} @keyframes ko{0%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}100%{transform:translateX(0)}}
-  #barre{position:absolute;left:0;bottom:0;height:6px;background:#2f8f46;border-radius:0 0 8px 8px;width:0}
-  #lecteur{position:absolute;top:8px;left:12px;font-size:1rem;color:#6c757d;font-weight:600}
+  #barre{position:absolute;left:0;bottom:0;height:7px;background:#2f8f46;width:0}
+  #lecteur{position:absolute;top:6px;left:14px;font-size:clamp(.8rem,1.6vw,1rem);color:#6c757d;font-weight:600}
   #msg{min-height:1.5em;font-size:1.05rem;font-weight:600;margin-bottom:8px;color:#495057}
   #msg.warn{color:#d97706}
   .jeu{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:10px}
@@ -44,16 +49,65 @@
   .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .bas button{background:#6c757d;font-size:.95rem;padding:9px 16px}
 
-  #scene{position:relative;aspect-ratio:5/4;background:linear-gradient(#dff1fb 0%,#eef8f0 55%,#cfe8c0 56%,#b9dca8 100%);border-radius:12px;min-height:360px;overflow:hidden;border:2px solid #cfe3c4}
-  #compte{position:absolute;top:10px;left:0;right:0;font-size:1.35rem;font-weight:bold;color:#2f6b3a;z-index:5;text-shadow:0 1px 0 #fff}
-  #nenuphar{position:absolute;left:4%;bottom:5%;width:52%;height:12%;background:#6fae5a;border-radius:50%;box-shadow:inset 0 -6px 0 #5a9548}
-  #grenouille,#princesse{position:absolute;left:6%;bottom:9%;width:46%;transition:transform 1s ease,opacity 1s ease;transform-origin:50% 80%}
-  #princesse{width:27%;left:15.5%;bottom:6%;opacity:0;transform:scale(.3)}
+  #scene{position:relative;aspect-ratio:16/9;background:linear-gradient(#bfe6f7 0%,#e6f6fb 52%,#cfe8c0 53%,#a9d495 100%);border-radius:12px;min-height:300px;overflow:hidden;border:2px solid #cfe3c4}
+  #compte{position:absolute;bottom:3%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:clamp(1rem,2.2vw,1.4rem);font-weight:bold;color:#2f6b3a;z-index:5;background:rgba(255,255,255,.85);border-radius:20px;padding:4px 14px}
+  #compte .presque{color:#c2410c}
+  #decor{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  #decor .nuage{animation:nuage 38s linear infinite}
+  #decor .nuage.n2{animation-duration:55s;animation-delay:-20s}
+  @keyframes nuage{from{transform:translateX(-160px)}to{transform:translateX(620px)}}
+  #decor .rayons{transform-box:fill-box;transform-origin:50% 50%;animation:tourne 30s linear infinite}
+  @keyframes tourne{to{transform:rotate(360deg)}}
+  #decor .roseau{transform-box:fill-box;transform-origin:50% 100%;animation:roseau 4s ease-in-out infinite alternate}
+  #decor .roseau.r2{animation-duration:5.2s;animation-delay:-1.5s} #decor .roseau.r3{animation-duration:3.6s;animation-delay:-2.4s}
+  @keyframes roseau{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+  #decor .rond{transform-box:fill-box;transform-origin:50% 50%;animation:rond 3.6s ease-out infinite;opacity:0}
+  #decor .rond.o2{animation-delay:-1.2s} #decor .rond.o3{animation-delay:-2.4s}
+  @keyframes rond{0%{transform:scale(.2);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+  .papillon{position:absolute;font-size:1.6rem;z-index:2;pointer-events:none;animation:papillon 22s ease-in-out infinite}
+  @keyframes papillon{0%{left:-8%;top:30%}20%{left:20%;top:16%}40%{left:45%;top:28%}60%{left:68%;top:12%}80%{left:90%;top:24%}100%{left:110%;top:18%}}
+  #rocher{position:absolute;right:5%;bottom:4%;width:28%;height:10%;border-radius:50%;background:radial-gradient(ellipse at 40% 30%,#c9c3b6,#9a9284 70%);box-shadow:inset 0 -5px 0 #827a6c}
+  #nenuphar{position:absolute;left:3%;bottom:3%;width:32%;height:13%;background:#6fae5a;border-radius:50%;box-shadow:inset 0 -6px 0 #5a9548}
+  #nenuphar::after{content:"";position:absolute;left:46%;top:-2%;width:9%;height:52%;background:#7cc3e0;clip-path:polygon(0 0,100% 0,50% 100%)}
+  #grenouille,#princesse{position:absolute;left:6%;bottom:8%;width:26%;transition:transform 1s ease,opacity 1s ease;transform-origin:50% 80%}
+  #grenouille{z-index:2} #saut,#respire{position:relative;transform-origin:50% 100%}
+  #respire{animation:respire 2.8s ease-in-out infinite}
+  @keyframes respire{50%{transform:scale(1.012,.985)}}
+  #respire img{display:block;width:100%;height:auto}
+  #parure{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  #saut.hop{animation:hop .5s ease-out}
+  @keyframes hop{0%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:translateY(-9%) scale(.97,1.05)}80%{transform:translateY(0) scale(1.04,.95)}100%{transform:none}}
+  #saut.oups{animation:oups .6s ease-in-out}
+  @keyframes oups{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+  .paupiere{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0)}
+  .cligne .paupiere{animation:cligne .22s ease-in-out}
+  @keyframes cligne{50%{transform:scaleY(1)}}
+  .etape{opacity:0;transform-box:fill-box;transform-origin:50% 50%;transform:scale(.3);transition:opacity .8s,transform .8s cubic-bezier(.3,1.6,.5,1)}
+  .etape.on{opacity:1;transform:scale(1)}
+  #bulle{position:absolute;left:31%;top:41%;max-width:38%;background:#fff;border:3px solid #2f6b3a;border-radius:18px;padding:8px 14px;font-weight:bold;font-size:clamp(.95rem,2.2vw,1.35rem);color:#2f6b3a;z-index:8;pointer-events:none;opacity:0;transform:scale(.4);transform-origin:0 100%;transition:opacity .25s,transform .3s cubic-bezier(.3,1.6,.5,1)}
+  #bulle::after{content:"";position:absolute;left:10px;bottom:-14px;border:8px solid transparent;border-top:12px solid #2f6b3a;border-left-width:4px}
+  #bulle.la{opacity:1;transform:scale(1)}
+  #bulle.magique{border-color:#9c2a7a;color:#9c2a7a;background:#fff4fb}
+  #bulle.magique::after{border-top-color:#9c2a7a}
+  .vol{position:absolute;z-index:30;pointer-events:none;width:30px;height:40px;margin:-20px 0 0 -15px}
+  .vol svg{width:100%;height:100%;display:block}
+  .eclab{position:absolute;width:9px;height:9px;border-radius:50%;background:#d65ee8;z-index:4;pointer-events:none}
+  .ride{position:absolute;height:10px;border:2px solid #fff;border-radius:50%;z-index:4;pointer-events:none}
+  #mot{display:inline-block}
+  #mot.envol{animation:envol .45s ease-out}
+  @keyframes envol{40%{transform:scale(1.15);color:#2f8f46}}
+  .vague{animation:vague 2.2s linear infinite} .vague.v2{animation:vague2 3.4s linear infinite}
+  @keyframes vague{to{transform:translateX(40px)}} @keyframes vague2{from{transform:translate(40px,-3px)}to{transform:translate(0,-3px)}}
+  .bul{animation:monte var(--d,3s) ease-in infinite;animation-delay:var(--r,0s);opacity:0}
+  @keyframes monte{0%{transform:translateY(0);opacity:0}15%{opacity:.75}100%{transform:translateY(var(--h));opacity:0}}
+  .repere{fill:#d4d4d4;stroke:#8a8a8a;stroke-width:1;transition:fill .6s}
+  .repere.on{fill:#ffd23f;stroke:#c98a00;filter:drop-shadow(0 0 3px #ffb800)}
+  #princesse{width:19%;left:9.5%;bottom:5%;opacity:0;transform:scale(.3)}
   #grenouille.boit{animation:boit .5s ease-in-out 4}
   @keyframes boit{50%{transform:translateY(-4%) scale(1.03)}}
   #grenouille.pschitt{opacity:0;transform:scale(.2) rotate(20deg)}
   #princesse.la{opacity:1;transform:scale(1)}
-  #fiole{position:absolute;right:8%;bottom:9%;width:30%;transition:transform 1.4s ease-in-out,opacity .8s;transform-origin:50% 50%;z-index:3}
+  #fiole{position:absolute;right:9.5%;bottom:9%;width:19%;transition:transform 1.4s ease-in-out,opacity .8s;transform-origin:50% 50%;z-index:3}
   #fiole svg{width:100%;height:auto;display:block;overflow:visible}
   #fiole.pleine{animation:brille 1s ease-in-out infinite alternate}
   @keyframes brille{to{filter:drop-shadow(0 0 14px #ff7ad9)}}
@@ -61,13 +115,12 @@
   .goutte svg{width:100%;height:100%}
   .etincelle{position:absolute;font-size:1.8rem;pointer-events:none;z-index:6;animation:etinc 1.6s ease-out forwards}
   @keyframes etinc{0%{opacity:0;transform:translate(0,0) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2)}}
-  #bravo{position:absolute;left:0;right:0;top:12%;z-index:7;font-size:1.5rem;font-weight:bold;color:#9c2a7a;text-shadow:0 2px 0 #fff;padding:0 10px}
+  #bravo{position:absolute;left:4%;right:4%;top:4%;z-index:7;font-size:clamp(1.1rem,2.8vw,1.8rem);background:rgba(255,255,255,.9);border-radius:18px;padding:12px 10px;font-weight:bold;color:#9c2a7a;text-shadow:0 2px 0 #fff;padding:0 10px}
   #bravo small{display:block;font-size:1rem;color:#2f6b3a;margin-top:6px}
 
   #relais{position:absolute;inset:0;background:rgba(243,248,239,.96);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
   #relais .grand{font-size:clamp(1.8rem,5vw,3rem);font-weight:bold;color:#2f6b3a}
   #relais p{font-size:1.15rem;color:#495057;margin:0;max-width:600px}
-  @media (max-width:760px){ #partie{grid-template-columns:1fr} #scene{min-height:300px} }
 </style>
 <script src="tour-de-controle.js"></script></head>
 <body>
@@ -141,8 +194,64 @@
   </div>
 
   <div id="partie" class="cache">
-    <div id="gauche">
+    <div id="scene">
+      <svg id="decor" viewBox="0 0 800 450" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <g transform="translate(70 55)"><g class="rayons" stroke="#ffd65a" stroke-width="5" stroke-linecap="round" opacity=".7"><line x1="0" y1="-52" x2="0" y2="-40"/><line x1="0" y1="52" x2="0" y2="40"/><line x1="-52" y1="0" x2="-40" y2="0"/><line x1="52" y1="0" x2="40" y2="0"/><line x1="-37" y1="-37" x2="-28" y2="-28"/><line x1="37" y1="37" x2="28" y2="28"/><line x1="-37" y1="37" x2="-28" y2="28"/><line x1="37" y1="-37" x2="28" y2="-28"/></g><circle r="30" fill="#ffd65a"/></g>
+        <g class="nuage" fill="#fff" opacity=".9"><ellipse cx="60" cy="70" rx="46" ry="16"/><ellipse cx="45" cy="60" rx="22" ry="18"/><ellipse cx="75" cy="56" rx="26" ry="22"/></g>
+        <g class="nuage n2" fill="#fff" opacity=".8"><ellipse cx="60" cy="130" rx="38" ry="13"/><ellipse cx="48" cy="121" rx="18" ry="15"/><ellipse cx="72" cy="118" rx="21" ry="18"/></g>
+        <path d="M0 245 Q120 205 260 232 T520 226 T800 236 V260 H0Z" fill="#b8dca6"/>
+        <ellipse cx="190" cy="415" rx="300" ry="82" fill="#7cc3e0"/>
+        <ellipse cx="200" cy="405" rx="250" ry="60" fill="#94d0e8"/>
+        <ellipse class="rond" cx="330" cy="400" rx="30" ry="7" fill="none" stroke="#fff" stroke-width="2"/>
+        <ellipse class="rond o2" cx="420" cy="420" rx="26" ry="6" fill="none" stroke="#fff" stroke-width="2"/>
+        <ellipse class="rond o3" cx="60" cy="425" rx="24" ry="6" fill="none" stroke="#fff" stroke-width="2"/>
+        <g class="roseau"><path d="M500 410 Q503 330 498 270" stroke="#4f8a3a" stroke-width="5" fill="none"/><rect x="492" y="270" width="12" height="38" rx="6" fill="#8a5a33"/></g>
+        <g class="roseau r2"><path d="M520 412 Q518 350 524 300" stroke="#5a9548" stroke-width="5" fill="none"/><rect x="518" y="300" width="11" height="32" rx="5" fill="#7a4e2b"/></g>
+        <g class="roseau r3"><path d="M540 414 Q546 360 542 325" stroke="#4f8a3a" stroke-width="4" fill="none"/><path d="M540 414 Q530 380 512 362" stroke="#6fae5a" stroke-width="4" fill="none"/></g>
+        <g class="roseau r2"><path d="M790 330 Q786 270 792 220" stroke="#4f8a3a" stroke-width="5" fill="none"/><rect x="786" y="220" width="12" height="36" rx="6" fill="#8a5a33"/></g>
+        <g fill="#ff8fb8"><circle cx="610" cy="300" r="6"/><circle cx="650" cy="285" r="5"/><circle cx="740" cy="300" r="6"/></g>
+        <g fill="#ffd65a"><circle cx="610" cy="300" r="2.5"/><circle cx="650" cy="285" r="2"/><circle cx="740" cy="300" r="2.5"/></g>
+        <g fill="#fff"><circle cx="580" cy="275" r="4"/><circle cx="700" cy="270" r="4"/></g>
+      </svg>
+      <div class="papillon">🦋</div>
+      <div id="rocher"></div>
+      <div id="compte"></div>
+      <div id="nenuphar"></div>
+      <div id="grenouille"><div id="saut"><div id="respire">
+        <img src="/images/fiole/grenouille.png" alt="La grenouille couronnée">
+        <svg id="parure" viewBox="0 0 426 506" aria-hidden="true">
+          <g id="yeux"><ellipse class="paupiere" cx="130" cy="131" rx="40" ry="39" fill="#6a8b47" stroke="#557a36" stroke-width="3"/><ellipse class="paupiere" cx="297" cy="132" rx="40" ry="39" fill="#6a8b47" stroke="#557a36" stroke-width="3"/></g>
+          <g id="etape1" class="etape"><ellipse cx="104" cy="226" rx="24" ry="15" fill="#ff8fa8" opacity=".75"/><ellipse cx="322" cy="226" rx="24" ry="15" fill="#ff8fa8" opacity=".75"/></g>
+          <g id="etape2" class="etape"><g id="cils" stroke="#1b1b18" stroke-width="5" stroke-linecap="round"></g><path d="M212 76 L224 92 L212 108 L200 92Z" fill="#3f9a52" stroke="#2c6e3a" stroke-width="2"/><path d="M207 88 L212 82 L215 88" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/></g>
+          <g id="etape3" class="etape"><g id="perles"></g><path d="M212 324 C204 314 192 322 200 332 L212 344 L224 332 C232 322 220 314 212 324Z" fill="#ff6fa8" stroke="#c9407a" stroke-width="2"/></g>
+        </svg>
+      </div></div></div>
+      <img id="princesse" src="/images/fiole/princesse.png" alt="La princesse">
+      <div id="bulle"></div>
       <div id="display"><span id="lecteur"></span><span id="mot">Prêt ?</span><div id="barre"></div></div>
+      <div id="fiole">
+        <svg viewBox="0 0 120 170" aria-label="La fiole">
+          <defs>
+            <clipPath id="dedans"><path d="M48 18 H72 V62 C98 72 112 92 112 116 C112 145 89 164 60 164 C31 164 8 145 8 116 C8 92 22 72 48 62 Z"/></clipPath>
+            <linearGradient id="potion" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff8fe0"/><stop offset="1" stop-color="#a23ee0"/></linearGradient>
+          </defs>
+          <g clip-path="url(#dedans)">
+            <rect x="0" y="0" width="120" height="170" fill="#ffffffaa"/>
+            <g id="liquide" style="transform:translateY(164px)">
+              <path class="vague v2" d="" fill="#c76be6" opacity=".55"/>
+              <path class="vague" d="" fill="url(#potion)"/>
+              <g id="bulles" fill="#fff"></g>
+            </g>
+          </g>
+          <path d="M48 18 H72 V62 C98 72 112 92 112 116 C112 145 89 164 60 164 C31 164 8 145 8 116 C8 92 22 72 48 62 Z" fill="none" stroke="#5b6b7a" stroke-width="4"/>
+          <path d="M22 112 C24 96 32 86 42 80" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+          <rect x="42" y="8" width="36" height="12" rx="4" fill="#b07a45" stroke="#7a5230" stroke-width="2"/>
+          <g id="graduations" stroke="#5b6b7a" stroke-width="2" opacity=".35"></g>
+        </svg>
+      </div>
+      <div id="bravo" class="cache"></div>
+    </div>
+    <div id="commandes">
       <div id="msg"></div>
       <div class="jeu" id="boutons">
         <button id="juste">✅ Juste</button>
@@ -152,30 +261,6 @@
         <button id="stop">⚙️ Réglages</button>
       </div>
       <p class="note" id="aideClavier">Clavier : Espace ou → = juste, X ou ← = mot suivant.</p>
-    </div>
-    <div id="scene">
-      <div id="compte"></div>
-      <div id="nenuphar"></div>
-      <img id="grenouille" src="/images/fiole/grenouille.png" alt="La grenouille couronnée">
-      <img id="princesse" src="/images/fiole/princesse.png" alt="La princesse">
-      <div id="fiole">
-        <svg viewBox="0 0 120 170" aria-label="La fiole">
-          <defs>
-            <clipPath id="dedans"><path d="M48 18 H72 V62 C98 72 112 92 112 116 C112 145 89 164 60 164 C31 164 8 145 8 116 C8 92 22 72 48 62 Z"/></clipPath>
-            <linearGradient id="potion" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff8fe0"/><stop offset="1" stop-color="#a23ee0"/></linearGradient>
-          </defs>
-          <g clip-path="url(#dedans)">
-            <rect x="0" y="0" width="120" height="170" fill="#ffffffaa"/>
-            <rect id="liquide" x="0" y="0" width="120" height="170" fill="url(#potion)" style="transform:translateY(164px)"/>
-            <g id="bulles" fill="#fff" opacity=".55"></g>
-          </g>
-          <path d="M48 18 H72 V62 C98 72 112 92 112 116 C112 145 89 164 60 164 C31 164 8 145 8 116 C8 92 22 72 48 62 Z" fill="none" stroke="#5b6b7a" stroke-width="4"/>
-          <path d="M22 112 C24 96 32 86 42 80" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
-          <rect x="42" y="8" width="36" height="12" rx="4" fill="#b07a45" stroke="#7a5230" stroke-width="2"/>
-          <g id="graduations" stroke="#5b6b7a" stroke-width="2" opacity=".35"></g>
-        </svg>
-      </div>
-      <div id="bravo" class="cache"></div>
     </div>
     <div id="relais" class="cache">
       <div class="grand">👋 Au suivant !</div>
@@ -245,23 +330,54 @@
   marquer();
 
   // ---------- Graduations et bulles de la fiole ----------
+  const NS="http://www.w3.org/2000/svg";
+  function el(nom, at, parent){ const e=document.createElementNS(NS,nom); for (const k in at) e.setAttribute(k,at[k]); if (parent) parent.appendChild(e); return e; }
+  function etoile(cx,cy,r){ let d=""; for (let k=0;k<10;k++){ const a=-Math.PI/2+k*Math.PI/5, rr=k%2?r*.45:r; d+=(k?"L":"M")+(cx+rr*Math.cos(a)).toFixed(1)+" "+(cy+rr*Math.sin(a)).toFixed(1); } return d+"Z"; }
   (function(){
-    const g=$("graduations"); for (let k=1;k<5;k++){ const y=164-k*29; const l=document.createElementNS("http://www.w3.org/2000/svg","line"); l.setAttribute("x1",k%2?92:96); l.setAttribute("x2",106); l.setAttribute("y1",y); l.setAttribute("y2",y); g.appendChild(l); }
+    // repères 1/4, 1/2, 3/4 : une étoile s'allume à chaque étape de la transformation
+    const g=$("graduations"), sv=g.ownerSVGElement;
+    [[1,128,97,109,121],[2,92,90,102,114],[3,56,62,70,82]].forEach(([k,y,x1,x2,xs])=>{
+      el("line",{x1,x2,y1:y,y2:y},g);
+      el("path",{d:etoile(xs,y,7),class:"repere",id:"repere"+k},sv);
+    });
+    // surface ondulée de la potion
+    let d="M-80 0 Q-70 -4 -60 0"; for (let x=-60;x<200;x+=20) d+=" T"+(x+20)+" 0"; d+=" V220 H-80Z";
+    document.querySelectorAll(".vague").forEach(v=>v.setAttribute("d",d));
+    // cils et collier de perles de la grenouille
+    const c=$("cils");
+    [[130,131,[115,135,155]],[297,132,[65,45,25]]].forEach(([cx,cy,angs])=>angs.forEach(a=>{
+      const r=a*Math.PI/180, x1=cx+39*Math.cos(r), y1=cy-39*Math.sin(r), x2=cx+55*Math.cos(r), y2=cy-55*Math.sin(r);
+      el("line",{x1:x1.toFixed(1),y1:y1.toFixed(1),x2:x2.toFixed(1),y2:y2.toFixed(1)},c);
+    }));
+    const pe=$("perles");
+    for (let k=0;k<=12;k++){ const t=k/12, x=(1-t)*(1-t)*150+2*t*(1-t)*212+t*t*274, y=(1-t)*(1-t)*290+2*t*(1-t)*332+t*t*290;
+      el("circle",{cx:x.toFixed(1),cy:y.toFixed(1),r:7,fill:"#fffaf0",stroke:"#b9ae9a","stroke-width":1.5},pe); }
   })();
   const HAUT = 20, BAS = 164;          // hauteur utile de la fiole (en unités du dessin)
   function niveau(frac, anime){
     const y = BAS - (BAS-HAUT)*Math.max(0,Math.min(1,frac));
     const r=$("liquide"); r.style.transition = anime ? "transform .6s ease" : "none";
     r.style.transform = "translateY("+y+"px)";
-    // quelques bulles sous la surface
-    const b=$("bulles"); b.innerHTML="";
-    if (frac>0.04) for (let k=0;k<Math.min(8,Math.ceil(frac*10));k++){
-      const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-      c.setAttribute("cx", 22+((k*37)%76)); c.setAttribute("cy", Math.min(BAS-6, y+8+((k*23)%Math.max(6,BAS-y-10))));
-      c.setAttribute("r", 2+(k%3)); b.appendChild(c);
+    // des bulles qui montent dans la potion
+    const b=$("bulles"), prof=BAS-y; b.innerHTML="";
+    if (prof>14) for (let k=0;k<Math.min(9,3+Math.ceil(frac*8));k++){
+      const c=el("circle",{cx:24+((k*37)%72), cy:prof-3, r:1.5+(k%3), class:"bul"},b);
+      c.style.setProperty("--h",(-(prof-6))+"px"); c.style.setProperty("--d",(2.2+(k%4)*.6)+"s"); c.style.setProperty("--r",(-(k*.7))+"s");
     }
   }
-  function compte(){ $("compte").textContent = "💧 "+gouttes+" / "+objectif+" gouttes"; }
+  function compte(){
+    const reste=objectif-gouttes;
+    $("compte").innerHTML = "💧 "+gouttes+" / "+objectif+" gouttes"+(reste>0&&reste<=5 ? ' · <span class="presque">plus que '+reste+' !</span>' : "");
+  }
+  // Le mot tient toujours sur une seule ligne, le plus grand possible
+  function ajuste(){
+    const m=$("mot"), d=$("display");
+    const max=Math.min(d.clientHeight*0.62, 160);
+    m.style.fontSize=max+"px";
+    const w=m.scrollWidth, dispo=d.clientWidth*0.9;
+    if (w>dispo) m.style.fontSize=Math.max(18, max*dispo/w)+"px";
+  }
+  window.addEventListener("resize", ()=>{ if (!$("partie").classList.contains("cache")) ajuste(); });
 
   // ---------- Son ----------
   let ac=null;
@@ -275,11 +391,11 @@
       o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.25);
     }catch(e){}
   }
-  function magie(){
+  function magie(court){
     if (!$("son").checked) return;
     try{
       ac = ac || new (window.AudioContext||window.webkitAudioContext)();
-      [523,659,784,1047,1319].forEach((f,k)=>{
+      (court?[784,1047,1319]:[523,659,784,1047,1319]).forEach((f,k)=>{
         const o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime+k*.12;
         o.type="triangle"; o.frequency.value=f; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.25,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.6);
         o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.65);
@@ -309,6 +425,7 @@
     $("aideClavier").style.display = mode==="micro" ? "none" : "";
     i=0; lus=0; bons=0; lecteur=1; finie=false; actif=true;
     niveau(gouttes/objectif,false); compte();
+    etapeVue=0; verifierEtape(false);
     if (+$("relaisN").value>0) ouvrirRelais(true); else lancer();
   }
   function lancer(){
@@ -327,7 +444,8 @@
     if (i>=mots.length){ i=0; if ($("melange").checked) melanger(); }
     const n=+$("relaisN").value;
     $("lecteur").textContent = n>0 ? "Élève "+lecteur+" · mot "+(lus%n+1)+" / "+n : "";
-    $("mot").textContent = mots[i];
+    const m=$("mot"); m.style.color=""; m.textContent = mots[i]; ajuste();
+    m.classList.remove("arrive"); void m.offsetWidth; m.classList.add("arrive");
     depuis = resultatsVus; texteEnCours = "";
     const s = parseFloat($("temps").value), barre=$("barre");
     barre.style.transition="none"; barre.style.width="0";
@@ -349,12 +467,13 @@
     if (!actif) return;
     const d=$("display"); d.classList.remove("ok","ko"); void d.offsetWidth; d.classList.add("ok");
     gouttes++; bons++; garder();
-    goutte();
+    goutte($("mot").getBoundingClientRect(), $("mot").textContent, parseFloat($("mot").style.fontSize)||60);
     apres();
   }
   function passer(){
     if (!actif) return;
     const d=$("display"); d.classList.remove("ok","ko"); void d.offsetWidth; d.classList.add("ko");
+    reagir("oups"); if (Math.random()<.4) parle(["Pas grave !","Au suivant !","On continue !"][Math.floor(Math.random()*3)]);
     apres();
   }
   $("juste").onclick = juste;
@@ -383,25 +502,84 @@
     arreterMicro();
   }
 
-  // Une goutte tombe du haut de la scène dans le goulot de la fiole
-  function goutte(){
+  const GOUTTE='<svg viewBox="0 0 22 30"><path d="M11 1 C11 1 2 13 2 19 A9 9 0 0 0 20 19 C20 13 11 1 11 1Z" fill="#d65ee8" stroke="#8a2bb8" stroke-width="1.5"/><ellipse cx="8" cy="18" rx="2.5" ry="4" fill="#fff" opacity=".6"/></svg>';
+  // Le mot lu rapetisse, devient une goutte et vole jusque dans la fiole
+  function goutte(rm, texte, taille){
     plop();
-    const sc=$("scene"), f=$("fiole").getBoundingClientRect(), s=sc.getBoundingClientRect();
-    const x = f.left - s.left + f.width*0.5 - 11, yFin = f.top - s.top + f.height*0.12;
-    const g=document.createElement("div"); g.className="goutte";
-    g.innerHTML='<svg viewBox="0 0 22 30"><path d="M11 1 C11 1 2 13 2 19 A9 9 0 0 0 20 19 C20 13 11 1 11 1Z" fill="#d65ee8" stroke="#8a2bb8" stroke-width="1.5"/><ellipse cx="8" cy="18" rx="2.5" ry="4" fill="#fff" opacity=".6"/></svg>';
-    g.style.left=x+"px"; g.style.top="-34px";
-    sc.appendChild(g);
-    const a = g.animate([{transform:"translateY(0)"},{transform:"translateY("+(yFin+34)+"px)",offset:.85},{transform:"translateY("+(yFin+44)+"px) scale(1.3,.4)",opacity:0}],{duration:650,easing:"ease-in"});
-    a.onfinish = ()=>{ g.remove(); niveau(gouttes/objectif,true); compte(); };
-    setTimeout(()=>{ if (g.isConnected){ g.remove(); niveau(gouttes/objectif,true); compte(); } }, 1200);
+    const jeu=$("fiole-jeu"), J=jeu.getBoundingClientRect(), f=$("fiole").getBoundingClientRect();
+    const x0=rm.left-J.left+rm.width/2, y0=rm.top-J.top+rm.height/2;
+    const x1=f.left-J.left+f.width*0.5, y1=f.top-J.top+f.height*0.08;
+    const cx=(x0+x1)/2, cy=Math.min(y0,y1)-Math.max(40,Math.abs(x1-x0)*0.25);
+    const pts=[]; for (let k=0;k<=14;k++){ const t=k/14; pts.push([(1-t)*(1-t)*x0+2*t*(1-t)*cx+t*t*x1, (1-t)*(1-t)*y0+2*t*(1-t)*cy+t*t*y1]); }
+    const D=780;
+    // le mot qui rapetisse
+    const w=document.createElement("div"); w.className="vol"; w.style.cssText="width:auto;height:auto;margin:0;white-space:nowrap;font-weight:bold;color:#2f8f46;line-height:1;font-size:"+taille+"px";
+    w.textContent=texte; jeu.appendChild(w);
+    const ww=w.offsetWidth, wh=w.offsetHeight;
+    w.animate(pts.map((p,k)=>({transform:"translate("+(p[0]-ww/2)+"px,"+(p[1]-wh/2)+"px) scale("+(1-0.92*k/14)+")", opacity:k<8?1:Math.max(0,1-(k-8)/4)})),{duration:D,easing:"ease-in"}).onfinish=()=>w.remove();
+    // la goutte (et sa traînée)
+    [1,.45,.25].forEach((op,n)=>{
+      const g=document.createElement("div"); g.className="vol"; g.innerHTML=GOUTTE; g.style.opacity="0"; jeu.appendChild(g);
+      const s=1-n*.25;
+      const a=g.animate(pts.map((p,k)=>({transform:"translate("+p[0]+"px,"+p[1]+"px) scale("+s*(.4+.6*k/14)+")", opacity:k<6?0:op})),{duration:D,delay:n*50,easing:"ease-in"});
+      a.onfinish=()=>{ g.remove(); if (n===0) arrivee(); };
+    });
+  }
+  function arrivee(){
+    niveau(gouttes/objectif,true); compte();
+    eclabousse();
+    reagir("hop");
+    if (!verifierEtape(true) && Math.random()<.3) parle(["Miam !","Bravo !","Encore !","Super !","Ça pétille !"][Math.floor(Math.random()*5)]);
+  }
+  // petites éclaboussures à la surface de la potion
+  function eclabousse(){
+    const sc=$("scene"), S=sc.getBoundingClientRect(), f=$("fiole").getBoundingClientRect();
+    const y=BAS-(BAS-HAUT)*Math.min(1,gouttes/objectif), py=f.top-S.top+y*f.height/170, px=f.left-S.left+f.width/2;
+    for (let k=0;k<6;k++){
+      const e=document.createElement("div"); e.className="eclab"; e.style.left=(px-4)+"px"; e.style.top=(py-4)+"px"; sc.appendChild(e);
+      const dx=(k-2.5)*9, h=14+Math.random()*16;
+      e.animate([{transform:"translate(0,0)"},{transform:"translate("+dx*.6+"px,"+(-h)+"px)",offset:.45},{transform:"translate("+dx+"px,4px)",opacity:0}],{duration:520,easing:"ease-out"}).onfinish=()=>e.remove();
+    }
+    const r=document.createElement("div"); r.className="ride"; const lw=f.width*.4; r.style.width=lw+"px"; r.style.left=(px-lw/2)+"px"; r.style.top=(py-5)+"px"; sc.appendChild(r);
+    r.animate([{transform:"scale(.3)",opacity:.9},{transform:"scale(1.2)",opacity:0}],{duration:600}).onfinish=()=>r.remove();
+  }
+
+  // ---------- La grenouille est vivante ----------
+  function reagir(c){ const s=$("saut"); s.classList.remove("hop","oups"); void s.offsetWidth; s.classList.add(c); }
+  let tBulle=null;
+  function parle(t, magique, duree){
+    const b=$("bulle"); b.textContent=t; b.classList.toggle("magique",!!magique); b.classList.add("la");
+    clearTimeout(tBulle); tBulle=setTimeout(()=>b.classList.remove("la"), duree||1400);
+  }
+  (function cligner(){
+    const y=$("yeux"); y.classList.remove("cligne"); void y.getBBox; setTimeout(()=>y.classList.add("cligne"),20);
+    setTimeout(cligner, 2200+Math.random()*3500);
+  })();
+
+  // ---------- La transformation se prépare par étapes ----------
+  const ETAPES=["","✨ La magie commence : des joues roses !","✨ De longs cils et un joyau !","✨ Un collier de perles ! Encore un effort !"];
+  let etapeVue=0;
+  function verifierEtape(fete){
+    const k=Math.min(3,Math.floor(gouttes/objectif*4));
+    if (gouttes>=objectif) return true;
+    for (let n=1;n<=3;n++){ $("etape"+n).classList.toggle("on",n<=k); $("repere"+n).classList.toggle("on",n<=k); }
+    if (fete && k>etapeVue){
+      magie(true);
+      const S=$("scene").getBoundingClientRect(), g=$("grenouille").getBoundingClientRect();
+      etincelles(g.left-S.left+g.width/2, g.top-S.top+g.height*.4, 12);
+      parle(ETAPES[k], true, 2800);
+      etapeVue=k; return true;
+    }
+    etapeVue=k; return false;
   }
 
   function reinitScene(){
     const f=$("fiole"); f.style.transition="none"; f.style.transform=""; f.style.opacity="1"; f.classList.remove("pleine");
     $("grenouille").className=""; $("princesse").className="";
-    $("bravo").classList.add("cache");
-    document.querySelectorAll(".etincelle,.goutte").forEach(e=>e.remove());
+    $("bravo").classList.add("cache"); $("display").classList.remove("fini");
+    $("bulle").classList.remove("la"); $("saut").className="";
+    for (let n=1;n<=3;n++){ $("etape"+n).classList.remove("on"); $("repere"+n).classList.remove("on"); }
+    document.querySelectorAll(".etincelle,.goutte,.vol,.eclab,.ride").forEach(e=>e.remove());
     void f.offsetWidth; f.style.transition="";
   }
 
@@ -425,7 +603,9 @@
     store.set("fiole-encours","null");
     $("boutons").classList.add("cache"); msg(""); $("aideClavier").style.display="none";
     $("lecteur").textContent="";
-    $("mot").innerHTML='<span style="font-size:.45em;color:#9c2a7a">🎉 La fiole est pleine ! 🎉</span>';
+    $("bulle").classList.remove("la");
+    $("mot").textContent="🎉 La fiole est pleine ! 🎉"; $("mot").style.color="#9c2a7a"; ajuste();
+    setTimeout(()=>$("display").classList.add("fini"), 1600);
     const sc=$("scene").getBoundingClientRect();
     setTimeout(()=>{   // laisser la dernière goutte tomber
       niveau(1,true); compte();
@@ -450,7 +630,8 @@
             $("grenouille").classList.remove("boit"); $("grenouille").classList.add("pschitt");
             setTimeout(()=>{
               $("princesse").classList.add("la"); etincelles(cx, cy-20, 14);
-              $("mot").innerHTML='<span style="font-size:.32em;line-height:1.35;display:block;color:#9c2a7a">✨ Merci à toute la classe ! ✨<br><span style="font-size:.6em;color:#2f6b3a;font-weight:600">Grâce à vos '+objectif+' mots bien lus,<br>la grenouille est redevenue princesse.</span><br><button class="go" id="rejouer">🔄 Nouvelle fiole</button></span>';
+              $("bravo").innerHTML='✨ Merci à toute la classe ! ✨<small>Grâce à vos '+objectif+' mots bien lus, la grenouille est redevenue princesse.</small><button class="go" id="rejouer" style="margin-top:8px">🔄 Nouvelle fiole</button>';
+              $("bravo").classList.remove("cache");
               $("rejouer").onclick=()=>demarrer(false);
               try{ const u=new SpeechSynthesisUtterance("Merci à toute la classe ! Je suis redevenue princesse !"); u.lang="fr-FR"; u.rate=.9; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){}
             }, 900);
