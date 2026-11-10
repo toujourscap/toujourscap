@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les jumeaux des doubles</title><link rel="canonical" href="https://toujourscap.com/post/les-jumeaux-des-doubles/"><meta name="description" content="Des jumeaux ont toujours la même chose ! Chaque jumeau a le même nombre de pommes : combien en tout ? Un jeu pour mémoriser les doubles de 1 à 10 (et les…">
+<!-- Images Canva (style papier découpé / feutrine) : décor jardin MAHagvFl3iw ; enfants MAHagt5h4ik (fille couettes), MAHagm_Vj10 (garçon roux), MAHagoRuzXQ (fille bandeau), MAHagplxfGc (garçon lunettes) ; pomme MAHaguH6gbs, fraise MAHagqEZRrQ. Le jumeau est la même image retournée. -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #jum-jeu{background:#f4fbef;border:2px solid #bfe0a8;border-radius:12px;padding:16px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#2b7a3d}
+  .intro{margin:0 auto 12px;max-width:720px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e3f3d7;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.98)}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#d3f9d8}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
+  .cache{display:none!important}
+  .go{background:#2f9e44;font-size:1.3rem;padding:14px 30px;margin:4px}
+  .go.second{background:#6c757d;font-size:1.05rem}
+
+  #scene{position:relative;border-radius:12px;overflow:hidden;border:2px solid #bfe0a8;background:#8fd0f0}
+  #scene svg{display:block;width:100%;height:auto}
+  #haut{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:3}
+  .pastille{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  #question{font-size:clamp(1.15rem,2.6vw,1.6rem);font-weight:bold;color:#212529;margin:12px 0 4px;min-height:1.6em}
+  #egalite{font-size:clamp(1.6rem,4.5vw,2.6rem);font-weight:bold;color:#2b7a3d;margin:2px 0 8px;min-height:1.3em;letter-spacing:1px}
+  #egalite .trou{display:inline-block;min-width:1.4em;border-bottom:4px solid #2b7a3d;color:#1d6fd8}
+  #pave{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;max-width:720px;margin:0 auto 10px}
+  #pave button{background:#fff;color:#1d3557;border:3px solid #2f9e44;font-size:1.5rem;height:58px;padding:0;box-shadow:0 3px 0 #a9dcb3}
+  #pave button:disabled{opacity:.45;cursor:default}
+  #pave button.bon{background:#2f9e44;color:#fff;opacity:1}
+  #pave button.mauvais{background:#e03131;border-color:#e03131;color:#fff;opacity:1}
+  #msg{min-height:1.5em;font-size:1.1rem;font-weight:600;margin-bottom:8px;color:#495057}
+  #msg.ok{color:#2b8a3e} #msg.ko{color:#c92a2a}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .bas button{background:#6c757d;font-size:.95rem;padding:9px 16px}
+  #continuer{background:#1d6fd8}
+  #fin .bas .go{background:#2f9e44;font-size:1.2rem;padding:12px 24px} #fin .bas .go.second{background:#6c757d}
+  #fin{position:absolute;inset:0;background:rgba(244,251,239,.96);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px}
+  #fin .grand{font-size:clamp(1.8rem,5vw,3rem);font-weight:bold;color:#2b7a3d}
+  #fin p{font-size:1.2rem;color:#495057;margin:0}
+  .confetti{position:absolute;top:-20px;width:10px;height:14px;z-index:11;pointer-events:none;animation:tombe linear forwards}
+  @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+  .secoue{animation:secoue .45s}
+  @keyframes secoue{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .saute{animation:saute .5s ease-out 2}
+  @keyframes saute{40%{transform:translateY(-26px)}}
+  .objet{transition:transform .45s ease-in-out, opacity .3s}
+  @media (max-width:600px){ #pave{gap:4px} #pave button{height:44px;font-size:1.15rem} }
+</style>
+<script src="tour-de-controle.js"></script></head>
+<body>
+<div id="jum-jeu">
+
+  <div id="reglages">
+    <h1>👯 Les jumeaux des doubles</h1>
+    <p class="intro">Des jumeaux ont toujours la même chose ! Chaque jumeau a le même nombre de pommes : combien en ont-ils en tout ? Un jeu pour mémoriser les doubles de 1 à 10.</p>
+
+    <div class="groupe">
+      <h2>1. Choisis le niveau</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="1" aria-pressed="true">👀 Niveau 1<small>Je vois les fruits des deux jumeaux</small></button>
+        <button data-v="2" aria-pressed="false">🎁 Niveau 2<small>Le 2ᵉ jumeau cache ses fruits dans une boîte</small></button>
+        <button data-v="3" aria-pressed="false">🪧 Niveau 3<small>Les jumeaux montrent seulement une pancarte</small></button>
+        <button data-v="4" aria-pressed="false">🧺 Niveau 4<small>Les moitiés : les jumeaux se partagent un panier</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Quels doubles ?</h2>
+      <div class="choix" id="choixMax">
+        <button data-v="5" aria-pressed="false">De 1 à 5<small>jusqu'à 5 + 5</small></button>
+        <button data-v="10" aria-pressed="true">De 1 à 10<small>jusqu'à 10 + 10</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Combien de questions ?</h2>
+      <div class="choix" id="choixTours">
+        <button data-v="5" aria-pressed="false">5</button>
+        <button data-v="10" aria-pressed="true">10</button>
+        <button data-v="15" aria-pressed="false">15</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>4. Options</h2>
+      <label class="opt"><input type="checkbox" id="optEgalite" checked> Afficher l'égalité (4 + 4 = ?)</label>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur lit la question</label>
+    </div>
+
+    <button class="go" id="jouer">👯 Jouer</button>
+  </div>
+
+  <div id="partie" class="cache">
+    <div id="scene">
+      <div id="haut">
+        <span class="pastille" id="tour">Question 1 / 10</span>
+        <span class="pastille" id="etoiles"></span>
+      </div>
+      <svg id="dessin" viewBox="0 0 1000 562" role="img" aria-label="Deux jumeaux dans un jardin"></svg>
+    </div>
+    <div id="question"></div>
+    <div id="egalite"></div>
+    <div id="pave"></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache">Continuer ▶</button>
+      <button id="ecouter">🔊 Réécouter</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <div class="grand">🎉 Bravo !</div>
+    <p id="finScore"></p>
+    <p id="finEtoiles" style="font-size:1.6rem"></p>
+    <div class="bas">
+      <button class="go" id="rejouer">🔁 Rejouer</button>
+      <button class="go second" id="changer">⚙️ Changer les réglages</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+  const IMG = "/images/jumeaux/";
+  const ENFANTS = [ {f:"enfant1",w:160,fille:true}, {f:"enfant2",w:140,fille:false}, {f:"enfant3",w:149,fille:true}, {f:"enfant4",w:127,fille:false} ];
+  const FRUITS = [ {f:"pomme", nom:"pomme", w:109}, {f:"fraise", nom:"fraise", w:92} ];
+  const X = [262, 738], H_ENF = 232, Y_ENF = 168, Y_BOITE = 426, CASE = 50;
+  const R_ = { niveau:1, max:10, tours:10 };
+  let S = null;
+  let jeton = 0;   // change à chaque question : les animations d'une ancienne question s'arrêtent
+  const vieux = j => j !== jeton;
+
+  [...ENFANTS.map(e=>e.f), ...FRUITS.map(f=>f.f)].forEach(f => { const im = new Image(); im.src = IMG + f + ".png"; });
+
+  /* ---------- Réglages ---------- */
+  const CHOIX = { choixNiveau:"niveau", choixMax:"max", choixTours:"tours" };
+  function marquer(id, v){ $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.v === v)); }
+  for (const id in CHOIX) $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => { R_[CHOIX[id]] = +b.dataset.v; marquer(id, +b.dataset.v); }));
+  try{
+    const m = JSON.parse(localStorage.getItem("jumeaux-reglages") || "null");
+    if (m){
+      for (const id in CHOIX){ const k = CHOIX[id]; if (m[k]){ R_[k] = m[k]; marquer(id, m[k]); } }
+      ["optEgalite","optVoix"].forEach(k => { if (k in m) $(k).checked = m[k]; });
+    }
+  }catch(e){}
+
+  /* ---------- Voix et sons ---------- */
+  function dire(t){
+    if (!$("optVoix").checked) return;
+    try{ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = .92; speechSynthesis.speak(u); }catch(e){}
+  }
+  let AC = null;
+  function bip(f, d, type){
+    try{
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type || "sine"; o.frequency.value = f; o.connect(g); g.connect(AC.destination);
+      g.gain.setValueAtTime(.15, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d);
+      o.start(); o.stop(AC.currentTime + d);
+    }catch(e){}
+  }
+  const attendre = ms => new Promise(r => setTimeout(r, ms));
+
+  /* ---------- Dessin ---------- */
+  function el(tag, attrs, parent){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  const svg = $("dessin");
+  let G = {};
+
+  // centre d'une case de la boîte du jumeau t (0 ou 1), case i (0 à 9)
+  function caseXY(t, i){ return { x: X[t] - 2*CASE + (i % 5)*CASE, y: Y_BOITE + 30 + Math.floor(i/5)*CASE }; }
+  // position dans le panier (niveau 4), objet i sur 2n
+  function panierXY(i, total){
+    const col = 4, l = Math.ceil(total/col), r = Math.floor(i/col), c = i % col;
+    const nb = Math.min(col, total - r*col);
+    return { x: 500 + (c - (nb-1)/2)*44, y: 345 - (l-1-r)*40 };
+  }
+
+  function dessinerScene(){
+    svg.innerHTML = "";
+    el("image", { href:IMG+"jardin.jpg", x:0, y:0, width:1000, height:562, preserveAspectRatio:"xMidYMid slice" }, svg);
+    const e = S.enfant, w = H_ENF * e.w / 300;
+    G.enfants = [0,1].map(t => {
+      const g = el("g", {}, svg);
+      g.style.transformBox = "fill-box"; g.style.transformOrigin = "center bottom";
+      const inner = el("g", { transform: t ? `translate(${2*X[1]} 0) scale(-1 1)` : "" }, g);
+      el("ellipse", { cx:X[t], cy:Y_ENF+H_ENF-4, rx:w*.42, ry:8, fill:"#000", opacity:.13 }, inner);
+      el("image", { href:IMG+e.f+".png", x:X[t]-w/2, y:Y_ENF, width:w, height:H_ENF }, inner);
+      return g;
+    });
+    // signe + entre les deux boîtes
+    G.plus = el("text", { x:500, y:Y_BOITE+70, "text-anchor":"middle", "font-size":64, "font-weight":"bold", fill:"#fff", stroke:"#2b7a3d", "stroke-width":3 }, svg);
+    G.plus.textContent = "+";
+    G.boites = [0,1].map(t => {
+      const g = el("g", {}, svg);
+      el("rect", { x:X[t]-2.5*CASE-8, y:Y_BOITE-2, width:5*CASE+16, height:2*CASE+14, rx:14, fill:"#c58b52", stroke:"#8a5a2b", "stroke-width":3 }, g);
+      for (let i=0;i<10;i++){ const p = caseXY(t,i); el("rect", { x:p.x-CASE/2+3, y:p.y-CASE/2+3, width:CASE-6, height:CASE-6, rx:8, fill:"#fff7ec", opacity:.85 }, g); }
+      return g;
+    });
+    // pancartes (niveau 3)
+    G.pancartes = [0,1].map(t => {
+      const g = el("g", { opacity:0 }, svg);
+      el("rect", { x:X[t]-6, y:Y_BOITE+60, width:12, height:70, fill:"#8a5a2b" }, g);
+      el("rect", { x:X[t]-70, y:Y_BOITE-6, width:140, height:86, rx:14, fill:"#fff7ec", stroke:"#c58b52", "stroke-width":6 }, g);
+      const tx = el("text", { x:X[t], y:Y_BOITE+60, "text-anchor":"middle", "font-size":64, "font-weight":"bold", fill:"#2b7a3d" }, g);
+      return { g, tx };
+    });
+    // couvercle (niveau 2)
+    G.couvercle = el("g", { opacity:0 }, svg);
+    G.couvercle.style.transition = "transform .6s, opacity .6s";
+    el("rect", { x:X[1]-2.5*CASE-12, y:Y_BOITE-8, width:5*CASE+24, height:2*CASE+24, rx:14, fill:"#e8590c", stroke:"#a63c06", "stroke-width":3 }, G.couvercle);
+    el("rect", { x:X[1]-12, y:Y_BOITE-8, width:24, height:2*CASE+24, fill:"#ffd43b" }, G.couvercle);
+    el("text", { x:X[1]+70, y:Y_BOITE+80, "text-anchor":"middle", "font-size":72, "font-weight":"bold", fill:"#fff" }, G.couvercle).textContent = "?";
+    // panier (niveau 4)
+    G.panier = el("g", { opacity:0 }, svg);
+    G.panierTxt = el("text", { x:500, y:150, "text-anchor":"middle", "font-size":34, "font-weight":"bold", fill:"#2b7a3d", stroke:"#fff", "stroke-width":6, "paint-order":"stroke" }, G.panier);
+    el("path", { d:"M405,370 L595,370 L578,412 L422,412 Z", fill:"#c58b52", stroke:"#8a5a2b", "stroke-width":3 }, G.panier);
+    G.objets = el("g", {}, svg);
+    G.numeros = el("g", {}, svg);
+  }
+
+  function poserObjet(p){
+    const fr = S.fruit, h = 42, w = h * fr.w / 120;
+    const g = el("g", { class:"objet" }, G.objets);
+    el("image", { href:IMG+fr.f+".png", x:-w/2, y:-h/2, width:w, height:h }, g);
+    g.style.transform = `translate(${p.x}px, ${p.y}px)`;
+    return g;
+  }
+  function numeroter(p, k, coul){
+    const g = el("g", {}, G.numeros);
+    el("circle", { cx:p.x+14, cy:p.y-14, r:12, fill:"#fff", stroke:coul, "stroke-width":3 }, g);
+    el("text", { x:p.x+14, y:p.y-8.5, "text-anchor":"middle", "font-size":15, "font-weight":"bold", fill:coul }, g).textContent = k;
+  }
+
+  /* ---------- Partie ---------- */
+  function tirerN(){
+    let n, essais = 0;
+    const min = Math.min(...[...Array(R_.max).keys()].map(k => S.deja[k+1] || 0));
+    do { n = 1 + Math.floor(Math.random()*R_.max); essais++; }
+    while ((n === S.dernier || (S.deja[n] || 0) > min) && essais < 60);
+    S.dernier = n; S.deja[n] = (S.deja[n] || 0) + 1;
+    return n;
+  }
+
+  function demarrer(){
+    jeton++;
+    try{ localStorage.setItem("jumeaux-reglages", JSON.stringify({ niveau:R_.niveau, max:R_.max, tours:R_.tours, optEgalite:$("optEgalite").checked, optVoix:$("optVoix").checked })); }catch(e){}
+    S = { tour:0, score:0, dernier:-1, deja:{}, n:0, attente:false, saisie:"", minuteur:null, enfantPrec:-1 };
+    $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+    $("ecouter").classList.toggle("cache", !$("optVoix").checked);
+    const p = $("pave"); p.innerHTML = "";
+    const haut = R_.niveau === 4 ? R_.max : 2*R_.max;
+    p.style.gridTemplateColumns = `repeat(${Math.min(10, haut)},1fr)`;
+    for (let v=1; v<=haut; v++){
+      const b = document.createElement("button"); b.textContent = v; b.dataset.v = v;
+      b.addEventListener("click", () => repondre(v, b)); p.appendChild(b);
+    }
+    tourSuivant();
+  }
+
+  function majHaut(){
+    $("tour").textContent = `Question ${Math.min(S.tour, R_.tours) || 1} / ${R_.tours}`;
+    $("etoiles").textContent = S.score > 8 ? "⭐ × " + S.score : S.score ? "⭐".repeat(S.score) : "⭐ 0";
+  }
+
+  const pl = (k, mot) => k > 1 ? mot + "s" : mot;
+  function texteQuestion(){
+    const n = S.n, f = S.fruit.nom, j = S.enfant.fille ? "jumelles" : "jumeaux", J = S.enfant.fille ? "jumelle" : "jumeau";
+    if (R_.niveau === 4) return `Les ${j} se partagent ${2*n} ${pl(2*n,f)}. Combien en aura chaque ${J} ?`;
+    if (R_.niveau === 3) return `Le double de ${n}, c'est combien ?`;
+    if (R_.niveau === 2) return `Chaque ${J} a ${n} ${pl(n,f)}. Combien de ${f}s en tout ?`;
+    return `Chaque ${J} a ${n} ${pl(n,f)}. Combien de ${f}s en tout ?`;
+  }
+  function egalite(rep){
+    const n = S.n, r = rep == null ? `<span class="trou">?</span>` : `<span class="trou">${rep}</span>`;
+    if (R_.niveau === 4) return rep == null ? `<span class="trou">?</span> + <span class="trou">?</span> = ${2*n}` : `${r} + ${r} = ${2*n}`;
+    return `${n} + ${n} = ${r}`;
+  }
+
+  async function tourSuivant(){
+    jeton++;
+    S.tour++;
+    if (S.tour > R_.tours) return finir();
+    majHaut();
+    let k; do { k = Math.floor(Math.random()*ENFANTS.length); } while (k === S.enfantPrec);
+    S.enfantPrec = k; S.enfant = ENFANTS[k];
+    S.fruit = FRUITS[Math.floor(Math.random()*FRUITS.length)];
+    S.n = tirerN();
+    dessinerScene();
+    const n = S.n, niv = R_.niveau;
+    S.obj = [[],[]];
+    if (niv === 1 || niv === 2){
+      for (let t=0;t<2;t++) for (let i=0;i<n;i++) S.obj[t].push(poserObjet(caseXY(t,i)));
+    }
+    if (niv === 2){ S.obj[1].forEach(o => o.style.opacity = 0); G.couvercle.setAttribute("opacity", 1); }
+    if (niv === 3){
+      G.boites.forEach(b => b.setAttribute("opacity", 0));
+      G.pancartes.forEach(p => { p.g.setAttribute("opacity", 1); p.tx.textContent = n; });
+    }
+    if (niv === 4){
+      G.panier.setAttribute("opacity", 1);
+      G.panierTxt.textContent = `${2*n} ${pl(2*n, S.fruit.nom)}`;
+      S.panier = [];
+      for (let i=0;i<2*n;i++) S.panier.push(poserObjet(panierXY(i, 2*n)));
+    }
+    $("question").textContent = texteQuestion();
+    $("egalite").innerHTML = $("optEgalite").checked ? egalite(null) : "";
+    $("msg").textContent = ""; $("msg").className = "";
+    $("continuer").classList.add("cache");
+    $("pave").querySelectorAll("button").forEach(b => { b.disabled = false; b.className = ""; });
+    S.attente = true; S.saisie = "";
+    dire(texteQuestion());
+  }
+
+  async function repondre(v, bouton){
+    if (!S || !S.attente) return;
+    const j = jeton;
+    S.attente = false; clearTimeout(S.minuteur); S.saisie = "";
+    const juste = R_.niveau === 4 ? S.n : 2*S.n;
+    $("pave").querySelectorAll("button").forEach(b => b.disabled = true);
+    if (v === juste){
+      bouton.className = "bon";
+      S.score++; majHaut();
+      $("egalite").innerHTML = $("optEgalite").checked ? egalite(juste) : "";
+      $("msg").textContent = R_.niveau === 4 ? `Bravo ! ${S.n} chacun, c'est juste !` : `Bravo ! Le double de ${S.n}, c'est ${2*S.n} !`; $("msg").className = "ok";
+      bip(660,.15); setTimeout(() => bip(880,.25), 140);
+      dire(R_.niveau === 4 ? `Oui ! ${S.n} plus ${S.n}, ${2*S.n}.` : `Oui ! ${S.n} plus ${S.n}, ${2*S.n} !`);
+      await montrerTout(false, j); if (vieux(j)) return;
+      sauter();
+      await attendre(1500); if (vieux(j)) return;
+      tourSuivant();
+    } else {
+      bouton.className = "mauvais";
+      $("scene").classList.remove("secoue"); void $("scene").offsetWidth; $("scene").classList.add("secoue");
+      bip(200,.3,"triangle");
+      $("msg").textContent = "Pas tout à fait… Comptons ensemble."; $("msg").className = "ko";
+      await montrerTout(true, j); if (vieux(j)) return;
+      const n = S.n;
+      $("egalite").innerHTML = egalite(juste);
+      if (R_.niveau === 4){
+        $("msg").textContent = `${2*n} partagé en deux : ${n} pour chaque ${S.enfant.fille ? "jumelle" : "jumeau"}. ${n} + ${n} = ${2*n}.`;
+        dire(`${n} chacun. ${n} plus ${n}, ${2*n}.`);
+      } else {
+        $("msg").textContent = `${n} et encore ${n} : ${n} + ${n} = ${2*n}.`;
+        dire(`Le double de ${n}, c'est ${2*n}. ${n} plus ${n}, ${2*n}.`);
+      }
+      $("continuer").classList.remove("cache");
+      $("continuer").focus();
+    }
+  }
+
+  // Fait apparaître tous les fruits ; si compter = true, les numérote un à un
+  async function montrerTout(compter, j){
+    const n = S.n, niv = R_.niveau, pause = compter ? 520 : 0;
+    if (niv === 2){
+      G.couvercle.style.transform = "translateY(-150px)"; G.couvercle.setAttribute("opacity", 0);
+      S.obj[1].forEach(o => o.style.opacity = 1);
+      await attendre(500); if (vieux(j)) return;
+    }
+    if (niv === 3){
+      G.pancartes.forEach(p => p.g.setAttribute("opacity", 0));
+      G.boites.forEach(b => b.setAttribute("opacity", 1));
+      for (let t=0;t<2;t++) for (let i=0;i<n;i++){ const o = poserObjet(caseXY(t,i)); o.style.opacity = 0; S.obj[t].push(o); }
+      await attendre(50); if (vieux(j)) return;
+      for (let i=0;i<n;i++) for (let t=0;t<2;t++){ S.obj[t][i].style.opacity = 1; }
+      await attendre(400); if (vieux(j)) return;
+    }
+    if (niv === 4){
+      // distribution : un pour toi, un pour moi
+      for (let i=0;i<2*n;i++){
+        const t = i % 2, p = caseXY(t, Math.floor(i/2));
+        S.panier[2*n-1-i].style.transform = `translate(${p.x}px, ${p.y}px)`;
+        S.obj[t].push(S.panier[2*n-1-i]);
+        bip(480 + i*20, .08);
+        await attendre(compter ? 300 : 150); if (vieux(j)) return;
+      }
+      await attendre(450); if (vieux(j)) return;
+      if (compter){
+        for (let t=0;t<2;t++){
+          for (let i=0;i<n;i++){ numeroter(caseXY(t,i), i+1, t ? "#1d6fd8" : "#e8590c"); bip(520+i*30,.1); await attendre(300); if (vieux(j)) return; }
+          await attendre(300); if (vieux(j)) return;
+        }
+      }
+      return;
+    }
+    if (compter){
+      let k = 0;
+      for (let t=0;t<2;t++){
+        for (let i=0;i<n;i++){ k++; numeroter(caseXY(t,i), k, t ? "#1d6fd8" : "#e8590c"); bip(520+k*25,.1); await attendre(pause); if (vieux(j)) return; }
+        await attendre(250); if (vieux(j)) return;
+      }
+    }
+  }
+
+  function sauter(){
+    G.enfants.forEach((g, t) => { g.classList.remove("saute"); void g.getBoundingClientRect(); setTimeout(() => g.classList.add("saute"), t*120); });
+  }
+
+  $("continuer").addEventListener("click", () => { $("continuer").classList.add("cache"); tourSuivant(); });
+
+  function finir(){
+    S.attente = false;
+    const t = R_.tours;
+    $("finScore").textContent = `${S.score} bonne${S.score>1?"s":""} réponse${S.score>1?"s":""} du premier coup sur ${t}.`;
+    $("finEtoiles").textContent = S.score ? "⭐".repeat(Math.min(S.score, 15)) : "";
+    $("fin").querySelector(".grand").textContent = S.score >= t*.8 ? "🎉 Bravo !" : S.score >= t/2 ? "👍 Bien joué !" : "💪 On recommence ?";
+    $("fin").classList.remove("cache");
+    const quoi = R_.niveau === 4 ? "les moitiés" : "les doubles";
+    dire(S.score >= t*.8 ? `Bravo ! Tu connais bien ${quoi} !` : "Bien joué ! On peut rejouer pour s'entraîner.");
+    if (S.score >= t*.8) confettis();
+    try{ TDC.note({ s:S.score, n:t, g:S.score >= t*.8, niv:"Niveau " + R_.niveau, d:`${S.score} / ${t} ${quoi} (1 à ${R_.max}) du premier coup, niveau ${R_.niveau}` }); }catch(e){}
+  }
+
+  function confettis(){
+    const cont = $("jum-jeu"), C = ["#e63946","#f4a261","#e9c46a","#2a9d8f","#1d6fd8","#7b4fd6","#e76fa8","#43aa8b"];
+    for (let k=0;k<60;k++){
+      const c = document.createElement("div"); c.className = "confetti";
+      c.style.left = Math.random()*100 + "%"; c.style.background = C[k % C.length];
+      c.style.animationDuration = (2 + Math.random()*2) + "s"; c.style.animationDelay = Math.random()*.8 + "s";
+      cont.appendChild(c); setTimeout(() => c.remove(), 5000);
+    }
+  }
+
+  $("jouer").addEventListener("click", demarrer);
+  $("rejouer").addEventListener("click", demarrer);
+  $("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+  $("arreter").addEventListener("click", () => { jeton++; try{ speechSynthesis.cancel(); }catch(e){} S = null; $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+  $("ecouter").addEventListener("click", () => { if (S) dire(texteQuestion()); });
+
+  // Clavier : un ou deux chiffres (Entrée pour valider tout de suite)
+  document.addEventListener("keydown", e => {
+    if (!S || !S.attente) return;
+    const haut = R_.niveau === 4 ? R_.max : 2*R_.max;
+    const valider = () => { const v = +S.saisie; S.saisie = ""; const b = $("pave").querySelector(`button[data-v="${v}"]`); if (b) b.click(); };
+    if (e.key === "Enter" && S.saisie){ clearTimeout(S.minuteur); valider(); return; }
+    if (!/^[0-9]$/.test(e.key)) return;
+    clearTimeout(S.minuteur);
+    S.saisie += e.key;
+    if (+S.saisie * 10 > haut || S.saisie.length >= 2) valider();
+    else S.minuteur = setTimeout(valider, 900);
+  });
+})();
+</script>
+</body>
+</html>
