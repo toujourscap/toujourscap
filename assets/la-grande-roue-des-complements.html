@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La grande roue des compléments à 10</title>
+<!-- Décor et enfants : images Canva (style papier découpé / feutrine) ; décor MAHaf5UC1Do, enfants MAHaf2h6iU4, MAHaf_3gFJM, MAHaf8cXMAU, MAHaf-FYFVM, MAHafysOG3E, MAHaf5z6U9E. La roue et les nacelles sont dessinées en SVG. -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #roue-jeu{background:#fff7ec;border:2px solid #f2d3a8;border-radius:12px;padding:16px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#b5302b}
+  .intro{margin:0 auto 12px;max-width:720px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#fdebd3;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.98)}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#d9480f;background:#ffe8d6}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
+  .cache{display:none!important}
+  .go{background:#d9480f;font-size:1.3rem;padding:14px 30px;margin:4px}
+  .go.second{background:#6c757d;font-size:1.05rem}
+
+  /* ---------- Partie ---------- */
+  #scene{position:relative;border-radius:12px;overflow:hidden;border:2px solid #f2d3a8;background:#2b6fc2}
+  #scene svg{display:block;width:100%;height:auto}
+  #haut{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:3}
+  .pastille{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  #tickets{letter-spacing:2px}
+  #question{font-size:clamp(1.15rem,2.6vw,1.6rem);font-weight:bold;color:#212529;margin:12px 0 4px;min-height:1.6em}
+  #egalite{font-size:clamp(1.6rem,4.5vw,2.6rem);font-weight:bold;color:#b5302b;margin:2px 0 8px;min-height:1.3em;letter-spacing:1px}
+  #egalite .trou{display:inline-block;min-width:1.4em;border-bottom:4px solid #b5302b;color:#1d6fd8}
+  #pave{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:860px;margin:0 auto 10px}
+  #pave button{background:#fff;color:#1d3557;border:3px solid #1d6fd8;font-size:1.6rem;width:62px;height:62px;padding:0;box-shadow:0 3px 0 #a5c4ef}
+  #pave button:disabled{opacity:.45;cursor:default}
+  #pave button.bon{background:#2f9e44;border-color:#2f9e44;color:#fff}
+  #pave button.mauvais{background:#e03131;border-color:#e03131;color:#fff}
+  #msg{min-height:1.5em;font-size:1.1rem;font-weight:600;margin-bottom:8px;color:#495057}
+  #msg.ok{color:#2b8a3e} #msg.ko{color:#c92a2a}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .bas button{background:#6c757d;font-size:.95rem;padding:9px 16px}
+  #continuer{background:#1d6fd8}
+  #fin .bas .go{background:#d9480f;font-size:1.2rem;padding:12px 24px} #fin .bas .go.second{background:#6c757d}
+  #fin{position:absolute;inset:0;background:rgba(255,247,236,.95);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px}
+  #fin .grand{font-size:clamp(1.8rem,5vw,3rem);font-weight:bold;color:#b5302b}
+  #fin p{font-size:1.2rem;color:#495057;margin:0}
+  .confetti{position:absolute;top:-20px;width:10px;height:14px;z-index:11;pointer-events:none;animation:tombe linear forwards}
+  @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+  .secoue{animation:secoue .45s}
+  @keyframes secoue{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  @media (max-width:600px){ #pave button{width:50px;height:50px;font-size:1.3rem} }
+</style>
+<script src="tour-de-controle.js"></script></head>
+<body>
+<div id="roue-jeu">
+
+  <!-- ===== Réglages ===== -->
+  <div id="reglages">
+    <h1>🎡 La grande roue des compléments à 10</h1>
+    <p class="intro">La grande roue a 10 nacelles. Des enfants sont déjà montés : combien de places reste-t-il ? Chaque bonne réponse fait monter de nouveaux passagers… et la roue tourne !</p>
+
+    <div class="groupe">
+      <h2>1. Choisis le niveau</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="1" aria-pressed="true">☀️ Niveau 1<small>Je vois les nacelles vides</small></button>
+        <button data-v="2" aria-pressed="false">🌙 Niveau 2<small>La nuit : seules les nacelles occupées sont éclairées</small></button>
+        <button data-v="3" aria-pressed="false">🎟️ Niveau 3<small>Les rideaux sont fermés : je lis le nombre de passagers</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Combien de tours de roue ?</h2>
+      <div class="choix" id="choixTours">
+        <button data-v="5" aria-pressed="false">5</button>
+        <button data-v="10" aria-pressed="true">10</button>
+        <button data-v="15" aria-pressed="false">15</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Options</h2>
+      <label class="opt"><input type="checkbox" id="optCouleurs" checked> Nacelles 5 rouges + 5 bleues</label>
+      <label class="opt"><input type="checkbox" id="optOrdre" checked> Passagers montés dans l'ordre (d'abord les rouges)</label>
+      <label class="opt"><input type="checkbox" id="optEgalite" checked> Afficher l'égalité (7 + ? = 10)</label>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur lit la question</label>
+    </div>
+
+    <button class="go" id="jouer">🎡 Jouer</button>
+  </div>
+
+  <!-- ===== Partie ===== -->
+  <div id="partie" class="cache">
+    <div id="scene">
+      <div id="haut">
+        <span class="pastille" id="tour">Tour 1 / 10</span>
+        <span class="pastille" id="tickets"></span>
+      </div>
+      <svg id="dessin" viewBox="0 0 1000 560" role="img" aria-label="Une grande roue de 10 nacelles"></svg>
+    </div>
+    <div id="question"></div>
+    <div id="egalite"></div>
+    <div id="pave"></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache">Continuer ▶</button>
+      <button id="ecouter">🔊 Réécouter</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <div class="grand">🎉 Bravo !</div>
+    <p id="finScore"></p>
+    <p id="finTickets" style="font-size:1.6rem"></p>
+    <div class="bas">
+      <button class="go" id="rejouer">🔁 Rejouer</button>
+      <button class="go second" id="changer">⚙️ Changer les réglages</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+  const N = 10, CX = 500, CY = 238, R = 186, ECH = 1.32, NB_ENFANTS = 6;
+  const ARC = ["#e63946","#f4a261","#e9c46a","#2a9d8f","#1d6fd8","#7b4fd6","#e76fa8","#43aa8b","#f3722c","#577590"];
+
+  const R_ = { niveau:1, tours:10 };
+  let S = null;       // état de la partie
+  let theta = -90;    // angle de la roue (degrés) ; nacelle 0 en haut
+  let anim = null;
+
+  for (let k=1;k<=6;k++){ const im = new Image(); im.src = `/images/grande-roue/enfant${k}.png`; }
+
+  /* ---------- Réglages ---------- */
+  function boutonsChoix(id, cle){
+    $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      R_[cle] = +b.dataset.v;
+    }));
+  }
+  boutonsChoix("choixNiveau", "niveau");
+  boutonsChoix("choixTours", "tours");
+  try{
+    const m = JSON.parse(localStorage.getItem("grande-roue-reglages") || "null");
+    if (m){
+      ["niveau","tours"].forEach(k => { if (m[k]){ R_[k]=m[k]; const id = k==="niveau"?"choixNiveau":"choixTours"; $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.v===m[k])); } });
+      ["optCouleurs","optOrdre","optEgalite","optVoix"].forEach(k => { if (k in m) $(k).checked = m[k]; });
+    }
+  }catch(e){}
+
+  /* ---------- Voix ---------- */
+  function dire(t){
+    if (!$("optVoix").checked) return;
+    try{ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = .92; speechSynthesis.speak(u); }catch(e){}
+  }
+
+  /* ---------- Sons ---------- */
+  let AC = null;
+  function bip(f, d, type){
+    try{
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type || "sine"; o.frequency.value = f; o.connect(g); g.connect(AC.destination);
+      g.gain.setValueAtTime(.15, AC.currentTime); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + d);
+      o.start(); o.stop(AC.currentTime + d);
+    }catch(e){}
+  }
+
+  /* ---------- Dessin ---------- */
+  function el(tag, attrs, parent){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function couleur(i){ return $("optCouleurs").checked ? (i < 5 ? "#e63946" : "#1d6fd8") : ARC[i]; }
+  function fonce(hex, k){
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.round(((n>>16)&255)*k), g = Math.round(((n>>8)&255)*k), b = Math.round((n&255)*k);
+    return "#" + ((1<<24) + (r<<16) + (g<<8) + b).toString(16).slice(1);
+  }
+
+  const svg = $("dessin");
+  let G = {};   // éléments du dessin
+
+  function dessinerDecor(){
+    svg.innerHTML = "";
+    el("image", { href:"/images/grande-roue/fete-foraine.jpg", x:0, y:0, width:1000, height:560, preserveAspectRatio:"xMidYMid slice" }, svg);
+    G.nuit = el("rect", { x:0, y:0, width:1000, height:560, fill:"#0b1540", opacity:0 }, svg);
+    G.nuit.style.transition = "opacity 1s";
+
+    // pieds de la roue
+    const pieds = el("g", { stroke:"#c9ced6", "stroke-width":14, "stroke-linecap":"round" }, svg);
+    el("line", { x1:CX, y1:CY, x2:CX-140, y2:522 }, pieds);
+    el("line", { x1:CX, y1:CY, x2:CX+140, y2:522 }, pieds);
+    el("line", { x1:CX-92, y1:405, x2:CX+92, y2:405, "stroke-width":8 }, pieds);
+
+    // panneau (niveau 3)
+    G.panneau = el("g", { opacity:0 }, svg);
+    el("line", { x1:880, y1:150, x2:880, y2:60, stroke:"#8a5a2b", "stroke-width":4 }, G.panneau);
+    el("line", { x1:800, y1:60, x2:960, y2:60, stroke:"#8a5a2b", "stroke-width":4 }, G.panneau);
+    el("line", { x1:812, y1:60, x2:812, y2:92, stroke:"#8a5a2b", "stroke-width":3 }, G.panneau);
+    el("line", { x1:948, y1:60, x2:948, y2:92, stroke:"#8a5a2b", "stroke-width":3 }, G.panneau);
+    el("rect", { x:790, y:90, width:180, height:56, fill:"#fff", stroke:"#b5302b", "stroke-width":5, rx:10 }, G.panneau);
+    G.panneauTxt = el("text", { x:880, y:128, "text-anchor":"middle", "font-size":28, "font-weight":"bold", fill:"#b5302b", "font-family":"inherit" }, G.panneau);
+
+    // roue (tourne)
+    G.roue = el("g", {}, svg);
+    el("circle", { cx:CX, cy:CY, r:R, fill:"none", stroke:"#f1f3f5", "stroke-width":10 }, G.roue);
+    el("circle", { cx:CX, cy:CY, r:R-28, fill:"none", stroke:"#dee2e6", "stroke-width":4 }, G.roue);
+    for (let i=0;i<N;i++){
+      const a = i*36*Math.PI/180;
+      el("line", { x1:CX, y1:CY, x2:CX+R*Math.cos(a), y2:CY+R*Math.sin(a), stroke:"#e9ecef", "stroke-width":5 }, G.roue);
+      const b = (i*36+18)*Math.PI/180;
+      el("line", { x1:CX+(R-28)*Math.cos(a), y1:CY+(R-28)*Math.sin(a), x2:CX+R*Math.cos(b), y2:CY+R*Math.sin(b), stroke:"#dee2e6", "stroke-width":3 }, G.roue);
+    }
+    G.ampoules = [];
+    for (let i=0;i<20;i++){
+      const a = i*18*Math.PI/180;
+      G.ampoules.push(el("circle", { cx:CX+R*Math.cos(a), cy:CY+R*Math.sin(a), r:5, fill:"#ffe066", stroke:"#f08c00", "stroke-width":1.5 }, G.roue));
+    }
+    el("circle", { cx:CX, cy:CY, r:22, fill:"#ffd43b", stroke:"#e67700", "stroke-width":4 }, svg);
+    el("circle", { cx:CX, cy:CY, r:7, fill:"#e67700" }, svg);
+
+    // nacelles
+    G.nacelles = [];
+    for (let i=0;i<N;i++) G.nacelles.push(dessinerNacelle(i));
+    placer();
+  }
+
+  function dessinerEnfant(parent, k){
+    return el("image", { href:`/images/grande-roue/enfant${k+1}.png`, x:-22, y:8, width:44, height:52, preserveAspectRatio:"xMidYMin meet" }, parent);
+  }
+
+  function dessinerNacelle(i){
+    const c = couleur(i), g = el("g", {}, svg);
+    el("line", { x1:0, y1:0, x2:0, y2:14, stroke:"#868e96", "stroke-width":4 }, g);
+    el("path", { d:"M-30,18 Q0,2 30,18 Z", fill:fonce(c,.75) }, g);
+    const fond = el("rect", { x:-27, y:18, width:54, height:40, rx:9, fill:fonce(c,.55) }, g);
+    const lumiere = el("rect", { x:-23, y:21, width:46, height:20, rx:6, fill:"#fff3bf", opacity:0 }, g);
+    const passager = el("g", {}, g);
+    const rideau = el("g", { opacity:0 }, g);
+    el("rect", { x:-25, y:20, width:50, height:24, rx:6, fill:"#f8f0e3" }, rideau);
+    el("path", { d:"M-25,20 Q-12,32 0,20 Q12,32 25,20", fill:"none", stroke:"#d6b98c", "stroke-width":3 }, rideau);
+    el("text", { x:0, y:40, "text-anchor":"middle", "font-size":16, "font-weight":"bold", fill:"#b5302b" }, rideau).textContent = "?";
+    el("rect", { x:-27, y:40, width:54, height:20, rx:7, fill:c }, g);
+    el("rect", { x:-27, y:40, width:54, height:4, fill:fonce(c,.8) }, g);
+    const num = el("g", { opacity:0 }, g);
+    el("circle", { cx:0, cy:76, r:15, fill:"#fff", stroke:"#2f9e44", "stroke-width":3 }, num);
+    const numTxt = el("text", { x:0, y:82, "text-anchor":"middle", "font-size":17, "font-weight":"bold", fill:"#2f9e44" }, num);
+    return { g, fond, lumiere, passager, rideau, num, numTxt };
+  }
+
+  function placer(){
+    G.roue.setAttribute("transform", `rotate(${theta+90} ${CX} ${CY})`);
+    for (let i=0;i<N;i++){
+      const a = (theta + i*36) * Math.PI/180;
+      G.nacelles[i].g.setAttribute("transform", `translate(${CX+R*Math.cos(a)} ${CY+R*Math.sin(a)}) scale(${ECH})`);
+    }
+  }
+
+  function tourner(degres, duree){
+    return new Promise(res => {
+      const t0 = performance.now(), d0 = theta;
+      cancelAnimationFrame(anim);
+      (function pas(t){
+        let k = Math.min(1, (t - t0) / duree);
+        k = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2)/2;
+        theta = d0 + degres * k; placer();
+        if (k < 1) anim = requestAnimationFrame(pas); else { theta = theta % 360; res(); }
+      })(t0);
+    });
+  }
+  const attendre = ms => new Promise(r => setTimeout(r, ms));
+
+  /* ---------- Affichage d'un état ---------- */
+  function montrer(i, visible, mode){
+    const nc = G.nacelles[i];
+    nc.passager.innerHTML = "";
+    if (S.occ[i]) dessinerEnfant(nc.passager, S.gens[i]);
+    nc.passager.style.opacity = (S.occ[i] && visible) ? 1 : 0;
+    nc.rideau.setAttribute("opacity", mode === "rideau" ? 1 : 0);
+    const nuit = mode === "nuit";
+    nc.lumiere.setAttribute("opacity", nuit && S.occ[i] ? .9 : 0);
+    nc.g.style.opacity = nuit && !S.occ[i] ? .12 : 1;
+    nc.g.style.transition = "opacity .6s";
+    nc.num.setAttribute("opacity", 0);
+  }
+  function rendre(mode){
+    G.nuit.setAttribute("opacity", mode === "nuit" ? .78 : 0);
+    G.ampoules.forEach((a, k) => a.setAttribute("opacity", mode === "nuit" ? (k%2 ? 1 : .55) : 1));
+    for (let i=0;i<N;i++) montrer(i, mode !== "rideau", mode);
+    G.panneauTxt.textContent = `${S.n} passager${S.n>1?"s":""}`;
+    G.panneau.setAttribute("opacity", mode === "rideau" ? 1 : 0);
+  }
+  function modeNiveau(){ return R_.niveau === 2 ? "nuit" : R_.niveau === 3 ? "rideau" : "jour"; }
+
+  /* ---------- Partie ---------- */
+  function melangerEnfants(){
+    const liste = [];
+    while (liste.length < N){ const t = [...Array(NB_ENFANTS).keys()]; for (let i=t.length-1;i>0;i--){ const j = Math.random()*(i+1)|0; [t[i],t[j]] = [t[j],t[i]]; } liste.push(...t); }
+    return liste.slice(0, N);
+  }
+  function tirerN(){
+    let n, essais = 0;
+    do { n = 1 + Math.floor(Math.random()*9); essais++; }      // de 1 à 9
+    while ((n === S.dernier || (S.deja[n] || 0) > S.deja.min) && essais < 40);
+    S.dernier = n; S.deja[n] = (S.deja[n] || 0) + 1;
+    S.deja.min = Math.min(...[1,2,3,4,5,6,7,8,9].map(k => S.deja[k] || 0));
+    return n;
+  }
+
+  function demarrer(){
+    try{ localStorage.setItem("grande-roue-reglages", JSON.stringify({ niveau:R_.niveau, tours:R_.tours,
+      optCouleurs:$("optCouleurs").checked, optOrdre:$("optOrdre").checked, optEgalite:$("optEgalite").checked, optVoix:$("optVoix").checked })); }catch(e){}
+    S = { tour:0, score:0, dernier:-1, deja:{min:0}, occ:[], gens:[], n:0, attente:false, resultats:[] };
+    $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+    $("ecouter").classList.toggle("cache", !$("optVoix").checked);
+    theta = -90;
+    dessinerDecor();
+    const p = $("pave"); p.innerHTML = "";
+    for (let v=0; v<=10; v++){
+      const b = document.createElement("button"); b.textContent = v; b.dataset.v = v;
+      b.addEventListener("click", () => repondre(v, b)); p.appendChild(b);
+    }
+    majTickets();
+    tourSuivant();
+  }
+
+  function majTickets(){
+    $("tour").textContent = `Tour ${Math.min(S.tour, R_.tours) || 1} / ${R_.tours}`;
+    $("tickets").textContent = S.score ? "🎟️".repeat(S.score) : "🎟️ 0";
+    if (S.score > 8) $("tickets").textContent = "🎟️ × " + S.score;
+  }
+
+  function texteQuestion(){
+    return R_.niveau === 3 ? `${S.n} enfant${S.n>1?"s sont montés":" est monté"}. Combien de places libres ?`
+         : R_.niveau === 2 ? "Combien faut-il rajouter de nacelles pour qu'il y en ait 10 ?"
+         : "Combien de nacelles sont vides ?";
+  }
+
+  async function tourSuivant(){
+    S.tour++;
+    if (S.tour > R_.tours) return finir();
+    majTickets();
+    const n = tirerN(); S.n = n;
+    const places = [...Array(N).keys()];
+    let pleines;
+    if ($("optOrdre").checked) pleines = places.slice(0, n);
+    else { for (let i=N-1;i>0;i--){ const j = Math.random()*(i+1)|0; [places[i],places[j]] = [places[j],places[i]]; } pleines = places.slice(0, n); }
+    S.occ = [...Array(N).keys()].map(i => pleines.includes(i));
+    S.gens = melangerEnfants();
+    rendre(modeNiveau());
+    $("question").textContent = texteQuestion();
+    $("egalite").innerHTML = $("optEgalite").checked ? `${n} + <span class="trou">?</span> = 10` : "";
+    $("msg").textContent = ""; $("msg").className = "";
+    $("continuer").classList.add("cache");
+    $("pave").querySelectorAll("button").forEach(b => { b.disabled = false; b.className = ""; });
+    S.attente = true;
+    dire(texteQuestion());
+  }
+
+  async function repondre(v, bouton){
+    if (!S || !S.attente) return;
+    S.attente = false;
+    const juste = 10 - S.n;
+    $("pave").querySelectorAll("button").forEach(b => b.disabled = true);
+    if (v === juste){
+      bouton.className = "bon";
+      S.score++; majTickets();
+      S.resultats.push(true);
+      $("egalite").innerHTML = $("optEgalite").checked ? `${S.n} + <span class="trou">${juste}</span> = 10` : "";
+      $("msg").textContent = "Bravo ! De nouveaux passagers montent…"; $("msg").className = "ok";
+      bip(660,.15); setTimeout(() => bip(880,.25), 140);
+      dire(`Oui ! ${S.n} plus ${juste}, 10 !`);
+      await embarquer();
+      await tourner(360, 2600);
+      await attendre(300);
+      tourSuivant();
+    } else {
+      bouton.className = "mauvais";
+      S.resultats.push(false);
+      $("scene").classList.remove("secoue"); void $("scene").offsetWidth; $("scene").classList.add("secoue");
+      bip(200,.3,"triangle");
+      $("msg").textContent = `Pas tout à fait… Regardons ensemble.`; $("msg").className = "ko";
+      await corriger();
+      $("continuer").classList.remove("cache");
+      $("continuer").focus();
+    }
+  }
+
+  async function embarquer(){
+    rendre("jour");
+    await attendre(250);
+    let k = S.n;
+    for (let i=0;i<N;i++){
+      if (S.occ[i]) continue;
+      k++;
+      S.occ[i] = true; montrer(i, true, "jour");
+      const p = G.nacelles[i].passager; p.style.transition = "none"; p.style.opacity = 0;
+      void p.getBoundingClientRect(); p.style.transition = "opacity .3s"; p.style.opacity = 1;
+      bip(500 + k*40, .12);
+      await attendre(380);
+    }
+  }
+
+  async function corriger(){
+    rendre("jour");
+    await attendre(500);
+    let k = 0;
+    const vides = [];
+    for (let i=0;i<N;i++) if (!S.occ[i]) vides.push(i);
+    for (const i of vides){
+      k++;
+      const nc = G.nacelles[i];
+      nc.numTxt.textContent = k; nc.num.setAttribute("opacity", 1);
+      bip(520 + k*30, .12);
+      await attendre(650);
+    }
+    const j = 10 - S.n;
+    $("egalite").innerHTML = `${S.n} + <span class="trou">${j}</span> = 10`;
+    $("msg").textContent = `Il y a ${S.n} passager${S.n>1?"s":""} et ${j} place${j>1?"s":""} libre${j>1?"s":""} : ${S.n} + ${j} = 10.`;
+    dire(`${j} place${j>1?"s":""} libre${j>1?"s":""}. ${S.n} plus ${j}, 10.`);
+  }
+
+  $("continuer").addEventListener("click", async () => {
+    $("continuer").classList.add("cache");
+    for (let i=0;i<N;i++) G.nacelles[i].num.setAttribute("opacity", 0);
+    await embarquer();
+    await tourner(360, 2200);
+    tourSuivant();
+  });
+
+  function finir(){
+    S.attente = false;
+    const t = R_.tours;
+    $("finScore").textContent = `${S.score} bonne${S.score>1?"s":""} réponse${S.score>1?"s":""} du premier coup sur ${t}.`;
+    $("finTickets").textContent = S.score ? "🎟️".repeat(Math.min(S.score, 15)) : "";
+    $("fin").querySelector(".grand").textContent = S.score >= t*.8 ? "🎉 Bravo !" : S.score >= t/2 ? "👍 Bien joué !" : "💪 On recommence ?";
+    $("fin").classList.remove("cache");
+    dire(S.score >= t*.8 ? "Bravo ! Tu connais bien les compléments à 10 !" : "Bien joué ! On peut rejouer pour s'entraîner.");
+    if (S.score >= t*.8) confettis();
+    try{ TDC.note({ s:S.score, n:t, g:S.score >= t*.8, niv:"Niveau " + R_.niveau, d:`${S.score} / ${t} compléments à 10 du premier coup (niveau ${R_.niveau})` }); }catch(e){}
+  }
+
+  function confettis(){
+    const cont = $("roue-jeu");
+    for (let k=0;k<60;k++){
+      const c = document.createElement("div"); c.className = "confetti";
+      c.style.left = Math.random()*100 + "%"; c.style.background = ARC[k % ARC.length];
+      c.style.animationDuration = (2 + Math.random()*2) + "s"; c.style.animationDelay = Math.random()*.8 + "s";
+      cont.appendChild(c); setTimeout(() => c.remove(), 5000);
+    }
+  }
+
+  $("jouer").addEventListener("click", demarrer);
+  $("rejouer").addEventListener("click", demarrer);
+  $("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+  $("arreter").addEventListener("click", () => { try{ speechSynthesis.cancel(); }catch(e){} cancelAnimationFrame(anim); S = null; $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+  $("ecouter").addEventListener("click", () => { if (S) dire(texteQuestion()); });
+  document.addEventListener("keydown", e => {
+    if (!S || !S.attente || !/^[0-9]$/.test(e.key)) return;
+    const b = $("pave").querySelector(`button[data-v="${e.key}"]`); if (b) b.click();
+  });
+})();
+</script>
+</body>
+</html>
