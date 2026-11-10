@@ -75,6 +75,10 @@
   @keyframes respire{50%{transform:scale(1.012,.985)}}
   #respire img{display:block;width:100%;height:auto}
   #parure{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  #bouche{transition:d .8s ease}
+  #grandeBouche,#sourcils,#larme{transition:opacity .8s}
+  #larme{animation:larme 2.4s ease-in infinite}
+  @keyframes larme{0%{transform:translateY(0)}80%{transform:translateY(40px)}100%{transform:translateY(40px)}}
   #saut.hop{animation:hop .5s ease-out}
   @keyframes hop{0%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:translateY(-9%) scale(.97,1.05)}80%{transform:translateY(0) scale(1.04,.95)}100%{transform:none}}
   #saut.oups{animation:oups .6s ease-in-out}
@@ -220,6 +224,13 @@
       <div id="grenouille"><div id="saut"><div id="respire">
         <img src="/images/fiole/grenouille.png" alt="La grenouille couronnée">
         <svg id="parure" viewBox="0 0 426 506" aria-hidden="true">
+          <path d="M121 223 Q212 290 303 223" fill="none" stroke="#688836" stroke-width="16" stroke-linecap="round"/>
+          <g id="humeur">
+            <path id="bouche" d="M125 223 Q212 290 300 223" fill="none" stroke="#1d3a17" stroke-width="7" stroke-linecap="round"/>
+            <g id="grandeBouche" opacity="0"><path d="M118 216 Q212 284 306 216 Q212 352 118 216Z" fill="#5a1f24" stroke="#1d3a17" stroke-width="6" stroke-linejoin="round"/><ellipse cx="212" cy="283" rx="34" ry="16" fill="#ff7f96"/></g>
+            <g id="sourcils" stroke="#2f4f22" stroke-width="8" stroke-linecap="round"><line x1="98" y1="90" x2="150" y2="74"/><line x1="276" y1="74" x2="328" y2="90"/></g>
+            <path id="larme" d="M92 168 C92 168 82 182 82 189 A10 10 0 0 0 102 189 C102 182 92 168 92 168Z" fill="#7cc8f0" stroke="#3d8fc0" stroke-width="2"/>
+          </g>
           <g id="yeux"><ellipse class="paupiere" cx="130" cy="131" rx="40" ry="39" fill="#6a8b47" stroke="#557a36" stroke-width="3"/><ellipse class="paupiere" cx="297" cy="132" rx="40" ry="39" fill="#6a8b47" stroke="#557a36" stroke-width="3"/></g>
           <g id="etape1" class="etape"><ellipse cx="104" cy="226" rx="24" ry="15" fill="#ff8fa8" opacity=".75"/><ellipse cx="322" cy="226" rx="24" ry="15" fill="#ff8fa8" opacity=".75"/></g>
           <g id="etape2" class="etape"><g id="cils" stroke="#1b1b18" stroke-width="5" stroke-linecap="round"></g><path d="M212 76 L224 92 L212 108 L200 92Z" fill="#3f9a52" stroke="#2c6e3a" stroke-width="2"/><path d="M207 88 L212 82 L215 88" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/></g>
@@ -355,6 +366,7 @@
   })();
   const HAUT = 20, BAS = 164;          // hauteur utile de la fiole (en unités du dessin)
   function niveau(frac, anime){
+    humeur(frac);
     const y = BAS - (BAS-HAUT)*Math.max(0,Math.min(1,frac));
     const r=$("liquide"); r.style.transition = anime ? "transform .6s ease" : "none";
     r.style.transform = "translateY("+y+"px)";
@@ -364,6 +376,17 @@
       const c=el("circle",{cx:24+((k*37)%72), cy:prof-3, r:1.5+(k%3), class:"bul"},b);
       c.style.setProperty("--h",(-(prof-6))+"px"); c.style.setProperty("--d",(2.2+(k%4)*.6)+"s"); c.style.setProperty("--r",(-(k*.7))+"s");
     }
+  }
+  // L'humeur de la grenouille suit la fiole : triste au début, contente ensuite, aux anges à la fin
+  function humeur(m){
+    m=Math.max(0,Math.min(1,m));
+    const a=Math.min(1,m/0.7), yb=245-23*a, yc=205+85*a;     // bouches tristes → souriantes
+    const d="M125 "+yb.toFixed(1)+" Q212 "+yc.toFixed(1)+" 300 "+yb.toFixed(1);
+    const b=$("bouche"); b.setAttribute("d",d); try{ b.style.d="path('"+d+"')"; }catch(e){}
+    const ouvre=m>=0.75;
+    b.style.opacity=ouvre?0:1; $("grandeBouche").setAttribute("opacity",ouvre?1:0);
+    $("sourcils").setAttribute("opacity",Math.max(0,1-m*3).toFixed(2));
+    $("larme").setAttribute("opacity",m<0.12?1:0);
   }
   function compte(){
     const reste=objectif-gouttes;
@@ -431,6 +454,7 @@
   function lancer(){
     $("relais").classList.add("cache");
     actif=true;
+    if (lus===0 && gouttes/objectif<0.12) setTimeout(()=>parle("Snif… Aidez-moi à remplir la fiole !",false,2600),300);
     msg(mode==="micro" ? "🎤 Lis le mot à voix haute." : "");
     if (mode==="micro") demarrerMicro();
     montrer();
