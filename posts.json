@@ -884,7 +884,7 @@
        "url": "/outils/la-machine-a-conjuguer.html",
        "containerData": {
         "height": {
-         "custom": "1150"
+         "custom": "1100"
         },
         "large": true
        }
@@ -12607,8 +12607,9 @@
        "url": "/outils/teleprompteur-de-lecture.html",
        "containerData": {
         "height": {
-         "custom": "860"
-        }
+         "custom": "1100"
+        },
+        "large": true
        }
       }
      },
@@ -12830,8 +12831,9 @@
        "url": "/outils/teleprompteur-a-l-ecoute.html",
        "containerData": {
         "height": {
-         "custom": "1150"
-        }
+         "custom": "1250"
+        },
+        "large": true
        }
       }
      },
