@@ -24,7 +24,7 @@
   --ok:#5cc28a; --warn:#e39a52; color-scheme:dark}
 
 body{background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.45}
-.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:12px;
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:12px;
   padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .top{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between}
 h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
@@ -36,10 +36,11 @@ h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
 .stage{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center}
 @media (max-width:700px){.bilan{position:static!important;transform:none!important;width:100%!important;margin-top:10px;box-shadow:0 2px 10px rgba(0,0,0,.15)!important}}
 /* Décor de classe en papier déchiré (Canva MAHanu1Iq-E, comme le téléprompteur de lecture) ; le texte défile dans la zone verte du tableau */
-.scene{position:relative;width:min(100%,calc(72vh*16/9));aspect-ratio:16/9;background:#e9d9b4 url(/images/teleprompteur/salle-de-classe.jpg) center/100% 100% no-repeat;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.scene{position:relative;width:100%;aspect-ratio:1.871;background:#e9d9b4 url(/images/teleprompteur/salle-de-classe.jpg) 50% 50%/125% 131.6% no-repeat;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .stage:fullscreen{background:#e9d9b4;height:100%}
-.stage:fullscreen .scene{width:min(100vw,calc(100vh*16/9));border-radius:0;box-shadow:none}
-.board{position:absolute;left:15.6%;right:15.8%;top:20.2%;bottom:22.4%;overflow:hidden;--board:#5a5f43}
+.stage:fullscreen .scene{width:min(100vw,calc(100vh*1.871));border-radius:0;box-shadow:none}
+.masque{position:absolute;inset:0;-webkit-mask-image:linear-gradient(transparent 2%,#000 20%,#000 76%,transparent 98%);mask-image:linear-gradient(transparent 2%,#000 20%,#000 76%,transparent 98%)}
+.board{position:absolute;left:7%;right:7.2%;top:10.8%;bottom:13.6%;overflow:hidden;--board:#5a5f43}
 .scroller{position:absolute;left:0;right:0;top:0;padding:0 6%;transition:transform .45s ease}
 .scroller p{margin:0 0 .5em;font-family:var(--text);color:var(--chalk);line-height:1.6}
 .w{border-radius:.2em;padding:0 .08em;cursor:pointer}
@@ -129,9 +130,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
   <div class="stage" id="stage" aria-label="Texte à lire">
    <div class="scene">
     <div class="board" id="board">
-    <div class="scroller" id="scroller"></div>
-    <div class="fade top"></div>
-    <div class="fade bottom"></div>
+    <div class="masque"><div class="scroller" id="scroller"></div></div>
     <div class="heard" id="heard"></div>
     <div class="done" id="done" hidden>Bravo, tu as tout lu !</div>
     </div>
