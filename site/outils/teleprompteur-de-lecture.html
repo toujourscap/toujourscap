@@ -33,9 +33,12 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);fon
 .wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 h1{font-weight:600;font-size:20px;margin:0;text-wrap:balance}
 
-/* Le tableau */
-.stage{position:relative;height:min(58vh,440px);min-height:260px;background:var(--board);border-radius:14px;overflow:hidden}
-.stage:fullscreen{height:100%;border-radius:0}
+/* Le tableau : décor de classe en papier déchiré (Canva MAHanu1Iq-E, 11/11/2026) ; le texte défile dans la zone verte du tableau */
+.stage{position:relative;display:flex;justify-content:center;align-items:center}
+.scene{position:relative;width:min(100%,calc(72vh*16/9));aspect-ratio:16/9;background:#e9d9b4 url(/images/teleprompteur/salle-de-classe.jpg) center/100% 100% no-repeat;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.stage:fullscreen{background:#e9d9b4;height:100%}
+.stage:fullscreen .scene{width:min(100vw,calc(100vh*16/9));border-radius:0;box-shadow:none}
+.board{position:absolute;left:15.6%;right:15.8%;top:20.2%;bottom:22.4%;overflow:hidden;--board:#5a5f43}
 .scroller{position:absolute;left:0;right:0;top:0;padding:0 6%;transition:transform .35s ease}
 .scroller p{margin:0 0 .6em;font-family:var(--text);color:var(--chalk);line-height:1.5}
 .w.past{color:var(--chalk-dim)}
@@ -86,12 +89,16 @@ textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line
   </div>
 
   <div class="stage" id="stage" aria-label="Texte à lire">
+   <div class="scene">
+    <div class="board" id="board">
     <div class="scroller" id="scroller"></div>
     <div class="fade bottom" id="fadeBottom"></div>
     <div class="band" id="band"></div>
     <div class="prog" id="prog"></div>
     <div class="count" id="count" hidden></div>
     <div class="done" id="done" hidden>Bravo, texte terminé !</div>
+    </div>
+   </div>
   </div>
 
   <div class="controls">
@@ -196,7 +203,7 @@ textarea{width:100%;min-height:150px;font-family:var(--text);font-size:17px;line
     const fs = +size.value;
     scroller.style.fontSize = fs + "px";
     $("sizeOut").textContent = fs + " px";
-    const h = stage.clientHeight;
+    const h = $("board").clientHeight;
     bandTop = Math.round(h*0.33);
     scroller.style.paddingTop = bandTop + "px";
     scroller.style.paddingBottom = h + "px";
