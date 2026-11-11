@@ -4,7 +4,7 @@
   {
    "title": "Le crocodile glouton",
    "slug": "le-crocodile-glouton",
-   "excerpt": "Au pays des crocodiles, le crocodile ouvre toujours sa grande bouche vers le plus grand nombre : un jeu pour comparer les nombres et retenir les signes < et >, avec 5 niveaux, de la GS au CE2.",
+   "excerpt": "Au pays des crocodiles, le crocodile ouvre toujours sa grande bouche vers le plus grand nombre : un jeu pour comparer les nombres et retenir les signes < et >, avec 6 niveaux, de la GS au CE2.",
    "date": "2026-11-11T15:00:00.000Z",
    "categoryIds": [
     "4508e272-b88b-42c8-a68d-b55e8afea67b"
@@ -137,7 +137,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les 5 niveaux",
+         "text": "Les 6 niveaux",
          "decorations": []
         }
        }
@@ -230,6 +230,23 @@
           ]
          }
         ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 6 : une suite de 4 nombres jusqu'à 1 000 (par exemple 352 ? 325 ? 532 ? 235) : l'élève place les 3 signes l'un après l'autre.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
        }
       ]
      },
@@ -261,6 +278,23 @@
             "type": "TEXT",
             "textData": {
              "text": "Réponse en touchant le bonhomme (conseillé au niveau 1) ou en choisissant le signe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Chiffres en couleur : centaines en vert, dizaines en rouge, unités en bleu (sur les panneaux et dans l'écriture en dessous).",
              "decorations": []
             }
            }
