@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le crocodile glouton : comparer les nombres</title><link rel="canonical" href="https://toujourscap.com/post/le-crocodile-glouton/"><meta name="description" content="Au pays des crocodiles, le crocodile ouvre toujours sa grande bouche vers le plus grand nombre : un jeu pour comparer les nombres et retenir les signes &lt; et…">
+<!-- Images Canva (style papier découpé / feutrine, jungle inspirée du Douanier Rousseau et des papiers découpés de Matisse) :
+     décor MAHantXQows (images/crocodile/jungle.jpg), crocodile bouche ouverte MAHanmov7W4, bouche fermée MAHannr-rV4 (détourés).
+     bonshommes MAHanioNSac, MAHanjdCtaY, MAHans-OOvo, MAHanqwO9p8 (images/crocodile/bonhomme1…4.png, détourés). -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #croco-jeu{background:#f3f8ea;border:2px solid #b9d8a0;border-radius:12px;padding:16px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden}
+  #croco-jeu:fullscreen{max-width:none;border-radius:0;overflow:auto;display:flex;flex-direction:column;justify-content:center}
+  #croco-jeu:fullscreen #scene{width:min(100%,62vh*16/9);margin:0 auto}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#2b6a2f}
+  .intro{margin:0 auto 12px;max-width:740px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e3f0d3;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.98)}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#e6f6df}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
+  .cache{display:none!important}
+  .go{background:#2f9e44;font-size:1.3rem;padding:14px 30px;margin:4px}
+  .go.second{background:#6c757d;font-size:1.05rem}
+
+  /* ---------- Partie ---------- */
+  #scene{position:relative;border-radius:12px;overflow:hidden;border:2px solid #b9d8a0;background:#a9d8ef}
+  #scene svg{display:block;width:100%;height:auto}
+  #haut{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;z-index:3}
+  .pastille{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  #consigne{font-size:clamp(1.05rem,2.4vw,1.45rem);font-weight:bold;color:#212529;margin:12px 0 4px;min-height:1.5em}
+  #egalite{font-size:clamp(2rem,6vw,3.4rem);font-weight:bold;color:#1d3557;margin:2px 0 4px;min-height:1.3em;letter-spacing:2px}
+  #egalite .trou{display:inline-block;min-width:1.3em;border:4px dashed #2f9e44;border-radius:10px;color:#2f9e44;padding:0 .15em;line-height:1.1}
+  #egalite .signe{color:#2f9e44}
+  #phrase{font-size:clamp(1rem,2.2vw,1.3rem);color:#2b6a2f;min-height:1.4em;margin-bottom:6px;font-weight:600}
+  #signes{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:6px 0 10px}
+  #signes button{background:#fff;color:#1d3557;border:3px solid #2f9e44;box-shadow:0 4px 0 #9fd08a;min-width:130px;padding:6px 14px 8px;line-height:1}
+  #signes button b{display:block;font-size:3rem;color:#2f9e44}
+  #signes button small{font-size:.85rem;font-weight:600;color:#495057}
+  #signes button.bon{background:#2f9e44;border-color:#2f9e44}#signes button.bon b,#signes button.bon small{color:#fff}
+  #signes button.mauvais{background:#e03131;border-color:#e03131}#signes button.mauvais b,#signes button.mauvais small{color:#fff}
+  #signes button:disabled{cursor:default}
+  #msg{min-height:1.4em;font-size:1.1rem;color:#495057;max-width:760px;margin:0 auto 8px}
+  #msg.erreur{color:#c92a2a;font-weight:600}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .bas button{background:#6c757d;font-size:1rem;padding:9px 16px}
+  #continuer{background:#2f9e44;font-size:1.2rem}
+  .bh{cursor:pointer}
+  .bh:hover .corps{filter:brightness(1.08)}
+  @keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  #flotte{animation:flotte 2.6s ease-in-out infinite}
+
+  /* ---------- Fin ---------- */
+  #fin .grand{font-size:2.4rem;font-weight:bold;color:#2b6a2f;margin:16px 0 4px}
+  #finScore{font-size:1.3rem;color:#212529}
+  #finEtoiles{font-size:2.6rem;letter-spacing:6px;margin:4px 0 10px}
+  .confetti{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:tombe linear forwards;z-index:9}
+  @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
+  @media (max-width:560px){#signes button{min-width:92px;padding:4px 8px}#signes button b{font-size:2.3rem}#signes button small{font-size:.7rem}}
+</style>
+<script src="tour-de-controle.js"></script></head>
+<body>
+<div id="croco-jeu">
+
+  <!-- ===== Réglages ===== -->
+  <div id="reglages">
+    <h1>🐊 Le crocodile glouton</h1>
+    <p class="intro">Au pays des crocodiles, le crocodile a toujours très faim : il ouvre sa grande bouche vers <b>le plus grand</b> des deux nombres pour le croquer ! Sa bouche ouverte, c'est le signe : <b>7 &gt; 3</b> (plus grand que), <b>3 &lt; 7</b> (plus petit que).</p>
+
+    <div class="groupe">
+      <h2>1. Choisis le niveau</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="1" aria-pressed="true">🧍 Niveau 1<small>De 1 à 10 : plus le nombre est grand,<br>plus le bonhomme est grand</small></button>
+        <button data-v="2" aria-pressed="false">🌿 Niveau 2<small>Jusqu'à 20 : les bonshommes<br>ont tous la même taille</small></button>
+        <button data-v="3" aria-pressed="false">🌴 Niveau 3<small>Jusqu'à 100<br>(dizaines et unités)</small></button>
+        <button data-v="4" aria-pressed="false">🌋 Niveau 4<small>Jusqu'à 1 000<br>(centaines)</small></button>
+        <button data-v="5" aria-pressed="false">🧮 Niveau 5<small>Un calcul et un nombre<br>(8 + 5 … 12)</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Comment l'élève répond-il ?</h2>
+      <div class="choix" id="choixRep">
+        <button data-v="clic" aria-pressed="true">👆 Il touche le bonhomme<small>que le crocodile va manger</small></button>
+        <button data-v="signe" aria-pressed="false">&lt; &gt; Il choisit le signe<small>la bouche du crocodile</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Combien de questions ?</h2>
+      <div class="choix" id="choixNb">
+        <button data-v="10" aria-pressed="true">10</button>
+        <button data-v="15" aria-pressed="false">15</button>
+        <button data-v="20" aria-pressed="false">20</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>4. Options</h2>
+      <label class="opt"><input type="checkbox" id="optEgal"> Parfois les deux nombres sont égaux (signe =)</label>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur lit la phrase à voix haute</label>
+    </div>
+
+    <button class="go" id="jouer">🐊 Jouer</button>
+  </div>
+
+  <!-- ===== Partie ===== -->
+  <div id="partie" class="cache">
+    <div id="scene">
+      <div id="haut">
+        <span class="pastille" id="numQ">Question 1 / 10</span>
+        <span class="pastille" id="score">⭐ 0</span>
+      </div>
+      <svg id="dessin" viewBox="0 0 1600 900" role="img" aria-label="Un crocodile dans la jungle entre deux bonshommes portant chacun un nombre"></svg>
+    </div>
+    <div id="consigne"></div>
+    <div id="egalite"></div>
+    <div id="phrase"></div>
+    <div id="signes"></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache">Continuer ▶</button>
+      <button id="ecran">⛶ Plein écran</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <div class="grand">🐊 Miam, bravo !</div>
+    <div id="finEtoiles"></div>
+    <p id="finScore"></p>
+    <div class="bas">
+      <button class="go" id="rejouer">🔁 Rejouer</button>
+      <button class="go second" id="changer">⚙️ Changer les réglages</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS = "http://www.w3.org/2000/svg";
+const $ = id => document.getElementById(id);
+const svg = $("dessin");
+
+/* ---------- Petits outils ---------- */
+const S = { i:0, score:0, essais:0, bloque:true, prec:"", jeton:0 };
+function el(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for(const k in attrs) e.setAttribute(k, attrs[k]); if(parent) parent.appendChild(e); return e; }
+function graine(s){ return function(){ s|=0; s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const alea = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = t => t[Math.floor(Math.random()*t.length)];
+const attendre = ms => new Promise(r => setTimeout(r, ms));
+const doux = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+// Une animation s'arrête net si la partie a été arrêtée ou relancée entre-temps (S.jeton a changé).
+function anim(ms, f){ const j = S.jeton; return new Promise(r => { const t0 = performance.now(); (function pas(n){ if(S.jeton !== j) return r(); const t = Math.min(1,(n-t0)/ms); f(doux(t), t); if(t<1) requestAnimationFrame(pas); else r(); })(t0); }); }
+
+/* ---------- Le décor (image Canva) ---------- */
+const IMG = "/images/crocodile/";
+const W_CROCO = 600, H_OUV = 600*401/700, H_FER = 600*282/700, BAS = 880;
+function decor(){
+  const defs = el("defs", {}, svg);
+  defs.innerHTML = `<clipPath id="eauDevant"><path d="M470,856 C600,850 760,862 960,854 L960,900 L470,900Z"/></clipPath>
+    <filter id="ombreL" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000" flood-opacity=".3"/></filter>`;
+  el("image", {href:IMG+"jungle.jpg", x:0, y:0, width:1600, height:900, preserveAspectRatio:"none"}, svg);
+  svg.appendChild(el("g", {id:"calqueBh"}));
+  svg.appendChild(el("g", {id:"calqueCroco"}));
+  // L'eau passe devant les pattes du crocodile : on recopie le bas de l'image
+  el("image", {href:IMG+"jungle.jpg", x:0, y:0, width:1600, height:900, preserveAspectRatio:"none", "clip-path":"url(#eauDevant)"}, svg);
+  const bulle = el("g", {id:"bulle", opacity:0}, svg);
+  el("ellipse", {cx:0, cy:0, rx:120, ry:58, fill:"#fff", stroke:"#2b6a2f", "stroke-width":5}, bulle);
+  el("text", {id:"bulleTxt", x:0, y:14, "text-anchor":"middle", "font-size":44, "font-weight":"bold", fill:"#2b6a2f", "font-family":"Comic Sans MS, Chalkboard SE, Arial"}, bulle).textContent = "Miam !";
+}
+
+/* ---------- Le crocodile (deux images Canva : bouche ouverte / fermée) ---------- */
+const C = { x:0, dir:1, ouvert:false, secoue:0, taille:1, sy:1 };
+let crocoG, imgCroco, signeG;
+function crocodile(){
+  const calque = $("calqueCroco");
+  const flotte = el("g", {id:"flotte"}, calque);
+  crocoG = el("g", {}, flotte);
+  imgCroco = el("image", {x:-W_CROCO/2, width:W_CROCO}, crocoG);
+  signeG = el("g", {opacity:0}, calque);
+  el("text", {id:"signeTxt", x:0, y:0, "text-anchor":"middle", "dominant-baseline":"central", "font-size":200, "font-weight":"bold", fill:"#fff", stroke:"#2b6a2f", "stroke-width":12, "paint-order":"stroke", "font-family":"Arial, sans-serif"}, signeG);
+  majCroco();
+}
+function majCroco(){
+  const h = C.ouvert ? H_OUV : H_FER;
+  if(imgCroco.dataset.o !== String(C.ouvert)){ imgCroco.setAttribute("href", IMG + (C.ouvert ? "croco-ouvert.png" : "croco-ferme.png")); imgCroco.setAttribute("height", h); imgCroco.setAttribute("y", -h); imgCroco.dataset.o = C.ouvert; }
+  crocoG.setAttribute("transform", `translate(${800 + C.x},${BAS}) rotate(${C.secoue}) scale(${C.dir*C.taille},${C.taille*C.sy})`);
+}
+function bouche(){ return { x: 800 + C.x - C.dir*216, y: BAS - H_OUV*.54 }; }
+
+/* ---------- Les bonshommes (images Canva en feutrine) ---------- */
+const ENFANTS = [[291,400],[246,400],[308,400],[279,400]];
+const B = { L:null, R:null };
+let enfantsTires = [];
+function hauteur(v){ return R_.niveau === 1 ? 200*(.12 + .153*v) : 250; }
+function bonhomme(cote, item){
+  const calque = $("calqueBh");
+  const x = cote === "L" ? 290 : 1310, sol = cote === "L" ? 805 : 818;
+  const h = hauteur(item.v), num = enfantsTires[cote === "L" ? 0 : 1], [w0,h0] = ENFANTS[num];
+  const w = h*w0/h0;
+  const g = el("g", {class:"bh", transform:`translate(${x},${sol}) scale(0)`}, calque);
+  el("image", {href:`${IMG}bonhomme${num+1}.png`, x:-w/2, y:-h, width:w, height:h, class:"corps"}, g);
+  const larg = 50 + item.txt.length*36, haut = -h - 16;
+  const pan = el("g", {filter:"url(#ombreL)"}, g);
+  el("rect", {x:-5, y:haut-10, width:10, height:26, fill:"#7a4b1e"}, pan);
+  el("rect", {x:-larg/2, y:haut-92, width:larg, height:86, rx:16, fill:"#fffaf0", stroke:"#7a4b1e", "stroke-width":6}, pan);
+  el("text", {x:0, y:haut-49, "text-anchor":"middle", "dominant-baseline":"central", "font-size":62, "font-weight":"bold", fill:"#1d3557", "font-family":"Arial, sans-serif"}, pan).textContent = item.txt;
+  g.addEventListener("click", () => clicBonhomme(cote));
+  const o = { g, x, sol, k:0, dx:0, dy:0 };
+  B[cote] = o;
+  return o;
+}
+function majBh(o){ o.g.setAttribute("transform", `translate(${o.x+o.dx},${o.sol+o.dy}) scale(${o.k})`); }
+
+/* ---------- Réglages ---------- */
+const R_ = { niveau:1, rep:"clic", nb:10, egal:false, voix:true };
+function choix(id, cle, conv){
+  $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    R_[cle] = conv(b.dataset.v);
+    if(cle === "niveau") majRepDefaut();
+  }));
+}
+function majRepDefaut(){
+  const v = R_.niveau === 1 ? "clic" : "signe";
+  R_.rep = v;
+  $("choixRep").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === v));
+}
+choix("choixNiveau", "niveau", Number);
+choix("choixRep", "rep", String);
+choix("choixNb", "nb", Number);
+
+/* ---------- Les paires de nombres ---------- */
+function n(v){ return { v, txt:String(v) }; }
+function paire(){
+  const lv = R_.niveau, egal = (R_.egal || lv === 5) && Math.random() < (lv === 5 ? .2 : .15);
+  let a, b, r = Math.random();
+  if(lv === 5){
+    const s = alea(5,20), x = alea(1, s-1), y = s - x;
+    const calc = { v:s, txt:`${x} + ${y}` };
+    const autre = n(egal ? s : Math.max(0, s + pick([-3,-2,-1,1,2,3])));
+    if(autre.v === s && !egal) autre.v = s+1, autre.txt = String(s+1);
+    return Math.random() < .5 ? [calc, autre] : [autre, calc];
+  }
+  if(lv === 1){ a = alea(1,10); do b = alea(1,10); while(b === a); }
+  else if(lv === 2){ a = alea(0,20); do b = alea(0,20); while(b === a); }
+  else if(lv === 3){
+    if(r < .35){ const d = alea(1,9), u = alea(0,9); let u2; do u2 = alea(0,9); while(u2 === u); a = d*10+u; b = d*10+u2; }
+    else if(r < .6){ let d, u; do { d = alea(1,9); u = alea(1,9); } while(d === u); a = d*10+u; b = u*10+d; }
+    else { a = alea(0,100); do b = alea(0,100); while(b === a); }
+  } else {
+    if(r < .3){ const c = alea(1,9); a = c*100+alea(0,99); do b = c*100+alea(0,99); while(b === a); }
+    else if(r < .5){ const c = alea(1,9), d = alea(0,9); a = c*100+d*10+alea(0,9); do b = c*100+d*10+alea(0,9); while(b === a); }
+    else if(r < .7){ const ch = [alea(1,9), alea(0,9), alea(1,9)]; a = ch[0]*100+ch[1]*10+ch[2]; b = ch[2]*100+ch[1]*10+ch[0]; if(a === b){ b = a + 10; } }
+    else if(r < .8){ a = alea(100,999); b = alea(10,99); if(Math.random()<.5) [a,b] = [b,a]; }
+    else { a = alea(100,1000); do b = alea(100,1000); while(b === a); }
+  }
+  if(egal) b = a;
+  return [n(a), n(b)];
+}
+const SIGNE_TXT = { ">":"est plus grand que", "<":"est plus petit que", "=":"est égal à" };
+function bonSigne(){ return Q.L.v > Q.R.v ? ">" : Q.L.v < Q.R.v ? "<" : "="; }
+function lu(t){ return t.replace("+", " plus "); }
+function explication(){
+  const { L, R } = Q, s = bonSigne();
+  if(s === "=") return `${L.txt} et ${R.txt}, c'est pareil : le crocodile ne sait pas qui manger, il ferme la bouche. ${L.txt} = ${R.txt}.`;
+  const G = L.v > R.v ? L : R, P = G === L ? R : L;
+  let raison = "";
+  if(R_.niveau === 1) raison = `Regarde les bonshommes : celui qui porte ${G.txt} est le plus grand. `;
+  else if(R_.niveau === 5){ const c = L.txt.includes("+") ? L : R; raison = `${c.txt} = ${c.v}. `; }
+  else if(R_.niveau >= 3){
+    const g = String(G.v), p = String(P.v);
+    if(g.length !== p.length) raison = `${G.txt} a plus de chiffres que ${P.txt}. `;
+    else {
+      const noms = g.length === 3 ? ["centaines","dizaines","unités"] : g.length === 2 ? ["dizaines","unités"] : ["unités"];
+      let i = 0; while(g[i] === p[i]) i++;
+      raison = (i > 0 ? `Mêmes ${noms[0]}${i > 1 ? " et mêmes " + noms[1] : ""}. ` : "") + `On compare les ${noms[i]} : ${g[i]} est plus grand que ${p[i]}. `;
+    }
+  }
+  return `${raison}Le crocodile ouvre la bouche vers ${G.txt}, le plus grand : ${L.txt} ${s} ${R.txt}.`;
+}
+
+/* ---------- Voix ---------- */
+function dire(t){
+  if(!R_.voix || !("speechSynthesis" in window)) return;
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = .92;
+    const v = speechSynthesis.getVoices().find(v => /^fr/i.test(v.lang)); if(v) u.voice = v; speechSynthesis.speak(u); } catch(e){}
+}
+
+/* ---------- Partie ---------- */
+let Q = {};
+function demarrer(){
+  R_.egal = $("optEgal").checked; R_.voix = $("optVoix").checked;
+  S.i = 0; S.score = 0; S.jeton++;
+  $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+  construireSignes();
+  question();
+}
+function construireSignes(){
+  const z = $("signes"); z.innerHTML = "";
+  const liste = R_.rep === "signe" ? [">","<","="] : (R_.egal || R_.niveau === 5 ? ["="] : []);
+  liste.forEach(s => {
+    const b = document.createElement("button");
+    b.dataset.s = s;
+    b.innerHTML = `<b>${s === "<" ? "&lt;" : s === ">" ? "&gt;" : "="}</b><small>${R_.rep === "clic" ? "Ils sont pareils" : SIGNE_TXT[s]}</small>`;
+    b.addEventListener("click", () => repondre(s, b));
+    z.appendChild(b);
+  });
+}
+async function question(){
+  S.essais = 0; S.bloque = true; const j = S.jeton;
+  $("numQ").textContent = `Question ${S.i+1} / ${R_.nb}`;
+  $("score").textContent = `⭐ ${S.score}`;
+  $("msg").textContent = ""; $("msg").className = ""; $("phrase").textContent = "";
+  $("continuer").classList.add("cache");
+  $("signes").querySelectorAll("button").forEach(b => { b.className = ""; b.disabled = false; });
+  let L, R, cle;
+  do { [L, R] = paire(); cle = L.txt + "|" + R.txt; } while(cle === S.prec);
+  S.prec = cle; Q = { L, R };
+  $("calqueBh").innerHTML = "";
+  C.x = 0; C.ouvert = false; C.secoue = 0; C.taille = 1; C.sy = 1; majCroco();
+  const t1 = alea(0,3); let t2; do t2 = alea(0,3); while(t2 === t1); enfantsTires = [t1, t2];
+  signeG.setAttribute("opacity", 0);
+  bonhomme("L", L); bonhomme("R", R);
+  $("egalite").innerHTML = `${L.txt} <span class="trou">?</span> ${R.txt}`;
+  $("consigne").textContent = R_.rep === "clic" ? "👆 Touche le bonhomme que le crocodile va manger : le plus grand nombre !" : "Quelle bouche le crocodile ouvre-t-il ? Choisis le signe.";
+  await anim(450, t => { const k = t < .8 ? t/.8*1.1 : 1.1 - (t-.8)/.2*.1; B.L.k = B.R.k = k; majBh(B.L); majBh(B.R); });
+  if(S.jeton !== j) return;
+  S.bloque = false;
+}
+function clicBonhomme(cote){
+  if(R_.rep !== "clic") return;
+  repondre(cote === "L" ? ">" : "<", null);
+}
+async function repondre(s, bouton){
+  if(S.bloque) return;
+  S.bloque = true;
+  const j = S.jeton, ok = () => S.jeton === j;
+  const bon = bonSigne();
+  if(s === bon){
+    if(S.essais === 0) S.score++;
+    if(bouton) bouton.className = "bon";
+    $("score").textContent = `⭐ ${S.score}`;
+    $("msg").textContent = S.essais === 0 ? pick(["Bravo !","Super !","Bien joué !","Exactement !","Tu as l'œil du crocodile !"]) : "Oui, c'est ça !";
+    $("msg").className = "";
+    await croquer(bon); if(!ok()) return;
+    finQuestion(true);
+  } else {
+    S.essais++;
+    if(bouton) bouton.className = "mauvais";
+    await nonNon(); if(!ok()) return;
+    if(S.essais === 1){
+      $("msg").textContent = "Pas tout à fait… Le crocodile mange toujours le plus grand. Essaie encore !";
+      $("msg").className = "erreur";
+      if(bouton) setTimeout(() => { bouton.className = ""; bouton.disabled = true; }, 700);
+      S.bloque = false;
+    } else {
+      $("msg").textContent = explication();
+      $("msg").className = "erreur";
+      await croquer(bon); if(!ok()) return;
+      finQuestion(false);
+    }
+  }
+}
+function finQuestion(ok){
+  const s = bonSigne();
+  $("egalite").innerHTML = `${Q.L.txt} <span class="signe">${s === "<" ? "&lt;" : s === ">" ? "&gt;" : "="}</span> ${Q.R.txt}`;
+  const phrase = `${Q.L.txt} ${SIGNE_TXT[s]} ${Q.R.txt}`;
+  $("phrase").textContent = phrase;
+  dire(lu(Q.L.txt) + " " + SIGNE_TXT[s] + " " + lu(Q.R.txt));
+  $("signes").querySelectorAll("button").forEach(b => { b.disabled = true; if(b.dataset.s === s) b.className = "bon"; });
+  if(ok){ const j = S.jeton, i = S.i; setTimeout(() => { if(S.jeton === j && S.i === i) suivant(); }, 2300); }
+  else { $("continuer").classList.remove("cache"); $("continuer").focus(); }
+}
+function suivant(){
+  if(!$("partie").classList.contains("cache") && !S.attenteFin){
+    if(S.dejaSuivi === S.i) return; S.dejaSuivi = S.i;
+    S.i++;
+    if(S.i >= R_.nb) fin(); else question();
+  }
+}
+$("continuer").addEventListener("click", suivant);
+
+/* ---------- Animations du crocodile ---------- */
+async function tourner(dir){
+  if(C.dir === dir) return;
+  const d0 = C.dir;
+  await anim(300, t => { C.dir = d0 + (dir-d0)*t; if(Math.abs(C.dir) < .05) C.dir = .05*Math.sign(dir); majCroco(); });
+  C.dir = dir; majCroco();
+}
+async function ouvrir(o){ await anim(90, t => { C.sy = 1 - .06*t; majCroco(); }); C.ouvert = o; await anim(120, t => { C.sy = .94 + .06*t; majCroco(); }); }
+function montrerSigne(s){
+  $("signeTxt").textContent = s;
+  const p = s === "=" ? { x: 800 + C.x - C.dir*170, y: BAS - H_FER*.62 } : bouche();
+  signeG.setAttribute("transform", `translate(${p.x},${p.y})`);
+  return anim(300, t => signeG.setAttribute("opacity", t));
+}
+function bulle(x, y, txt){
+  $("bulleTxt").textContent = txt;
+  const b = $("bulle");
+  return anim(250, t => { b.setAttribute("opacity", t); b.setAttribute("transform", `translate(${x},${y}) scale(${.6+.4*t})`); });
+}
+async function croquer(s){
+  const bulleEl = $("bulle");
+  if(s === "="){
+    await bulle(800, 450, "Pareil !");
+    await anim(400, t => { C.taille = 1 + .05*Math.sin(Math.PI*t); majCroco(); });
+    C.taille = 1;
+    await montrerSigne("=");
+    await attendre(900);
+    await anim(300, t => bulleEl.setAttribute("opacity", 1-t));
+    return;
+  }
+  const dir = s === ">" ? 1 : -1;               // > : la bouche s'ouvre vers la gauche
+  const cible = dir === 1 ? B.L : B.R;
+  await tourner(dir);
+  await ouvrir(true);
+  await montrerSigne(s);
+  await attendre(350);
+  await anim(250, t => signeG.setAttribute("opacity", 1-t));
+  const dist = -dir*330;
+  await anim(420, t => { C.x = dist*t; majCroco(); });
+  const m = bouche(), k0 = cible.k;
+  await anim(240, t => { cible.k = k0*(1-t); cible.dx = (m.x - cible.x)*t; cible.dy = (m.y + 40 - cible.sol)*t; majBh(cible); });
+  await ouvrir(false);
+  await bulle(800 + dist*.6, 450, "Miam !");
+  await anim(160, t => { C.taille = 1 + .06*Math.sin(Math.PI*t); majCroco(); });
+  C.taille = 1;
+  await anim(420, t => { C.x = dist*(1-t); majCroco(); });
+  await anim(250, t => bulleEl.setAttribute("opacity", 1-t));
+  await ouvrir(true);
+  await montrerSigne(s);
+}
+async function nonNon(){
+  await anim(500, (t, l) => { C.secoue = 6*Math.sin(l*Math.PI*4); majCroco(); });
+  C.secoue = 0; majCroco();
+}
+
+/* ---------- Fin ---------- */
+function fin(){
+  S.attenteFin = false;
+  $("partie").classList.add("cache"); $("fin").classList.remove("cache");
+  const t = R_.nb, r = S.score/t;
+  $("finEtoiles").textContent = r >= .9 ? "⭐⭐⭐" : r >= .6 ? "⭐⭐" : "⭐";
+  $("finScore").textContent = `${S.score} / ${t} du premier coup (niveau ${R_.niveau}).`;
+  try{ TDC.note({ s:S.score, n:t, g:S.score >= t*.8, niv:"Niveau " + R_.niveau, d:`${S.score} / ${t} comparaisons justes du premier coup (niveau ${R_.niveau})` }); }catch(e){}
+  for(let i=0;i<26;i++){ const c = document.createElement("div"); c.className = "confetti"; c.textContent = pick(["🍌","🌺","🍊","🐊","🌿","⭐"]);
+    c.style.left = Math.random()*100 + "%"; c.style.animationDuration = (2+Math.random()*2) + "s"; c.style.animationDelay = Math.random()*.8 + "s";
+    $("croco-jeu").appendChild(c); setTimeout(() => c.remove(), 5000); }
+}
+$("jouer").addEventListener("click", () => { S.dejaSuivi = -1; demarrer(); });
+$("rejouer").addEventListener("click", () => { S.dejaSuivi = -1; demarrer(); });
+$("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("arreter").addEventListener("click", () => { S.bloque = true; S.jeton++; S.dejaSuivi = S.i; try{ speechSynthesis.cancel(); }catch(e){} $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("ecran").addEventListener("click", () => { const z = $("croco-jeu"); if(document.fullscreenElement) document.exitFullscreen(); else if(z.requestFullscreen) z.requestFullscreen().catch(()=>{}); });
+document.addEventListener("keydown", e => {
+  if($("partie").classList.contains("cache")) return;
+  if(e.key === "Enter" && !$("continuer").classList.contains("cache")){ e.preventDefault(); suivant(); return; }
+  if(R_.rep === "clic"){
+    if(e.key === "ArrowLeft") clicBonhomme("L");
+    else if(e.key === "ArrowRight") clicBonhomme("R");
+    else if(e.key === "=" && (R_.egal || R_.niveau === 5)) repondre("=", $("signes").querySelector("button"));
+  } else if(["<",">","="].includes(e.key)){
+    const b = $("signes").querySelector(`button[data-s="${e.key}"]`);
+    if(b && !b.disabled) repondre(e.key, b);
+  }
+});
+
+decor();
+crocodile();
+})();
+</script>
+</body>
+</html>
