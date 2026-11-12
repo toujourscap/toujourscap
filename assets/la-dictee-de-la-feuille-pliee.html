@@ -198,7 +198,38 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
   .feuille{padding-left:46px;background-image:linear-gradient(to right,transparent 34px,var(--marge) 34px,var(--marge) 36px,transparent 36px),repeating-linear-gradient(#fff 0 53px,var(--ligne) 53px 55px)}
   .rangee-f .vu{left:-30px}
   .ardoise .etiquette{display:none}
+  .dicteur .lbl{display:none}
 }
+/* Ludique : dictée à l'oral, loupe, étoiles, tampon, grades */
+[hidden]{display:none!important}
+.dicteur{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0;background:#eef5ff;border:2px solid #b9d3f5;border-radius:16px;padding:8px 12px}
+.dicteur .lbl{font-weight:700;color:var(--stylo);font-size:16px}
+.dicteur button{border:0;border-radius:12px;padding:8px 14px;font-size:clamp(16px,2vw,19px);font-weight:700;background:var(--stylo);color:#fff;box-shadow:0 3px 0 #133a7a}
+.dicteur button.lent{background:#fff;color:var(--stylo);border:2px solid var(--stylo);box-shadow:0 3px 0 #b9d3f5}
+.dicteur button:active{transform:translateY(2px);box-shadow:none}
+.dicteur button.parle{animation:parle .9s ease-in-out infinite}
+@keyframes parle{50%{transform:scale(1.07)}}
+.loupe{display:inline-flex;align-items:center;gap:4px;background:#fff6d6;border:2px solid #e0b84a;color:#5b4a12;border-radius:999px;padding:3px 11px;font-weight:700;font-size:15px}
+.loupe.hop{animation:pop .4s ease}
+.plus1{position:absolute;z-index:60;font-weight:800;color:#b9800a;font-size:20px;pointer-events:none;animation:monte .9s ease-out forwards;font-family:"Baloo 2",sans-serif}
+@keyframes monte{to{transform:translateY(-42px);opacity:0}}
+.tampon{position:absolute;right:12px;top:8px;z-index:5;border:4px solid var(--rouge);color:var(--rouge);font-family:"Baloo 2",sans-serif;font-weight:800;font-size:clamp(17px,2.5vw,25px);padding:0 12px;border-radius:10px;transform:rotate(-9deg);background:rgba(255,255,255,.88);text-transform:uppercase;animation:tampon .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes tampon{from{transform:rotate(-9deg) scale(2.6);opacity:0}to{transform:rotate(-9deg) scale(1);opacity:1}}
+.etoiles-ph{font-size:38px;letter-spacing:4px;text-align:center;margin:4px 0 0}
+.etoiles-ph span{display:inline-block;animation:etoile .5s cubic-bezier(.2,1.6,.4,1) backwards}
+.etoiles-ph span:nth-child(2){animation-delay:.18s}.etoiles-ph span:nth-child(3){animation-delay:.36s}
+.etoiles-ph .vide,.etoiles .vide{filter:grayscale(1);opacity:.3}
+@keyframes etoile{from{transform:scale(0) rotate(-120deg)}to{transform:scale(1)}}
+.confetti{position:fixed;top:-24px;width:10px;height:15px;border-radius:3px;z-index:80;pointer-events:none;animation:tombe linear forwards}
+@keyframes tombe{to{transform:translate(var(--dx),112vh) rotate(var(--r))}}
+.grade{background:#fffaf0;border:3px solid var(--or);border-radius:18px;padding:12px 16px;margin:12px auto;max-width:520px;text-align:center}
+.grade .g-nom{font-family:"Baloo 2",sans-serif;font-size:26px;color:var(--or-f)}
+.grade .g-nom .badge{font-size:34px;vertical-align:-4px;margin-right:6px}
+.grade .barre-g{height:16px;background:#efe7d6;border-radius:999px;overflow:hidden;margin:8px 0 4px}
+.grade .barre-g i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--or),#ffd166);border-radius:999px;transition:width 1.2s ease}
+.grade small{color:#66716d;font-size:15px}
+.grade .nouveau{display:inline-block;background:var(--rouge);color:#fff;border-radius:999px;padding:2px 12px;font-weight:700;margin-bottom:6px;animation:pop .5s ease}
+.grade-accueil{text-align:center;font-weight:700;color:var(--or-f);margin:0 0 8px;font-size:17px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <script src="tour-de-controle.js"></script></head>
@@ -210,6 +241,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
     <h1>Prépare ta dictée !</h1>
     <p class="sous">J'apprends ma dictée comme un détective&nbsp;!</p>
     <p class="titre-dictee" id="titreDictee"></p>
+    <p class="grade-accueil" id="gradeAccueil" hidden></p>
     <p class="centre" style="font-weight:700;margin:0">Choisis ton détective&nbsp;:</p>
     <div class="persos">
       <button class="perso" data-p="fille" aria-pressed="true"><img alt="" id="imgFille">La détective</button>
@@ -288,7 +320,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
   <div class="barre">
     <span class="compteur" id="compteur"></span>
     <div class="pastilles" id="pastilles" aria-hidden="true"></div>
+    <span class="loupe" id="loupe" hidden>🔍 <span id="loupeN"></span></span>
     <button class="btn petit blanc quitter" id="quitter">Accueil</button>
+    <button class="btn petit blanc" id="son" type="button" aria-pressed="true" title="Bruitages">🔔</button>
   </div>
   <div class="scene">
     <div class="enfant">
@@ -306,6 +340,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
         <div class="rangee-f ligne-saisie" id="ligneSaisie"><input id="saisie" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="J'écris ma phrase ici"><span class="crayon" aria-hidden="true">✏️</span></div>
       </div>
       <div id="zoneSaisie">
+        <div class="dicteur" id="dicteur" role="group" aria-label="Écouter la dictée"><span class="lbl">La maîtresse dicte&nbsp;:</span><button type="button" id="dicNormal">🔊 Écouter</button><button type="button" class="lent" id="dicLent">🐢 Lentement</button></div>
         <div class="accents" id="accents"></div>
       </div>
       <div class="pieges" id="pieges"></div>
@@ -322,10 +357,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:4px soli
 <section class="ecran" id="bilan">
   <div class="carte">
     <h1>Bravo, détective&nbsp;!</h1>
-    <div class="etoiles" aria-hidden="true">⭐⭐⭐</div>
+    <div class="etoiles" id="bilanEtoiles" aria-hidden="true">⭐⭐⭐</div>
     <p class="sous" id="bilanTexte"></p>
+    <div class="grade" id="grade"></div>
     <p class="centre" id="bilanCats"></p>
-    <table class="tab-bilan"><thead><tr><th>Phrase</th><th>Erreurs au 1er essai</th></tr></thead><tbody id="bilanLignes"></tbody></table>
+    <table class="tab-bilan"><thead><tr><th>Phrase</th><th>Erreurs au 1er essai</th><th>Étoiles</th></tr></thead><tbody id="bilanLignes"></tbody></table>
     <h2 style="color:var(--vert);font-size:24px;text-align:center;margin-top:18px">Je recommence plusieurs jours</h2>
     <div class="jours" id="jours"></div>
     <p class="sous">Reviens demain et refais ta dictée&nbsp;: chaque jour, tu feras moins d'erreurs&nbsp;!</p>
@@ -873,16 +909,68 @@ function explication(x,md){
   }
 }
 // Synthèse vocale (voix française de l'appareil)
-function dire(txt){
-  try{var sy=window.speechSynthesis;if(!sy)return;sy.cancel();
+var direN=0;
+// o.rate : vitesse ; o.fin : appelé une fois quand la voix a fini (ou a été coupée)
+function dire(txt,o){
+  o=o||{};var n=++direN,fini=false,sec=null,fin=function(){if(fini)return;fini=true;clearTimeout(sec);if(o.fin)o.fin();};
+  try{var sy=window.speechSynthesis;if(!sy||!txt){fin();return;}
     var NOMS_P={"?":"point d'interrogation","!":"point d'exclamation",".":"point",",":"virgule",";":"point-virgule",":":"deux-points","'":"apostrophe","-":"trait d'union"};
     // un signe seul entre guillemets (« ? », « . »…) est lu par son nom, sinon la voix ne dit rien
     txt=txt.replace(/«\s*([?!.,;:'-])\s*»/g,function(_,c){return NOMS_P[c];});
-    var u=new SpeechSynthesisUtterance(txt.replace(/[«»]/g,"").replace(/[\p{Extended_Pictographic}\uFE0F]/gu,"").replace(/([.!?:])\s*\./g,"$1").replace(/\s+/g," ").trim());u.lang="fr-FR";u.rate=0.9;
-    var v=sy.getVoices().filter(function(v){return /^fr/i.test(v.lang);});if(v.length)u.voice=v.find(function(x){return /fr-FR/i.test(x.lang);})||v[0];
-    sy.speak(u);}catch(e){}
+    var t=txt.replace(/[«»]/g,"").replace(/[\p{Extended_Pictographic}️]/gu,"").replace(/([.!?:])\s*\./g,"$1").replace(/\s+/g," ").trim();
+    var parler=function(sansVoix){
+      if(n!==direN){fin();return;}
+      var u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=o.rate||0.9;
+      if(!sansVoix){var v=sy.getVoices().filter(function(v){return /^fr/i.test(v.lang);});if(v.length)u.voice=v.find(function(x){return /fr-FR/i.test(x.lang);})||v[0];}
+      u.onend=fin;
+      u.onerror=function(e){if(!sansVoix&&e.error!=="interrupted"&&e.error!=="canceled"&&n===direN){parler(true);return;}fin();};
+      sy.speak(u);
+      clearTimeout(sec);sec=setTimeout(fin,2000+t.length*120/u.rate);};
+    // Android : cancel() suivi tout de suite de speak() perd souvent la phrase → petite pause
+    if(sy.speaking||sy.pending){sy.cancel();setTimeout(function(){parler(false);},120);}else parler(false);
+  }catch(e){fin();}
 }
-function fermerBulle(){var b=document.querySelector(".bulle-corr");if(b)b.remove();try{window.speechSynthesis&&speechSynthesis.cancel();}catch(e){}}
+/* Bruitages (petites notes, sans fichier) */
+var SON=lire("dictee-pliee-son",true),AC=null;
+function ctxSon(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume();}catch(e){AC=null;}return AC;}
+function note(f,t0,d,type,vol){var a=ctxSon();if(!a)return;var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;
+  o.type=type||"triangle";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.16,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.05);}
+var SONS={ding:[[988,0,.16],[1319,.07,.25]],retire:[[660,0,.12,"sine"],[440,.07,.14,"sine"]],pop:[[523,0,.1,"sine"],[784,.05,.14,"sine"]],
+  bravo:[[659,0,.14],[880,.12,.22]],fanfare:[[523,0,.15],[659,.13,.15],[784,.26,.15],[1047,.39,.5]],doux:[[440,0,.2,"sine"],[523,.15,.3,"sine"]],
+  grade:[[523,0,.12],[659,.1,.12],[784,.2,.12],[1047,.3,.12],[1319,.42,.6]]};
+function son(nom){if(!SON)return;try{(SONS[nom]||[]).forEach(function(x){note(x[0],x[1],x[2],x[3],x[4]);});}catch(e){}}
+/* Android : débloquer le son et la voix au premier contact avec l'écran */
+document.addEventListener("pointerdown",function(){
+  try{var a=ctxSon();if(a){var bf=a.createBuffer(1,1,22050),src=a.createBufferSource();src.buffer=bf;src.connect(a.destination);src.start(0);}}catch(e){}
+  try{if(window.speechSynthesis){speechSynthesis.resume();var u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u);}}catch(e){}
+},{once:true,capture:true});
+/* Dictée à l'oral quand le modèle est caché : normal, ou lentement par groupes de mots avec la ponctuation dite */
+var dicTok=0;
+function marquerDicteur(id){["dicNormal","dicLent"].forEach(function(x){$(x).classList.toggle("parle",x===id);});}
+function arreterDictee(){dicTok++;marquerDicteur(null);}
+function groupesDictee(t){
+  if(enMots())return t.split(/\s+/).filter(Boolean);
+  var NP={",":"virgule",".":"point","!":"point d'exclamation","?":"point d'interrogation",";":"point-virgule",":":"deux-points"};
+  var m=t.replace(/([,.!?;:])/g," $1 ").split(/\s+/).filter(Boolean),g=[],cur=[];
+  // groupes de 3 mots au plus, sans laisser un mot tout seul à la fin
+  function vider(){while(cur.length){var k=cur.length===4?2:Math.min(3,cur.length);g.push(cur.splice(0,k).join(" "));}}
+  m.forEach(function(x){if(NP[x]){vider();g.push(NP[x]);}else cur.push(x);});
+  vider();return g;
+}
+function dicter(lent){
+  var tok=++dicTok,t=modele(),id=lent?"dicLent":"dicNormal";
+  marquerDicteur(id);
+  var finTout=function(){if(tok===dicTok)marquerDicteur(null);};
+  if(!lent){dire(enMots()?t.split(/\s+/).join(", "):t,{rate:.85,fin:finTout});return;}
+  var g=groupesDictee(t),i=0;
+  (function suite(){
+    if(tok!==dicTok)return;
+    if(i>=g.length){finTout();return;}
+    dire(g[i++],{rate:.72,fin:function(){if(tok===dicTok)setTimeout(suite,i>=g.length?0:1400);}});
+  })();
+}
+function fermerBulle(){var b=document.querySelector(".bulle-corr");if(b)b.remove();arreterDictee();try{window.speechSynthesis&&speechSynthesis.cancel();}catch(e){}}
 // Explication d'une erreur : bulle à côté de l'erreur, lue à voix haute
 function ajouterExplication(x,md,ancre){
   fermerBulle();
@@ -900,14 +988,39 @@ function ajouterExplication(x,md,ancre){
   d.style.setProperty("--fl",Math.max(12,Math.min(w-30,window.scrollX+r.left+r.width/2-left-9))+"px");
   dire(txt);
 }
-window.addEventListener("resize",fermerBulle);
+window.addEventListener("resize",function(){var b=document.querySelector(".bulle-corr");if(b)b.remove();});
+
+/* ---------- Grades de détective (étoiles gagnées, gardées sur l'appareil) ---------- */
+var CLE_ET="dictee-pliee-etoiles";
+var GRADES=[{s:0,b:"🔎",f:"Apprentie détective",g:"Apprenti détective"},{s:15,b:"🕵️",f:"Détective",g:"Détective"},{s:40,b:"🎖️",f:"Inspectrice",g:"Inspecteur"},{s:80,b:"🏅",f:"Commissaire",g:"Commissaire"},{s:150,b:"🏆",f:"Super-détective",g:"Super-détective"}];
+function etoilesTotal(){var n=+lire(CLE_ET,0);return n>0?n:0;}
+function gradeDe(n){var k=0;GRADES.forEach(function(x,i){if(n>=x.s)k=i;});return k;}
+function nomGrade(k){return GRADES[k][perso==="garcon"?"g":"f"];}
+function majGradeAccueil(){var n=etoilesTotal(),e=$("gradeAccueil");if(!n){e.hidden=true;return;}var k=gradeDe(n);e.hidden=false;e.textContent=GRADES[k].b+" "+nomGrade(k)+" — "+n+" ⭐";}
+function etoilesHTML(n,el){el.innerHTML="";for(var i=0;i<3;i++){var x=document.createElement("span");x.textContent="⭐";if(i>=n)x.className="vide";el.appendChild(x);}}
+function confettis(nb){
+  var C=["#f4b62a","#1f6f5c","#d23c3c","#1d4fa3","#e8835a","#7cc4a4"];
+  for(var i=0;i<(nb||40);i++){var d=document.createElement("div");d.className="confetti";d.style.left=(Math.random()*100)+"vw";d.style.background=C[i%C.length];
+    d.style.setProperty("--dx",(Math.random()*160-80)+"px");d.style.setProperty("--r",(Math.random()*900-450)+"deg");
+    d.style.animationDuration=(1.6+Math.random()*1.4)+"s";d.style.animationDelay=(Math.random()*.4)+"s";document.body.appendChild(d);
+    setTimeout(function(x){return function(){x.remove();};}(d),3600);}
+}
+function plus1(el,txt){if(!el)return;var r=el.getBoundingClientRect(),p=document.createElement("div");p.className="plus1";p.textContent=txt;
+  p.style.left=(window.scrollX+r.left+r.width/2-10)+"px";p.style.top=(window.scrollY+r.top-14)+"px";document.body.appendChild(p);setTimeout(function(){p.remove();},950);}
+function majLoupe(hop){var n=etat&&etat.pieges?etat.pieges.length:0,l=$("loupe");l.hidden=!n;$("loupeN").textContent=n+(n>1?" pièges":" piège");
+  if(hop){l.classList.remove("hop");void l.offsetWidth;l.classList.add("hop");}}
+function oterTampon(){var t=document.querySelector(".tampon");if(t)t.remove();}
 
 /* ---------- Accueil ---------- */
 var perso = lire("dictee-pliee-perso","fille");
 $("imgFille").src=IMG.fille; $("imgGarcon").src=IMG.garcon;
 function majPerso(){document.querySelectorAll(".perso").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.p===perso?"true":"false");});}
-document.querySelectorAll(".perso").forEach(function(b){b.onclick=function(){perso=b.dataset.p;ecrire("dictee-pliee-perso",perso);majPerso();};});
-majPerso();
+document.querySelectorAll(".perso").forEach(function(b){b.onclick=function(){perso=b.dataset.p;ecrire("dictee-pliee-perso",perso);majPerso();majGradeAccueil();};});
+majPerso();majGradeAccueil();
+function majSon(){var b=$("son");b.textContent=SON?"🔔":"🔕";b.setAttribute("aria-pressed",String(!!SON));b.setAttribute("aria-label",SON?"Couper les bruitages":"Remettre les bruitages");}
+$("son").onclick=function(){SON=!SON;ecrire("dictee-pliee-son",SON);majSon();son("ding");};majSon();
+$("dicNormal").onclick=function(){dicter(false);};
+$("dicLent").onclick=function(){dicter(true);};
 function majTitre(){var t=$("titreDictee"),n=dictee.p.length+(dictee.m?" mot":" phrase")+(dictee.p.length>1?"s":"");
   if(estExemple){
     t.textContent="Avec un adulte, écris toi-même la phrase modèle sur l'ardoise verte, ou essaie la dictée d'exemple.";
@@ -1110,7 +1223,8 @@ function modele(){return mod().texte;}
 function nbPhrases(){return etat.libre?etat.modeles.length:dictee.p.length;}
 function nouvellePhrase(){
   fermerBulle();
-  etat.essais=[];etat.regarde=false;etat.regarde1=false;etat.cats1=null;etat.pieges=[];etat.correction=null;
+  etat.essais=[];etat.regarde=false;etat.regarde1=false;etat.cats1=null;etat.pieges=[];etat.correction=null;etat.etoiles=0;
+  oterTampon();majLoupe(false);
   $("compteur").textContent=PH("Phrase ","Mot ")+(etat.i+1)+(etat.libre?"":" sur "+dictee.p.length);
   $("quitter").textContent=etat.libre?"Accueil":PH("Mes phrases","Mes mots");
   $("saisie").setAttribute("aria-label",PH("J'écris ma phrase ici","J'écris mes mots ici"));
@@ -1149,7 +1263,7 @@ function bouton(txt,cls,fn){var b=document.createElement("button");b.className="
 var tAct=null;
 function montrerActions(){clearTimeout(tAct);tAct=setTimeout(function(){var a=$("actions");if(!a||!a.firstChild)return;var r=a.getBoundingClientRect();if(r.bottom>window.innerHeight-8||r.top<0)a.scrollIntoView({block:"end",behavior:"smooth"});},350);}
 function accents(v){$("zoneSaisie").style.display=v?"block":"none";}
-function saisieVisible(v){accents(v);$("ligneSaisie").style.display=v?"flex":"none";if(v){$("saisie").value="";setTimeout(function(){$("saisie").focus();},60);}}
+function saisieVisible(v){accents(v);$("dicteur").style.display=v?"flex":"none";if(!v)arreterDictee();$("ligneSaisie").style.display=v?"flex":"none";if(v){$("saisie").value="";setTimeout(function(){$("saisie").focus();},60);}}
 function hauteurRangees(nb){var r=$("rangees").children,h=0;for(var k=0;k<nb&&k<r.length;k++)h+=r[k].offsetHeight;return h+14;}
 function rabat(nb,texte){var e=$("rabat");e.textContent=texte||"";e.style.height=nb?hauteurRangees(nb)+"px":"0";e.style.borderBottomWidth=nb?"3px":"0";e.style.boxShadow=nb?"":"none";}
 function ajouterRangee(){var d=document.createElement("div");d.className="rangee-f";$("rangees").appendChild(d);return d;}
@@ -1256,8 +1370,8 @@ function piege(k){
 function basculerPiege(k){
   // etat.pieges : liste de pièges {g:[index des lettres], ph:phrase}
   var i=etat.pieges.findIndex(function(p){return p.g.indexOf(k)>=0;});
-  if(i>=0)etat.pieges.splice(i,1);
-  else{var nv=piege(k);etat.pieges=etat.pieges.filter(function(p){return !p.g.some(function(x){return nv.g.indexOf(x)>=0;});});etat.pieges.push(nv);}
+  if(i>=0){etat.pieges.splice(i,1);son("retire");}
+  else{son("ding");plus1(zonePieges().querySelector('.lettre[data-k="'+k+'"]'),"🔍");var nv=piege(k);etat.pieges=etat.pieges.filter(function(p){return !p.g.some(function(x){return nv.g.indexOf(x)>=0;});});etat.pieges.push(nv);}
   // dessin : un seul cadre autour des lettres d'un même piège
   var r=zonePieges();
   r.querySelectorAll(".lettre").forEach(function(l){l.classList.remove("piege","pg","pg-d","pg-f");});
@@ -1267,7 +1381,7 @@ function basculerPiege(k){
   });
   var z=$("pieges");z.querySelectorAll(".piege-bulle").forEach(function(e){e.remove();});var vus={};
   etat.pieges.slice().sort(function(a,b){return a.g[0]-b.g[0];}).forEach(function(p){if(vus[p.ph])return;vus[p.ph]=1;var d=document.createElement("div");d.className="piege-bulle";d.textContent=p.ph;z.appendChild(d);});
-  $("actions").firstChild.disabled=!etat.pieges.length;
+  $("actions").firstChild.disabled=!etat.pieges.length;majLoupe(i<0);
   msg(etat.pieges.length?"Dis-toi ces pièges dans ta tête. Encore d'autres ?":"Touche les lettres pièges sur le modèle.");
 }
 
@@ -1275,7 +1389,7 @@ function basculerPiege(k){
 function plier(){
   fermerBulle();
   var n=$("rangees").children.length,nEssai=etat.essais.length;
-  etat.correction=null;$("verif").classList.remove("vue");$("explications").innerHTML="";
+  etat.correction=null;$("verif").classList.remove("vue");$("explications").innerHTML="";oterTampon();
   etape(nEssai===0?3:nEssai===1?5:7);
   $("ardoise").classList.add("cachee");
   // le modèle redevient un texte normal (sans les pièges entourés)
@@ -1327,7 +1441,7 @@ function verifier(){
   if($("saisie").readOnly)return; // modèle affiché : on attend qu'il soit caché
   var essai=normaliser($("saisie").value);
   if(!essai){$("saisie").focus();return;}
-  saisieVisible(false);
+  saisieVisible(false);arreterDictee();
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
   var regarde=!!etat.regarde;etat.regarde=false;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
@@ -1342,7 +1456,7 @@ function verifier(){
   if(!err.length&&regarde){
     r.textContent=essai;var v0=document.createElement("span");v0.className="vu";v0.textContent="👀";r.appendChild(v0);
     etape(etat.essais.length===1?4:6,"J'ai regardé le modèle : ce n'est pas compté juste.");
-    msg("Ta phrase est bien écrite, mais tu as regardé le modèle. Replie et réécris-la sans regarder !","orange");
+    msg("Ta phrase est bien écrite, mais tu as regardé le modèle. Replie et réécris-la sans regarder !","orange");son("doux");
     bouton(etat.essais.length===1?"Je replie et je réécris":"Je replie encore","vert",plier);
     boutonsSuite();
     return;
@@ -1350,7 +1464,11 @@ function verifier(){
   if(!err.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
     etape(8,PH("Bravo ! Ma phrase est juste, sans erreur !","Bravo ! Mes mots sont justes, sans erreur !"));
-    msg(etat.essais.length===1?"Zéro erreur du premier coup, super détective !":"Zéro erreur ! Tu as appris en corrigeant.","vert");
+    var ne=etat.essais.length,et=ne===1?3:ne===2?2:1;etat.etoiles=et;ecrire(CLE_ET,etoilesTotal()+et);
+    msg((ne===1?"Zéro erreur du premier coup, super détective !":"Zéro erreur ! Tu as appris en corrigeant.")+" +"+et+" ⭐","vert");
+    var ep=document.createElement("div");ep.className="etoiles-ph";ep.setAttribute("aria-label",et+" étoile"+(et>1?"s":"")+" sur 3");etoilesHTML(et,ep);$("explications").appendChild(ep);
+    var tp=document.createElement("div");tp.className="tampon";tp.textContent="Affaire résolue !";$("feuille").appendChild(tp);
+    son(et===3?"fanfare":"bravo");confettis(et===3?60:30);
     boutonsSuite();$("actions").firstChild.className="btn vert";
     return;
   }
@@ -1373,7 +1491,7 @@ function verifier(){
         var p=document.createElement("button");p.type="button";p.className="point"+(estChoisi?"":" secondaire");p.textContent="?";
         p.style.minWidth=(Math.max(Array.from(x.trop).length,1)*0.6+0.5)+"em";
         p.setAttribute("aria-label","Une erreur est cachée ici : compare avec le modèle, puis touche pour voir la correction");
-        p.onclick=function(){vues[idx]=1;dessiner();ajouterExplication(x,md,r.querySelector('.faute[data-i="'+idx+'"]'));bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
+        p.onclick=function(){vues[idx]=1;son("pop");dessiner();ajouterExplication(x,md,r.querySelector('.faute[data-i="'+idx+'"]'));bilanCorrection("C'était "+NOMCAT[x.cat].un+".");};
         f.appendChild(p);
       }else{
         if(x.trop){var t=document.createElement("span");t.className="trop";t.textContent=x.trop;f.appendChild(t);}
@@ -1394,7 +1512,7 @@ function verifier(){
       return;
     }
     if(c.dansChoix===0)msg(pre+"Pas d'erreur de ce que tu vérifies : bravo !"+orange,"vert");
-    else{msg(pre+(c.autres?"Tes erreurs rouges sont corrigées en vert !":"Toutes tes erreurs sont corrigées en vert !")+orange,"vert");$("bulle2").classList.add("vue");}
+    else{msg(pre+(c.autres?"Tes erreurs rouges sont corrigées en vert !":"Toutes tes erreurs sont corrigées en vert !")+orange,"vert");$("bulle2").classList.add("vue");if(avant)setTimeout(function(){son("bravo");},250);}
     bouton(etat.essais.length===1?"Je replie et je réécris":"Je replie encore","vert",plier);
     boutonsSuite();
   }
@@ -1402,7 +1520,7 @@ function verifier(){
 }
 
 function suivante(encore){
-  etat.resultats.push({p:modele(),premier:etat.essais[0],vu:!!etat.regarde1,cats:etat.cats1||{}});
+  etat.resultats.push({p:modele(),premier:etat.essais[0],vu:!!etat.regarde1,cats:etat.cats1||{},et:etat.etoiles||0});
   if(!etat.libre){var f=faites();f[etat.i]=etat.essais[0];ecrire(cle()+"-"+aujourdhui(),f);if(encore){choixPhrase();return;}bilan();return;}
   etat.i++;
   if(encore){nouvellePhrase();return;}
@@ -1417,7 +1535,18 @@ function bilan(){
   try{TDC.note({s:etat.resultats.filter(function(r){return r.premier===0&&!r.vu;}).length,n:etat.resultats.length,g:total===0,d:total===0?"Zéro erreur au premier essai":total+" erreur"+(total>1?"s":"")+" au premier essai"})}catch(e){}
   etat.resultats.forEach(function(r){Object.keys(r.cats).forEach(function(k){parCat[k]=(parCat[k]||0)+r.cats[k];});});
   var tb=$("bilanLignes");tb.innerHTML="";
-  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0 ⭐":r.vu?"👀 modèle regardé":r.premier;tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr);});
+  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0":r.vu?"👀 modèle regardé":r.premier;var c3=document.createElement("td");c3.textContent=r.et?"⭐".repeat(r.et):"–";tr.appendChild(a);tr.appendChild(b);tr.appendChild(c3);tb.appendChild(tr);});
+  var gagne=etat.resultats.reduce(function(s,r){return s+(r.et||0);},0),tot=etoilesTotal(),avant=Math.max(0,tot-gagne),
+      k=gradeDe(tot),k0=gradeDe(avant),sv=GRADES[k+1];
+  etoilesHTML(etat.resultats.length?Math.round(3*gagne/(3*etat.resultats.length)):0,$("bilanEtoiles"));
+  var gz=$("grade");gz.innerHTML="";
+  if(k>k0){var nv=document.createElement("div");nv.className="nouveau";nv.textContent="🎉 Nouveau grade !";gz.appendChild(nv);}
+  var gn=document.createElement("div");gn.className="g-nom";gn.innerHTML='<span class="badge"></span><span></span>';gn.firstChild.textContent=GRADES[k].b;gn.lastChild.textContent=nomGrade(k);gz.appendChild(gn);
+  var bg=document.createElement("div");bg.className="barre-g";var bi=document.createElement("i");bg.appendChild(bi);gz.appendChild(bg);
+  var sm=document.createElement("small");sm.textContent="+"+gagne+" ⭐ aujourd'hui · "+tot+" ⭐ en tout"+(sv?" · encore "+(sv.s-tot)+" ⭐ pour devenir "+sv[perso==="garcon"?"g":"f"]:" · le plus haut grade !");gz.appendChild(sm);
+  setTimeout(function(){bi.style.width=(sv?Math.round(100*(tot-GRADES[k].s)/(sv.s-GRADES[k].s)):100)+"%";},200);
+  if(k>k0)setTimeout(function(){son("grade");confettis(80);},400);
+  majGradeAccueil();
   $("bilanTexte").textContent=total===0?"Zéro erreur au premier essai : ta dictée est apprise !":"Au premier essai, tu as fait "+total+" erreur"+(total>1?"s":"")+". En les corrigeant, tu as appris !";
   $("bilanCats").textContent=total?"À surveiller : "+CATS.filter(function(c){return parCat[c.id];}).map(function(c){return c.nom.toLowerCase()+" ("+parCat[c.id]+")";}).join(", ")+".":"";
   var h=lire(cle(),[]),j=aujourdhui();
