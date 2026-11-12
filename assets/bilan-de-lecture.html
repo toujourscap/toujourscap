@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bilan de lecture — cycle 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--fond:#fdf8ef;--carte:#fff;--encre:#2c3440;--doux:#6b7280;--vert:#2f9e62;--orange:#e8912d;--rouge:#d64545;--bleu:#2f6fb2;--ligne:#e7dfcf;--jaune:#fff3c4}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Andika","Comic Sans MS",Arial,sans-serif;background:var(--fond);color:var(--encre);font-size:17px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 18px;background:#24527a;color:#fff;flex-wrap:wrap}
+header h1{margin:0;font-size:1.25rem}
+#hdrInfo{font-size:.95rem;opacity:.9}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.carte{background:var(--carte);border:1px solid var(--ligne);border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+h2{margin:.1em 0 .5em;font-size:1.3rem;color:#24527a}
+h3{margin:.8em 0 .3em;font-size:1.05rem}
+label{cursor:pointer}
+input[type=text],input[type=date],select,textarea{font:inherit;padding:6px 10px;border:1px solid #cfc6b4;border-radius:8px;background:#fff}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 18px}
+.groupe{border:1px dashed var(--ligne);border-radius:12px;padding:10px 12px}
+.groupe h3{margin-top:0}
+.groupe label{display:block;padding:3px 0}
+.b{font:inherit;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;background:#e9eef5;color:var(--encre);font-weight:700;transition:transform .08s}
+.b:active{transform:scale(.97)}
+.b.prim{background:var(--bleu);color:#fff;font-size:1.1rem;padding:12px 22px}
+.b.ok{background:var(--vert);color:#fff}
+.b.hes{background:var(--orange);color:#fff}
+.b.ko{background:var(--rouge);color:#fff}
+.b.petit{padding:6px 10px;font-size:.9rem;font-weight:400}
+kbd{font-family:inherit;font-size:.75em;background:rgba(255,255,255,.3);border-radius:4px;padding:0 5px;margin-left:4px}
+.barre{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.95rem;color:var(--doux);margin-bottom:6px}
+.barre b{color:var(--encre)}
+.prog{height:8px;background:#eee4d2;border-radius:6px;overflow:hidden;margin-bottom:12px}
+.prog i{display:block;height:100%;background:var(--bleu);border-radius:6px}
+.scene{background:#fff;border:2px solid var(--ligne);border-radius:20px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;margin-bottom:14px;position:relative}
+.stim{font-weight:400;line-height:1.1;text-align:center;user-select:none}
+.stim.xl{font-size:min(30vw,190px)}
+.stim.l{font-size:min(20vw,130px)}
+.stim.m{font-size:min(14vw,96px)}
+.modele{border:4px solid #24527a;border-radius:18px;padding:0 30px;margin-bottom:18px;font-size:min(20vw,120px);line-height:1.15;background:var(--jaune)}
+.choix{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.choix button{font-family:inherit;font-size:min(13vw,80px);min-width:min(22vw,140px);padding:4px 18px;border-radius:18px;border:3px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer;line-height:1.2}
+.choix button:hover{border-color:var(--bleu)}
+.choix button.pris{background:#dfe9f6;border-color:var(--bleu)}
+.choix.mots button{font-size:min(9vw,48px)}
+.adulte{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#eef3f9;border-radius:14px;padding:10px 12px}
+.adulte .lab{font-weight:700;color:#24527a;margin-right:4px}
+.adulte input{flex:1;min-width:180px}
+.consigne{background:var(--jaune);border-radius:12px;padding:12px 14px;margin:10px 0 14px;line-height:1.45}
+.cache{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.mot-cache{font-size:2rem;min-width:9ch;text-align:center;padding:2px 14px;border-radius:10px;background:#eee;color:transparent;user-select:none}
+.mot-cache.vu{color:var(--encre);background:var(--jaune)}
+.texte{font-size:clamp(22px,3.4vw,34px);line-height:1.9;max-width:900px;text-align:left}
+.texte span{padding:0 3px;border-radius:6px;cursor:pointer}
+.texte span.err{background:#fbd5d5;color:var(--rouge);text-decoration:line-through}
+.texte span.apres{color:#c3c3c3}
+.texte span.dernier{outline:3px solid var(--bleu)}
+.texte.choisir span:hover{background:#dfe9f6}
+.chrono{font-size:2rem;font-variant-numeric:tabular-nums;font-weight:700;color:#24527a;min-width:4ch}
+.fixe{font-size:90px;color:var(--doux)}
+.masque{font-size:min(20vw,130px);color:#bbb;letter-spacing:.1em}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{border-bottom:1px solid var(--ligne);padding:7px 6px;text-align:left;vertical-align:top}
+th{background:#f4efe4}
+.pastille{display:inline-block;padding:1px 9px;border-radius:20px;color:#fff;font-size:.85rem;white-space:nowrap}
+.p-a{background:var(--vert)}.p-e{background:var(--orange)}.p-n{background:var(--rouge)}.p-x{background:#9aa3ad}
+.note{color:var(--doux);font-size:.88rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10px;padding:12px;margin:0}
+.histo li{margin:4px 0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
+.modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
+@media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
+</style>
+</head>
+<body>
+<header><h1>📖 Bilan de lecture — cycle 2</h1><span id="hdrInfo"></span></header>
+<main id="app"></main>
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const app=$('#app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const melange=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const hasard=a=>a[Math.random()*a.length|0];
+
+/* ---------- Contenus ---------- */
+const TEXTE_SIMPLE="Léa a une amie : Mila. Mila a une petite tortue, Titi. Titi file sur le tapis. Elle a vu une salade. Hop ! Titi a dévoré la salade. Mila rit. Léa rit avec Mila.";
+const TEXTE_COMPLEXE="Le petit lapin de Manon s'appelle Pompon. Chaque matin, il sort de sa maison en bois et il court dans le jardin. Il mange des feuilles de chou et une carotte. Un jour, un gros oiseau noir se pose sur le toit de sa cabane. Pompon a très peur ! Il rentre bien vite chez lui, sous la paille.";
+
+const MIROIR={b:['d','p'],d:['b','q'],p:['q','b'],q:['p','d']};
+const LETTRES='aeioucfjlmnrstvz'.split('');
+const PROCHES={a:'oe',e:'cao',o:'aec',c:'eo',u:'nv',n:'mu',m:'n',i:'jl',l:'it',t:'lf',f:'t',j:'i',r:'n',s:'z',z:'s',v:'u'};
+
+const EPREUVES=[
+ {id:'vs',groupe:'Lecture',titre:'Voyelles simples',type:'lire',taille:'xl',
+  items:()=>ordre(['a','e','i','o','u','y','é','è','ê']),
+  consigne:"Montrez l'écran à l'élève : « Dis-moi le son de cette lettre. » Validez chaque réponse. Le son est attendu (ex. y = [i]) ; si l'élève donne le nom de la lettre, demandez « Et quel son fait-elle ? »."},
+ {id:'vc',groupe:'Lecture',titre:'Voyelles complexes',type:'lire',taille:'xl',
+  items:()=>ordre(['ou','oi','on','an','en','in','un','au','eau','ai','ei','eu','œu','oin','ain','ein']),
+  consigne:"« Dis-moi le son que font ces lettres ensemble. » Accepter toute lecture juste (en = [an] ou [in] ; eu / œu = [eu] ouvert ou fermé)."},
+ {id:'ms',groupe:'Lecture',titre:'Mots simples',type:'lire',taille:'l',
+  items:()=>ordre(['ami','lune','moto','vélo','rame','pile','mule','sofa','robe','tomate','salade','domino','farine','cabane','malade','numéro']),
+  consigne:"« Lis ce mot. » Mots réguliers aux syllabes simples. Notez une lecture syllabée lente en « Hésitant »."},
+ {id:'mc',groupe:'Lecture',titre:'Mots avec voyelles complexes',type:'lire',taille:'l',
+  items:()=>ordre(['loup','roi','bonbon','lapin','maison','moulin','bateau','poule','raisin','lundi','peinture','coin','jardin','oiseau','chapeau','feuille']),
+  consigne:"« Lis ce mot. » Chaque mot contient au moins un graphème complexe (ou, oi, on, in, ai, eau, ein…)."},
+ {id:'ts',groupe:'Lecture',titre:'Texte simple',type:'texte',texte:TEXTE_SIMPLE,
+  consigne:"« Lis ce texte à voix haute, le mieux possible. » Lancez le chrono quand l'élève commence. Touchez les mots mal lus (ils passent en rouge ; un mot autocorrigé n'est pas une erreur). Méthode des évaluations nationales : mots correctement lus par minute."},
+ {id:'tc',groupe:'Lecture',titre:'Texte avec sons complexes',type:'texte',texte:TEXTE_COMPLEXE,
+  consigne:"Même passation que le texte simple. Ce texte contient de nombreux graphèmes complexes (an, ou, oi, ai, eu, ill, ch…)."},
+ {id:'vis',groupe:'Discrimination visuelle',titre:'b, d, p, q (visuel)',type:'choix',sorte:'visuel',
+  items:genVisuel,
+  consigne:"« Regarde la lettre dans le cadre jaune. Montre-moi la même en dessous. » L'élève montre, vous cliquez sur sa réponse. Puis viennent des paires de lettres (bd, pq…)."},
+ {id:'aud',groupe:'Discrimination auditive',titre:'b, d, p, q (auditif)',type:'choix',sorte:'auditif',
+  items:()=>ordre([['bébé','b'],['dodo','d'],['papa','p'],['quatre','q'],['bulle','b'],['poule','p'],['dune','d'],['quille','q'],['bain','b'],['pain','p'],['dent','d'],['queue','q']]).map(([m,l])=>({label:m,bonne:l,choix:['b','d','p','q'],dire:m})),
+  consigne:"Maintenez le bouton 👁 pour voir le mot (sans le montrer), puis dites-le à l'élève (ou 🔊). « Par quelle lettre commence ce mot ? Montre-la. » Cliquez sur la lettre montrée. (q se lit [k] : quatre, quille, queue.)"},
+ {id:'par',groupe:'Discrimination auditive',titre:'Pareil ou différent ?',type:'choix',sorte:'pareil',
+  items:()=>ordre([['bain','pain'],['dent','dent'],['bon','don'],['pas','pas'],['bille','quille'],['dos','dos'],['pont','bon'],['qui','qui']]).map(([a,b])=>({label:a+' – '+b,bonne:a===b?'Pareil':'Différent',choix:['Pareil','Différent'],dire:a+' … '+b})),
+  consigne:"Dites les deux mots à l'élève (maintenez 👁 pour les voir). « Est-ce que j'ai dit deux fois le même mot ou deux mots différents ? » Cachez votre bouche si besoin."},
+ {id:'e1',groupe:'Empan visuel',titre:'Empan : 1 lettre',type:'choix',sorte:'empan',n:1,items:()=>genEmpan(1),
+  consigne:"« Une lettre va apparaître très vite puis se cacher. Regarde bien, puis montre-moi celle que tu as vue. » Cliquez sur « Montrer » quand l'élève est prêt et regarde l'écran."},
+ {id:'e2',groupe:'Empan visuel',titre:'Empan : 2 lettres',type:'choix',sorte:'empan',n:2,items:()=>genEmpan(2),
+  consigne:"Même consigne avec deux lettres : l'élève doit retrouver les deux lettres dans le bon ordre."},
+ {id:'e3',groupe:'Empan visuel',titre:'Empan : 3 lettres',type:'choix',sorte:'empan',n:3,items:()=>genEmpan(3),
+  consigne:"Même consigne avec trois lettres, dans le bon ordre."}
+];
+const REPERES={CP:50,CE1:70,CE2:90};
+
+let reglages={prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
+let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
+
+function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
+function genVisuel(){
+ const seules=ordre(['b','d','p','q','d','b','q','p']).map(l=>({label:l,bonne:l,choix:melange(['b','d','p','q'])}));
+ const paires=ordre(['bd','pq','db','qp','bp','dq']).map(w=>{
+  const s=new Set([w]);
+  for(const x of [w[1]+w[0],MIROIR[w[0]][0]+w[1],w[0]+MIROIR[w[1]][0],MIROIR[w[0]][1]+w[1],w[0]+MIROIR[w[1]][1]]){if(s.size>=4)break;if(x[0]!==x[1])s.add(x)}
+  return {label:w,bonne:w,choix:melange([...s])};
+ });
+ return seules.concat(paires);
+}
+function voisin(l){const p=PROCHES[l];return p?hasard(p.split('')):hasard(LETTRES)}
+function genEmpan(n){
+ const out=[];
+ for(let k=0;k<5;k++){
+  let a;do{a=melange(LETTRES).slice(0,n)}while(n>1&&out.some(o=>o.bonne===a.join('')));
+  const s=a.join(''),set=new Set([s]);let g=0;
+  while(set.size<4&&g++<300){
+   const b=s.split('');
+   if(b.length>1&&Math.random()<.35){const i=Math.random()*(b.length-1)|0;[b[i],b[i+1]]=[b[i+1],b[i]]}
+   else{const i=Math.random()*b.length|0;b[i]=Math.random()<.7?voisin(b[i]):hasard(LETTRES)}
+   const x=b.join('');if(x!==s&&new Set(b).size===b.length)set.add(x);
+  }
+  out.push({label:s,bonne:s,choix:melange([...set])});
+ }
+ return out;
+}
+
+/* ---------- Outils ---------- */
+function stopTimers(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]}
+function dire(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,ageTexte(ageMois()),dateFr(reglages.date)].filter(Boolean).join(' · ')}
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function ageMois(m=reglages.moisN,a=reglages.anneeN,d=reglages.date){if(!m||!a||!d)return null;const [y,mo]=d.split('-').map(Number);const n=(y-a)*12+(mo-m);return n>=36&&n<=144?n:null}
+function ageTexte(n){return n==null?'':Math.floor(n/12)+' ans'+(n%12?' '+(n%12)+' mois':'')}
+const API='/api/bilan-lecture';
+function dateFr(d){if(!d)return'';const [y,m,j]=d.split('-');return j+'/'+m+'/'+y}
+function duree(s){s=Math.round(s);return s<60?s+' s':Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s'}
+document.addEventListener('keydown',e=>{if(onKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))onKey(e)});
+const lireHisto=()=>{try{return JSON.parse(localStorage.getItem('bilanLectureC2')||'[]')}catch(e){return[]}};
+const ecrireHisto=h=>{try{localStorage.setItem('bilanLectureC2',JSON.stringify(h.slice(0,15)))}catch(e){}};
+
+/* ---------- Accueil ---------- */
+function accueil(){
+ stopTimers();onKey=null;R=null;
+ const groupes=[...new Set(EPREUVES.map(e=>e.groupe))];
+ const h=lireHisto();
+ app.innerHTML=`
+ <div class="carte">
+  <h2>1. L'élève</h2>
+  <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
+  <div class="grille">
+   <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
+   <label>Mois de naissance <b style="color:var(--rouge)">*</b><br><select id="moisN"><option value="">— mois —</option>${MOIS.map((m,i)=>`<option value="${i+1}" ${i+1==reglages.moisN?'selected':''}>${m}</option>`).join('')}</select></label>
+   <label>Année de naissance <b style="color:var(--rouge)">*</b><br><select id="anneeN"><option value="">— année —</option>${Array.from({length:10},(_,i)=>new Date().getFullYear()-4-i).map(a=>`<option ${a==reglages.anneeN?'selected':''}>${a}</option>`).join('')}</select></label>
+   <label>Date de la passation<br><input type="date" id="date" value="${reglages.date}"></label>
+   <label>Âge le jour du test<br><b id="age" style="font-size:1.2rem">—</b></label>
+   <label>Prénom (facultatif)<br><input type="text" id="prenom" value="${esc(reglages.prenom)}" placeholder="affiché, jamais enregistré"></label>
+  </div>
+ </div>
+ <div class="carte">
+  <h2>2. Épreuves</h2>
+  <div class="grille">${groupes.map(g=>`<div class="groupe"><h3>${g}</h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>`<label><input type="checkbox" value="${e.id}" ${reglages.choisies.includes(e.id)?'checked':''}> ${e.titre}</label>`).join('')}</div>`).join('')}</div>
+  <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
+  <h3>Réglages</h3>
+  <div class="grille">
+   <label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre</label>
+   <label><input type="checkbox" id="unemin" ${reglages.uneMinute?'checked':''}> Textes : arrêt à 1 minute</label>
+   <label>Empan : lettres affichées <select id="duree">${[200,300,500,800,1000].map(d=>`<option value="${d}" ${d==reglages.duree?'selected':''}>${d} ms</option>`).join('')}</select></label>
+  </div>
+  <div class="actions"><button class="b prim" id="go">▶ Commencer le bilan</button><a class="b" href="/outils/bilan-de-lecture-documents" target="_blank" rel="noopener" style="text-decoration:none">📄 Documents papier</a></div>
+ </div>
+ ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
+ <p class="note">Repères de fluence (mots correctement lus en une minute, attendus de fin d'année, Éduscol) : CP 50 · CE1 70 · CE2 90.</p>`;
+ const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n)};
+ ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
+ $('#tout').onclick=()=>$$('.groupe input').forEach(c=>c.checked=true);
+ $('#rien').onclick=()=>$$('.groupe input').forEach(c=>c.checked=false);
+ $$('[data-voir]').forEach(b=>b.onclick=()=>modal(h[b.dataset.voir].texte));
+ if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
+ $('#go').onclick=()=>{
+  reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;
+  reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;
+  if(!reglages.classe||ageMois()==null){$('#go').textContent='⚠ Indiquez le niveau, le mois et l\'année de naissance';window.scrollTo(0,0);return}
+  reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;
+  reglages.choisies=$$('.groupe input:checked').map(c=>c.value);
+  if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
+  majEntete();resultats={};bilanEnregistre=false;envoye=false;passation=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
+  R={liste:EPREUVES.filter(e=>reglages.choisies.includes(e.id)),i:0,t0:Date.now()};
+  intro();
+ };
+}
+function modal(txt){
+ const d=document.createElement('div');d.className='modal';
+ d.innerHTML=`<div class="carte"><pre>${esc(txt)}</pre><div class="actions"><button class="b" id="mfermer">Fermer</button></div></div>`;
+ document.body.appendChild(d);d.onclick=e=>{if(e.target===d||e.target.id==='mfermer')d.remove()};
+}
+
+/* ---------- Déroulé ---------- */
+function intro(){
+ stopTimers();
+ if(R.i>=R.liste.length)return bilan();
+ const ep=R.liste[R.i];R.ep=ep;
+ app.innerHTML=`<div class="barre"><span>Épreuve ${R.i+1} / ${R.liste.length}</span><button class="b petit" id="finBilan">🏁 Aller au bilan</button></div>
+ <div class="carte"><p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
+ <div class="consigne"><b>Pour l'adulte :</b> ${ep.consigne}</div>
+ <div class="actions"><button class="b prim" id="start">▶ Commencer <kbd>Entrée</kbd></button><button class="b" id="passer">Passer cette épreuve</button></div></div>`;
+ $('#finBilan').onclick=bilan;
+ $('#passer').onclick=()=>{R.i++;intro()};
+ const go=()=>{R.items=ep.type==='texte'?null:ep.items();R.k=0;R.res=[];R.tEp=Date.now();ep.type==='texte'?ecranTexte():suivant()};
+ $('#start').onclick=go;
+ onKey=e=>{if(e.key==='Enter'){e.preventDefault();go()}};
+}
+const seuil=n=>Math.min(5,Math.ceil(n*.6));
+function peutPasser(){return R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
+function barre(){
+ const ep=R.ep,n=R.items.length;
+ return `<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${Math.min(R.k+1,n)} / ${n}</span>
+ <span>${peutPasser()?`<button class="b ok" id="acquis">⏩ Acquis : niveau supérieur</button> `:''}<button class="b petit" id="stopEp">⏭ Arrêter l'épreuve</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
+ <div class="prog"><i style="width:${R.k/n*100}%"></i></div>`;
+}
+function lierBarre(){
+ $('#stopEp').onclick=()=>finEpreuve();
+ if($('#acquis'))$('#acquis').onclick=()=>{R.anticipe=true;finEpreuve()};
+ $('#finBilan').onclick=()=>{finEpreuve(true)};
+}
+function suivant(){
+ stopTimers();
+ if(R.k>=R.items.length)return finEpreuve();
+ R.ep.type==='lire'?ecranLire():ecranChoix();
+}
+function finEpreuve(versBilan){
+ stopTimers();
+ const ep=R.ep;
+ if(ep.type!=='texte'&&R.res.length){
+  const r={titre:ep.titre,groupe:ep.groupe,type:ep.type,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,
+   ok:R.res.filter(x=>x.v==='ok').length,hes:R.res.filter(x=>x.v==='hes'),err:R.res.filter(x=>x.v==='ko'),sec:(Date.now()-R.tEp)/1000};
+  resultats[ep.id]=r;
+ }
+ R.anticipe=false;
+ R.i++;
+ versBilan===true?bilan():intro();
+}
+
+/* ---------- Lecture validée ---------- */
+function ecranLire(){
+ const ep=R.ep,it=R.items[R.k];
+ app.innerHTML=barre()+`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>
+ <div class="adulte"><span class="lab">Adulte :</span>
+  <button class="b ok" data-v="ok">✔ Juste<kbd>→</kbd></button>
+  <button class="b hes" data-v="hes">≈ Hésitant / autocorrigé<kbd>↑</kbd></button>
+  <button class="b ko" data-v="ko">✘ Erreur<kbd>←</kbd></button>
+  <input type="text" id="rep" placeholder="Ce que l'élève a dit (facultatif)">
+  <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
+ lierBarre();
+ const noter=v=>{R.res.push({item:it,v,rep:$('#rep').value.trim()});R.k++;suivant()};
+ $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v));
+ $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
+ $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
+ onKey=e=>{const m={ArrowRight:'ok',ArrowUp:'hes',ArrowLeft:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+}
+
+/* ---------- Choix (visuel, auditif, empan) ---------- */
+function ecranChoix(){
+ const ep=R.ep,it=R.items[R.k];
+ let haut='';
+ if(ep.sorte==='visuel')haut=`<div class="modele">${esc(it.label)}</div>`;
+ if(ep.sorte==='auditif'||ep.sorte==='pareil')haut=`<div class="cache noprint"><button class="b" id="voir">👁 Maintenir pour voir</button><span class="mot-cache" id="mot">${esc(ep.sorte==='pareil'?it.label:it.dire)}</span><button class="b" id="dire">🔊 Faire écouter</button></div>`;
+ const bout=`<div class="choix ${ep.sorte==='pareil'?'mots':''}" id="choix">${it.choix.map((c,i)=>`<button data-c="${esc(c)}">${ep.sorte==='pareil'?(c==='Pareil'?'= Pareil':'≠ Différent'):esc(c)}</button>`).join('')}</div>`;
+ app.innerHTML=barre()+`<div class="scene" id="scene">${haut}${ep.sorte==='empan'?'':bout}</div>
+ <div class="adulte"><span class="lab">Adulte :</span><span>${ep.sorte==='empan'?"Cliquez sur « Montrer » quand l'élève regarde l'écran, puis sur la réponse qu'il montre.":"Cliquez sur la réponse que l'élève montre."} <span class="note">(touches 1 à ${it.choix.length})</span></span>
+ <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
+ lierBarre();
+ $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
+ if($('#voir')){
+  const v=$('#voir'),m=$('#mot');
+  const on=e=>{e.preventDefault();m.classList.add('vu')},off=()=>m.classList.remove('vu');
+  v.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(t=>v.addEventListener(t,off));
+  $('#dire').onclick=()=>dire(it.dire);
+ }
+ let fini=false;
+ const activer=()=>{
+  $$('#choix button').forEach(b=>b.onclick=()=>repondre(b));
+  onKey=e=>{const n=parseInt(e.key,10);const bs=$$('#choix button');if(n>=1&&n<=bs.length)repondre(bs[n-1]);else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+ };
+ const repondre=b=>{
+  if(fini)return;fini=true;b.classList.add('pris');
+  const c=b.dataset.c;R.res.push({item:it.label,v:c===it.bonne?'ok':'ko',rep:c});
+  timers.push(setTimeout(()=>{R.k++;suivant()},300));
+ };
+ if(ep.sorte!=='empan')return activer();
+ // Empan : montrer, cacher, choisir
+ const sc=$('#scene');
+ sc.innerHTML=`<button class="b prim" id="montrer">👀 Montrer <kbd>Espace</kbd></button>`;
+ const montrer=()=>{
+  onKey=null;
+  sc.innerHTML=`<div class="fixe">+</div>`;
+  timers.push(setTimeout(()=>{sc.innerHTML=`<div class="stim l">${esc(it.label)}</div>`;
+   timers.push(setTimeout(()=>{sc.innerHTML=`<div class="masque">${'#'.repeat(it.label.length)}</div>`;
+    timers.push(setTimeout(()=>{sc.innerHTML=bout;activer()},300));
+   },reglages.duree));
+  },700));
+ };
+ $('#montrer').onclick=montrer;
+ onKey=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();montrer()}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+}
+
+/* ---------- Textes (fluence) ---------- */
+function decouper(t){const out=[];t.split(/\s+/).forEach(w=>{if(/[\p{L}\d]/u.test(w))out.push(w);else if(out.length)out[out.length-1]+=' '+w});return out}
+const nettoyer=w=>w.replace(/[^\p{L}'’-]/gu,'');
+function ecranTexte(){
+ const ep=R.ep,mots=decouper(ep.texte);
+ const T={phase:'pret',t0:0,sec:0,err:new Set(),dernier:mots.length-1};
+ app.innerHTML=`<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${mots.length} mots</span><span><button class="b petit" id="stopEp">⏭ Passer</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
+ <div class="scene"><div class="texte" id="texte">${mots.map((w,i)=>`<span data-i="${i}">${esc(w)}</span>`).join(' ')}</div></div>
+ <div class="adulte" id="ctrl"></div>`;
+ $('#stopEp').onclick=()=>{stopTimers();R.i++;intro()};
+ $('#finBilan').onclick=()=>{stopTimers();R.i++;bilan()};
+ const tx=$('#texte');
+ const peindre=()=>{$$('#texte span').forEach(s=>{const i=+s.dataset.i;s.classList.toggle('err',T.err.has(i)&&i<=T.dernier);s.classList.toggle('apres',T.phase==='fin'&&i>T.dernier);s.classList.toggle('dernier',T.phase==='fin'&&i===T.dernier&&T.dernier<mots.length-1)});tx.classList.toggle('choisir',T.phase==='dernier')};
+ tx.onclick=e=>{const s=e.target.closest('span');if(!s)return;const i=+s.dataset.i;
+  if(T.phase==='dernier'){T.dernier=i;T.phase='fin';ctrl()}
+  else if(T.phase==='lecture'||T.phase==='fin'){T.err.has(i)?T.err.delete(i):T.err.add(i);if(T.phase==='fin')ctrl()}
+  peindre()};
+ const arreter=(fin)=>{stopTimers();T.sec=Math.min((Date.now()-T.t0)/1000,reglages.uneMinute?60:1e9);T.phase=fin?'fin':'dernier';if(fin)T.dernier=mots.length-1;ctrl();peindre()};
+ function ctrl(){
+  const c=$('#ctrl');
+  if(T.phase==='pret'){c.innerHTML=`<span class="lab">Adulte :</span><button class="b prim" id="dem">▶ Démarrer le chrono <kbd>Espace</kbd></button><span class="note">${reglages.uneMinute?'Arrêt automatique à 1 minute.':'Sans limite de temps.'}</span>`;
+   $('#dem').onclick=demarrer;onKey=e=>{if(e.key===' '){e.preventDefault();demarrer()}}}
+  else if(T.phase==='lecture'){c.innerHTML=`<span class="chrono" id="chr">0</span><span class="note">Touchez les mots mal lus.</span><button class="b ok" id="fin">✅ Texte terminé <kbd>Espace</kbd></button><button class="b" id="ici">⏹ Arrêter ici</button>`;
+   $('#fin').onclick=()=>arreter(true);$('#ici').onclick=()=>arreter(false);onKey=e=>{if(e.key===' '){e.preventDefault();arreter(true)}}}
+  else if(T.phase==='dernier'){c.innerHTML=`<span class="lab">${T.sec>=60&&reglages.uneMinute?'⏰ 1 minute !':'Arrêt.'}</span><span>Touchez le <b>dernier mot lu</b> par l'élève dans le texte.</span><button class="b petit" id="tout">Il a tout lu</button>`;
+   $('#tout').onclick=()=>{T.dernier=mots.length-1;T.phase='fin';ctrl();peindre()};onKey=null}
+  else{const lus=T.dernier+1,e=[...T.err].filter(i=>i<=T.dernier).length,mclm=T.sec?Math.round((lus-e)*60/T.sec):0;
+   c.innerHTML=`<span><b>${lus}</b> mots lus · <b>${e}</b> erreur${e>1?'s':''} · ${duree(T.sec)} → <b>${mclm}</b> mots correctement lus / min</span>
+   <span class="note">Vous pouvez encore toucher des mots pour corriger.</span>
+   <button class="b ok" id="val">Valider et continuer <kbd>Entrée</kbd></button><button class="b petit" id="rec">↺ Recommencer</button>`;
+   const valider=()=>{resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,type:'texte',total:mots.length,lus,nbErr:e,sec:T.sec,mclm,
+     motsErr:[...T.err].filter(i=>i<=T.dernier).sort((a,b)=>a-b).map(i=>nettoyer(mots[i]))};R.i++;intro()};
+   $('#val').onclick=valider;$('#rec').onclick=ecranTexte;onKey=ev=>{if(ev.key==='Enter'){ev.preventDefault();valider()}}}
+ }
+ function demarrer(){T.phase='lecture';T.t0=Date.now();ctrl();
+  timers.push(setInterval(()=>{const s=(Date.now()-T.t0)/1000;const ch=$('#chr');if(ch)ch.textContent=Math.floor(s)+' s';if(reglages.uneMinute&&s>=60)arreter(false)},200))}
+ ctrl();peindre();
+}
+
+/* ---------- Bilan ---------- */
+function niveau(p){return p>=80?['Acquis','p-a']:p>=50?['En cours','p-e']:['Non acquis','p-n']}
+function bilan(){
+ stopTimers();onKey=null;
+ const ids=EPREUVES.map(e=>e.id).filter(id=>resultats[id]);
+ const rep=REPERES[reglages.classe];
+ const lignes=[],texteL=[];
+ const age=ageTexte(ageMois());
+ const titreAnon=`Bilan de lecture — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
+ const titre=reglages.prenom?`Bilan de lecture — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
+ texteL.push('TITRE','');
+ let grp='';
+ ids.forEach(id=>{
+  const r=resultats[id];
+  if(r.groupe!==grp){grp=r.groupe;texteL.push(grp.toUpperCase())}
+  if(r.type==='texte'){
+   const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0;
+   const [nv,cl]=rep?(r.mclm>=rep?['Atteint','p-a']:r.mclm>=rep*.7?['Proche','p-e']:['En dessous','p-n']):niveau(prec);
+   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.motsErr.length?`<br><span class="note">Erreurs : ${esc(r.motsErr.join(', '))}</span>`:'');
+   lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
+   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.motsErr.length?` Erreurs : ${r.motsErr.join(', ')}.`:''));
+  }else{
+   const juste=r.ok+r.hes.length,p=Math.round(juste/r.faits*100),[nv,cl]=niveau(p);
+   const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
+   const hesTxt=r.hes.map(x=>x.item).join(', ');
+   const det=[r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
+   lignes.push(`<tr><td>${r.titre}</td><td>${juste} / ${r.faits} (${p} %)</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
+   texteL.push(`- ${r.titre} : ${juste}/${r.faits} (${p} %) — ${nv}.`+(r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:''));
+  }
+ });
+ const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
+ app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
+ ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même âge</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Fluence : mots correctement lus en une minute, comparés aux attendus de fin d'année (Éduscol : CP 50, CE1 70, CE2 90), à adapter selon le moment de l'année et les besoins de l'élève.</p>
+ <h3>Observations de l'adulte</h3>
+ <textarea id="obs" rows="4" style="width:100%" placeholder="Stratégies, attitude, fatigue, confusions observées…"></textarea>
+ <div class="actions"><button class="b prim" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
+ <p class="note" id="msg"></p></div>`;
+ const texteFinal=(t=titre)=>texteL.join('\n').replace('TITRE',t)+($('#obs').value.trim()?'\n\nObservations : '+$('#obs').value.trim():'');
+ const enregistrer=()=>{if(!ids.length)return;const h=lireHisto();if(bilanEnregistre)h.shift();h.unshift({titre:titreAnon,texte:texteFinal(titreAnon)});ecrireHisto(h);bilanEnregistre=true};
+ enregistrer();envoyer(ids);
+ $('#obs').addEventListener('change',enregistrer);
+ $('#copier').onclick=async()=>{enregistrer();const t=texteFinal();try{await navigator.clipboard.writeText(t);$('#msg').textContent='Bilan copié : collez-le dans votre document.'}catch(e){modal(t);$('#msg').textContent='Sélectionnez le texte affiché pour le copier.'}};
+ $('#impr').onclick=()=>{enregistrer();try{window.print()}catch(e){$('#msg').textContent="Impression impossible ici : utilisez « Copier le bilan »."}};
+ $('#nouveau').onclick=()=>{enregistrer();accueil()};
+}
+
+// Envoi anonyme (niveau, âge en mois, scores) puis affichage des moyennes du site.
+async function envoyer(ids){
+ const age=ageMois(),r={};
+ ids.forEach(id=>{const x=resultats[id];
+  if(x.type==='texte')r[id]={pct:x.lus?Math.round((x.lus-x.nbErr)/x.lus*100):0,mclm:x.mclm};
+  else if(x.faits===x.prevus||x.anticipe)r[id]={pct:Math.round((x.ok+x.hes.length)/x.faits*100)}});
+ try{
+  if(!envoye&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
+  const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&age=${age}`)).json();
+  const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.age||[]).forEach(x=>A[x.epreuve]=x);
+  const f=(x,id)=>!x?'—':(id==='ts'||id==='tc'?`${x.mclm} MCLM`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
+  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe} : ${f(C[id],id)}<br>${Math.floor(age/12)} ans : ${f(A[id],id)}`});
+ }catch(e){$$('td.moy').forEach(td=>td.innerHTML='<span class="note">indisponible dans cet aperçu</span>')}
+}
+majEntete();accueil();
+</script>
+</body>
+</html>
