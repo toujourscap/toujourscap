@@ -44,6 +44,7 @@ CATS = {
     "metacognition": {"name": "Métacognition", "desc": "Jeux pour aider les élèves à réfléchir à leur façon d'apprendre : nommer les attitudes qui aident, vérifier, demander de l'aide, apprendre de ses erreurs.", "domain": "divers"},
     "memorisation": {"name": "Mémorisation", "desc": "Ressources pour aider les élèves à comprendre comment fonctionne leur mémoire et à apprendre leurs leçons efficacement.", "domain": "divers"},
     "methode": {"name": "Méthode", "desc": "Des modes d'emploi à donner aux élèves et aux familles pour apprendre efficacement : dictée, leçons, mots à retenir.", "domain": "divers"},
+    "evaluations": {"name": "Évaluations", "desc": "Des bilans à faire passer en tête-à-tête à un élève du cycle 2, validés par l'adulte, avec un bilan écrit à la fin.", "domain": "divers"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -638,7 +639,7 @@ def main():
             cover = f"/images/jeux/{slug}.jpg"  # plateau du jeu
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
                       "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": p.get("jeu"),
-                      "epingle": p.get("epingle", False)})
+                      "epingle": p.get("epingle", False), "aussi": p.get("aussi", [])})
     posts.sort(key=lambda x: x["date"], reverse=True)
     # Articles épinglés ("epingle": true dans posts.json) : toujours en tête de leur rubrique
     epingles_d_abord = lambda lst: sorted(lst, key=lambda q: not q["epingle"])
@@ -688,7 +689,7 @@ def main():
   {grid(posts)}
 </section>""", "/blog/", "Tous les articles de Toujours cap ! : contes pour le cercle conteur, jeux de lecture et outils de numération pour la GS, le CP et le CE1."))
     for k, v in CATS.items():
-        sub = epingles_d_abord([p for p in posts if p["cat"] == k])
+        sub = epingles_d_abord([p for p in posts if p["cat"] == k or k in p["aussi"]])  # "aussi" : article rangé dans une 2e rubrique
         chips_k = chips.replace(' active', '').replace(f'href="/blog/{k}/"', f'href="/blog/{k}/" aria-current="page"').replace(f'class="chip" href="/blog/{k}/"', f'class="chip active" href="/blog/{k}/"')
         write(f"/blog/{k}/", page(v["name"], f"""<section class="wrap">
   <h1>{v['name']}</h1>
@@ -773,8 +774,8 @@ def main():
   {filtres}
   {grid(lst) if lst else '<div class="empty">Les premières ressources arrivent bientôt.</div>'}
 </section>""", "/maths/", d))
-    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("maitre-e", "metacognition", "memorisation", "methode")]
-    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "metacognition": "/images/domaines/metacognition.jpg", "memorisation": "/images/domaines/memorisation-2.jpg", "methode": "/images/domaines/methode.jpg"}
+    dsubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k or k in p["aussi"]])) for k in ("maitre-e", "evaluations", "metacognition", "memorisation", "methode")]
+    DVIGNETTES = {"maitre-e": "/images/domaines/divers.jpg", "evaluations": "/images/jeux/bilan-de-lecture.jpg", "metacognition": "/images/domaines/metacognition.jpg", "memorisation": "/images/domaines/memorisation-2.jpg", "methode": "/images/domaines/methode.jpg"}
     dvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/divers/{k}/">
   <div class="card-img"><img src="{DVIGNETTES[k]}" alt="{esc(t)}" loading="lazy"></div>
   <div class="card-body"><span class="chip">{len(lst)} article{'s' if len(lst) > 1 else ''}</span><h3>{esc(t)}</h3><p>{d}</p><span class="link">Découvrir →</span></div>
@@ -783,7 +784,7 @@ def main():
   <h1>Divers</h1>
   <p class="lead">Des pistes variées pour stimuler la motivation, la métacognition et la mémorisation, et des méthodes pour apprendre.</p>
   {dvignettes}
-</section>""", "/divers/", "Pistes variées pour les enseignants du cycle 2 : aide pédagogique spécialisée (maître E, RASED), motivation et métacognition."))
+</section>""", "/divers/", "Pistes variées pour les enseignants du cycle 2 : aide pédagogique spécialisée (maître E, RASED), évaluations, motivation et métacognition."))
     for k, t, d, lst in dsubs:
         write(f"/divers/{k}/", page(t, f"""<section class="wrap">
   <nav class="crumbs"><a href="/divers/">Divers</a> › {esc(t)}</nav>
