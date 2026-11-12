@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bilan de lecture — cycle 2</title><link rel="canonical" href="https://toujourscap.com/post/bilan-de-lecture/"><meta name="description" content="Un bilan de lecture à faire passer en tête-à-tête à un élève de cycle 2 : voyelles simples et complexes, mots, fluence sur deux textes, discrimination…">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Playwrite+FR+Trad&display=swap" rel="stylesheet">
 <style>
 :root{--fond:#fdf8ef;--carte:#fff;--encre:#2c3440;--doux:#6b7280;--vert:#2f9e62;--orange:#e8912d;--rouge:#d64545;--bleu:#2f6fb2;--ligne:#e7dfcf;--jaune:#fff3c4}
 *{box-sizing:border-box}
@@ -73,6 +73,15 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .histo li{margin:4px 0}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
 .modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
+.question{font-size:1.4rem;text-align:center;margin:0 0 14px;color:#24527a;font-weight:700}
+.phrase{font-size:min(7vw,44px);text-align:center;margin-bottom:22px;line-height:1.3}
+.lecture{font-size:clamp(19px,2.5vw,27px);line-height:1.7;margin:0 0 14px;max-width:860px;background:#fffdf6;border-radius:12px;padding:8px 14px}
+.choix.phr button{font-size:min(6vw,28px);padding:8px 18px}
+.choix.emo button{font-size:min(14vw,78px);padding:2px 14px}
+.f-cur{font-family:"Playwrite FR Trad",cursive}
+.f-cap,.f-scr{font-family:"Andika","Comic Sans MS",Arial,sans-serif}
+.choix .f-cur{font-size:min(10vw,64px)}
+details summary{cursor:pointer}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
 </style>
 </head>
@@ -95,7 +104,35 @@ const MIROIR={b:['d','p'],d:['b','q'],p:['q','b'],q:['p','d']};
 const LETTRES='aeioucfjlmnrstvz'.split('');
 const PROCHES={a:'oe',e:'cao',o:'aec',c:'eo',u:'nv',n:'mu',m:'n',i:'jl',l:'it',t:'lf',f:'t',j:'i',r:'n',s:'z',z:'s',v:'u'};
 
+const REPERES={CP:50,CE1:70,CE2:90};
+const HISTOIRE_FILOU="Le petit chat Filou a très faim. Il court à la cuisine pour manger, mais son bol est vide. Alors Filou va voir la fermière. Elle lui donne un grand bol de lait. Filou boit tout le lait, puis il s'endort au soleil.";
+const TEXTE_ZOE="Ce matin, Zoé part à la plage avec son papi. Elle prend son seau rouge et sa pelle. Sur le sable, elle construit un grand château. Soudain, une vague arrive et casse le château. Zoé rit : « Demain, j'en ferai un plus grand ! »";
+const SYL=[['Combien de syllabes dans','chocolat','3'],['Combien de syllabes dans','ballon','2'],['Combien de syllabes dans','éléphant','3'],['Combien de syllabes dans','lit','1'],['Combien de syllabes dans','locomotive','4'],['Combien de syllabes dans','banane','3'],
+ ['Dis le mot sans la première syllabe :','lapin','pin'],['Dis le mot sans la première syllabe :','moto','to'],['Dis le mot sans la première syllabe :','camion','mion'],['Dis le mot sans la première syllabe :','radis','dis'],['Dis le mot sans la première syllabe :','domino','mino'],['Dis le mot sans la première syllabe :','chapeau','peau']];
+const PHO=[['Quel est le premier son de','moto','[m]'],['Quel est le premier son de','sapin','[s]'],['Quel est le premier son de','fusée','[f]'],['Quel est le premier son de','lune','[l]'],['Quel est le premier son de','ours','[ou]'],['Quel est le premier son de','rat','[r]'],
+ ['Quel est le dernier son de','bol','[l]'],['Quel est le dernier son de','lavabo','[o]'],['Quel est le dernier son de','vache','[ch]'],['Quel est le dernier son de','robe','[b]'],['Quel est le dernier son de','nez','[é]'],['Quel est le dernier son de','four','[r]']];
+const ECR=[['R','cap','scr',['r','n','p','k']],['G','cap','scr',['g','q','p','j']],['B','cap','scr',['b','d','h','p']],
+ ['f','scr','cur',['f','t','l','b']],['e','scr','cur',['e','l','a','o']],['h','scr','cur',['h','k','b','l']],
+ ['a','cur','scr',['a','o','d','q']],['s','cur','scr',['s','z','r','c']],['m','cur','scr',['m','n','u','w']]];
+const VF=[["Le soleil brille la nuit.",'Faux'],["Un poisson vit dans l'eau.",'Vrai'],["On met ses chaussures sur la tête.",'Faux'],["La neige est froide.",'Vrai'],["Un chat peut voler comme un oiseau.",'Faux'],["On mange la soupe avec une cuillère.",'Vrai'],["Un bébé est plus grand que son papa.",'Faux'],["Les vaches mangent de l'herbe.",'Vrai']];
+const QZOE=[["Avec qui Zoé va-t-elle à la plage ?","avec son papi",["avec sa mamie","avec son papi","avec son frère"]],["De quelle couleur est le seau ?","rouge",["bleu","rouge","vert"]],["Qu'est-ce qui casse le château ?","une vague",["un chien","papi","une vague"]],["Comment se sent Zoé à la fin ?","joyeuse",["triste","en colère","joyeuse"]],["Quel titre irait bien à cette histoire ?","Le château de sable de Zoé",["Zoé à l'école","Le château de sable de Zoé","Le chien de papi"]]];
+const MOTS_ORAUX=[['carotte','🥕',['🍅','🥕','🍌','🍎']],['cheval','🐴',['🐄','🐑','🐴','🐷']],['parapluie','☂️',['☂️','🎩','🧤','👢']],['fusée','🚀',['✈️','🚁','🚂','🚀']],['hibou','🦉',['🦅','🦉','🐦','🐧']],['tambour','🥁',['🎸','🎺','🥁','🎹']],['citron','🍋',['🍊','🍋','🍐','🍌']],['escargot','🐌',['🐛','🐜','🐞','🐌']]];
+const QFILOU=[["Qui a faim dans l'histoire ?",'🐱',['🐶','🐱','🐭']],["Qu'est-ce qui est vide ?",'🥣',['🥣','👟','🎒']],["Qui donne du lait à Filou ?",'👩‍🌾',['🐮','🧒','👩‍🌾']],["Que boit Filou ?",'🥛',['🧃','🥛','💧']],["Que fait Filou à la fin ?",'😴',['🏃','🍽️','😴']]];
+const DSYL=['la','mi','ro','tu','fé','cha','jo','pon','tri','bla'];
+const DMOT=['lune','vélo','salade','lapin','chapeau','maison','poisson','train'];
 const EPREUVES=[
+ {id:'sy1',groupe:'Conscience phonologique',titre:'Compter les syllabes',type:'oral',icone:'👂',
+  items:()=>SYL.slice(0,6).map(([q,w,att])=>({q,w,att})),
+  consigne:"Tout se passe à l'oral. Maintenez 👁 pour voir le mot et la réponse attendue, dites-le à l'élève ou faites-le écouter 🔊. « Combien de syllabes dans… ? » L'élève peut frapper dans ses mains."},
+ {id:'sy2',groupe:'Conscience phonologique',titre:'Enlever la première syllabe',type:'oral',icone:'👂',
+  items:()=>SYL.slice(6).map(([q,w,att])=>({q,w,att})),
+  consigne:"À l'oral. « Dis le mot sans la première syllabe : lapin → pin. » Donnez cet exemple avant de commencer."},
+ {id:'ph1',groupe:'Conscience phonologique',titre:'Premier son',type:'oral',icone:'👂',
+  items:()=>PHO.slice(0,6).map(([q,w,att])=>({q,w,att})),
+  consigne:"À l'oral. « Quel est le premier son que tu entends dans… ? » Le son est attendu, pas le nom de la lettre (moto → [m], pas « èm »)."},
+ {id:'ph2',groupe:'Conscience phonologique',titre:'Dernier son',type:'oral',icone:'👂',
+  items:()=>PHO.slice(6).map(([q,w,att])=>({q,w,att})),
+  consigne:"À l'oral. « Quel est le dernier son que tu entends dans… ? » (bol → [l])."},
  {id:'vs',groupe:'Lecture',titre:'Voyelles simples',type:'lire',taille:'xl',
   items:()=>ordre(['a','e','i','o','u','y','é','è','ê']),
   consigne:"Montrez l'écran à l'élève : « Dis-moi le son de cette lettre. » Validez chaque réponse. Le son est attendu (ex. y = [i]) ; si l'élève donne le nom de la lettre, demandez « Et quel son fait-elle ? »."},
@@ -112,9 +149,30 @@ const EPREUVES=[
   consigne:"« Lis ce texte à voix haute, le mieux possible. » Lancez le chrono quand l'élève commence. Touchez les mots mal lus (ils passent en rouge ; un mot autocorrigé n'est pas une erreur). Méthode des évaluations nationales : mots correctement lus par minute."},
  {id:'tc',groupe:'Lecture',titre:'Texte avec sons complexes',type:'texte',texte:TEXTE_COMPLEXE,
   consigne:"Même passation que le texte simple. Ce texte contient de nombreux graphèmes complexes (an, ou, oi, ai, eu, ill, ch…)."},
+ {id:'cph',groupe:"Compréhension de l'écrit",titre:'Phrases : vrai ou faux ?',type:'choix',sorte:'vf',
+  items:()=>ordre(VF).map(([p,r])=>({label:p,bonne:r,choix:['Vrai','Faux']})),
+  consigne:"« Lis la phrase dans ta tête. Est-ce que c'est vrai ou faux ? Montre-moi. » L'élève lit seul (lecture silencieuse) ; ne lisez pas la phrase à sa place."},
+ {id:'ctx',groupe:"Compréhension de l'écrit",titre:'Comprendre un texte lu seul',type:'choix',sorte:'comp',texte:TEXTE_ZOE,
+  items:()=>QZOE.map(([q,b,c])=>({label:q,bonne:b,choix:c})),
+  consigne:"L'élève lit le texte seul, dans sa tête. Puis lisez-lui chaque question et les réponses ; il montre la bonne. Le texte reste affiché (questions de prélèvement, d'inférence et de titre)."},
+ {id:'cmo',groupe:'Compréhension orale',titre:'Mots entendus',type:'choix',sorte:'emoji',
+  items:()=>ordre(MOTS_ORAUX).map(([w,b,c])=>({label:w,dire:w,bonne:b,choix:c})),
+  consigne:"Dites le mot (maintenez 👁 pour le voir) ou faites-le écouter 🔊. « Montre-moi l'image du mot que j'ai dit. »"},
+ {id:'cto',groupe:'Compréhension orale',titre:'Histoire entendue',type:'choix',sorte:'emoji',histoire:HISTOIRE_FILOU,cleHistoire:'histoire-filou',
+  items:()=>QFILOU.map(([q,b,c])=>({label:q,q,dire:q,bonne:b,choix:c})),
+  consigne:"Lisez l'histoire à l'élève (ou faites-la écouter 🔊), une seule fois, sans la montrer. Puis posez chaque question : l'élève montre l'image."},
+ {id:'dsy',groupe:'Écriture',titre:'Syllabes dictées',type:'oral',icone:'✏️',question:"Écris la syllabe sur ta feuille.",
+  items:()=>DSYL.map(w=>({w,att:w})),
+  consigne:"Donnez une feuille ou une ardoise. Dites la syllabe (maintenez 👁) ou faites-la écouter 🔊 : « Écris la syllabe… ». Validez ce qu'il a écrit et notez son écriture en cas d'erreur."},
+ {id:'dmo',groupe:'Écriture',titre:'Mots dictés',type:'oral',icone:'✏️',question:"Écris le mot sur ta feuille.",
+  items:()=>DMOT.map(w=>({w,att:w})),
+  consigne:"« Écris le mot… » Comptez juste une écriture phonologiquement correcte (« lapin », pas « lapain ») ; notez l'orthographe exacte dans la case si besoin."},
  {id:'vis',groupe:'Discrimination visuelle',titre:'b, d, p, q (visuel)',type:'choix',sorte:'visuel',
   items:genVisuel,
   consigne:"« Regarde la lettre dans le cadre jaune. Montre-moi la même en dessous. » L'élève montre, vous cliquez sur sa réponse. Puis viennent des paires de lettres (bd, pq…)."},
+ {id:'ecr',groupe:'Discrimination visuelle',titre:'Les différentes écritures d\'une lettre',type:'choix',sorte:'ecritures',
+  items:()=>ECR.map(([l,mf,cf,c])=>({label:l,mf,cf,bonne:c[0],choix:melange(c)})),
+  consigne:"« Voici une lettre. Montre-moi la même lettre écrite autrement. » Capitale → script, script → cursive, cursive → script."},
  {id:'aud',groupe:'Discrimination auditive',titre:'b, d, p, q (auditif)',type:'choix',sorte:'auditif',
   items:()=>ordre([['bébé','b'],['dodo','d'],['papa','p'],['quatre','q'],['bulle','b'],['poule','p'],['dune','d'],['quille','q'],['bain','b'],['pain','p'],['dent','d'],['queue','q']]).map(([m,l])=>({label:m,bonne:l,choix:['b','d','p','q'],dire:m})),
   consigne:"Maintenez le bouton 👁 pour voir le mot (sans le montrer), puis dites-le à l'élève (ou 🔊). « Par quelle lettre commence ce mot ? Montre-la. » Cliquez sur la lettre montrée. (q se lit [k] : quatre, quille, queue.)"},
@@ -128,7 +186,6 @@ const EPREUVES=[
  {id:'e3',groupe:'Empan visuel',titre:'Empan : 3 lettres',type:'choix',sorte:'empan',n:3,items:()=>genEmpan(3),
   consigne:"Même consigne avec trois lettres, dans le bon ordre."}
 ];
-const REPERES={CP:50,CE1:70,CE2:90};
 
 let reglages={prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
@@ -162,6 +219,15 @@ function genEmpan(n){
 
 /* ---------- Outils ---------- */
 function stopTimers(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]}
+const cle=t=>t.toLowerCase().replace(/œ/g,'oe').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+// Voix enregistrée si le fichier existe (/audio/bilan-lecture/<cle>.mp3), sinon voix de l'ordinateur.
+let sonEnCours=null;
+function jouer(t,k){let fait=false;const repli=()=>{if(!fait){fait=true;dire(t)}};try{speechSynthesis.cancel()}catch(e){}
+ try{if(sonEnCours)sonEnCours.pause();const a=new Audio('/audio/bilan-lecture/'+(k||cle(t))+'.mp3');sonEnCours=a;a.onerror=repli;a.play().catch(repli)}catch(e){repli()}}
+function cache(vu){return `<div class="cache noprint"><button class="b" id="voir">👁 Maintenir pour voir</button><span class="mot-cache" id="mot">${esc(vu)}</span><button class="b" id="dire">🔊 Faire écouter</button></div>`}
+function lierCache(t){if(!$('#voir'))return;const v=$('#voir'),m=$('#mot');
+ v.addEventListener('pointerdown',e=>{e.preventDefault();m.classList.add('vu')});['pointerup','pointerleave','pointercancel'].forEach(x=>v.addEventListener(x,()=>m.classList.remove('vu')));
+ $('#dire').onclick=()=>jouer(t)}
 function dire(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,ageTexte(ageMois()),dateFr(reglages.date)].filter(Boolean).join(' · ')}
 const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -238,8 +304,10 @@ function intro(){
  app.innerHTML=`<div class="barre"><span>Épreuve ${R.i+1} / ${R.liste.length}</span><button class="b petit" id="finBilan">🏁 Aller au bilan</button></div>
  <div class="carte"><p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
  <div class="consigne"><b>Pour l'adulte :</b> ${ep.consigne}</div>
+ ${ep.histoire?`<div class="consigne">📖 <b>L'histoire</b> <button class="b petit" id="hist">🔊 Faire écouter</button><details><summary>Voir le texte (pour l'adulte)</summary><p>${esc(ep.histoire)}</p></details></div>`:''}
  <div class="actions"><button class="b prim" id="start">▶ Commencer <kbd>Entrée</kbd></button><button class="b" id="passer">Passer cette épreuve</button></div></div>`;
  $('#finBilan').onclick=bilan;
+ if($('#hist'))$('#hist').onclick=()=>jouer(ep.histoire,ep.cleHistoire);
  $('#passer').onclick=()=>{R.i++;intro()};
  const go=()=>{R.items=ep.type==='texte'?null:ep.items();R.k=0;R.res=[];R.tEp=Date.now();ep.type==='texte'?ecranTexte():suivant()};
  $('#start').onclick=go;
@@ -261,7 +329,7 @@ function lierBarre(){
 function suivant(){
  stopTimers();
  if(R.k>=R.items.length)return finEpreuve();
- R.ep.type==='lire'?ecranLire():ecranChoix();
+ (R.ep.type==='lire'||R.ep.type==='oral')?ecranLire():ecranChoix();
 }
 function finEpreuve(versBilan){
  stopTimers();
@@ -278,16 +346,16 @@ function finEpreuve(versBilan){
 
 /* ---------- Lecture validée ---------- */
 function ecranLire(){
- const ep=R.ep,it=R.items[R.k];
- app.innerHTML=barre()+`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>
+ const ep=R.ep,it=R.items[R.k],oral=ep.type==='oral';
+ app.innerHTML=barre()+(oral?cache(it.w+(it.att&&it.att!==it.w?'  →  '+it.att:''))+`<div class="scene"><div class="question">${esc(it.q?(it.q.endsWith(':')?it.q+' « … »':it.q+' « … » ?'):ep.question||'')}</div><div class="stim l">${ep.icone}</div></div>`:`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>`)+`
  <div class="adulte"><span class="lab">Adulte :</span>
   <button class="b ok" data-v="ok">✔ Juste<kbd>→</kbd></button>
   <button class="b hes" data-v="hes">≈ Hésitant / autocorrigé<kbd>↑</kbd></button>
   <button class="b ko" data-v="ko">✘ Erreur<kbd>←</kbd></button>
-  <input type="text" id="rep" placeholder="Ce que l'élève a dit (facultatif)">
+  <input type="text" id="rep" placeholder="${ep.icone==='✏️'?"Ce que l'élève a écrit":"Ce que l'élève a dit"} (facultatif)">
   <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
- lierBarre();
- const noter=v=>{R.res.push({item:it,v,rep:$('#rep').value.trim()});R.k++;suivant()};
+ lierBarre();if(oral)lierCache(it.w);
+ const noter=v=>{R.res.push({item:oral?it.w:it,v,rep:$('#rep').value.trim()});R.k++;suivant()};
  $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v));
  $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
@@ -298,20 +366,22 @@ function ecranLire(){
 function ecranChoix(){
  const ep=R.ep,it=R.items[R.k];
  let haut='';
- if(ep.sorte==='visuel')haut=`<div class="modele">${esc(it.label)}</div>`;
- if(ep.sorte==='auditif'||ep.sorte==='pareil')haut=`<div class="cache noprint"><button class="b" id="voir">👁 Maintenir pour voir</button><span class="mot-cache" id="mot">${esc(ep.sorte==='pareil'?it.label:it.dire)}</span><button class="b" id="dire">🔊 Faire écouter</button></div>`;
- const bout=`<div class="choix ${ep.sorte==='pareil'?'mots':''}" id="choix">${it.choix.map((c,i)=>`<button data-c="${esc(c)}">${ep.sorte==='pareil'?(c==='Pareil'?'= Pareil':'≠ Différent'):esc(c)}</button>`).join('')}</div>`;
+ const so=ep.sorte;
+ if(so==='visuel')haut=`<div class="modele">${esc(it.label)}</div>`;
+ if(so==='ecritures')haut=`<div class="modele f-${it.mf}">${esc(it.label)}</div>`;
+ if(so==='auditif'||so==='pareil')haut=cache(so==='pareil'?it.label:it.dire);
+ if(so==='emoji')haut=it.q?`<div class="cache noprint"><button class="b" id="dire">🔊 Faire écouter</button></div><div class="question">${esc(it.q)}</div>`:cache(it.dire);
+ if(so==='vf')haut=`<div class="phrase">${esc(it.label)}</div>`;
+ if(so==='comp')haut=`<div class="lecture">${esc(ep.texte)}</div><div class="question">${esc(it.label)}</div>`;
+ const cl={pareil:'mots',vf:'mots',comp:'phr',emoji:'emo'}[so]||'';
+ const lib=c=>so==='pareil'?(c==='Pareil'?'= Pareil':'≠ Différent'):so==='vf'?(c==='Vrai'?'✔ Vrai':'✘ Faux'):esc(c);
+ const bout=`<div class="choix ${cl}" id="choix">${it.choix.map(c=>`<button data-c="${esc(c)}" class="${so==='ecritures'?'f-'+it.cf:''}">${lib(c)}</button>`).join('')}</div>`;
  app.innerHTML=barre()+`<div class="scene" id="scene">${haut}${ep.sorte==='empan'?'':bout}</div>
  <div class="adulte"><span class="lab">Adulte :</span><span>${ep.sorte==='empan'?"Cliquez sur « Montrer » quand l'élève regarde l'écran, puis sur la réponse qu'il montre.":"Cliquez sur la réponse que l'élève montre."} <span class="note">(touches 1 à ${it.choix.length})</span></span>
  <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
  lierBarre();
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
- if($('#voir')){
-  const v=$('#voir'),m=$('#mot');
-  const on=e=>{e.preventDefault();m.classList.add('vu')},off=()=>m.classList.remove('vu');
-  v.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(t=>v.addEventListener(t,off));
-  $('#dire').onclick=()=>dire(it.dire);
- }
+ if($('#voir'))lierCache(it.dire);else if($('#dire'))$('#dire').onclick=()=>jouer(it.dire);
  let fini=false;
  const activer=()=>{
   $$('#choix button').forEach(b=>b.onclick=()=>repondre(b));
@@ -319,7 +389,7 @@ function ecranChoix(){
  };
  const repondre=b=>{
   if(fini)return;fini=true;b.classList.add('pris');
-  const c=b.dataset.c;R.res.push({item:it.label,v:c===it.bonne?'ok':'ko',rep:c});
+  const c=b.dataset.c;R.res.push({item:so==='ecritures'?it.label+' → '+it.bonne:it.label,v:c===it.bonne?'ok':'ko',rep:c});
   timers.push(setTimeout(()=>{R.k++;suivant()},300));
  };
  if(ep.sorte!=='empan')return activer();
@@ -328,12 +398,12 @@ function ecranChoix(){
  sc.innerHTML=`<button class="b prim" id="montrer">👀 Montrer <kbd>Espace</kbd></button>`;
  const montrer=()=>{
   onKey=null;
-  sc.innerHTML=`<div class="fixe">+</div>`;
+  sc.innerHTML='';
   timers.push(setTimeout(()=>{sc.innerHTML=`<div class="stim l">${esc(it.label)}</div>`;
-   timers.push(setTimeout(()=>{sc.innerHTML=`<div class="masque">${'#'.repeat(it.label.length)}</div>`;
+   timers.push(setTimeout(()=>{sc.innerHTML='';
     timers.push(setTimeout(()=>{sc.innerHTML=bout;activer()},300));
    },reglages.duree));
-  },700));
+  },500));
  };
  $('#montrer').onclick=montrer;
  onKey=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();montrer()}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
