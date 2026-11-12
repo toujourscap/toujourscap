@@ -18,7 +18,7 @@ const SCHEMA = [
   "CREATE INDEX IF NOT EXISTS idx_bilan_classe ON bilan_lecture (classe, epreuve)",
 ];
 const CLASSES = new Set(["GS", "CP", "CE1", "CE2", "Autre"]);
-const EPREUVES = new Set(["vs", "vc", "ms", "mc", "ts", "tc", "vis", "aud", "par", "e1", "e2", "e3"]);
+const EPREUVES = new Set(["sy1", "sy2", "ph1", "ph2", "vs", "vc", "ms", "mc", "ts", "tc", "cph", "ctx", "cmo", "cto", "dsy", "dmo", "vis", "ecr", "aud", "par", "e1", "e2", "e3"]);
 const ID_RE = /^[a-z0-9]{8,24}$/;
 
 let pret = false;
@@ -31,14 +31,14 @@ const ent = (v, a, b) => { v = Math.round(+v); return Number.isFinite(v) && v >=
 
 export async function onRequestPost({ request, env }) {
   let d;
-  try { d = JSON.parse((await request.text()).slice(0, 3000)); } catch { return json({ erreur: "Données illisibles" }, 400); }
+  try { d = JSON.parse((await request.text()).slice(0, 6000)); } catch { return json({ erreur: "Données illisibles" }, 400); }
   const p = String(d.p || ""), classe = String(d.classe || ""), age = ent(d.age, 36, 144);
   if (!ID_RE.test(p) || !CLASSES.has(classe) || age === null || !d.r || typeof d.r !== "object") return json({ erreur: "Données invalides" }, 400);
   let b;
   try { b = await base(env); } catch { return json({ erreur: "Enregistrement indisponible" }, 503); }
   const jour = new Date().toISOString().slice(0, 10);
   const lignes = [];
-  for (const [e, v] of Object.entries(d.r).slice(0, 12)) {
+  for (const [e, v] of Object.entries(d.r).slice(0, 30)) {
     if (!EPREUVES.has(e) || !v || typeof v !== "object") continue;
     const pct = ent(v.pct, 0, 100);
     if (pct === null) continue;
