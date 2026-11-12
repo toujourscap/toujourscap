@@ -1,5 +1,5 @@
 {
- "count": 50,
+ "count": 51,
  "posts": [
   {
    "title": "Le crocodile glouton",
@@ -14962,6 +14962,48 @@
      {
       "type": "RAW_HTML",
       "file": "redis-la-regle-suite.html"
+     }
+    ]
+   }
+  },
+  {
+   "title": "Bilan de lecture cycle 2",
+   "slug": "bilan-de-lecture",
+   "cat": "lecture",
+   "excerpt": "Un bilan de lecture à faire passer en tête-à-tête à un élève de cycle 2 : voyelles simples et complexes, mots, fluence sur deux textes, discrimination visuelle et auditive de b, d, p, q, empan visuel. L'adulte valide chaque réponse ; le bilan s'écrit tout seul, avec les moyennes du site. Version papier à imprimer.",
+   "date": "2026-11-12T09:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": ["sons-syllabes", "mots", "fluence", "discrimination-visuelle"],
+    "niveaux": ["GS", "CP", "CE1", "CE2"],
+    "joueurs": "1 élève et un adulte",
+    "supports": ["ecran", "imprimable"]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "bilan-de-lecture.html"
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/bilan-de-lecture.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "RAW_HTML",
+      "file": "bilan-de-lecture-suite.html"
      }
     ]
    }
