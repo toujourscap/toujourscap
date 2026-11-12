@@ -83,6 +83,8 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .f-cap,.f-scr{font-family:"Andika","Comic Sans MS",Arial,sans-serif}
 .choix .f-cur{font-size:min(10vw,64px)}
 details summary{cursor:pointer}
+.choix .num{display:block;font-family:Arial,sans-serif;font-size:15px;line-height:1;color:#8a94a3;margin:2px 0 4px}
+.texte-adulte{align-self:stretch;background:#fff8e1;border-radius:10px;padding:6px 12px;margin:-8px 0 14px;font-size:1rem}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
 </style>
 </head>
@@ -354,17 +356,17 @@ function ecranLire(){
  const ep=R.ep,it=R.items[R.k],oral=ep.type==='oral';
  app.innerHTML=barre()+(oral?cache(it.w+(it.att&&it.att!==it.w?'  →  '+it.att:''))+`<div class="scene"><div class="question">${esc(it.q?(it.q.endsWith(':')?it.q+' « … »':it.q+' « … » ?'):ep.question||'')}</div><div class="stim l">${ep.icone}</div></div>`:`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>`)+`
  <div class="adulte"><span class="lab">Adulte :</span>
-  <button class="b ok" data-v="ok">✔ Juste<kbd>→</kbd></button>
+  <button class="b ok" data-v="ok">✔ Juste<kbd>←</kbd></button>
   <button class="b hes" data-v="hes">≈ Hésitant / autocorrigé<kbd>↑</kbd></button>
-  <button class="b ko" data-v="ko">✘ Erreur<kbd>←</kbd></button>
+  <button class="b ko" data-v="ko">✘ Erreur<kbd>→</kbd></button>
   <input type="text" id="rep" placeholder="${ep.icone==='✏️'?"Ce que l'élève a écrit":"Ce que l'élève a dit"} (facultatif)">
-  <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
+  <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`;
  lierBarre();if(oral)lierCache(it.w);
  const noter=v=>{R.res.push({item:oral?it.w:it,v,rep:$('#rep').value.trim()});R.k++;suivant()};
  $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v));
  $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
- $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
- onKey=e=>{const m={ArrowRight:'ok',ArrowUp:'hes',ArrowLeft:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+ $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else intro()};
+ onKey=e=>{const m={ArrowLeft:'ok',ArrowUp:'hes',ArrowRight:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
 }
 
 /* ---------- Choix (visuel, auditif, empan) ---------- */
@@ -375,18 +377,19 @@ function ecranChoix(){
  if(so==='visuel')haut=`<div class="modele">${esc(it.label)}</div>`;
  if(so==='ecritures')haut=`<div class="modele f-${it.mf}">${esc(it.label)}</div>`;
  if(so==='auditif'||so==='pareil')haut=cache(so==='pareil'?it.label:it.dire);
- if(so==='emoji')haut=it.q?`<div class="cache noprint"><button class="b" id="dire">🔊 Faire écouter</button></div><div class="question">${esc(it.q)}</div>`:cache(it.dire);
+ if(so==='emoji')haut=it.q?`<div class="cache noprint"><button class="b" id="dire">🔊 Faire écouter</button>${ep.histoire?`<button class="b" id="hist2">📖 Réécouter l'histoire</button>`:''}</div>${ep.histoire?`<details class="noprint texte-adulte" ${R.txt?'open':''} ontoggle="R.txt=this.open"><summary>Voir le texte de l'histoire (adulte)</summary><p>${esc(ep.histoire)}</p></details>`:''}<div class="question">${esc(it.q)}</div>`:cache(it.dire);
  if(so==='vf')haut=`<div class="phrase">${esc(it.label)}</div>`;
  if(so==='comp')haut=`<div class="lecture">${esc(ep.texte)}</div><div class="question">${esc(it.label)}</div>`;
  const cl={pareil:'mots',vf:'mots',comp:'phr',emoji:'emo'}[so]||'';
  const lib=c=>so==='pareil'?(c==='Pareil'?'= Pareil':'≠ Différent'):so==='vf'?(c==='Vrai'?'✔ Vrai':'✘ Faux'):esc(c);
- const bout=`<div class="choix ${cl}" id="choix">${it.choix.map(c=>`<button data-c="${esc(c)}" class="${so==='ecritures'?'f-'+it.cf:''}">${lib(c)}</button>`).join('')}</div>`;
+ const bout=`<div class="choix ${cl}" id="choix">${it.choix.map((c,i)=>`<button data-c="${esc(c)}" class="${so==='ecritures'?'f-'+it.cf:''}">${lib(c)}<small class="num">${i+1}</small></button>`).join('')}</div>`;
  app.innerHTML=barre()+`<div class="scene" id="scene">${haut}${ep.sorte==='empan'?'':bout}</div>
  <div class="adulte"><span class="lab">Adulte :</span><span>${ep.sorte==='empan'?"Cliquez sur « Montrer » quand l'élève regarde l'écran, puis sur la réponse qu'il montre.":"Cliquez sur la réponse que l'élève montre."} <span class="note">(touches 1 à ${it.choix.length})</span></span>
- <button class="b petit" id="retour" ${R.k?'':'disabled'}>↶ Retour</button></div>`;
+ <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`;
  lierBarre();
- $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}};
+ $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else intro()};
  if($('#voir'))lierCache(it.dire);else if($('#dire'))$('#dire').onclick=()=>jouer(it.dire);
+ if($('#hist2'))$('#hist2').onclick=()=>jouer(ep.histoire,ep.cleHistoire);
  let fini=false;
  const activer=()=>{
   $$('#choix button').forEach(b=>b.onclick=()=>repondre(b));
