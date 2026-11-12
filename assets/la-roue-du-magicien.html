@@ -394,6 +394,7 @@ function son(type){
   if(!$("opt-son").checked) return;
   try{
     ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state!=="running") ac.resume();
     const t = ac.currentTime;
     const note = (f, d, v=.15, onde="triangle", dt=0) => { const o=ac.createOscillator(), g=ac.createGain(); o.type=onde; o.frequency.setValueAtTime(f,t+dt);
       g.gain.setValueAtTime(0,t+dt); g.gain.linearRampToValueAtTime(v,t+dt+.01); g.gain.exponentialRampToValueAtTime(.001,t+dt+d); o.connect(g).connect(ac.destination); o.start(t+dt); o.stop(t+dt+d+.05); return o; };
@@ -409,7 +410,20 @@ function son(type){
 let voix = null;
 function choisirVoix(){ const v=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang)); voix = v.find(x=>/fr-FR/i.test(x.lang)&&/google|amélie|thomas|denise|julie/i.test(x.name)) || v.find(x=>/fr-FR/i.test(x.lang)) || v[0] || null; }
 if("speechSynthesis" in window){ choisirVoix(); speechSynthesis.onvoiceschanged = choisirVoix; }
-function dire(t){ if(!("speechSynthesis" in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; if(voix) u.voice=voix; u.rate=.85; speechSynthesis.speak(u); }
+function dire(t, sansVoix){ if(!("speechSynthesis" in window) || !t) return;
+  const parler = () => { const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; if(voix && !sansVoix) u.voice=voix; u.rate=.85;
+    if(!sansVoix) u.onerror = e => { if(e.error!=="interrupted" && e.error!=="canceled") dire(t, true); };
+    speechSynthesis.speak(u); };
+  /* Android : cancel() suivi tout de suite de speak() perd souvent la phrase → petite pause */
+  if(speechSynthesis.speaking || speechSynthesis.pending){ speechSynthesis.cancel(); setTimeout(parler, 120); } else parler();
+}
+/* Android : débloquer le son et la voix au premier contact avec l'écran */
+function debloquerSon(){
+  try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); if(ac.state!=="running") ac.resume();
+    const b=ac.createBuffer(1,1,22050), src=ac.createBufferSource(); src.buffer=b; src.connect(ac.destination); src.start(0); }catch(e){}
+  try{ if("speechSynthesis" in window){ speechSynthesis.resume(); const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); } }catch(e){}
+}
+document.addEventListener("pointerdown", debloquerSon, {once:true, capture:true});
 
 /* ---------- Réglages ---------- */
 const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
