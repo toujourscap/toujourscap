@@ -1,6 +1,24 @@
 {
- "count": 51,
+ "count": 52,
  "posts": [
+  {
+   "title": "Bilan de maths CE1",
+   "slug": "bilan-de-maths",
+   "cat": "numeration",
+   "aussi": ["evaluations"],
+   "excerpt": "Un bilan de mathématiques à faire passer en tête-à-tête à un élève de CE1, en deux versions d'après le programme 2025 : début de CE1 (acquis de fin de CP) et fin de CE1 – début de CE2. Nombres, calcul chronométré, problèmes, mesures, géométrie, données. L'adulte valide chaque réponse ; le bilan s'écrit tout seul, avec les moyennes du site.",
+   "date": "2026-11-13T12:00:00.000Z",
+   "categoryIds": [],
+   "media": {"displayed": true, "custom": false},
+   "jeu": {"niveaux": ["CE1"], "joueurs": "1 élève et un adulte", "supports": ["ecran"]},
+   "richContent": {
+    "nodes": [
+     {"type": "RAW_HTML", "file": "bilan-de-maths.html"},
+     {"type": "HTML", "htmlData": {"url": "/outils/bilan-de-maths.html", "containerData": {"height": {"custom": "ecran"}, "large": true}}},
+     {"type": "RAW_HTML", "file": "bilan-de-maths-suite.html"}
+    ]
+   }
+  },
   {
    "title": "Le crocodile glouton",
    "slug": "le-crocodile-glouton",
