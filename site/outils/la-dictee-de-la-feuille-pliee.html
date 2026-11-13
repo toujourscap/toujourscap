@@ -920,12 +920,16 @@ function dire(txt,o){
     var t=txt.replace(/[«»]/g,"").replace(/[\p{Extended_Pictographic}️]/gu,"").replace(/([.!?:])\s*\./g,"$1").replace(/\s+/g," ").trim();
     var parler=function(sansVoix){
       if(n!==direN){fin();return;}
+      try{
       var u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=o.rate||0.9;
       if(!sansVoix){var v=sy.getVoices().filter(function(v){return /^fr/i.test(v.lang);});if(v.length)u.voice=v.find(function(x){return /fr-FR/i.test(x.lang);})||v[0];}
       u.onend=fin;
       u.onerror=function(e){if(!sansVoix&&e.error!=="interrupted"&&e.error!=="canceled"&&n===direN){parler(true);return;}fin();};
+      // minuterie de sécurité posée AVANT speak : si la voix ne prévient jamais qu'elle a fini, on continue quand même
+      clearTimeout(sec);sec=setTimeout(fin,2500+t.length*130/u.rate);
+      window.__u=u; // Chrome : garder l'énoncé en mémoire, sinon « onend » peut ne jamais arriver
       sy.speak(u);
-      clearTimeout(sec);sec=setTimeout(fin,2000+t.length*120/u.rate);};
+      }catch(e){fin();}};
     // Android : cancel() suivi tout de suite de speak() perd souvent la phrase → petite pause
     if(sy.speaking||sy.pending){sy.cancel();setTimeout(function(){parler(false);},120);}else parler(false);
   }catch(e){fin();}
@@ -955,7 +959,7 @@ function groupesDictee(t){
   var m=t.replace(/([,.!?;:])/g," $1 ").split(/\s+/).filter(Boolean),g=[],cur=[];
   // groupes de 3 mots au plus, sans laisser un mot tout seul à la fin
   function vider(){while(cur.length){var k=cur.length===4?2:Math.min(3,cur.length);g.push(cur.splice(0,k).join(" "));}}
-  m.forEach(function(x){if(NP[x]){vider();g.push(NP[x]);}else cur.push(x);});
+  m.forEach(function(x){if(NP[x]){vider();if(g.length&&!/^(virgule|point|deux-points)/.test(g[g.length-1]))g[g.length-1]+=", "+NP[x];else g.push(NP[x]);}else cur.push(x);});
   vider();return g;
 }
 function dicter(lent){
@@ -967,7 +971,9 @@ function dicter(lent){
   (function suite(){
     if(tok!==dicTok)return;
     if(i>=g.length){finTout();return;}
-    dire(g[i++],{rate:.72,fin:function(){if(tok===dicTok)setTimeout(suite,i>=g.length?0:1400);}});
+    var fait=false,apres=function(){if(fait)return;fait=true;clearTimeout(garde);if(tok===dicTok)setTimeout(suite,i>=g.length?0:1400);};
+    var garde=setTimeout(apres,4000+g[i].length*200); // au cas où la voix ne répond plus
+    dire(g[i++],{rate:.72,fin:apres});
   })();
 }
 function fermerBulle(){var b=document.querySelector(".bulle-corr");if(b)b.remove();arreterDictee();try{window.speechSynthesis&&speechSynthesis.cancel();}catch(e){}}
@@ -1397,14 +1403,16 @@ function plier(){
   rabat(n,nEssai===0?"modèle caché":"modèle et essais cachés");
   $("pieges").style.display="none";
   saisieVisible(true);
+  MAX_VUES=vuesPermises();
   etat.regarde=false;etat.vues=0;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
   bouton(PH("J'ai écrit ma phrase","J'ai écrit mes mots"),"vert",verifier);
-  etat.btnRegard=bouton("👀 Regarder le modèle (3)","blanc",regarderModele);
+  etat.btnRegard=bouton("👀 Regarder le modèle ("+MAX_VUES+")","blanc",regarderModele);
   $("saisie").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();verifier();}};
 }
 
-/* Pendant l'écriture, l'élève peut jeter un œil au modèle (3 s, 3 fois par essai au maximum) : l'essai ne compte alors pas comme juste */
-var tRegard=null,MAX_VUES=3;
+/* Pendant l'écriture, l'élève peut jeter un œil au modèle (3 s) : 1 fois pour une phrase courte (6 mots au plus) ou un mot, 2 fois pour une longue. Pas de pénalité */
+var tRegard=null,MAX_VUES=2;
+function vuesPermises(){if(enMots())return 1;var n=(modele().match(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu)||[]).length;return n>6?2:1;}
 function regarderModele(){
   if(!$("ardoise").classList.contains("cachee")||etat.vues>=MAX_VUES)return;
   etat.vues++;
@@ -1418,7 +1426,7 @@ function regarderModele(){
 }
 function finRegard(){
   $("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
-  if($("ligneSaisie").style.display!=="none"){msg("Le modèle est caché : à toi d'écrire ! Cet essai ne comptera pas comme juste.","orange");$("saisie").focus();}
+  if($("ligneSaisie").style.display!=="none"){msg("Le modèle est caché : à toi d'écrire !","orange");$("saisie").focus();}
 }
 // pendant que le modèle est affiché, l'élève ne peut pas écrire (ni clavier, ni accents, ni valider)
 function bloquerSaisie(b){
@@ -1445,22 +1453,14 @@ function verifier(){
   var md=mod(),m=comparer(md.texte,essai),err=erreurs(m);
   err.forEach(function(x){x.cat=classer(x,md);});
   var regarde=!!etat.regarde;etat.regarde=false;clearTimeout(tRegard);$("ardoise").classList.remove("vue-modele");bloquerSaisie(false);
-  // modèle regardé : l'essai compte au moins 1 erreur (jamais « juste »)
-  etat.essais.push(regarde?Math.max(err.length,1):err.length);
+  // regarder le modèle n'est pas pénalisé (on le note seulement dans le bilan)
+  etat.essais.push(err.length);
   if(etat.essais.length===1)etat.regarde1=regarde;
   if(!etat.cats1){etat.cats1={};err.forEach(function(x){etat.cats1[x.cat]=(etat.cats1[x.cat]||0)+1;});}
   verif=verif.filter(function(v){return actif(v);});if(!verif.length)verif=tous();
   var r=ajouterRangee();
   rabat(0);$("ardoise").classList.remove("cachee");
   etape(etat.essais.length===1?4:6);
-  if(!err.length&&regarde){
-    r.textContent=essai;var v0=document.createElement("span");v0.className="vu";v0.textContent="👀";r.appendChild(v0);
-    etape(etat.essais.length===1?4:6,"J'ai regardé le modèle : ce n'est pas compté juste.");
-    msg("Ta phrase est bien écrite, mais tu as regardé le modèle. Replie et réécris-la sans regarder !","orange");son("doux");
-    bouton(etat.essais.length===1?"Je replie et je réécris":"Je replie encore","vert",plier);
-    boutonsSuite();
-    return;
-  }
   if(!err.length){
     r.textContent=essai;var v=document.createElement("span");v.className="vu";v.textContent="✓";r.appendChild(v);
     etape(8,PH("Bravo ! Ma phrase est juste, sans erreur !","Bravo ! Mes mots sont justes, sans erreur !"));
@@ -1535,7 +1535,7 @@ function bilan(){
   try{TDC.note({s:etat.resultats.filter(function(r){return r.premier===0&&!r.vu;}).length,n:etat.resultats.length,g:total===0,d:total===0?"Zéro erreur au premier essai":total+" erreur"+(total>1?"s":"")+" au premier essai"})}catch(e){}
   etat.resultats.forEach(function(r){Object.keys(r.cats).forEach(function(k){parCat[k]=(parCat[k]||0)+r.cats[k];});});
   var tb=$("bilanLignes");tb.innerHTML="";
-  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier===0?"0":r.vu?"👀 modèle regardé":r.premier;var c3=document.createElement("td");c3.textContent=r.et?"⭐".repeat(r.et):"–";tr.appendChild(a);tr.appendChild(b);tr.appendChild(c3);tb.appendChild(tr);});
+  etat.resultats.forEach(function(r){var tr=document.createElement("tr");var a=document.createElement("td");a.textContent=r.p;var b=document.createElement("td");b.textContent=r.premier+(r.vu?" 👀":"");var c3=document.createElement("td");c3.textContent=r.et?"⭐".repeat(r.et):"–";tr.appendChild(a);tr.appendChild(b);tr.appendChild(c3);tb.appendChild(tr);});
   var gagne=etat.resultats.reduce(function(s,r){return s+(r.et||0);},0),tot=etoilesTotal(),avant=Math.max(0,tot-gagne),
       k=gradeDe(tot),k0=gradeDe(avant),sv=GRADES[k+1];
   etoilesHTML(etat.resultats.length?Math.round(3*gagne/(3*etat.resultats.length)):0,$("bilanEtoiles"));
