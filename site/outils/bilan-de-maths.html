@@ -82,6 +82,7 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
 .modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
+.acquis-msg{background:#e3f4ea;color:#1d6b40;border-radius:10px;padding:8px 12px;margin:0 0 12px;font-weight:600}
 </style>
 </head>
 <body>
@@ -213,7 +214,7 @@ const EP_FIN=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'n2',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[64,'soixante-quatre'],[81,'quatre-vingt-un'],[150,'cent-cinquante'],[307,'trois-cent-sept'],[520,'cinq-cent-vingt'],[742,'sept-cent-quarante-deux'],[416,'quatre-cent-seize'],[999,'neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Dites le nombre (maintenez 👁 pour le voir) ou faites-le écouter 🔊 : « Écris en chiffres… ». Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
+  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran ; dès votre validation, on passe au suivant, qui est dit aussitôt (🔊 pour répéter, 👁 maintenu pour le voir). Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
  {id:'n3',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[15,'quinze'],[60,'soixante'],[200,'deux-cents'],[635,'six-cent-trente-cinq']].map(([n,l])=>V(nb(n),l)),
   consigne:"« Écris ce nombre en lettres. » Comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots)."},
@@ -359,7 +360,7 @@ const EP_DEBUT=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'a2',groupe:G,titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[14,'quatorze'],[25,'vingt-cinq'],[38,'trente-huit'],[52,'cinquante-deux'],[67,'soixante-sept'],[70,'soixante-dix'],[81,'quatre-vingt-un'],[96,'quatre-vingt-seize']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Dites le nombre (maintenez 👁 pour le voir) ou faites-le écouter 🔊 : « Écris en chiffres… ». Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
+  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran ; dès votre validation, on passe au suivant, qui est dit aussitôt (🔊 pour répéter, 👁 maintenu pour le voir). Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
  {id:'a3',groupe:G,titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[7,'sept'],[12,'douze'],[30,'trente'],[45,'quarante-cinq']].map(([n,l])=>V(String(n),l)),
   consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. Comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case."},
@@ -471,7 +472,7 @@ function accueil(){
  app.innerHTML=`
  <div class="carte">
   <h2>1. L'élève</h2>
-  <p class="note" style="margin-top:0">Deux versions : <b>début de CE1</b> (objectifs de fin de CP) et <b>fin de CE1 – début de CE2</b> (objectifs de fin de CE1). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur, le bouton « ⏩ Acquis : épreuve suivante » permet d'écourter l'épreuve.</p>
+  <p class="note" style="margin-top:0">Deux versions : <b>début de CE1</b> (objectifs de fin de CP) et <b>fin de CE1 – début de CE2</b> (objectifs de fin de CE1). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5 au plus), l'épreuve est jugée acquise et on passe automatiquement à la suivante.</p>
   <div class="grille">
    <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="version"><option value="">— choisir —</option><option value="debut" ${reglages.version==='debut'?'selected':''}>Début de CE1 (acquis de fin de CP)</option><option value="fin" ${reglages.version==='fin'?'selected':''}>Fin de CE1 – début de CE2</option></select></label>
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
@@ -526,8 +527,9 @@ function intro(){
  stopTimers();
  if(R.i>=R.liste.length)return bilan();
  const ep=R.liste[R.i];R.ep=ep;
+ const dejaA=R.dejaAcquis;R.dejaAcquis='';
  app.innerHTML=`<div class="barre"><span>Épreuve ${R.i+1} / ${R.liste.length}</span><button class="b petit" id="finBilan">🏁 Aller au bilan</button></div>
- <div class="carte"><p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
+ <div class="carte">${dejaA?`<p class="acquis-msg">✅ « ${esc(dejaA)} » : acquis, épreuve écourtée.</p>`:''}<p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
  <div class="consigne"><b>Pour l'adulte :</b> ${ep.consigne}</div>
  <div class="actions"><button class="b prim" id="start">▶ Commencer <kbd>Entrée</kbd></button><button class="b" id="passer">Passer cette épreuve</button></div></div>`;
  $('#finBilan').onclick=bilan;
@@ -546,7 +548,7 @@ function peutPasser(){return !R.ep.temps&&R.k<R.items.length&&R.res.length>=seui
 function barre(){
  const ep=R.ep,n=R.items.length;
  return `<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${ep.temps?`${R.res.filter(x=>x.v!=='ko').length} juste${R.res.filter(x=>x.v!=='ko').length>1?'s':''} · <span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span>
- <span>${peutPasser()?`<button class="b ok" id="acquis">⏩ Acquis : épreuve suivante</button> `:''}<button class="b petit" id="stopEp">⏭ Arrêter l'épreuve</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
+ <span><button class="b petit" id="stopEp">⏭ Arrêter l'épreuve</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
  <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):R.k/n*100}%"></i></div>`;
 }
 function lierBarre(){
@@ -557,6 +559,7 @@ function lierBarre(){
 function suivant(){
  if(!R.ep.temps)stopTimers();
  if(R.k>=R.items.length)return finEpreuve();
+ if(peutPasser()){R.anticipe=true;R.dejaAcquis=R.ep.titre;return finEpreuve()}
  R.ep.mode==='valider'?ecranValider():ecranChoix();
 }
 function finEpreuve(versBilan){
@@ -590,6 +593,7 @@ function ecranValider(){
   <input type="text" id="rep" placeholder="Réponse de l'élève (facultatif)">
   <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`;
  lierBarre();lierCache(it.dire||it.q);
+ if(ep.cache&&it.dire)timers.push(setTimeout(()=>dire(it.dire),400));
  const noter=v=>{R.res.push({item:ep.cache?it.att:it.q,v,rep:$('#rep').value.trim()});R.k++;suivant()};
  $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v));
  $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
