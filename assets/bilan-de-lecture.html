@@ -234,8 +234,9 @@ function lierCache(t){if(!$('#voir'))return;const v=$('#voir'),m=$('#mot');
 function dire(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,ageTexte(ageMois()),dateFr(reglages.date)].filter(Boolean).join(' · ')}
 const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-function ageMois(m=reglages.moisN,a=reglages.anneeN,d=reglages.date){if(!m||!a||!d)return null;const [y,mo]=d.split('-').map(Number);const n=(y-a)*12+(mo-m);return n>=36&&n<=144?n:null}
-function ageTexte(n){return n==null?'':Math.floor(n/12)+' ans'+(n%12?' '+(n%12)+' mois':'')}
+// Sans mois de naissance (facultatif), l'âge est estimé au milieu de l'année (juillet).
+function ageMois(m=reglages.moisN,a=reglages.anneeN,d=reglages.date){if(!a||!d)return null;m=m||7;const [y,mo]=d.split('-').map(Number);const n=(y-a)*12+(mo-m);return n>=36&&n<=144?n:null}
+function ageTexte(n,approx=!reglages.moisN){return n==null?'':approx?'environ '+Math.floor(n/12)+' ans':Math.floor(n/12)+' ans'+(n%12?' '+(n%12)+' mois':'')}
 const API='/api/bilan-lecture';
 function dateFr(d){if(!d)return'';const [y,m,j]=d.split('-');return j+'/'+m+'/'+y}
 function duree(s){s=Math.round(s);return s<60?s+' s':Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s'}
@@ -254,7 +255,7 @@ function accueil(){
   <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
-   <label>Mois de naissance <b style="color:var(--rouge)">*</b><br><select id="moisN"><option value="">— mois —</option>${MOIS.map((m,i)=>`<option value="${i+1}" ${i+1==reglages.moisN?'selected':''}>${m}</option>`).join('')}</select></label>
+   <label>Mois de naissance (facultatif)<br><select id="moisN"><option value="">— mois —</option>${MOIS.map((m,i)=>`<option value="${i+1}" ${i+1==reglages.moisN?'selected':''}>${m}</option>`).join('')}</select></label>
    <label>Année de naissance <b style="color:var(--rouge)">*</b><br><select id="anneeN"><option value="">— année —</option>${Array.from({length:10},(_,i)=>new Date().getFullYear()-4-i).map(a=>`<option ${a==reglages.anneeN?'selected':''}>${a}</option>`).join('')}</select></label>
    <label>Date de la passation<br><input type="date" id="date" value="${reglages.date}"></label>
    <label>Âge le jour du test<br><b id="age" style="font-size:1.2rem">—</b></label>
@@ -275,7 +276,7 @@ function accueil(){
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">Repères de fluence (mots correctement lus en une minute, attendus de fin d'année, Éduscol) : CP 50 · CE1 70 · CE2 90.</p>`;
- const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n)};
+ const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n,!$('#moisN').value)};
  ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
  // Case du titre d'un groupe : coche ou décoche tout le groupe en un clic
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
@@ -288,7 +289,7 @@ function accueil(){
  $('#go').onclick=()=>{
   reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;
   reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;
-  if(!reglages.classe||ageMois()==null){$('#go').textContent='⚠ Indiquez le niveau, le mois et l\'année de naissance';window.scrollTo(0,0);return}
+  if(!reglages.classe||ageMois()==null){$('#go').textContent='⚠ Indiquez le niveau, l\'année de naissance';window.scrollTo(0,0);return}
   reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;
   reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value);
   if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
