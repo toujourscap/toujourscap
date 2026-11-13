@@ -82,6 +82,15 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
 .modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
+.support{display:flex;gap:8px;justify-content:center;margin:0 0 10px}
+.support button{font-family:inherit;font-size:16px;padding:6px 14px;border-radius:12px;border:2px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer}
+.support button.on{background:#dfe9f6;border-color:var(--bleu);font-weight:700}
+.ecran-nb{min-width:min(60vw,320px);min-height:1.3em;font-size:min(14vw,80px);text-align:center;border-bottom:4px solid var(--bleu);margin:6px 0 12px;letter-spacing:.05em}
+.pave{display:grid;grid-template-columns:repeat(3,min(20vw,92px));gap:10px;justify-content:center}
+.pave button{font-family:inherit;font-size:min(9vw,40px);padding:6px 0;border-radius:16px;border:3px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer;touch-action:manipulation}
+.pave button:active{background:#dfe9f6}
+.pave .eff{color:#b3261e}.pave .val{background:#1d6b40;border-color:#1d6b40;color:#fff}
+.pave button:disabled{opacity:.4}
 .acquis-msg{background:#e3f4ea;color:#1d6b40;border-radius:10px;padding:8px 12px;margin:0 0 12px;font-weight:600}
 </style>
 </head>
@@ -214,7 +223,7 @@ const EP_FIN=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'n2',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[64,'soixante-quatre'],[81,'quatre-vingt-un'],[150,'cent-cinquante'],[307,'trois-cent-sept'],[520,'cinq-cent-vingt'],[742,'sept-cent-quarante-deux'],[416,'quatre-cent-seize'],[999,'neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran ; dès votre validation, on passe au suivant, qui est dit aussitôt (🔊 pour répéter, 👁 maintenu pour le voir). Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
+  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). L'élève écrit sur sa feuille (vous validez) ou « ⌨️ Sur l'écran » avec le pavé de chiffres (correction automatique) ; on passe aussitôt au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
  {id:'n3',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[15,'quinze'],[60,'soixante'],[200,'deux-cents'],[635,'six-cent-trente-cinq']].map(([n,l])=>V(nb(n),l)),
   consigne:"« Écris ce nombre en lettres. » Comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots)."},
@@ -360,7 +369,7 @@ const EP_DEBUT=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'a2',groupe:G,titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[14,'quatorze'],[25,'vingt-cinq'],[38,'trente-huit'],[52,'cinquante-deux'],[67,'soixante-sept'],[70,'soixante-dix'],[81,'quatre-vingt-un'],[96,'quatre-vingt-seize']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran ; dès votre validation, on passe au suivant, qui est dit aussitôt (🔊 pour répéter, 👁 maintenu pour le voir). Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
+  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). L'élève écrit sur sa feuille (vous validez) ou « ⌨️ Sur l'écran » avec le pavé de chiffres (correction automatique) ; on passe aussitôt au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
  {id:'a3',groupe:G,titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[7,'sept'],[12,'douze'],[30,'trente'],[45,'quarante-cinq']].map(([n,l])=>V(String(n),l)),
   consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. Comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case."},
@@ -442,6 +451,7 @@ const VERSIONS={
 VERSIONS.fin.ep=EP_FIN;
 let EPREUVES=EP_DEBUT;
 let reglages={version:'',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,choisies:EPREUVES.map(e=>e.id)};
+let surEcran=(()=>{try{return localStorage.getItem('bilanMathsSupport')==='ecran'}catch(e){return false}})();
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
 
@@ -583,7 +593,8 @@ function enonce(it,ep){
 /* ---------- L'adulte valide ---------- */
 function ecranValider(){
  const ep=R.ep,it=R.items[R.k];
- const haut=ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div></div>`
+ const ecran=ep.cache&&surEcran;
+ const haut=ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`+(ecran?`<div class="question">Écris le nombre.</div><div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`:`<div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div>`)+`</div>`
   :cache(String(it.att),!!it.dire)+`<div class="scene">${ep.question?`<div class="question">${mx(ep.question)}</div>`:''}<div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>${it.type?`<p class="note noprint" style="margin:14px 0 0">${esc(it.type)}</p>`:''}</div>`;
  app.innerHTML=barre()+haut+`
  <div class="adulte"><span class="lab">Adulte :</span>
@@ -599,6 +610,18 @@ function ecranValider(){
  $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else{stopTimers();intro()}};
  onKey=e=>{const m={ArrowLeft:'ok',ArrowUp:'hes',ArrowRight:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+ $$('.support [data-s]').forEach(b=>b.onclick=()=>{surEcran=b.dataset.s==='ecran';try{localStorage.setItem('bilanMathsSupport',surEcran?'ecran':'feuille')}catch(e){}stopTimers();ecranValider()});
+ if(ecran){
+  // L'élève tape le nombre : correction automatique, puis item suivant.
+  let saisie='',fini=false;const aff=$('#nbE'),bv=$('#pave .val');
+  const maj=()=>{aff.textContent=saisie;bv.disabled=!saisie};
+  const touche=c=>{if(fini)return;if(c==='x')saisie=saisie.slice(0,-1);else if(c==='ok'){if(!saisie)return;fini=true;
+    const juste=saisie===String(it.att).replace(/\s/g,'');aff.style.color=juste?'#1d6b40':'#b3261e';
+    $('#rep').value=juste?'':saisie;timers.push(setTimeout(()=>noter(juste?'ok':'ko'),500));return}
+   else if(saisie.length<5)saisie+=c;maj()};
+  $$('#pave button').forEach(b=>b.onclick=()=>touche(b.dataset.c));
+  onKey=e=>{if(/^\d$/.test(e.key))touche(e.key);else if(e.key==='Backspace'){e.preventDefault();touche('x')}else if(e.key==='Enter'){e.preventDefault();touche('ok')}};
+ }
 }
 
 /* ---------- L'élève montre la réponse ---------- */
