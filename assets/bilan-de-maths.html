@@ -81,6 +81,23 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .histo li{margin:4px 0}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
 .modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
+.mode{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px}
+.mode label{border:2px solid var(--ligne);border-radius:14px;padding:10px 12px;cursor:pointer;display:block;line-height:1.35}
+.mode label.on{border-color:var(--bleu);background:#eef3f9}
+.avert{background:#fff3c4;border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.eleve-intro h2{font-size:1.8rem}
+.eleve-intro .dit{font-size:clamp(20px,3vw,28px);line-height:1.45;margin:.4em 0 .8em}
+.b.gros{font-size:1.4rem;padding:16px 28px}
+.saisie{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap}
+.saisie input{font-family:inherit;font-size:min(9vw,48px);width:min(80vw,440px);text-align:center;border-radius:14px;border:3px solid #cfd8e3;padding:6px 12px}
+.saisie .b{font-size:1.6rem;padding:12px 22px}
+.micro{text-align:center;margin-top:18px}
+.micro .ecoute{background:var(--rouge)!important;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.entendu{min-height:1.6em;margin-top:10px;font-size:1.2rem;color:var(--doux)}
+.scene.merci{opacity:.45;transition:opacity .3s}
+.eleve-bas{justify-content:center}
+label.indispo{opacity:.45}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
 .support{display:flex;gap:8px;justify-content:center;margin:0 0 10px}
 .support button{font-family:inherit;font-size:16px;padding:6px 14px;border-radius:12px;border:2px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer}
@@ -450,13 +467,108 @@ const VERSIONS={
   reperes:"Repères de fluence en calcul (fin de CE1, programme 2025) : tables d'addition 12 égalités en 1 min · tables de multiplication 8 égalités en 1 min · calcul mental 12 résultats en 3 min."}};
 VERSIONS.fin.ep=EP_FIN;
 let EPREUVES=EP_DEBUT;
-let reglages={version:'',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,choisies:EPREUVES.map(e=>e.id)};
+let reglages={mode:'adulte',version:'',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,choisies:EPREUVES.map(e=>e.id)};
 let surEcran=(()=>{try{return localStorage.getItem('bilanMathsSupport')==='ecran'}catch(e){return false}})();
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
 
 /* ---------- Outils ---------- */
 function stopTimers(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]}
+/* ---------- Mode autonomie : l'élève passe le bilan seul (Google Chrome : voix de l'ordinateur + micro) ---------- */
+const RECO=window.SpeechRecognition||window.webkitSpeechRecognition;
+const auto=()=>reglages.mode==='auto';
+const sansAccent=s=>String(s).toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae').normalize('NFD').replace(/[̀-ͯ]/g,'');
+const normer=s=>sansAccent(s).replace(/[^a-z0-9]+/g,' ').trim();
+const colle=s=>normer(s).replace(/ /g,'');
+let reco=null;
+function arreterReco(){if(reco){const r=reco;reco=null;try{r.onend=null;r.onresult=null;r.abort()}catch(e){}}}
+// Réponse orale courte : renvoie toutes les transcriptions proposées par Chrome.
+function ecouter(fin,pendant){
+ arreterReco();let alts=[],fait=false;
+ const r=new RECO();reco=r;r.lang='fr-FR';r.maxAlternatives=5;r.interimResults=true;r.continuous=false;
+ r.onresult=e=>{const res=e.results[e.results.length-1];if(pendant)pendant(res[0].transcript);if(res.isFinal)alts=[...res].map(a=>a.transcript)};
+ r.onerror=()=>{};
+ r.onend=()=>{if(fait)return;fait=true;if(reco===r)reco=null;fin(alts)};
+ try{r.start()}catch(e){fait=true;reco=null;fin([])}
+ timers.push(setTimeout(()=>{try{r.stop()}catch(e){}},8000));
+}
+function barreEleve(){
+ const ep=R.ep,n=R.items?R.items.length:0;
+ return `<div class="barre"><span><b>${ep.titre}</b></span><span>${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
+ <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):n?R.k/n*100:0}%"></i></div>`;
+}
+// Écran de l'élève : sp = {html, parle, jouer, saisie:'pave'|'texte'|'voix'|'choix', choix, juste(réponse)}
+function ecranEleve(sp,noter){
+ const zone=sp.saisie==='pave'?`<div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`
+  :sp.saisie==='texte'?`<div class="saisie"><input id="txtE" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Écris ici"><button class="b ok" id="okE">✔</button></div>`
+  :sp.saisie==='voix'?`<div class="micro"><button class="b prim gros" id="micE">🎤 Appuie et dis-le</button><div class="entendu" id="entE"></div></div>`
+  :`<div class="choix" id="choixE">${sp.choix.map(c=>`<button data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>`;
+ app.innerHTML=barre()+`<div class="scene eleve">${sp.html}${zone}</div>
+ <div class="adulte eleve-bas">${sp.parle?'<button class="b" id="reec">🔊 Réécouter</button>':''}<button class="b" id="nsp">🤷 Je ne sais pas</button></div>`;
+ const parler=()=>{if(!sp.parle)return;sp.jouer?jouer(sp.parle):dire(sp.parle)};
+ if(sp.parle){timers.push(setTimeout(parler,350));$('#reec').onclick=parler}
+ let fini=false;
+ const fin=(v,rep)=>{if(fini)return;fini=true;arreterReco();$('.scene').classList.add('merci');timers.push(setTimeout(()=>noter(v,rep),450))};
+ $('#nsp').onclick=()=>fin('ko','(ne sait pas)');
+ onKey=null;
+ if(sp.saisie==='pave'){let s='';const aff=$('#nbE'),bv=$('#pave .val');const maj=()=>{aff.textContent=s;bv.disabled=!s};
+  const t=c=>{if(fini)return;if(c==='x')s=s.slice(0,-1);else if(c==='ok'){if(s)fin(sp.juste(s)?'ok':'ko',s);return}else if(s.length<5)s+=c;maj()};
+  $$('#pave button').forEach(b=>b.onclick=()=>t(b.dataset.c));
+  onKey=e=>{if(/^\d$/.test(e.key))t(e.key);else if(e.key==='Backspace'){e.preventDefault();t('x')}else if(e.key==='Enter'){e.preventDefault();t('ok')}}}
+ else if(sp.saisie==='texte'){const i=$('#txtE');const ok=()=>{const v=i.value.trim();if(v)fin(sp.juste(v)?'ok':'ko',v)};
+  $('#okE').onclick=ok;i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok()}});timers.push(setTimeout(()=>i.focus(),60))}
+ else if(sp.saisie==='choix')$$('#choixE button').forEach(b=>b.onclick=()=>{b.classList.add('pris');fin(sp.juste(b.dataset.c)?'ok':'ko',b.dataset.c)});
+ else{let essai=0;const bm=$('#micE'),ent=$('#entE');
+  // Deux essais : réussi au 2ᵉ = « hésitant » (compté juste).
+  bm.onclick=()=>{if(fini||reco)return;try{speechSynthesis.cancel()}catch(e){}bm.classList.add('ecoute');bm.textContent='👂 J\'écoute…';ent.textContent='';
+   ecouter(alts=>{bm.classList.remove('ecoute');bm.textContent='🎤 Appuie et dis-le';if(fini)return;
+    if(alts.length&&sp.juste(alts))return fin(essai?'hes':'ok',alts[0]);
+    essai++;if(essai>=2)return fin('ko',alts[0]||'(rien entendu)');
+    ent.textContent=alts.length?'Recommence encore une fois, bien fort.':'Je n\'ai rien entendu. Appuie encore sur le micro.'},t=>{ent.textContent=t})}}
+}
+function introEleve(ep,texte,go){
+ app.innerHTML=`<div class="carte eleve-intro">${R.dejaAcquis?'<p class="acquis-msg">✅ Bravo !</p>':''}<p class="note" style="margin:0">Épreuve ${R.i+1} sur ${R.liste.length}</p><h2>${esc(ep.titre)}</h2><p class="dit">${esc(texte)}</p>
+ <div class="actions"><button class="b" id="reec">🔊 Réécouter</button><button class="b prim gros" id="start">▶ C'est parti !</button></div></div>`;
+ R.dejaAcquis='';
+ timers.push(setTimeout(()=>dire(texte),300));$('#reec').onclick=()=>dire(texte);
+ $('#start').onclick=()=>{try{speechSynthesis.cancel()}catch(e){}go()};
+ onKey=e=>{if(e.key==='Enter'){e.preventDefault();$('#start').click()}};
+}
+function finEleve(){
+ R.finVu=true;stopTimers();onKey=null;arreterReco();
+ app.innerHTML=`<div class="carte eleve-intro" style="text-align:center"><div style="font-size:90px;line-height:1.1">🎉</div><h2>Bravo, tu as terminé !</h2><p class="dit">Appelle ton enseignant.</p>
+ <div class="actions" style="justify-content:center"><button class="b" id="voirB">Bilan (pour l'enseignant)</button></div></div>`;
+ dire('Bravo, tu as terminé ! Appelle ton enseignant.');$('#voirB').onclick=bilan;
+}
+// Choix du mode à l'accueil
+function blocMode(dispo){
+ return `<div class="mode noprint">
+  <label class="${auto()?'':'on'}"><input type="radio" name="mode" value="adulte" ${auto()?'':'checked'}> 👩‍🏫 <b>Avec l'enseignant</b><br><span class="note">L'élève répond à l'oral ou montre, l'enseignant valide chaque réponse.</span></label>
+  <label class="${auto()?'on':''}"><input type="radio" name="mode" value="auto" ${auto()?'checked':''}> 🧒 <b>Élève en autonomie</b> (Google Chrome)<br><span class="note">Consignes et questions lues par l'ordinateur ; l'élève touche l'écran, écrit au clavier ou parle au micro. Correction automatique.</span></label>
+ </div>${auto()?`<p class="note avert">${RECO?'':'⚠ Le micro ne fonctionne pas dans ce navigateur : ouvrez le bilan dans <b>Google Chrome</b> pour les épreuves à lire à voix haute. '}Autorisez le micro quand Chrome le demande ; un casque avec micro aide beaucoup en classe. ${dispo?`Les épreuves grisées demandent un adulte (${esc(dispo)}). `:''}Les résultats en autonomie ne comptent pas dans les moyennes du site.</p>`:''}`;
+}
+
+/* Autonomie (maths) : ce que l'élève entend avant chaque épreuve, et comment il répond. */
+const NB_LUS=['n1','a1'],EN_LETTRES=['n3','a3'],POSEES=['c5','c6','a13'];
+const dispoAuto=ep=>!NB_LUS.includes(ep.id)||!!RECO;
+const chiffres=s=>(String(s).replace(/(\d)[\s\u202f](?=\d{3})/g,'$1').match(/\d+/)||[''])[0];
+function consigneEleve(ep){
+ if(NB_LUS.includes(ep.id))return "Lis chaque nombre à voix haute. Appuie sur le micro, puis dis le nombre.";
+ if(ep.cache)return "Écoute le nombre, puis écris-le avec les chiffres. Appuie sur la coche verte pour valider.";
+ if(EN_LETTRES.includes(ep.id))return "Écris chaque nombre en lettres avec le clavier, puis appuie sur la coche verte.";
+ if(POSEES.includes(ep.id))return "Pose chaque opération sur ta feuille et calcule-la. Ensuite, écris le résultat avec les chiffres.";
+ if(ep.id==='pb'||ep.id==='apb')return "Écoute bien chaque problème. Cherche sur ta feuille, puis écris la réponse : seulement le nombre.";
+ if(ep.temps)return `Tu as ${ep.temps>=120?Math.round(ep.temps/60)+' minutes':'une minute'}. Écris chaque résultat avec les chiffres, le plus vite possible !`;
+ if(ep.mode==='choix')return "Écoute chaque question, puis touche la bonne réponse.";
+ return "Écoute chaque question, puis écris le résultat avec les chiffres. Appuie sur la coche verte pour valider.";
+}
+const aDire=t=>String(t).replace(/ = …$/,' égale combien ?').replace(/…/g,'combien');
+function specMaths(ep,it){
+ if(ep.cache)return {html:`<div class="question">Écris le nombre que tu entends.</div>`,parle:it.dire,saisie:'pave',juste:r=>r===chiffres(it.att)};
+ if(NB_LUS.includes(ep.id))return {html:`<div class="question">Lis ce nombre.</div><div class="stim xl">${mx(it.q)}</div>`,saisie:'voix',juste:alts=>alts.some(a=>colle(a)===colle(it.att)||chiffres(a)===chiffres(it.q))};
+ if(EN_LETTRES.includes(ep.id))return {html:`<div class="question">Écris ce nombre en lettres.</div><div class="stim l">${mx(it.q)}</div>`,saisie:'texte',juste:r=>colle(r)===colle(it.att)};
+ return {html:(ep.question?`<div class="question">${mx(ep.question)}</div>`:'')+`<div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>`,parle:ep.temps?'':(it.dire||aDire(it.q)),saisie:'pave',juste:r=>r===chiffres(it.att)};
+}
 function dire(t){try{const u=new SpeechSynthesisUtterance(t.replace(/−/g,'moins').replace(/×/g,'fois'));u.lang='fr-FR';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function cache(vu,son){return `<div class="cache noprint"><button class="b" id="voir">👁 Maintenir pour voir la réponse</button><span class="mot-cache" id="mot">${esc(vu)}</span>${son?'<button class="b" id="dire">🔊 Faire écouter</button>':''}</div>`}
 function lierCache(t){if(!$('#voir'))return;const v=$('#voir'),m=$('#mot');
@@ -482,6 +594,7 @@ function accueil(){
  app.innerHTML=`
  <div class="carte">
   <h2>1. L'élève</h2>
+  ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
   <p class="note" style="margin-top:0">Deux versions : <b>début de CE1</b> (objectifs de fin de CP) et <b>fin de CE1 – début de CE2</b> (objectifs de fin de CE1). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5 au plus), l'épreuve est jugée acquise et on passe automatiquement à la suivante.</p>
   <div class="grille">
    <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="version"><option value="">— choisir —</option><option value="debut" ${reglages.version==='debut'?'selected':''}>Début de CE1 (acquis de fin de CP)</option><option value="fin" ${reglages.version==='fin'?'selected':''}>Fin de CE1 – début de CE2</option></select></label>
@@ -496,7 +609,7 @@ function accueil(){
  <div class="carte">
   <h2>2. Épreuves — ${reglages.version?VERSIONS[reglages.version].lab+' ('+VERSIONS[reglages.version].titre+')':'choisissez d\'abord le moment du bilan'}</h2>
   <p class="note" style="margin-top:0">Tout le bilan prend environ 45 minutes : il peut se faire en deux ou trois fois (cochez seulement quelques domaines). Prévoyez une feuille, un crayon, une règle et une équerre.</p>
-  <div class="grille" ${reglages.version?'':'style="display:none"'}>${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>`<label><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)?'checked':''}> ${e.titre}</label>`).join('')}</div>`).join('')}</div>
+  <div class="grille" ${reglages.version?'':'style="display:none"'}>${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>{const non=auto()&&!dispoAuto(e);return `<label class="${non?'indispo':''}"><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)&&!non?'checked':''} ${non?'disabled':''}> ${e.titre}${non?' <span class="note">(adulte)</span>':''}</label>`}).join('')}</div>`).join('')}</div>
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
   <h3>Réglages</h3>
   <div class="grille"><label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre</label></div>
@@ -504,13 +617,14 @@ function accueil(){
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">${VERSIONS[reglages.version||'debut'].reperes}</p>`;
+ $$('.mode input').forEach(r=>r.onchange=()=>{lireForm();reglages.mode=r.value;accueil()});
  $('#version').onchange=()=>{lireForm();reglages.version=$('#version').value;EPREUVES=VERSIONS[reglages.version||'debut'].ep;reglages.choisies=EPREUVES.map(e=>e.id);accueil()};
  const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n,!$('#moisN').value)};
  ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
- $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep').forEach(c=>c.checked=t.checked);majGroupes()});
+ $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep:not(:disabled)').forEach(c=>c.checked=t.checked);majGroupes()});
  $$('.groupe input.ep').forEach(c=>c.onchange=majGroupes);majGroupes();
- $('#tout').onclick=()=>{$$('.groupe input.ep').forEach(c=>c.checked=true);majGroupes()};
+ $('#tout').onclick=()=>{$$('.groupe input.ep:not(:disabled)').forEach(c=>c.checked=true);majGroupes()};
  $('#rien').onclick=()=>{$$('.groupe input.ep').forEach(c=>c.checked=false);majGroupes()};
  $$('[data-voir]').forEach(b=>b.onclick=()=>modal(h[b.dataset.voir].texte));
  if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
@@ -521,7 +635,7 @@ function accueil(){
   reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value);
   if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
   majEntete();resultats={};bilanEnregistre=false;envoye=false;passation=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
-  R={liste:EPREUVES.filter(e=>reglages.choisies.includes(e.id)),i:0,t0:Date.now()};
+  R={liste:EPREUVES.filter(e=>reglages.choisies.includes(e.id)&&(!auto()||dispoAuto(e))),i:0,t0:Date.now()};
   intro();
  };
 }
@@ -535,8 +649,9 @@ function modal(txt){
 /* ---------- Déroulé ---------- */
 function intro(){
  stopTimers();
- if(R.i>=R.liste.length)return bilan();
+ if(R.i>=R.liste.length)return auto()&&!R.finVu?finEleve():bilan();
  const ep=R.liste[R.i];R.ep=ep;
+ if(auto())return introEleve(ep,consigneEleve(ep),()=>{R.items=ep.items();R.k=0;R.res=[];R.tEp=Date.now();R.fin=ep.temps?Date.now()+ep.temps*1000:0;if(ep.temps)timers.push(setInterval(tic,250));suivant()});
  const dejaA=R.dejaAcquis;R.dejaAcquis='';
  app.innerHTML=`<div class="barre"><span>Épreuve ${R.i+1} / ${R.liste.length}</span><button class="b petit" id="finBilan">🏁 Aller au bilan</button></div>
  <div class="carte">${dejaA?`<p class="acquis-msg">✅ « ${esc(dejaA)} » : acquis, épreuve écourtée.</p>`:''}<p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
@@ -556,12 +671,14 @@ function tic(){const c=$('#chr');if(!R||!R.fin)return;const s=Math.max(0,Math.ce
 const seuil=n=>Math.min(5,Math.ceil(n*.6));
 function peutPasser(){return !R.ep.temps&&R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
 function barre(){
+ if(auto())return barreEleve();
  const ep=R.ep,n=R.items.length;
  return `<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${ep.temps?`${R.res.filter(x=>x.v!=='ko').length} juste${R.res.filter(x=>x.v!=='ko').length>1?'s':''} · <span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span>
  <span><button class="b petit" id="stopEp">⏭ Arrêter l'épreuve</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
  <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):R.k/n*100}%"></i></div>`;
 }
 function lierBarre(){
+ if(!$('#stopEp'))return;
  $('#stopEp').onclick=()=>finEpreuve();
  if($('#acquis'))$('#acquis').onclick=()=>{R.anticipe=true;finEpreuve()};
  $('#finBilan').onclick=()=>{finEpreuve(true)};
@@ -593,6 +710,7 @@ function enonce(it,ep){
 /* ---------- L'adulte valide ---------- */
 function ecranValider(){
  const ep=R.ep,it=R.items[R.k];
+ if(auto())return ecranEleve(specMaths(ep,it),(v,rep)=>{R.res.push({item:ep.cache?it.att:it.q,v,rep:v==='ok'?'':rep});R.k++;suivant()});
  const ecran=ep.cache&&surEcran;
  const haut=ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`+(ecran?`<div class="question">Écris le nombre.</div><div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`:`<div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div>`)+`</div>`
   :cache(String(it.att),!!it.dire)+`<div class="scene">${ep.question?`<div class="question">${mx(ep.question)}</div>`:''}<div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>${it.type?`<p class="note noprint" style="margin:14px 0 0">${esc(it.type)}</p>`:''}</div>`;
@@ -616,8 +734,8 @@ function ecranValider(){
   let saisie='',fini=false;const aff=$('#nbE'),bv=$('#pave .val');
   const maj=()=>{aff.textContent=saisie;bv.disabled=!saisie};
   const touche=c=>{if(fini)return;if(c==='x')saisie=saisie.slice(0,-1);else if(c==='ok'){if(!saisie)return;fini=true;
-    const juste=saisie===String(it.att).replace(/\s/g,'');aff.style.color=juste?'#1d6b40':'#b3261e';
-    $('#rep').value=juste?'':saisie;timers.push(setTimeout(()=>noter(juste?'ok':'ko'),500));return}
+    // Mode enseignant : rien n'est corrigé automatiquement, l'adulte valide ce qui est écrit.
+    aff.classList.add('fige');$('#rep').value=saisie;$('#pave').style.opacity=.4;return}
    else if(saisie.length<5)saisie+=c;maj()};
   $$('#pave button').forEach(b=>b.onclick=()=>touche(b.dataset.c));
   onKey=e=>{if(/^\d$/.test(e.key))touche(e.key);else if(e.key==='Backspace'){e.preventDefault();touche('x')}else if(e.key==='Enter'){e.preventDefault();touche('ok')}};
@@ -638,6 +756,8 @@ function ecranChoix(){
  $('#dire').onclick=()=>dire(lu);
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else intro()};
  let fini=false;
+ if(auto()){$('.adulte').className='adulte eleve-bas';$('.adulte').innerHTML='<button class="b" id="nsp">🤷 Je ne sais pas</button>';$('.cache').innerHTML='<button class="b" id="dire">🔊 Réécouter</button>';$('#dire').onclick=()=>dire(lu);
+  $('#nsp').onclick=()=>{if(fini)return;fini=true;R.res.push({item:it.q||'',v:'ko',rep:'(ne sait pas)',bonne:it.bonne});R.k++;suivant()};timers.push(setTimeout(()=>dire(lu),350))}
  const repondre=b=>{
   if(fini)return;fini=true;b.classList.add('pris');
   const c=b.dataset.c;R.res.push({item:it.q||'',v:c===it.bonne?'ok':'ko',rep:c,bonne:it.bonne});
@@ -658,7 +778,7 @@ function bilan(){
  const V0=VERSIONS[reglages.version];
  const titreAnon=`Bilan de maths ${V0.court} — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
  const titre=reglages.prenom?`Bilan de maths ${V0.court} — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
- texteL.push('TITRE','');
+ texteL.push('TITRE',auto()?'Passation en autonomie (correction automatique, à vérifier).':'');
  let grp='';
  ids.forEach(id=>{
   const r=resultats[id];
@@ -682,6 +802,7 @@ function bilan(){
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
  ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même âge</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Épreuves chronométrées : nombre de réponses justes comparé aux attendus de ${V0.att} du programme 2025, à adapter selon le moment de l'année.</p>
  <h3>Observations de l'adulte</h3>
  <textarea id="obs" rows="4" style="width:100%" placeholder="Procédures utilisées (doigts, comptage, décomposition…), schémas, attitude, fatigue…"></textarea>
@@ -702,7 +823,7 @@ async function envoyer(ids){
  ids.forEach(id=>{const x=resultats[id];if(!x.complet)return;const juste=x.ok+x.hes.length;
   r[id]=x.temps?{pct:Math.min(100,Math.round(juste/x.attendu*100)),nb:juste}:{pct:Math.round(juste/x.faits*100)}});
  try{
-  if(!envoye&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
+  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
   const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&age=${age}`)).json();
   const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.age||[]).forEach(x=>A[x.epreuve]=x);
   const f=(x,id)=>!x?'—':(resultats[id].temps?`${x.nb} justes`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
