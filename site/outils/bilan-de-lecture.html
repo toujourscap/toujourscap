@@ -85,6 +85,24 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 details summary{cursor:pointer}
 .choix .num{display:block;font-family:Arial,sans-serif;font-size:15px;line-height:1;color:#8a94a3;margin:2px 0 4px}
 .texte-adulte{align-self:stretch;background:#fff8e1;border-radius:10px;padding:6px 12px;margin:-8px 0 14px;font-size:1rem}
+.mode{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px}
+.mode label{border:2px solid var(--ligne);border-radius:14px;padding:10px 12px;cursor:pointer;display:block;line-height:1.35}
+.mode label.on{border-color:var(--bleu);background:#eef3f9}
+.avert{background:#fff3c4;border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.eleve-intro h2{font-size:1.8rem}
+.eleve-intro .dit{font-size:clamp(20px,3vw,28px);line-height:1.45;margin:.4em 0 .8em}
+.b.gros{font-size:1.4rem;padding:16px 28px}
+.saisie{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap}
+.saisie input{font-family:inherit;font-size:min(9vw,48px);width:min(80vw,440px);text-align:center;border-radius:14px;border:3px solid #cfd8e3;padding:6px 12px}
+.saisie .b{font-size:1.6rem;padding:12px 22px}
+.micro{text-align:center;margin-top:18px}
+.micro .ecoute{background:var(--rouge)!important;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.entendu{min-height:1.6em;margin-top:10px;font-size:1.2rem;color:var(--doux)}
+.scene.merci{opacity:.45;transition:opacity .3s}
+.eleve-bas{justify-content:center}
+label.indispo{opacity:.45}
+.acquis-msg{background:#e3f4ea;color:#1d6b40;border-radius:10px;padding:8px 12px;margin:0 0 12px;font-weight:600}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
 </style>
 </head>
@@ -190,7 +208,7 @@ const EPREUVES=[
   consigne:"Même consigne avec trois lettres, dans le bon ordre."}
 ];
 
-let reglages={prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
+let reglages={mode:'adulte',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
@@ -222,6 +240,148 @@ function genEmpan(n){
 
 /* ---------- Outils ---------- */
 function stopTimers(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]}
+/* ---------- Mode autonomie : l'élève passe le bilan seul (Google Chrome : voix de l'ordinateur + micro) ---------- */
+const RECO=window.SpeechRecognition||window.webkitSpeechRecognition;
+const auto=()=>reglages.mode==='auto';
+const sansAccent=s=>String(s).toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae').normalize('NFD').replace(/[̀-ͯ]/g,'');
+const normer=s=>sansAccent(s).replace(/[^a-z0-9]+/g,' ').trim();
+const colle=s=>normer(s).replace(/ /g,'');
+let reco=null;
+function arreterReco(){if(reco){const r=reco;reco=null;try{r.onend=null;r.onresult=null;r.abort()}catch(e){}}}
+// Réponse orale courte : renvoie toutes les transcriptions proposées par Chrome.
+function ecouter(fin,pendant){
+ arreterReco();let alts=[],fait=false;
+ const r=new RECO();reco=r;r.lang='fr-FR';r.maxAlternatives=5;r.interimResults=true;r.continuous=false;
+ r.onresult=e=>{const res=e.results[e.results.length-1];if(pendant)pendant(res[0].transcript);if(res.isFinal)alts=[...res].map(a=>a.transcript)};
+ r.onerror=()=>{};
+ r.onend=()=>{if(fait)return;fait=true;if(reco===r)reco=null;fin(alts)};
+ try{r.start()}catch(e){fait=true;reco=null;fin([])}
+ timers.push(setTimeout(()=>{try{r.stop()}catch(e){}},8000));
+}
+function barreEleve(){
+ const ep=R.ep,n=R.items?R.items.length:0;
+ return `<div class="barre"><span><b>${ep.titre}</b></span><span>${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
+ <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):n?R.k/n*100:0}%"></i></div>`;
+}
+// Écran de l'élève : sp = {html, parle, jouer, saisie:'pave'|'texte'|'voix'|'choix', choix, juste(réponse)}
+function ecranEleve(sp,noter){
+ const zone=sp.saisie==='pave'?`<div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`
+  :sp.saisie==='texte'?`<div class="saisie"><input id="txtE" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Écris ici"><button class="b ok" id="okE">✔</button></div>`
+  :sp.saisie==='voix'?`<div class="micro"><button class="b prim gros" id="micE">🎤 Appuie et dis-le</button><div class="entendu" id="entE"></div></div>`
+  :`<div class="choix" id="choixE">${sp.choix.map(c=>`<button data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>`;
+ app.innerHTML=barre()+`<div class="scene eleve">${sp.html}${zone}</div>
+ <div class="adulte eleve-bas">${sp.parle?'<button class="b" id="reec">🔊 Réécouter</button>':''}<button class="b" id="nsp">🤷 Je ne sais pas</button></div>`;
+ const parler=()=>{if(!sp.parle)return;sp.jouer?jouer(sp.parle):dire(sp.parle)};
+ if(sp.parle){timers.push(setTimeout(parler,350));$('#reec').onclick=parler}
+ let fini=false;
+ const fin=(v,rep)=>{if(fini)return;fini=true;arreterReco();$('.scene').classList.add('merci');timers.push(setTimeout(()=>noter(v,rep),450))};
+ $('#nsp').onclick=()=>fin('ko','(ne sait pas)');
+ onKey=null;
+ if(sp.saisie==='pave'){let s='';const aff=$('#nbE'),bv=$('#pave .val');const maj=()=>{aff.textContent=s;bv.disabled=!s};
+  const t=c=>{if(fini)return;if(c==='x')s=s.slice(0,-1);else if(c==='ok'){if(s)fin(sp.juste(s)?'ok':'ko',s);return}else if(s.length<5)s+=c;maj()};
+  $$('#pave button').forEach(b=>b.onclick=()=>t(b.dataset.c));
+  onKey=e=>{if(/^\d$/.test(e.key))t(e.key);else if(e.key==='Backspace'){e.preventDefault();t('x')}else if(e.key==='Enter'){e.preventDefault();t('ok')}}}
+ else if(sp.saisie==='texte'){const i=$('#txtE');const ok=()=>{const v=i.value.trim();if(v)fin(sp.juste(v)?'ok':'ko',v)};
+  $('#okE').onclick=ok;i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok()}});timers.push(setTimeout(()=>i.focus(),60))}
+ else if(sp.saisie==='choix')$$('#choixE button').forEach(b=>b.onclick=()=>{b.classList.add('pris');fin(sp.juste(b.dataset.c)?'ok':'ko',b.dataset.c)});
+ else{let essai=0;const bm=$('#micE'),ent=$('#entE');
+  // Deux essais : réussi au 2ᵉ = « hésitant » (compté juste).
+  bm.onclick=()=>{if(fini||reco)return;try{speechSynthesis.cancel()}catch(e){}bm.classList.add('ecoute');bm.textContent='👂 J\'écoute…';ent.textContent='';
+   ecouter(alts=>{bm.classList.remove('ecoute');bm.textContent='🎤 Appuie et dis-le';if(fini)return;
+    if(alts.length&&sp.juste(alts))return fin(essai?'hes':'ok',alts[0]);
+    essai++;if(essai>=2)return fin('ko',alts[0]||'(rien entendu)');
+    ent.textContent=alts.length?'Recommence encore une fois, bien fort.':'Je n\'ai rien entendu. Appuie encore sur le micro.'},t=>{ent.textContent=t})}}
+}
+function introEleve(ep,texte,go){
+ app.innerHTML=`<div class="carte eleve-intro">${R.dejaAcquis?'<p class="acquis-msg">✅ Bravo !</p>':''}<p class="note" style="margin:0">Épreuve ${R.i+1} sur ${R.liste.length}</p><h2>${esc(ep.titre)}</h2><p class="dit">${esc(texte)}</p>
+ <div class="actions"><button class="b" id="reec">🔊 Réécouter</button><button class="b prim gros" id="start">▶ C'est parti !</button></div></div>`;
+ R.dejaAcquis='';
+ timers.push(setTimeout(()=>dire(texte),300));$('#reec').onclick=()=>dire(texte);
+ $('#start').onclick=()=>{try{speechSynthesis.cancel()}catch(e){}go()};
+ onKey=e=>{if(e.key==='Enter'){e.preventDefault();$('#start').click()}};
+}
+function finEleve(){
+ R.finVu=true;stopTimers();onKey=null;arreterReco();
+ app.innerHTML=`<div class="carte eleve-intro" style="text-align:center"><div style="font-size:90px;line-height:1.1">🎉</div><h2>Bravo, tu as terminé !</h2><p class="dit">Appelle ton enseignant.</p>
+ <div class="actions" style="justify-content:center"><button class="b" id="voirB">Bilan (pour l'enseignant)</button></div></div>`;
+ dire('Bravo, tu as terminé ! Appelle ton enseignant.');$('#voirB').onclick=bilan;
+}
+// Choix du mode à l'accueil
+function blocMode(dispo){
+ return `<div class="mode noprint">
+  <label class="${auto()?'':'on'}"><input type="radio" name="mode" value="adulte" ${auto()?'':'checked'}> 👩‍🏫 <b>Avec l'enseignant</b><br><span class="note">L'élève répond à l'oral ou montre, l'enseignant valide chaque réponse.</span></label>
+  <label class="${auto()?'on':''}"><input type="radio" name="mode" value="auto" ${auto()?'checked':''}> 🧒 <b>Élève en autonomie</b> (Google Chrome)<br><span class="note">Consignes et questions lues par l'ordinateur ; l'élève touche l'écran, écrit au clavier ou parle au micro. Correction automatique.</span></label>
+ </div>${auto()?`<p class="note avert">${RECO?'':'⚠ Le micro ne fonctionne pas dans ce navigateur : ouvrez le bilan dans <b>Google Chrome</b> pour les épreuves à lire à voix haute. '}Autorisez le micro quand Chrome le demande ; un casque avec micro aide beaucoup en classe. ${dispo?`Les épreuves grisées demandent un adulte (${esc(dispo)}). `:''}Les résultats en autonomie ne comptent pas dans les moyennes du site.</p>`:''}`;
+}
+
+
+/* Autonomie (lecture) : les sons isolés et la phonologie demandent une oreille d'adulte. */
+const SANS_AUTO=['sy2','ph1','ph2','vs','vc'],AU_MICRO=['ms','mc','ts','tc'];
+const dispoAuto=ep=>!SANS_AUTO.includes(ep.id)&&(!AU_MICRO.includes(ep.id)||!!RECO);
+const CONSIGNES_ELEVE={
+ sy1:"Écoute le mot. Combien de syllabes entends-tu ? Tu peux frapper dans tes mains. Touche le bon nombre.",
+ ms:"Lis chaque mot à voix haute. Appuie sur le micro, puis lis le mot.",
+ mc:"Lis chaque mot à voix haute. Appuie sur le micro, puis lis le mot.",
+ ts:"Lis le texte à voix haute, le mieux possible. Appuie sur « Je commence à lire », puis lis. Quand tu as fini, appuie sur « J'ai fini ».",
+ tc:"Lis le texte à voix haute, le mieux possible. Appuie sur « Je commence à lire », puis lis. Quand tu as fini, appuie sur « J'ai fini ».",
+ cph:"Lis chaque phrase dans ta tête. Est-ce vrai ou faux ? Touche ta réponse.",
+ ctx:"Lis le texte dans ta tête. Ensuite, écoute chaque question et touche la bonne réponse. Le texte reste affiché.",
+ cmo:"Écoute le mot, puis touche la bonne image.",
+ cto:"Écoute bien l'histoire. Ensuite, pour chaque question, touche la bonne image.",
+ dsy:"Écoute la syllabe, puis écris-la avec le clavier. Appuie sur la coche verte pour valider.",
+ dmo:"Écoute le mot, puis écris-le avec le clavier. Appuie sur la coche verte pour valider.",
+ vis:"Regarde la lettre dans le cadre jaune. Touche la même lettre en dessous.",
+ ecr:"Voici une lettre. Touche la même lettre écrite autrement.",
+ aud:"Écoute le mot. Par quelle lettre commence-t-il ? Touche la lettre.",
+ par:"Écoute les deux mots. Est-ce deux fois le même mot, ou deux mots différents ?",
+ e1:"Appuie sur « Je suis prêt ». Une lettre va apparaître très vite, puis se cacher. Touche la lettre que tu as vue.",
+ e2:"Appuie sur « Je suis prêt ». Deux lettres vont apparaître très vite, puis se cacher. Touche les lettres que tu as vues, dans le bon ordre.",
+ e3:"Appuie sur « Je suis prêt ». Trois lettres vont apparaître très vite, puis se cacher. Touche les lettres que tu as vues, dans le bon ordre."};
+const consigneEleve=ep=>CONSIGNES_ELEVE[ep.id]||"Écoute bien, puis touche la bonne réponse.";
+function motLu(alts,w){const y=colle(w);return alts.some(a=>{const x=colle(a);return x===y||x===y+'s'||x===y+'x'||x===y+'e'||(y.endsWith('e')&&x===y.slice(0,-1))||normer(a).split(' ').some(t=>t===y||t===y+'s')})}
+function specLecture(ep,it){
+ if(ep.id==='sy1')return {html:`<div class="question">Combien de syllabes dans ce mot ?</div><div class="stim l">👂</div>`,parle:`${it.q} ${it.w} ?`,saisie:'choix',choix:['1','2','3','4','5'],juste:c=>c===it.att};
+ if(ep.type==='lire')return {html:`<div class="question">Lis ce mot.</div><div class="stim ${ep.taille}">${esc(it)}</div>`,saisie:'voix',juste:a=>motLu(a,it)};
+ return {html:`<div class="question">${esc(ep.question.replace('sur ta feuille','avec le clavier'))}</div><div class="stim l">✏️</div>`,parle:it.w,jouer:true,saisie:'texte',juste:r=>normer(r)===normer(it.w)};
+}
+function ecranHistoire(){
+ const ep=R.ep,ecoute=()=>jouer(ep.histoire,ep.cleHistoire);
+ app.innerHTML=`<div class="carte eleve-intro" style="text-align:center"><div style="font-size:80px;line-height:1.1">🎧</div><h2>Écoute bien l'histoire.</h2>
+ <div class="actions" style="justify-content:center"><button class="b" id="reec">🔊 Réécouter</button><button class="b prim gros" id="ok">J'ai bien écouté →</button></div></div>`;
+ timers.push(setTimeout(ecoute,300));$('#reec').onclick=ecoute;
+ $('#ok').onclick=()=>{try{speechSynthesis.cancel();if(sonEnCours)sonEnCours.pause()}catch(e){}suivant()};
+}
+// Lecture à voix haute écoutée par le micro : les mots dits sont alignés sur le texte (score estimé).
+function aligner(mots,dits){
+ const tok=[];mots.forEach((w,i)=>normer(w).split(' ').filter(Boolean).forEach(t=>tok.push([t,i])));
+ const D=normer(dits.join(' ')).split(' ').filter(Boolean);
+ let p=0;const okT=new Set();
+ D.forEach(d=>{for(let j=p;j<Math.min(tok.length,p+5);j++){const t=tok[j][0];
+  if(t===d||(d.length>=4&&t.length>=4&&d.slice(0,4)===t.slice(0,4))){okT.add(j);p=j+1;break}}});
+ const lus=p?tok[p-1][1]+1:0,err=[];
+ for(let i=0;i<lus;i++){const ks=tok.map((x,k)=>x[1]===i?k:-1).filter(k=>k>=0);if(ks.length&&!ks.every(k=>okT.has(k)))err.push(i)}
+ return {lus,err};
+}
+function ecranTexteAuto(){
+ const ep=R.ep,mots=decouper(ep.texte),limite=reglages.uneMinute?60:600;
+ app.innerHTML=`<div class="barre"><span><b>${ep.titre}</b></span><span class="chrono" id="chr"></span></div>
+ <div class="scene"><div class="texte" id="texte">${mots.map(w=>`<span>${esc(w)}</span>`).join(' ')}</div></div>
+ <div class="adulte eleve-bas" id="ctrl"><button class="b prim gros" id="dem">🎤 Je commence à lire</button></div>`;
+ let dits=[],t0=0,actif=false;
+ const lancer=()=>{const r=new RECO();reco=r;r.lang='fr-FR';r.continuous=true;r.interimResults=false;
+  r.onresult=e=>{for(let i=e.resultIndex||0;i<e.results.length;i++)if(e.results[i].isFinal)dits.push(e.results[i][0].transcript)};
+  r.onerror=()=>{};r.onend=()=>{if(actif&&reco===r)lancer()};try{r.start()}catch(e){}};
+ const finir=()=>{if(!actif)return;actif=false;const sec=Math.min((Date.now()-t0)/1000,limite);stopTimers();
+  try{reco&&reco.stop()}catch(e){}
+  $('#ctrl').innerHTML='<span class="lab">⏳ Un instant…</span>';
+  setTimeout(()=>{arreterReco();const a=aligner(mots,dits),bons=a.lus-a.err.length,mclm=sec?Math.round(bons*60/sec):0;
+   resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,type:'texte',total:mots.length,lus:a.lus,nbErr:a.err.length,sec,mclm,estime:true,motsErr:a.err.map(i=>nettoyer(mots[i]))};
+   $('#ctrl').innerHTML='<span class="lab">👍 Merci !</span>';setTimeout(()=>{R.i++;intro()},900)},1300)};
+ $('#dem').onclick=()=>{try{speechSynthesis.cancel()}catch(e){}actif=true;t0=Date.now();lancer();
+  $('#ctrl').innerHTML='<span class="lab">👂 J\'écoute…</span><button class="b ok gros" id="fini">✅ J\'ai fini</button>';$('#fini').onclick=finir;
+  timers.push(setInterval(()=>{const s=(Date.now()-t0)/1000;if(s>=limite)finir()},250))};
+}
+function lireForm(){reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value)}
 const cle=t=>t.toLowerCase().replace(/œ/g,'oe').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 // Voix enregistrée si le fichier existe (/audio/bilan-lecture/<cle>.mp3), sinon voix de l'ordinateur.
 let sonEnCours=null;
@@ -252,6 +412,7 @@ function accueil(){
  app.innerHTML=`
  <div class="carte">
   <h2>1. L'élève</h2>
+  ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
   <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
@@ -264,7 +425,7 @@ function accueil(){
  </div>
  <div class="carte">
   <h2>2. Épreuves</h2>
-  <div class="grille">${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>`<label><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)?'checked':''}> ${e.titre}</label>`).join('')}</div>`).join('')}</div>
+  <div class="grille">${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>{const non=auto()&&!dispoAuto(e);return `<label class="${non?'indispo':''}"><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)&&!non?'checked':''} ${non?'disabled':''}> ${e.titre}${non?' <span class="note">(adulte)</span>':''}</label>`}).join('')}</div>`).join('')}</div>
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
   <h3>Réglages</h3>
   <div class="grille">
@@ -276,13 +437,14 @@ function accueil(){
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">Repères de fluence (mots correctement lus en une minute, attendus de fin d'année, Éduscol) : CP 50 · CE1 70 · CE2 90.</p>`;
+ $$('.mode input').forEach(r=>r.onchange=()=>{const c=reglages.choisies;lireForm();reglages.choisies=[...new Set(reglages.choisies.concat(c))];reglages.mode=r.value;accueil()});
  const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n,!$('#moisN').value)};
  ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
  // Case du titre d'un groupe : coche ou décoche tout le groupe en un clic
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
- $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep').forEach(c=>c.checked=t.checked);majGroupes()});
+ $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep:not(:disabled)').forEach(c=>c.checked=t.checked);majGroupes()});
  $$('.groupe input.ep').forEach(c=>c.onchange=majGroupes);majGroupes();
- $('#tout').onclick=()=>{$$('.groupe input.ep').forEach(c=>c.checked=true);majGroupes()};
+ $('#tout').onclick=()=>{$$('.groupe input.ep:not(:disabled)').forEach(c=>c.checked=true);majGroupes()};
  $('#rien').onclick=()=>{$$('.groupe input.ep').forEach(c=>c.checked=false);majGroupes()};
  $$('[data-voir]').forEach(b=>b.onclick=()=>modal(h[b.dataset.voir].texte));
  if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
@@ -294,7 +456,7 @@ function accueil(){
   reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value);
   if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
   majEntete();resultats={};bilanEnregistre=false;envoye=false;passation=Math.random().toString(36).slice(2,12)+Date.now().toString(36);
-  R={liste:EPREUVES.filter(e=>reglages.choisies.includes(e.id)),i:0,t0:Date.now()};
+  R={liste:EPREUVES.filter(e=>reglages.choisies.includes(e.id)&&(!auto()||dispoAuto(e))),i:0,t0:Date.now()};
   intro();
  };
 }
@@ -307,8 +469,9 @@ function modal(txt){
 /* ---------- Déroulé ---------- */
 function intro(){
  stopTimers();
- if(R.i>=R.liste.length)return bilan();
+ if(R.i>=R.liste.length)return auto()&&!R.finVu?finEleve():bilan();
  const ep=R.liste[R.i];R.ep=ep;
+ if(auto())return introEleve(ep,consigneEleve(ep),()=>{R.items=ep.type==='texte'?null:ep.items();R.k=0;R.res=[];R.tEp=Date.now();ep.type==='texte'?ecranTexteAuto():ep.histoire?ecranHistoire():suivant()});
  app.innerHTML=`<div class="barre"><span>Épreuve ${R.i+1} / ${R.liste.length}</span><button class="b petit" id="finBilan">🏁 Aller au bilan</button></div>
  <div class="carte"><p class="note" style="margin:0">${ep.groupe}</p><h2>${ep.titre}</h2>
  <div class="consigne"><b>Pour l'adulte :</b> ${ep.consigne}</div>
@@ -324,12 +487,14 @@ function intro(){
 const seuil=n=>Math.min(5,Math.ceil(n*.6));
 function peutPasser(){return R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
 function barre(){
+ if(auto())return barreEleve();
  const ep=R.ep,n=R.items.length;
  return `<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${Math.min(R.k+1,n)} / ${n}</span>
  <span>${peutPasser()?`<button class="b ok" id="acquis">⏩ Acquis : niveau supérieur</button> `:''}<button class="b petit" id="stopEp">⏭ Arrêter l'épreuve</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
  <div class="prog"><i style="width:${R.k/n*100}%"></i></div>`;
 }
 function lierBarre(){
+ if(!$('#stopEp'))return;
  $('#stopEp').onclick=()=>finEpreuve();
  if($('#acquis'))$('#acquis').onclick=()=>{R.anticipe=true;finEpreuve()};
  $('#finBilan').onclick=()=>{finEpreuve(true)};
@@ -355,6 +520,7 @@ function finEpreuve(versBilan){
 /* ---------- Lecture validée ---------- */
 function ecranLire(){
  const ep=R.ep,it=R.items[R.k],oral=ep.type==='oral';
+ if(auto())return ecranEleve(specLecture(ep,it),(v,rep)=>{R.res.push({item:oral?it.w:it,v,rep:v==='ok'?'':rep});R.k++;suivant()});
  app.innerHTML=barre()+(oral?cache(it.w+(it.att&&it.att!==it.w?'  →  '+it.att:''))+`<div class="scene"><div class="question">${esc(it.q?(it.q.endsWith(':')?it.q+' « … »':it.q+' « … » ?'):ep.question||'')}</div><div class="stim l">${ep.icone}</div></div>`:`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>`)+`
  <div class="adulte"><span class="lab">Adulte :</span>
   <button class="b ok" data-v="ok">✔ Juste<kbd>←</kbd></button>
@@ -389,9 +555,13 @@ function ecranChoix(){
  <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`;
  lierBarre();
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else intro()};
+ if(auto()){['#voir','#mot','.texte-adulte'].forEach(x=>{const e=$(x);if(e)e.remove()});if($('#dire'))$('#dire').textContent='🔊 Réécouter';
+  $('.adulte').className='adulte eleve-bas';$('.adulte').innerHTML='<button class="b" id="nsp">🤷 Je ne sais pas</button>'}
  if($('#voir'))lierCache(it.dire);else if($('#dire'))$('#dire').onclick=()=>jouer(it.dire);
  if($('#hist2'))$('#hist2').onclick=()=>jouer(ep.histoire,ep.cleHistoire);
  let fini=false;
+ if(auto()){$('#nsp').onclick=()=>{if(fini)return;fini=true;R.res.push({item:it.label,v:'ko',rep:'(ne sait pas)'});R.k++;suivant()};
+  if(it.dire)timers.push(setTimeout(()=>jouer(it.dire),350));else if(so==='comp')timers.push(setTimeout(()=>dire(it.label),350))}
  const activer=()=>{
   $$('#choix button').forEach(b=>b.onclick=()=>repondre(b));
   onKey=e=>{const n=parseInt(e.key,10);const bs=$$('#choix button');if(n>=1&&n<=bs.length)repondre(bs[n-1]);else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
@@ -404,7 +574,7 @@ function ecranChoix(){
  if(ep.sorte!=='empan')return activer();
  // Empan : montrer, cacher, choisir
  const sc=$('#scene');
- sc.innerHTML=`<button class="b prim" id="montrer">👀 Montrer <kbd>Espace</kbd></button>`;
+ sc.innerHTML=`<button class="b prim" id="montrer">${auto()?'👀 Je suis prêt':'👀 Montrer <kbd>Espace</kbd>'}</button>`;
  const montrer=()=>{
   onKey=null;
   sc.innerHTML='';
@@ -467,7 +637,7 @@ function bilan(){
  const age=ageTexte(ageMois());
  const titreAnon=`Bilan de lecture — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
  const titre=reglages.prenom?`Bilan de lecture — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
- texteL.push('TITRE','');
+ texteL.push('TITRE',auto()?'Passation en autonomie (correction automatique, à vérifier).':'');
  let grp='';
  ids.forEach(id=>{
   const r=resultats[id];
@@ -475,9 +645,9 @@ function bilan(){
   if(r.type==='texte'){
    const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0;
    const [nv,cl]=rep?(r.mclm>=rep?['Atteint','p-a']:r.mclm>=rep*.7?['Proche','p-e']:['En dessous','p-n']):niveau(prec);
-   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.motsErr.length?`<br><span class="note">Erreurs : ${esc(r.motsErr.join(', '))}</span>`:'');
+   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.motsErr.length?`<br><span class="note">Erreurs : ${esc(r.motsErr.join(', '))}</span>`:'');
    lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.motsErr.length?` Erreurs : ${r.motsErr.join(', ')}.`:''));
+   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.motsErr.length?` Erreurs : ${r.motsErr.join(', ')}.`:''));
   }else{
    const juste=r.ok+r.hes.length,p=Math.round(juste/r.faits*100),[nv,cl]=niveau(p);
    const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
@@ -490,6 +660,7 @@ function bilan(){
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
  ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même âge</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Fluence : mots correctement lus en une minute, comparés aux attendus de fin d'année (Éduscol : CP 50, CE1 70, CE2 90), à adapter selon le moment de l'année et les besoins de l'élève.</p>
  <h3>Observations de l'adulte</h3>
  <textarea id="obs" rows="4" style="width:100%" placeholder="Stratégies, attitude, fatigue, confusions observées…"></textarea>
@@ -511,7 +682,7 @@ async function envoyer(ids){
   if(x.type==='texte')r[id]={pct:x.lus?Math.round((x.lus-x.nbErr)/x.lus*100):0,mclm:x.mclm};
   else if(x.faits===x.prevus||x.anticipe)r[id]={pct:Math.round((x.ok+x.hes.length)/x.faits*100)}});
  try{
-  if(!envoye&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
+  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
   const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&age=${age}`)).json();
   const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.age||[]).forEach(x=>A[x.epreuve]=x);
   const f=(x,id)=>!x?'—':(id==='ts'||id==='tc'?`${x.mclm} MCLM`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
