@@ -1,6 +1,395 @@
 {
- "count": 53,
+ "count": 54,
  "posts": [
+  {
+   "title": "Le jour du marché",
+   "slug": "le-jour-du-marche",
+   "excerpt": "Un jeu de marché pour travailler la monnaie du CP au CE2 : lire les prix, payer le prix juste avec pièces et billets, rendre la monnaie, euros et centimes, écriture à virgule.",
+   "date": "2026-11-14T19:30:00.000Z",
+   "cat": "problemes",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "C'est jour de marché sur la place du village ! Avec sa liste de courses, l'élève passe d'un étal à l'autre (primeur, boulangerie, fromagerie, poissonnerie, fleuriste, épicerie), lit les étiquettes de prix, paie le prix juste avec ses pièces et ses billets et aide le marchand à rendre la monnaie.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ce que travaillent les élèves",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Le jeu suit la partie « La monnaie » du programme de mathématiques du cycle 2 (BO n° 41 du 31 octobre 2024) :",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CP : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "prix en euros entiers, pièces de 1 € et 2 €, billets de 5, 10 et 20 €. L'élève détermine la valeur d'un ensemble de pièces et de billets, constitue une somme donnée, simule des achats et rend la monnaie ; il rencontre le vocabulaire des achats (prix, payer, rendre la monnaie, billet, pièce, somme).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CE1 : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "euros et centimes (pièces de 10, 20 et 50 c). Le lien 1 € = 100 c et les deux écritures d'un prix : 3 € 50 c et 3,50 €.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CE2 : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "prix à virgule (au 5 centimes près), achat de plusieurs articles identiques (3 croissants à 1,15 € l'un), monnaie rendue en comptant « en avançant » à partir du prix (méthode des ajouts successifs) et addition des prix sur le ticket de caisse.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir la classe (CP, CE1, CE2), ce que fait l'élève (payer le prix juste, rendre la monnaie ou les deux) et le nombre d'étals sur la liste (3, 4 ou 6).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Sur la place, l'élève touche un étal. Il retrouve l'article de sa liste et lit son prix sur l'ardoise.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Payer : il touche les pièces et les billets de son porte-monnaie pour les poser sur le plateau, puis paie. Rendre la monnaie : il donne un billet plus grand que le prix et pose sur le plateau la monnaie que le marchand doit lui rendre.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Erreur : le jeu dit ce qui ne va pas (« Il manque 2 € », « Le marchand te rend trop ») et l'élève réessaie. À la deuxième erreur, il montre une solution (et, pour la monnaie rendue, le comptage en avançant : 7 € → 8 € → 10 €).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "À la fin, le ticket de caisse : combien as-tu dépensé en tout ? Une étoile par réussite du premier coup ; les résultats sont notés dans la tour de contrôle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les options pour l'enseignant",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écriture des prix au CE1 et au CE2 : 3 € 50 c, 3,50 € ou les deux mélangées.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Aide : afficher la somme posée sur le plateau (et le comptage en avançant pour rendre la monnaie). Sans l'aide, l'élève compte lui-même.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Défi : payer avec le moins de pièces et de billets possible (sinon, pas d'étoile, et le jeu montre la meilleure façon).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Toutes les pièces dans le porte-monnaie (1 c, 2 c, 5 c…) pour apprendre à les reconnaître.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les marchands parlent (voix), bouton « Réécouter », plein écran pour projeter en classe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-jour-du-marche.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Illustrations : Canva (aquarelle). Pièces et billets dessinés pour le site (dessins simplifiés, ce ne sont pas des reproductions des vrais billets).",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "La pizzeria des fractions",
    "slug": "la-pizzeria-des-fractions",
