@@ -94,6 +94,10 @@
   @keyframes pose{from{transform:translateY(40px) scale(.5);opacity:0}to{transform:translateY(0) scale(.82);opacity:1}}
   #plateau .mo{animation:pose .25s ease-out}
 
+  #classeBtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+  #tester{background:#e8590c;font-size:1.15rem} #solution{background:#1971c2;font-size:1.15rem}
+  .ardoise{display:inline-block;background:#2f3a33;color:#fff;border:5px solid #a0784f;border-radius:10px;padding:4px 14px;margin-top:6px;font-size:.95em}
+  #mc-jeu.classe #consigne{font-size:clamp(1.15rem,2.6vw,1.6rem)}
   #msg{min-height:1.4em;font-size:1.05rem;color:#495057;max-width:900px;margin:2px auto 4px;line-height:1.5}
   #msg.erreur{color:#c92a2a;font-weight:600}
   #msg.bravo{color:#2b8a3e;font-weight:600}
@@ -144,7 +148,15 @@
     </div>
 
     <div class="groupe">
-      <h2>3. Combien d'étals sur la liste ?</h2>
+      <h2>3. Qui joue ?</h2>
+      <div class="choix" id="choixQui">
+        <button data-v="eleve" aria-pressed="true">🧒 Un élève à l'écran<small>Il pose lui-même pièces et billets</small></button>
+        <button data-v="classe" aria-pressed="false">👩‍🏫 Toute la classe, sur un seul écran<small>On projette : chacun cherche sur son ardoise,<br>puis on vérifie une ardoise ou on montre la solution</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>4. Combien d'étals sur la liste ?</h2>
       <div class="choix" id="choixNb">
         <button data-v="3" aria-pressed="false">3</button>
         <button data-v="4" aria-pressed="true">4</button>
@@ -197,6 +209,7 @@
       <div id="bourse"><div id="bourseT">👛 Ton porte-monnaie (touche pour poser)</div><div id="monnaie"></div></div>
       <div id="actions"><button id="vider">↩ Tout reprendre</button><button id="payer">💶 Payer</button></div>
     </div>
+    <div id="classeBtns" class="cache"><button id="tester">✏️ Vérifier l'ardoise d'un élève</button><button id="solution">👀 Montrer la solution</button></div>
     <div id="reponses"></div>
     <div id="msg"></div>
     <div class="bas">
@@ -220,7 +233,7 @@
 
 <script>
 const $ = id => document.getElementById(id);
-const R_ = { niveau: "CP", mission: "payer", nb: 4, ecriture: "mix", aide: false, defi: false, bilan: true, centimes: false, voix: true };
+const R_ = { qui: "eleve", niveau: "CP", mission: "payer", nb: 4, ecriture: "mix", aide: false, defi: false, bilan: true, centimes: false, voix: true };
 const S = { score: 0, total: 0, faits: 0, achats: [], liste: [], vue: "marche" };
 let Q = null; // achat en cours
 const hasard = n => Math.floor(Math.random() * n);
@@ -370,11 +383,12 @@ function choix(id, cle, conv) {
     $("groupeEcriture").classList.toggle("cache", R_.niveau === "CP");
   }));
 }
-choix("choixNiveau", "niveau"); choix("choixMission", "mission"); choix("choixNb", "nb", Number); choix("choixEcriture", "ecriture");
+choix("choixNiveau", "niveau"); choix("choixMission", "mission"); choix("choixQui", "qui"); choix("choixNb", "nb", Number); choix("choixEcriture", "ecriture");
 $("groupeEcriture").classList.add("cache");
 
 function demarrer() {
   ["aide", "defi", "bilan", "centimes", "voix"].forEach(k => R_[k] = $("opt" + k[0].toUpperCase() + k.slice(1)).checked);
+  $("mc-jeu").classList.toggle("classe", R_.qui === "classe");
   S.score = 0; S.faits = 0; S.achats = []; S.total = R_.nb + (R_.bilan ? 1 : 0);
   // la liste de courses : un produit par étal choisi
   const etals = melange(ETALS.slice()).slice(0, R_.nb);
@@ -400,7 +414,7 @@ function majListe() {
   $("avance").textContent = `🧺 ${S.faits} / ${R_.nb}`;
   $("score").textContent = "⭐ " + S.score;
 }
-function cacherPaiement() { ["paiement", "continuer", "retour"].forEach(id => $(id).classList.add("cache")); $("reponses").innerHTML = ""; }
+function cacherPaiement() { ["paiement", "continuer", "retour", "classeBtns"].forEach(id => $(id).classList.add("cache")); $("reponses").innerHTML = ""; }
 
 function allerMarche(debut) {
   S.vue = "marche"; Q = null;
@@ -474,7 +488,26 @@ function toucherProduit(k) {
     preparerPlateau(denoms().filter(v => v < donne), `🗃️ La caisse de ${Q.E.qui.replace(/ (le|la|l')\s?.*$/, "")} (touche pour rendre)`, "La monnaie rendue :", "🪙 Rendre la monnaie");
     $("donneBox").classList.remove("cache");
   }
+  if (R_.qui === "classe") modeArdoise();
 }
+function modeArdoise() {
+  const q = Q.etape === "payer"
+    ? (Q.a.qte > 1 ? "Combien faut-il payer ? Écris la somme et dessine les pièces et les billets." : "Dessine les pièces et les billets pour payer le prix juste.")
+    : "Combien le marchand rend-il ? Écris la somme et dessine les pièces.";
+  $("consigne").innerHTML = $("consigne").innerHTML.replace(/<br>.*$/s, "") + `<br><span class="ardoise">✏️ Sur ton ardoise : ${q}</span>`;
+  $("paiement").classList.add("cache"); $("classeBtns").classList.remove("cache");
+  $("payer").textContent = "✔ Vérifier";
+}
+$("tester").addEventListener("click", () => {
+  if (!Q || Q.fini) return;
+  $("paiement").classList.remove("cache"); Q.pose = []; majPlateau();
+  $("msg").className = ""; $("msg").textContent = "Pose sur le plateau ce que l'élève a dessiné, puis vérifie.";
+});
+$("solution").addEventListener("click", () => {
+  if (!Q || Q.fini) return;
+  $("paiement").classList.remove("cache"); Q.montre = true;
+  echec(texteSolution());
+});
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 
 function preparerPlateau(ds, titreBourse, titrePlateau, bouton) {
@@ -496,7 +529,7 @@ function majPlateau() {
   z.querySelectorAll(".mo").forEach(b => b.addEventListener("click", () => retirer(+b.dataset.i)));
   $("payer").disabled = Q.pose.length === 0 || Q.fini;
   const s = somme(Q.pose);
-  if (!R_.aide || !Q.pose.length) { $("total").textContent = ""; return; }
+  if (!(R_.aide || Q.montre) || !Q.pose.length) { $("total").textContent = ""; return; }
   if (Q.etape === "payer") $("total").textContent = `Sur le plateau : ${fmt(s, Q.st)}`;
   else {
     let c = Q.du, pas = [fmt(c, Q.st)];
@@ -515,6 +548,19 @@ function cheminAvancer(du, donne, ds) {
   return pas;
 }
 
+function texteSolution() {
+  const vise = Q.etape === "payer" ? Q.du : Q.rendu;
+  const sol = Q.etape === "payer" ? plusPetit(vise, Q.ds) : cheminAvancer(Q.du, Q.donne, Q.ds);
+  let t;
+  if (Q.etape === "payer") {
+    t = (Q.a.qte > 1 ? `${Q.a.qte} × ${fmt(Q.a.prixEtal[Q.a.k].c, Q.st)} = <b>${fmt(vise, Q.st)}</b>. ` : `Il fallait payer <b>${fmt(vise, Q.st)}</b>. `) + `Par exemple : ${sol ? miniHTML(sol) : ""}`;
+  } else {
+    let c = Q.du; const etapes = [fmt(c, Q.st)]; (sol || []).forEach(v => { c += v; etapes.push(fmt(c, Q.st)); });
+    t = `On part du prix et on avance jusqu'à ${fmt(Q.donne, Q.st)} : ${etapes.join(" → ")}. ${sol ? miniHTML(sol) : ""} On rend <b>${fmt(vise, Q.st)}</b>.`;
+  }
+  Q.pose = (sol || []).slice(); majPlateau();
+  return t;
+}
 $("payer").addEventListener("click", () => {
   if (!Q || Q.fini || !Q.pose.length) return;
   const s = somme(Q.pose), vise = Q.etape === "payer" ? Q.du : Q.rendu;
@@ -528,36 +574,29 @@ $("payer").addEventListener("click", () => {
   }
   Q.err++;
   const ecart = Math.abs(s - vise);
-  if (Q.err >= 2) {
-    const sol = Q.etape === "payer" ? plusPetit(vise, Q.ds) : cheminAvancer(Q.du, Q.donne, Q.ds);
-    let t;
-    if (Q.etape === "payer") {
-      t = (Q.a.qte > 1 ? `${Q.a.qte} × ${fmt(Q.a.prixEtal[Q.a.k].c, Q.st)} = <b>${fmt(vise, Q.st)}</b>. ` : `Il fallait payer <b>${fmt(vise, Q.st)}</b>. `) + `Par exemple : ${sol ? miniHTML(sol) : ""}`;
-    } else {
-      let c = Q.du; const etapes = [fmt(c, Q.st)]; (sol || []).forEach(v => { c += v; etapes.push(fmt(c, Q.st)); });
-      t = `On part du prix et on avance jusqu'à ${fmt(Q.donne, Q.st)} : ${etapes.join(" → ")}. ${sol ? miniHTML(sol) : ""} On rend <b>${fmt(vise, Q.st)}</b>.`;
-    }
-    Q.pose = (sol || []).slice(); majPlateau();
-    echec(t);
+  if (Q.err >= 2 && R_.qui !== "classe") {
+    echec(texteSolution());
   } else {
     $("msg").className = "erreur";
-    const montre = R_.aide ? "" : `Tu as posé ${fmt(s, Q.st)}. `;
+    const montre = R_.aide ? "" : `${R_.qui === "classe" ? "Sur le plateau" : "Tu as posé"} : ${fmt(s, Q.st)}. `;
     if (Q.etape === "payer") $("msg").innerHTML = "Pas tout à fait. " + montre + (s < vise ? `Il manque ${fmt(ecart, Q.st)}.` : `C'est trop : ${fmt(ecart, Q.st)} de trop.`) + (Q.a.qte > 1 ? ` N'oublie pas : tu en prends ${Q.a.qte}.` : "");
     else $("msg").innerHTML = "Pas tout à fait. " + (s < vise ? "Le marchand ne te rend pas assez." : "Le marchand te rend trop !") + ` Pars du prix (${fmt(Q.du, Q.st)}) et avance jusqu'à ${fmt(Q.donne, Q.st)}.`;
     dire(s < vise ? "Il en manque." : "C'est trop.");
+    if (R_.qui === "classe") $("msg").innerHTML += " Essayez une autre ardoise, ou montrez la solution.";
   }
 });
 
 function reussite(t, etoile) {
   Q.fini = true; if (Q.err === 0 && etoile) S.score++;
-  $("msg").className = "bravo"; $("msg").innerHTML = (Q.err === 0 ? "Merci et bonne journée ! " : "Bravo ! ") + t;
+  if (R_.qui === "classe") t = t.replace("Tu as payé", "L'ardoise paie").replace("On te rend", "Le marchand rend");
+  $("msg").className = "bravo"; $("msg").innerHTML = (R_.qui === "classe" ? "Cette ardoise est juste ! " : Q.err === 0 ? "Merci et bonne journée ! " : "Bravo ! ") + t;
   dire(Q.err === 0 ? "Merci, et bonne journée !" : "Bravo !");
   finAchat();
 }
 function echec(t) { Q.fini = true; $("msg").className = ""; $("msg").innerHTML = "📖 " + t; finAchat(); }
 function finAchat() {
   const a = Q.a; a.fait = true; S.faits++; S.achats.push({ nom: nomAchat(a), c: Q.du, st: Q.st });
-  $("payer").disabled = true; majListe();
+  $("payer").disabled = true; $("classeBtns").classList.add("cache"); majListe();
   $("continuer").innerHTML = (S.faits >= R_.nb ? (R_.bilan ? "Voir mon ticket" : "Terminer") : "Continuer mes courses") + " <kbd>→</kbd>";
   $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true });
 }
@@ -587,6 +626,16 @@ function bilan() {
   for (const p of melange(pieges)) { if (prop.size >= 4) break; if (p > 0) prop.add(p); }
   for (let k = 2; prop.size < 4; k++) prop.add(T + k * 100);
   const z = $("reponses"); z.innerHTML = "";
+  if (R_.qui === "classe") {
+    $("consigne").innerHTML = $("consigne").innerHTML.replace("Voici ton ticket.", `Voici notre ticket. <span class="ardoise">✏️ Sur ton ardoise : calcule le total</span><br>`);
+    const b = document.createElement("button"); b.textContent = "👀 Montrer le total"; b.style.fontSize = "1.3rem"; b.style.borderColor = "#1971c2";
+    b.addEventListener("click", () => {
+      if (Q.fini) return; Q.fini = true; b.disabled = true; b.classList.add("bon");
+      $("msg").className = "bravo"; $("msg").innerHTML = `On ajoute tous les prix : ${S.achats.map(a => fmt(a.c, st)).join(" + ")} = <b>${fmt(T, st)}</b>.`;
+      $("continuer").innerHTML = "Terminer <kbd>→</kbd>"; $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true });
+    });
+    z.appendChild(b); return;
+  }
   melange([...prop]).forEach(v => {
     const b = document.createElement("button"); b.textContent = fmt(v, st); b.dataset.v = v;
     b.addEventListener("click", () => {
@@ -611,6 +660,11 @@ function bilan() {
 function fin() {
   try { speechSynthesis.cancel(); } catch (e) {}
   $("partie").classList.add("cache"); $("fin").classList.remove("cache");
+  if (R_.qui === "classe") {
+    $("finEtoiles").textContent = "🧺 ⭐ 🧺";
+    $("finScore").textContent = `Bravo la classe ! ${S.faits} achat${S.faits > 1 ? "s" : ""} faits au marché.`;
+    confettis(); dire("Bravo la classe ! Les courses sont faites !"); return;
+  }
   const t = S.total, r = S.score / t, et = r >= .9 ? 3 : r >= .6 ? 2 : r > 0 ? 1 : 0;
   $("finEtoiles").textContent = "⭐".repeat(et) + "☆".repeat(3 - et);
   $("finScore").textContent = `${S.score} réussite${S.score > 1 ? "s" : ""} du premier coup sur ${t}.`;
@@ -647,7 +701,7 @@ function ajuste() {
 }
 addEventListener("resize", ajuste);
 document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
-try { const ro = new ResizeObserver(() => ajuste()); ["liste", "consigne", "paiement", "reponses", "msg"].forEach(id => ro.observe($(id))); } catch (e) {}
+try { const ro = new ResizeObserver(() => ajuste()); ["liste", "consigne", "paiement", "classeBtns", "reponses", "msg"].forEach(id => ro.observe($(id))); } catch (e) {}
 $("ecran").addEventListener("click", () => { const z = $("mc-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
 </script>
 </body>
