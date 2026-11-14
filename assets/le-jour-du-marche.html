@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le jour du marché : jeu sur la monnaie (CP, CE1, CE2)</title>
+<!-- Images Canva (style aquarelle) dans images/marche/ : place de village MAHa68wW5gs (place.jpg, deux moitiés recollées 1067×600),
+     étals détourés : primeur MAHa6y8IENU, boulangerie MAHa60sdE1U, fromagerie MAHa6_tsOuQ, poissonnerie MAHa660kYuQ, fleuriste MAHa66fs3a4, épicerie MAHa66Z7SDU. Pièces et billets dessinés en CSS (simplifiés, ce ne sont pas des reproductions).
+     Repères : programme de mathématiques du cycle 2 (BO n° 41 du 31/10/2024), « La monnaie » :
+     CP montants entiers ≤ 100 €, CE1 euros et centimes + écriture à virgule, CE2 rendre la monnaie par ajouts successifs, additions de prix. -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #mc-jeu{background:linear-gradient(180deg,#eaf6ff 0,#fdf8ee 60%);border:2px solid #b9d7ea;border-radius:12px;padding:16px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden}
+  #mc-jeu:fullscreen{max-width:none;border-radius:0;overflow:auto;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#1864ab}
+  .intro{margin:0 auto 12px;max-width:780px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e3f0fa;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.97)}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#e6f6df}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer;text-align:left}
+  .cache{display:none!important}
+  .go{background:#1971c2;font-size:1.3rem;padding:14px 30px;margin:4px}
+
+  /* ---------- Scène ---------- */
+  #scene{margin:0 auto;position:relative;border-radius:12px;overflow:hidden;border:2px solid #b9d7ea;background:#cfe8f7}
+  #scene svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+  #haut{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;z-index:3}
+  .pastille{background:rgba(255,255,255,.93);border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  .etal{cursor:pointer}
+  .etal:hover .bache,.etal:focus .bache{filter:brightness(1.08)}
+  .etal.fait{opacity:.8}
+  @keyframes rebond{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .prod{cursor:pointer}
+  .prod .halo{fill:#fff;opacity:0;transition:opacity .2s}
+  .prod:hover .halo{opacity:.15}
+  .prod.choisi .halo{opacity:.35;fill:#ffd43b}
+  .prod.non{opacity:.45}
+  .emo{font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif}
+  .craie{font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;font-weight:700}
+
+  /* ---------- Liste de courses ---------- */
+  #liste{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px auto 2px;max-width:1000px}
+  #liste>span{background:#fffdf3;border:2px dashed #d9c27a;border-radius:8px;padding:3px 10px;font-size:1rem;color:#495057}
+  #liste>span.ok{text-decoration:line-through;color:#2b8a3e;border-color:#8ccf96;background:#ebfbee}
+  #liste b{color:#7c5a00}
+
+  #consigne{font-size:clamp(1rem,2.2vw,1.3rem);font-weight:bold;color:#212529;margin:8px auto 4px;min-height:1.5em;max-width:920px}
+  #consigne .qui{color:#1864ab}
+  #consigne .prix{color:#c92a2a;white-space:nowrap}
+
+  /* ---------- Plateau et porte-monnaie ---------- */
+  #paiement{max-width:980px;margin:0 auto}
+  #plateauZone{display:flex;gap:10px;align-items:stretch;justify-content:center;margin:4px 0}
+  .zoneT{font-size:.85rem;font-weight:bold;color:#495057;text-align:left;margin:0 0 2px 4px}
+  #donneBox{background:#fff3bf;border:2px solid #f2c94c;border-radius:12px;padding:4px 8px;min-width:120px}
+  #plateauBox{flex:1;max-width:760px}
+  #plateau{min-height:84px;background:radial-gradient(ellipse at 50% 30%,#2b8a3e,#1b5e20);border:4px solid #8d5a2b;border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;box-shadow:inset 0 3px 8px rgba(0,0,0,.35)}
+  #plateau:empty::before{content:"Touche les pièces et les billets pour les poser ici";color:#c3e6cb;font-size:.95rem;font-style:italic}
+  #donne{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;min-height:62px}
+  #total{min-height:1.35em;font-size:1.05rem;font-weight:bold;color:#1b5e20;margin:2px 0}
+  #bourse{margin:6px auto 2px;background:#f4e3cf;border:3px solid #b07a45;border-radius:16px;padding:6px 8px 8px;max-width:980px}
+  #bourseT{font-size:.9rem;font-weight:bold;color:#7a4a1f;margin-bottom:4px}
+  #monnaie{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+  #actions{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin:6px 0 4px}
+  #payer{background:#2f9e44;font-size:1.2rem;padding:9px 24px}
+  #payer:disabled{background:#adb5bd;cursor:default}
+  #vider{background:#868e96;font-size:1rem;padding:9px 16px}
+
+  /* pièces et billets (dessins simplifiés) */
+  .mo{padding:0;border:none;color:#3b2a00;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none;box-shadow:0 3px 0 rgba(0,0,0,.25);line-height:1;font-family:inherit}
+  .mo:disabled{cursor:default;opacity:1}
+  .piece{border-radius:50%;width:var(--d);height:var(--d);font-size:calc(var(--d) * .3)}
+  .cuivre{background:radial-gradient(circle at 35% 30%,#f3b48c,#c4673a 55%,#9c4a24);color:#4a1d06}
+  .or{background:radial-gradient(circle at 35% 30%,#fff1a8,#e2b33c 55%,#b38712);color:#4d3600}
+  .e1{background:radial-gradient(circle at 50% 50%,#d9dde1 0 54%,#7d848b 55% 57%,#e6c34a 58%,#c99a1b 100%);color:#343a40}
+  .e2{background:radial-gradient(circle at 50% 50%,#ecc95a 0 54%,#9b7a14 55% 57%,#dde1e5 58%,#9aa1a8 100%);color:#3b2a00}
+  .billet{width:var(--w,92px);height:var(--h,50px);border-radius:6px;font-size:1.15rem;position:relative;border:2px solid rgba(0,0,0,.18);overflow:hidden}
+  .billet::before{content:"";position:absolute;inset:5px;border:2px solid rgba(255,255,255,.55);border-radius:4px}
+  .billet::after{content:"EURO";position:absolute;right:6px;bottom:3px;font-size:.55rem;letter-spacing:1px;opacity:.65}
+  .billet span{position:relative;z-index:1;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+  .b500{background:linear-gradient(135deg,#c5ccd3,#8f9aa4);color:#212529}
+  .b1000{background:linear-gradient(135deg,#f5a3a3,#d9534f);color:#3d0a0a}
+  .b2000{background:linear-gradient(135deg,#a8c6f0,#4f7fc9);color:#0b2550}
+  .b5000{background:linear-gradient(135deg,#ffc98b,#ec7f2a);color:#3d1c00}
+  #plateau .mo,#donne .mo,.mini .mo{transform:scale(.82);margin:-4px}
+  .mini{display:inline-flex;flex-wrap:wrap;gap:2px;vertical-align:middle;align-items:center}
+  .mini .mo{transform:scale(.62);margin:-9px -6px}
+  @keyframes pose{from{transform:translateY(40px) scale(.5);opacity:0}to{transform:translateY(0) scale(.82);opacity:1}}
+  #plateau .mo{animation:pose .25s ease-out}
+
+  #msg{min-height:1.4em;font-size:1.05rem;color:#495057;max-width:900px;margin:2px auto 4px;line-height:1.5}
+  #msg.erreur{color:#c92a2a;font-weight:600}
+  #msg.bravo{color:#2b8a3e;font-weight:600}
+  #reponses{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+  #reponses button{background:#fff;color:#1d3557;border:3px solid #1971c2;box-shadow:0 4px 0 #a5d8ff;min-width:120px;padding:8px 18px;font-size:clamp(1.4rem,3.5vw,2rem)}
+  #reponses button.bon{background:#2f9e44;border-color:#2f9e44;color:#fff;box-shadow:0 4px 0 #8ccf96}
+  #reponses button.mauvais{background:#e03131;border-color:#e03131;color:#fff;box-shadow:none;opacity:.75}
+  #ticket{display:inline-block;background:#fff;border:1px dashed #adb5bd;border-radius:6px;padding:8px 16px;font-family:'Courier New',monospace;text-align:left;font-size:1rem;margin:6px auto;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+  #ticket div{display:flex;justify-content:space-between;gap:24px}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+  .bas button{background:#6c757d;font-size:1rem;padding:9px 16px}
+  #continuer,#retour{background:#2f9e44;font-size:1.15rem}
+  #retour{background:#1971c2}
+  #continuer kbd{display:inline-block;margin-left:8px;padding:0 9px;border:2px solid #fff;border-bottom-width:4px;border-radius:7px;background:rgba(255,255,255,.18);font-family:inherit;font-size:1rem;line-height:1.05;vertical-align:1px}
+
+  #fin .grand{font-size:2.3rem;font-weight:bold;color:#1864ab;margin:16px 0 4px}
+  #finScore{font-size:1.3rem;color:#212529}
+  #finEtoiles{font-size:2.6rem;letter-spacing:6px;margin:4px 0 10px}
+  .confetti{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:tombe linear forwards;z-index:9}
+  @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
+  @media (max-width:560px){.piece{font-size:calc(var(--d) * .28)} .billet{--w:78px;--h:44px;font-size:1rem}}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
+<body>
+<div id="mc-jeu">
+
+  <!-- ===== Réglages ===== -->
+  <div id="reglages">
+    <h1>🧺 Le jour du marché</h1>
+    <p class="intro">C'est jour de marché sur la place du village ! Avec ta <b>liste de courses</b>, passe d'un étal à l'autre : le primeur, la boulangerie, la fromagerie… Lis les prix, <b>paie le prix juste</b> avec tes pièces et tes billets, et vérifie qu'on te <b>rend bien la monnaie</b>.</p>
+
+    <div class="groupe">
+      <h2>1. Choisis la classe</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="CP" aria-pressed="true">🟢 CP<small>Prix en euros entiers<br>pièces de 1 € et 2 €, billets</small></button>
+        <button data-v="CE1" aria-pressed="false">🔵 CE1<small>Euros et centimes<br>3 € 50 c = 3,50 €</small></button>
+        <button data-v="CE2" aria-pressed="false">🟣 CE2<small>Écriture à virgule<br>plusieurs articles, rendre la monnaie</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Que fait l'élève ?</h2>
+      <div class="choix" id="choixMission">
+        <button data-v="payer" aria-pressed="true">🛒 Payer le prix juste<small>Constituer une somme<br>avec pièces et billets</small></button>
+        <button data-v="rendre" aria-pressed="false">🪙 Rendre la monnaie<small>On paie avec un billet :<br>combien le marchand rend-il ?</small></button>
+        <button data-v="melange" aria-pressed="false">🔀 Les deux<small>Une fois l'un,<br>une fois l'autre</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Combien d'étals sur la liste ?</h2>
+      <div class="choix" id="choixNb">
+        <button data-v="3" aria-pressed="false">3</button>
+        <button data-v="4" aria-pressed="true">4</button>
+        <button data-v="6" aria-pressed="false">6 (tout le marché)</button>
+      </div>
+    </div>
+
+    <div class="groupe" id="groupeEcriture">
+      <h2>Écriture des prix <small style="font-weight:400">(CE1 – CE2)</small></h2>
+      <div class="choix" id="choixEcriture">
+        <button data-v="ec" aria-pressed="false">3 € 50 c</button>
+        <button data-v="virg" aria-pressed="false">3,50 €</button>
+        <button data-v="mix" aria-pressed="true">Les deux, mélangées</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>Options</h2>
+      <label class="opt"><input type="checkbox" id="optAide"> Aide : afficher la somme posée sur le plateau (et le comptage « en avançant » pour rendre la monnaie)</label>
+      <label class="opt"><input type="checkbox" id="optDefi"> <span>Défi : payer avec <b>le moins</b> de pièces et de billets possible</span></label>
+      <label class="opt"><input type="checkbox" id="optBilan" checked> À la fin, le ticket : « Combien as-tu dépensé en tout ? »</label>
+      <label class="opt"><input type="checkbox" id="optCentimes"> Toutes les pièces dans le porte-monnaie (1 c, 2 c, 5 c…)</label>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> Les marchands parlent (voix)</label>
+    </div>
+
+    <button class="go" id="jouer">🧺 Aller au marché</button>
+  </div>
+
+  <!-- ===== Partie ===== -->
+  <div id="partie" class="cache">
+    <div id="scene">
+      <div id="haut">
+        <span class="pastille" id="avance">🧺 0 / 4</span>
+        <span class="pastille" id="score">⭐ 0</span>
+      </div>
+      <svg id="dessin" viewBox="0 0 1600 900" role="img" aria-label="La place du marché : des maisons, un clocher comtois et six étals (primeur, boulangerie, fromagerie, poissonnerie, fleuriste, épicerie)">
+        <defs id="defs"></defs>
+        <g id="vueMarche"></g>
+        <g id="vueEtal" class="cache"></g>
+      </svg>
+    </div>
+    <div id="liste"></div>
+    <div id="consigne"></div>
+    <div id="paiement" class="cache">
+      <div id="plateauZone">
+        <div id="donneBox" class="cache"><div class="zoneT">Tu as donné :</div><div id="donne"></div></div>
+        <div id="plateauBox"><div class="zoneT" id="plateauT">Le plateau de monnaie :</div><div id="plateau"></div></div>
+      </div>
+      <div id="total"></div>
+      <div id="bourse"><div id="bourseT">👛 Ton porte-monnaie (touche pour poser)</div><div id="monnaie"></div></div>
+      <div id="actions"><button id="vider">↩ Tout reprendre</button><button id="payer">💶 Payer</button></div>
+    </div>
+    <div id="reponses"></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache" title="Touche → du clavier (ou Entrée)">Continuer mes courses <kbd>→</kbd></button>
+      <button id="retour" class="cache">⬅ Retour sur la place</button>
+      <button id="ecouter">🔊 Réécouter</button>
+      <button id="ecran">⛶ Plein écran</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <div style="font-size:4rem" class="emo">🧺</div>
+    <div class="grand">Les courses sont faites !</div>
+    <div id="finEtoiles"></div>
+    <p id="finScore"></p>
+    <button class="go" id="rejouer">🔁 Retourner au marché</button>
+    <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const R_ = { niveau: "CP", mission: "payer", nb: 4, ecriture: "mix", aide: false, defi: false, bilan: true, centimes: false, voix: true };
+const S = { score: 0, total: 0, faits: 0, achats: [], liste: [], vue: "marche" };
+let Q = null; // achat en cours
+const hasard = n => Math.floor(Math.random() * n);
+const pick = t => t[hasard(t.length)];
+const melange = t => { for (let i = t.length - 1; i > 0; i--) { const j = hasard(i + 1); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+
+/* ---------- Les étals (prix réalistes, en centimes : [min, max]) ---------- */
+const ETALS = [
+  { id: "primeur", nom: "Primeur", couleur: "#2f9e44", clair: "#d3f9d8", marchand: "👩‍🌾", qui: "Margot la maraîchère", produits: [
+    { e: "🍎", n: "un kilo de pommes", p: [200, 400] }, { e: "🍓", n: "une barquette de fraises", p: [300, 550] },
+    { e: "🥬", n: "une salade", p: [90, 200], q: ["salade", "salades"] }, { e: "🍅", n: "un kilo de tomates", p: [250, 500] },
+    { e: "🥕", n: "une botte de carottes", p: [120, 300] }, { e: "🍈", n: "un melon", p: [200, 400], q: ["melon", "melons"] } ] },
+  { id: "boulangerie", nom: "Boulangerie", couleur: "#e8590c", clair: "#ffe8cc", marchand: "👩‍🍳", qui: "Rose la boulangère", produits: [
+    { e: "🥖", n: "une baguette", p: [100, 140], q: ["baguette", "baguettes"] }, { e: "🥐", n: "un croissant", p: [90, 140], q: ["croissant", "croissants"] },
+    { e: "🍞", n: "un pain de campagne", p: [220, 420] }, { e: "🥧", n: "une tarte aux pommes", p: [900, 1600] },
+    { e: "🎂", n: "un gâteau d'anniversaire", p: [1200, 2000] } ] },
+  { id: "fromagerie", nom: "Fromagerie", couleur: "#e0a800", clair: "#fff3bf", marchand: "👵", qui: "Mamie Jeanne la fromagère", produits: [
+    { e: "🧀", n: "un morceau de comté", p: [500, 1300] }, { e: "🥚", n: "une boîte de six œufs", p: [200, 380] },
+    { e: "🥛", n: "une bouteille de lait", p: [100, 200], q: ["bouteille de lait", "bouteilles de lait"] }, { e: "🧈", n: "une plaquette de beurre", p: [200, 350] } ] },
+  { id: "poissonnerie", nom: "Poissonnerie", couleur: "#1c7ed6", clair: "#d0ebff", marchand: "🧔", qui: "Yann le poissonnier", produits: [
+    { e: "🐟", n: "un poisson", p: [600, 1400] }, { e: "🦐", n: "un sachet de crevettes", p: [500, 1000] },
+    { e: "🦀", n: "un crabe", p: [700, 1500] }, { e: "🦪", n: "six huîtres", p: [600, 1100] } ] },
+  { id: "fleuriste", nom: "Fleuriste", couleur: "#d6336c", clair: "#ffdeeb", marchand: "👩‍🦰", qui: "Lila la fleuriste", produits: [
+    { e: "💐", n: "un bouquet de fleurs", p: [1000, 2000] }, { e: "🌻", n: "un tournesol", p: [200, 400], q: ["tournesol", "tournesols"] },
+    { e: "🌹", n: "une rose", p: [150, 300], q: ["rose", "roses"] }, { e: "🌷", n: "un pot de tulipes", p: [400, 800] }, { e: "🌵", n: "un petit cactus", p: [300, 650] } ] },
+  { id: "epicerie", nom: "Épicerie", couleur: "#7048e8", clair: "#e5dbff", marchand: "👴", qui: "Papi Louis l'épicier", produits: [
+    { e: "🍯", n: "un pot de miel", p: [550, 950] }, { e: "🍫", n: "une tablette de chocolat", p: [120, 300], q: ["tablette de chocolat", "tablettes de chocolat"] },
+    { e: "🍪", n: "un paquet de biscuits", p: [130, 300], q: ["paquet de biscuits", "paquets de biscuits"] }, { e: "🧃", n: "une brique de jus de fruits", p: [110, 280] },
+    { e: "🥜", n: "un sachet de cacahuètes", p: [100, 250] } ] }
+];
+const CLIENTS = ["Léa", "Noé", "Inès", "Hugo", "Jade", "Malo", "Lina", "Sacha", "Zoé", "Adam", "Rose", "Tom", "Nina", "Elio"];
+
+/* ---------- Monnaie ---------- */
+const PORTE = { CP: [100, 200, 500, 1000, 2000], CE1: [10, 20, 50, 100, 200, 500, 1000], CE2: [5, 10, 20, 50, 100, 200, 500, 1000, 2000] };
+const TOUTES = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000];
+const DIAM = { 1: 38, 2: 42, 5: 46, 10: 44, 20: 48, 50: 54, 100: 52, 200: 58 };
+function denoms() {
+  if (R_.centimes && R_.niveau !== "CP") return TOUTES.slice();
+  return PORTE[R_.niveau].slice();
+}
+function nomV(v) { return v >= 100 ? `${v / 100} €` : `${v} c`; }
+function moHTML(v, attrs = "") {
+  if (v >= 500) return `<button class="mo billet b${v}" data-v="${v}" aria-label="billet de ${v / 100} euros" ${attrs}><span>${v / 100} €</span></button>`;
+  const cl = v <= 5 ? "cuivre" : v < 100 ? "or" : v === 100 ? "e1" : "e2";
+  const lab = v >= 100 ? `pièce de ${v / 100} euro${v > 100 ? "s" : ""}` : `pièce de ${v} centime${v > 1 ? "s" : ""}`;
+  return `<button class="mo piece ${cl}" style="--d:${DIAM[v]}px" data-v="${v}" aria-label="${lab}" ${attrs}><span>${nomV(v)}</span></button>`;
+}
+function miniHTML(liste) { return `<span class="mini">${liste.map(v => moHTML(v, "disabled tabindex=-1")).join("")}</span>`; }
+// Le moins de pièces et de billets possible (méthode gloutonne, juste pour l'euro)
+function plusPetit(s, ds) { const r = []; for (const d of ds.slice().sort((a, b) => b - a)) while (s >= d) { r.push(d); s -= d; } return s === 0 ? r : null; }
+
+/* ---------- Écriture des sommes ---------- */
+function fmt(c, style) {
+  const e = Math.floor(c / 100), ce = c % 100;
+  if (R_.niveau === "CP" || style === "ent") return `${e} €`;
+  if (style === "virg") return `${e},${String(ce).padStart(2, "0")} €`;
+  if (e === 0) return `${ce} c`;
+  return ce === 0 ? `${e} €` : `${e} € ${ce} c`;
+}
+function parle(c) {
+  const e = Math.floor(c / 100), ce = c % 100;
+  if (e === 0) return `${ce} centimes`;
+  return `${e} euro${e > 1 ? "s" : ""}` + (ce ? ` ${ce}` : "");
+}
+function styleAchat() { return R_.niveau === "CP" ? "ent" : R_.niveau === "CE2" && R_.ecriture === "mix" ? (Math.random() < .75 ? "virg" : "ec") : R_.ecriture === "mix" ? (Math.random() < .5 ? "virg" : "ec") : R_.ecriture; }
+function prixAuHasard(p) {
+  const pas = R_.niveau === "CP" ? 100 : R_.niveau === "CE1" ? 10 : 5;
+  let a = Math.ceil(p[0] / pas), b = Math.floor(p[1] / pas);
+  if (R_.niveau === "CP") { a = Math.max(1, Math.round(p[0] / 100)); b = Math.max(a, Math.round(p[1] / 100)); }
+  let c = (a + hasard(b - a + 1)) * pas;
+  if (R_.niveau !== "CP" && Math.random() < .2) c = Math.max(100, Math.round(c / 100) * 100); // de temps en temps un prix rond
+  return c;
+}
+
+/* ---------- Voix ---------- */
+function dire(...phrases) {
+  if (!R_.voix || !("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const voix = speechSynthesis.getVoices(), v = voix.find(v => /^fr/i.test(v.lang));
+    phrases.forEach(t => { const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = .92; if (v) u.voice = v; speechSynthesis.speak(u); });
+  } catch (e) {}
+}
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) {}
+
+/* ================= DÉCOR (images Canva, style aquarelle) ================= */
+const IMG = "/images/marche/";
+const TAILLES = { primeur: [454, 520], boulangerie: [502, 520], fromagerie: [509, 520], poissonnerie: [471, 520], fleuriste: [485, 520], epicerie: [503, 520] };
+const XS = [35, 295, 555, 815, 1075, 1335], LE = 250; // 6 emplacements sur la place
+function defs() {
+  $("defs").innerHTML = `<filter id="flou"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="ombre" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-opacity=".3"/></filter>`;
+}
+function dessineMarche() {
+  defs();
+  let g = `<image href="${IMG}place.jpg" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>`;
+  ETALS.forEach((E, i) => {
+    const [tw, th] = TAILLES[E.id], h = 268, w = tw * h / th, x = XS[i] + (LE - w) / 2, y = 848 - h;
+    const achat = S.liste.find(a => a.etal === E);
+    g += `<g class="etal${achat && achat.fait ? " fait" : ""}" data-i="${i}" tabindex="0" role="button" aria-label="Étal : ${E.nom}">
+      <ellipse cx="${XS[i] + LE / 2}" cy="850" rx="${w / 2}" ry="14" fill="#000" opacity=".18"/>
+      <image href="${IMG}${E.id}.png" x="${x.toFixed(0)}" y="${y}" width="${w.toFixed(0)}" height="${h}"/>
+      <rect x="${XS[i] + 22}" y="${y - 56}" width="${LE - 44}" height="48" rx="10" fill="#fffaf0" stroke="${E.couleur}" stroke-width="4" filter="url(#ombre)"/>
+      <text x="${XS[i] + LE / 2}" y="${y - 23}" text-anchor="middle" font-size="27" font-weight="bold" fill="#495057" font-family="inherit">${E.nom}</text>
+      ${achat && achat.fait ? `<circle cx="${XS[i] + LE - 24}" cy="${y - 58}" r="26" fill="#2f9e44" stroke="#fff" stroke-width="4"/><path d="M${XS[i] + LE - 36} ${y - 58}l8 9l16-18" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+    </g>`;
+  });
+  $("vueMarche").innerHTML = g;
+  $("vueMarche").querySelectorAll(".etal").forEach(el => {
+    const ouvrir = () => allerEtal(+el.dataset.i);
+    el.addEventListener("click", ouvrir);
+    el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ouvrir(); } });
+  });
+}
+function dessineEtal(E, achat) {
+  // vue rapprochée (1600 × 600) : l'étal à gauche, l'ardoise des prix à droite
+  defs();
+  const [tw, th] = TAILLES[E.id], h = 580, w = tw * h / th, cp = R_.niveau === "CP";
+  const prods = E.produits, n = prods.length, col = n > 4 ? 3 : 2, lig = Math.ceil(n / col);
+  const bx = 600, by = 30, bw = 975, bh = 545, cw = (bw - 40) / col, ch = (bh - 90) / lig;
+  let g = `<image href="${IMG}place.jpg" x="-200" y="-450" width="2400" height="1350" filter="url(#flou)" preserveAspectRatio="xMidYMid slice"/>
+    <rect width="1600" height="600" fill="#fff" opacity=".2"/>
+    <image href="${IMG}${E.id}.png" x="${(300 - w / 2).toFixed(0)}" y="12" width="${w.toFixed(0)}" height="${h}"/>
+    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="20" fill="#2f3a33" stroke="#a0784f" stroke-width="14" filter="url(#ombre)"/>
+    <text x="${bx + bw / 2}" y="${by + 58}" text-anchor="middle" font-size="40" font-weight="bold" fill="#fff" font-family="inherit">${E.nom}</text>`;
+  prods.forEach((p, k) => {
+    const c = k % col, l = Math.floor(k / col), x = bx + 20 + c * cw, y = by + 80 + l * ch, cx = x + cw / 2;
+    const prix = achat && achat.prixEtal[k], txt = prix ? fmt(prix.c, prix.st) : "";
+    const fs = Math.min(cp ? 64 : 54, (cw - 150) / Math.max(2.5, txt.length * .56));
+    const em = Math.min(ch * .62, 120);
+    g += `<g class="prod" data-k="${k}" role="button" aria-label="${p.n}${txt ? ", " + txt : ""}">
+      <rect class="halo" x="${x + 6}" y="${y + 4}" width="${cw - 12}" height="${ch - 8}" rx="14"/>
+      <text x="${x + 18 + em / 2}" y="${y + ch / 2 + em * .36}" font-size="${em.toFixed(0)}" class="emo" text-anchor="middle">${p.e}</text>
+      <text x="${x + 30 + em + (cw - 40 - em) / 2}" y="${y + ch / 2 + fs * .36 - (p.q && !cp ? 10 : 0)}" text-anchor="middle" font-size="${fs.toFixed(0)}" fill="#fff" class="craie">${txt}</text>
+      ${p.q && !cp && prix ? `<text x="${x + 30 + em + (cw - 40 - em) / 2}" y="${y + ch / 2 + fs * .36 + 24}" text-anchor="middle" font-size="24" fill="#ced4da" class="craie">l'unité</text>` : ""}
+    </g>`;
+  });
+  $("vueEtal").innerHTML = g;
+  $("vueEtal").querySelectorAll(".prod").forEach(el => el.addEventListener("click", () => toucherProduit(+el.dataset.k)));
+}
+
+/* ================= PARTIE ================= */
+function choix(id, cle, conv) {
+  $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    R_[cle] = conv ? conv(b.dataset.v) : b.dataset.v;
+    $("groupeEcriture").classList.toggle("cache", R_.niveau === "CP");
+  }));
+}
+choix("choixNiveau", "niveau"); choix("choixMission", "mission"); choix("choixNb", "nb", Number); choix("choixEcriture", "ecriture");
+$("groupeEcriture").classList.add("cache");
+
+function demarrer() {
+  ["aide", "defi", "bilan", "centimes", "voix"].forEach(k => R_[k] = $("opt" + k[0].toUpperCase() + k.slice(1)).checked);
+  S.score = 0; S.faits = 0; S.achats = []; S.total = R_.nb + (R_.bilan ? 1 : 0);
+  // la liste de courses : un produit par étal choisi
+  const etals = melange(ETALS.slice()).slice(0, R_.nb);
+  S.liste = etals.map((E, j) => {
+    const k = hasard(E.produits.length), p = E.produits[k];
+    const prixEtal = E.produits.map(pp => ({ c: prixAuHasard(pp.p), st: styleAchat() }));
+    let qte = 1;
+    if (R_.niveau === "CE2" && p.q && Math.random() < .6) qte = 2 + hasard(2);
+    if (R_.niveau === "CP" && p.q && Math.random() < .25 && prixEtal[k].c <= 300) qte = 2;
+    const mission = R_.mission === "melange" ? (j % 2 ? "rendre" : "payer") : R_.mission;
+    return { etal: E, k, p, prixEtal, qte, mission, fait: false };
+  });
+  S.liste.sort((a, b) => ETALS.indexOf(a.etal) - ETALS.indexOf(b.etal));
+  $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+  allerMarche(true); ajuste();
+}
+function nomAchat(a) {
+  if (a.qte === 1) return a.p.n;
+  return `${["", "", "deux", "trois"][a.qte]} ${a.p.q[1]}`;
+}
+function majListe() {
+  $("liste").innerHTML = "📝 " + S.liste.map(a => `<span class="${a.fait ? "ok" : ""}"><span class="emo">${a.p.e}</span> ${a.qte > 1 ? `<b>${nomAchat(a)}</b>` : nomAchat(a)}</span>`).join("");
+  $("avance").textContent = `🧺 ${S.faits} / ${R_.nb}`;
+  $("score").textContent = "⭐ " + S.score;
+}
+function cacherPaiement() { ["paiement", "continuer", "retour"].forEach(id => $(id).classList.add("cache")); $("reponses").innerHTML = ""; }
+
+function allerMarche(debut) {
+  S.vue = "marche"; Q = null;
+  dessineMarche(); $("vueMarche").classList.remove("cache"); $("vueEtal").classList.add("cache");
+  $("dessin").setAttribute("viewBox", "0 0 1600 900"); ajuste();
+  cacherPaiement(); majListe();
+  $("msg").className = ""; $("msg").textContent = "";
+  if (S.faits >= R_.nb) { if (R_.bilan) bilan(); else fin(); return; }
+  $("consigne").innerHTML = debut ? "Voici ta liste de courses. <span class='qui'>Touche un étal</span> pour aller faire tes achats." : "Où vas-tu maintenant ? Touche un étal.";
+  if (debut) dire("Voici ta liste de courses. Touche un étal pour aller faire tes achats.");
+}
+function allerEtal(i) {
+  const E = ETALS[i], achat = S.liste.find(a => a.etal === E);
+  S.vue = "etal"; $("vueMarche").classList.add("cache"); $("vueEtal").classList.remove("cache");
+  $("dessin").setAttribute("viewBox", "0 0 1600 600"); ajuste();
+  // prix affichés même sans achat prévu
+  const prixVue = achat ? achat : { prixEtal: E.produits.map(pp => ({ c: prixAuHasard(pp.p), st: styleAchat() })) };
+  dessineEtal(E, prixVue);
+  cacherPaiement(); $("retour").classList.remove("cache");
+  $("msg").className = ""; $("msg").textContent = "";
+  if (!achat) {
+    $("consigne").innerHTML = `<span class="qui">${E.qui}</span> : « Bonjour ! » — Regarde ta liste : il n'y a rien à acheter ici.`;
+    dire("Bonjour ! Regarde bien ta liste : il n'y a rien à acheter ici.");
+    marquerProduits(-1); Q = null; return;
+  }
+  if (achat.fait) {
+    $("consigne").innerHTML = `<span class="qui">${E.qui}</span> : « Tu es déjà passé chez moi ! Bonne journée ! »`;
+    dire("Tu es déjà passé chez moi ! Bonne journée !"); Q = null; return;
+  }
+  Q = { a: achat, E, etape: "choisir", err: 0, pose: [], fini: false };
+  $("consigne").innerHTML = `<span class="qui">${E.qui}</span> : « Bonjour ! Qu'est-ce que je te sers ? » <br><small style="font-weight:400">Touche ce qu'il y a sur ta liste.</small>`;
+  dire(`Bonjour ! Qu'est-ce que je te sers ?`);
+}
+function marquerProduits(k) { $("vueEtal").querySelectorAll(".prod").forEach(el => { el.classList.toggle("choisi", +el.dataset.k === k); }); }
+
+function toucherProduit(k) {
+  if (!Q || Q.etape !== "choisir") return;
+  const a = Q.a;
+  if (k !== a.k) {
+    $("msg").className = "erreur liste"; $("msg").textContent = `Ce n'est pas sur ta liste ! Tu cherches : ${nomAchat(a)}.`;
+    return;
+  }
+  marquerProduits(k); $("vueEtal").querySelectorAll(".prod").forEach(el => { if (+el.dataset.k !== k) el.classList.add("non"); });
+  $("retour").classList.add("cache");
+  const pu = a.prixEtal[k], du = pu.c * a.qte;
+  Q.du = du; Q.st = pu.st; Q.mission = a.mission;
+  $("msg").className = ""; $("msg").textContent = "";
+  const prixTxt = `<span class="prix">${fmt(pu.c, pu.st)}</span>`;
+  if (Q.mission === "payer") {
+    Q.etape = "payer";
+    if (a.qte > 1) {
+      $("consigne").innerHTML = `Tu prends <b>${nomAchat(a)}</b> à ${prixTxt} l'un${/^une /.test(a.p.n) ? "e" : ""}. <br>Combien dois-tu payer ? Pose la somme sur le plateau.`;
+      dire(`Tu prends ${nomAchat(a)} à ${parle(pu.c)} chacun. Combien dois-tu payer ?`);
+    } else {
+      $("consigne").innerHTML = `<span class="qui">${Q.E.qui}</span> : « ${cap(a.p.n)}, voilà ! Ça fait ${prixTxt}. » <br><small style="font-weight:400">Pose le prix juste sur le plateau, puis paie.</small>`;
+      dire(`${cap(a.p.n)}, voilà ! Ça fait ${parle(du)}.`);
+    }
+    preparerPlateau(denoms(), "👛 Ton porte-monnaie (touche pour poser)", "Le plateau de monnaie :", "💶 Payer");
+  } else {
+    // on paie avec un billet (ou une pièce) plus grand : le marchand rend la monnaie
+    const grands = [100, 200, 500, 1000, 2000, 5000].filter(v => v > du && (R_.niveau !== "CP" || v >= 500 || du < v));
+    let donne = grands[0];
+    if (grands[1] && Math.random() < .3 && grands[1] - du <= (R_.niveau === "CP" ? 1900 : 2000)) donne = grands[1];
+    if (R_.niveau === "CP" && donne < 500) donne = 500;
+    Q.donne = donne; Q.rendu = donne - du; Q.etape = "rendre";
+    const total = a.qte > 1 ? `<b>${nomAchat(a)}</b> à ${prixTxt} l'un${/^une /.test(a.p.n) ? "e" : ""}` : `${a.p.n} à ${prixTxt}`;
+    $("consigne").innerHTML = `Tu achètes ${total}. Tu donnes ${donne >= 500 ? "un billet" : "une pièce"} de <span class="prix">${fmt(donne, "ec")}</span>.<br>Aide ${Q.E.qui.split(" ")[0] === "Mamie" || Q.E.qui.split(" ")[0] === "Papi" ? Q.E.qui.split(" ").slice(0, 2).join(" ") : Q.E.qui.split(" ")[0]} : pose sur le plateau <b>la monnaie à te rendre</b>.`;
+    dire(a.qte > 1 ? `Tu achètes ${nomAchat(a)} à ${parle(pu.c)} chacun. Tu donnes ${parle(donne)}. Combien le marchand doit-il te rendre ?`
+                   : `Ça fait ${parle(du)}. Tu donnes ${parle(donne)}. Combien le marchand doit-il te rendre ?`);
+    $("donne").innerHTML = moHTML(donne, "disabled tabindex=-1");
+    preparerPlateau(denoms().filter(v => v < donne), `🗃️ La caisse de ${Q.E.qui.replace(/ (le|la|l')\s?.*$/, "")} (touche pour rendre)`, "La monnaie rendue :", "🪙 Rendre la monnaie");
+    $("donneBox").classList.remove("cache");
+  }
+}
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+
+function preparerPlateau(ds, titreBourse, titrePlateau, bouton) {
+  $("paiement").classList.remove("cache");
+  if (Q.etape === "payer") $("donneBox").classList.add("cache");
+  $("bourseT").textContent = titreBourse; $("plateauT").textContent = titrePlateau; $("payer").textContent = bouton;
+  Q.ds = ds;
+  $("monnaie").innerHTML = ds.map(v => moHTML(v)).join("");
+  $("monnaie").querySelectorAll(".mo").forEach(b => b.addEventListener("click", () => poser(+b.dataset.v)));
+  Q.pose = []; majPlateau();
+}
+function effaceErreur() { if ($("msg").className === "erreur") { $("msg").className = ""; $("msg").textContent = ""; } }
+function poser(v) { if (!Q || Q.fini) return; if (Q.pose.length >= 30) return; Q.pose.push(v); effaceErreur(); majPlateau(); }
+function retirer(idx) { if (!Q || Q.fini) return; Q.pose.splice(idx, 1); effaceErreur(); majPlateau(); }
+function somme(t) { return t.reduce((s, v) => s + v, 0); }
+function majPlateau() {
+  // les pièces restent dans l'ordre où on les a posées (utile pour compter « en avançant »)
+  const z = $("plateau"); z.innerHTML = Q.pose.map((v, i) => moHTML(v, `data-i="${i}" title="Reprendre"`)).join("");
+  z.querySelectorAll(".mo").forEach(b => b.addEventListener("click", () => retirer(+b.dataset.i)));
+  $("payer").disabled = Q.pose.length === 0 || Q.fini;
+  const s = somme(Q.pose);
+  if (!R_.aide || !Q.pose.length) { $("total").textContent = ""; return; }
+  if (Q.etape === "payer") $("total").textContent = `Sur le plateau : ${fmt(s, Q.st)}`;
+  else {
+    let c = Q.du, pas = [fmt(c, Q.st)];
+    Q.pose.forEach(v => { c += v; pas.push(fmt(c, Q.st)); });
+    $("total").textContent = `On compte en avançant : ${pas.join(" → ")}` + (c === Q.donne ? " ✔" : "");
+  }
+}
+$("vider").addEventListener("click", () => { if (!Q || Q.fini) return; Q.pose = []; effaceErreur(); majPlateau(); });
+
+// chemin « en avançant » du prix jusqu'à la somme donnée (méthode des ajouts successifs)
+function cheminAvancer(du, donne, ds) {
+  let c = du; const pas = [];
+  const ajoute = cible => { while (c < cible) { const d = ds.filter(v => v <= cible - c).sort((a, b) => b - a)[0]; if (!d) return; pas.push(d); c += d; } };
+  for (const m of [10, 50, 100, 500, 1000, 2000, 5000]) { if (c % m) ajoute(Math.min(donne, c - (c % m) + m)); }
+  ajoute(donne);
+  return pas;
+}
+
+$("payer").addEventListener("click", () => {
+  if (!Q || Q.fini || !Q.pose.length) return;
+  const s = somme(Q.pose), vise = Q.etape === "payer" ? Q.du : Q.rendu;
+  if (s === vise) {
+    const mini = plusPetit(vise, Q.ds), nonMini = R_.defi && mini && Q.pose.length > mini.length;
+    let t = Q.etape === "payer" ? `Tu as payé ${fmt(vise, Q.st)} : c'est le prix juste !` : `On te rend ${fmt(vise, Q.st)} : ${fmt(Q.du, Q.st)} + ${fmt(vise, Q.st)} = ${fmt(Q.donne, Q.st)}.`;
+    if (Q.a.qte > 1 && Q.etape === "payer") t += ` (${Q.a.qte} × ${fmt(Q.a.prixEtal[Q.a.k].c, Q.st)})`;
+    if (nonMini) t += `<br>Défi : tu pouvais le faire avec seulement ${mini.length} pièce${mini.length > 1 ? "s" : ""} ou billet${mini.length > 1 ? "s" : ""} : ${miniHTML(mini)}`;
+    reussite(t, !nonMini);
+    return;
+  }
+  Q.err++;
+  const ecart = Math.abs(s - vise);
+  if (Q.err >= 2) {
+    const sol = Q.etape === "payer" ? plusPetit(vise, Q.ds) : cheminAvancer(Q.du, Q.donne, Q.ds);
+    let t;
+    if (Q.etape === "payer") {
+      t = (Q.a.qte > 1 ? `${Q.a.qte} × ${fmt(Q.a.prixEtal[Q.a.k].c, Q.st)} = <b>${fmt(vise, Q.st)}</b>. ` : `Il fallait payer <b>${fmt(vise, Q.st)}</b>. `) + `Par exemple : ${sol ? miniHTML(sol) : ""}`;
+    } else {
+      let c = Q.du; const etapes = [fmt(c, Q.st)]; (sol || []).forEach(v => { c += v; etapes.push(fmt(c, Q.st)); });
+      t = `On part du prix et on avance jusqu'à ${fmt(Q.donne, Q.st)} : ${etapes.join(" → ")}. ${sol ? miniHTML(sol) : ""} On rend <b>${fmt(vise, Q.st)}</b>.`;
+    }
+    Q.pose = (sol || []).slice(); majPlateau();
+    echec(t);
+  } else {
+    $("msg").className = "erreur";
+    const montre = R_.aide ? "" : `Tu as posé ${fmt(s, Q.st)}. `;
+    if (Q.etape === "payer") $("msg").innerHTML = "Pas tout à fait. " + montre + (s < vise ? `Il manque ${fmt(ecart, Q.st)}.` : `C'est trop : ${fmt(ecart, Q.st)} de trop.`) + (Q.a.qte > 1 ? ` N'oublie pas : tu en prends ${Q.a.qte}.` : "");
+    else $("msg").innerHTML = "Pas tout à fait. " + (s < vise ? "Le marchand ne te rend pas assez." : "Le marchand te rend trop !") + ` Pars du prix (${fmt(Q.du, Q.st)}) et avance jusqu'à ${fmt(Q.donne, Q.st)}.`;
+    dire(s < vise ? "Il en manque." : "C'est trop.");
+  }
+});
+
+function reussite(t, etoile) {
+  Q.fini = true; if (Q.err === 0 && etoile) S.score++;
+  $("msg").className = "bravo"; $("msg").innerHTML = (Q.err === 0 ? "Merci et bonne journée ! " : "Bravo ! ") + t;
+  dire(Q.err === 0 ? "Merci, et bonne journée !" : "Bravo !");
+  finAchat();
+}
+function echec(t) { Q.fini = true; $("msg").className = ""; $("msg").innerHTML = "📖 " + t; finAchat(); }
+function finAchat() {
+  const a = Q.a; a.fait = true; S.faits++; S.achats.push({ nom: nomAchat(a), c: Q.du, st: Q.st });
+  $("payer").disabled = true; majListe();
+  $("continuer").innerHTML = (S.faits >= R_.nb ? (R_.bilan ? "Voir mon ticket" : "Terminer") : "Continuer mes courses") + " <kbd>→</kbd>";
+  $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true });
+}
+let tSuivant = 0;
+function suivant() {
+  if ($("continuer").classList.contains("cache") || Date.now() - tSuivant < 400) return;
+  tSuivant = Date.now();
+  if (S.vue === "bilan") fin(); else allerMarche(false);
+}
+$("continuer").addEventListener("click", suivant);
+$("retour").addEventListener("click", () => allerMarche(false));
+document.addEventListener("keydown", e => {
+  if (!["ArrowRight", "PageDown", "Enter", " ", "Spacebar"].includes(e.key) || e.repeat) return;
+  if ($("partie").classList.contains("cache") || $("continuer").classList.contains("cache")) return;
+  e.preventDefault(); suivant();
+});
+
+/* ---------- Le ticket : combien as-tu dépensé ? ---------- */
+function bilan() {
+  S.vue = "bilan"; Q = { fini: false, err: 0 };
+  const st = R_.niveau === "CP" ? "ent" : R_.niveau === "CE2" ? "virg" : (R_.ecriture === "ec" ? "ec" : "virg");
+  const T = somme(S.achats.map(a => a.c));
+  $("consigne").innerHTML = `Voici ton ticket. <span class="qui">Combien as-tu dépensé en tout ?</span><br><div id="ticket">${S.achats.map(a => `<div><span>${a.nom}</span><span>${fmt(a.c, st)}</span></div>`).join("")}<div style="border-top:1px dashed #adb5bd;margin-top:4px;padding-top:4px"><b>TOTAL</b><b>?</b></div></div>`;
+  dire("Voici ton ticket. Combien as-tu dépensé en tout ?");
+  const prop = new Set([T]), pieges = [T + 100, T - 100, T - S.achats[hasard(S.achats.length)].c, T + 1000, T - 1000];
+  if (R_.niveau !== "CP") pieges.push(T + 10, T - 10, T + 50);
+  for (const p of melange(pieges)) { if (prop.size >= 4) break; if (p > 0) prop.add(p); }
+  for (let k = 2; prop.size < 4; k++) prop.add(T + k * 100);
+  const z = $("reponses"); z.innerHTML = "";
+  melange([...prop]).forEach(v => {
+    const b = document.createElement("button"); b.textContent = fmt(v, st); b.dataset.v = v;
+    b.addEventListener("click", () => {
+      if (Q.fini) return;
+      if (v === T) {
+        b.classList.add("bon"); Q.fini = true; if (Q.err === 0) S.score++;
+        $("msg").className = "bravo"; $("msg").innerHTML = `Bravo ! ${S.achats.map(a => fmt(a.c, st)).join(" + ")} = <b>${fmt(T, st)}</b>.`;
+        dire("Bravo !");
+      } else {
+        b.classList.add("mauvais"); b.disabled = true; Q.err++;
+        if (Q.err >= 2) {
+          Q.fini = true; z.querySelectorAll("button").forEach(x => { x.disabled = true; if (+x.dataset.v === T) x.classList.add("bon"); });
+          $("msg").className = ""; $("msg").innerHTML = `📖 On ajoute tous les prix : ${S.achats.map(a => fmt(a.c, st)).join(" + ")} = <b>${fmt(T, st)}</b>.`;
+        } else { $("msg").className = "erreur"; $("msg").textContent = "Pas tout à fait : ajoute tous les prix du ticket."; return; }
+      }
+      majListe(); $("continuer").innerHTML = "Terminer <kbd>→</kbd>"; $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true });
+    });
+    z.appendChild(b);
+  });
+}
+
+function fin() {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  $("partie").classList.add("cache"); $("fin").classList.remove("cache");
+  const t = S.total, r = S.score / t, et = r >= .9 ? 3 : r >= .6 ? 2 : r > 0 ? 1 : 0;
+  $("finEtoiles").textContent = "⭐".repeat(et) + "☆".repeat(3 - et);
+  $("finScore").textContent = `${S.score} réussite${S.score > 1 ? "s" : ""} du premier coup sur ${t}.`;
+  const mis = { payer: "payer le prix juste", rendre: "rendre la monnaie", melange: "payer et rendre la monnaie" }[R_.mission];
+  try { TDC.note({ s: S.score, n: t, g: r >= .8, niv: `${R_.niveau} (${mis})`, d: `${S.score} / ${t} réussis du premier coup (${R_.niveau}, ${mis})` }); } catch (e) {}
+  if (et >= 2) confettis();
+  dire(`Les courses sont faites ! ${S.score} réussites sur ${t}.`);
+}
+function confettis() {
+  const z = $("mc-jeu");
+  for (let k = 0; k < 28; k++) {
+    const c = document.createElement("div"); c.className = "confetti emo"; c.textContent = ["🍎", "🥖", "🧀", "💐", "🪙"][k % 5];
+    c.style.left = Math.random() * 100 + "%"; c.style.animationDuration = (2.2 + Math.random() * 2) + "s"; c.style.animationDelay = Math.random() + "s";
+    z.appendChild(c); setTimeout(() => c.remove(), 4500);
+  }
+}
+$("jouer").addEventListener("click", demarrer);
+$("rejouer").addEventListener("click", demarrer);
+$("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("arreter").addEventListener("click", () => { try { speechSynthesis.cancel(); } catch (e) {} $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("ecouter").addEventListener("click", () => {
+  const v = R_.voix; R_.voix = true;
+  const t = $("consigne").textContent.replace(/\s+/g, " ").replace(/(\d+),(\d\d) €/g, "$1 euros $2").replace(/ c\b/g, " centimes").replace(/€/g, "euros");
+  dire(t); R_.voix = v;
+});
+/* La partie tient dans la hauteur de l'écran : la scène rétrécit pour laisser la place au plateau et au porte-monnaie. */
+function ajuste() {
+  const partie = $("partie"), scene = $("scene"); if (partie.classList.contains("cache")) return;
+  const autres = partie.offsetHeight - scene.offsetHeight;
+  const cadre = $("mc-jeu"), marge = cadre.offsetHeight - partie.offsetHeight + 6;
+  const h = Math.max(170, window.innerHeight - autres - marge);
+  const vb = $("dessin").viewBox.baseVal, ratio = vb && vb.height ? vb.width / vb.height : 16 / 9;
+  scene.style.maxWidth = Math.min(cadre.clientWidth, h * ratio) + "px";
+}
+addEventListener("resize", ajuste);
+document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
+try { const ro = new ResizeObserver(() => ajuste()); ["liste", "consigne", "paiement", "reponses", "msg"].forEach(id => ro.observe($(id))); } catch (e) {}
+$("ecran").addEventListener("click", () => { const z = $("mc-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
+</script>
+</body>
+</html>
