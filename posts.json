@@ -1,6 +1,285 @@
 {
- "count": 52,
+ "count": 53,
  "posts": [
+  {
+   "title": "La pizzeria des fractions",
+   "slug": "la-pizzeria-des-fractions",
+   "excerpt": "À Naples, Luigi le pizzaiolo coupe ses pizzas en parts égales : un jeu pour lire, écrire et construire les fractions simples (demis, tiers, quarts… jusqu'aux dixièmes), du CE1 au CM2.",
+   "date": "2026-11-14T18:30:00.000Z",
+   "cat": "numeration",
+   "categoryIds": [
+    "4508e272-b88b-42c8-a68d-b55e8afea67b"
+   ],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CE1",
+     "CE2",
+     "CM1",
+     "CM2"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Benvenuti a Napoli ! Dans sa pizzeria, Luigi coupe ses pizzas en parts égales. Coupée en 4 parts égales, chaque part est un quart de la pizza : 3 parts, c'est trois quarts, on écrit 3/4. Les clients passent commande… à l'élève de les servir !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 3 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 – Lire : une partie de la pizza a été mangée. L'élève choisit la fraction qui reste sur la planche (ou, parfois, celle qui a été mangée) parmi quatre propositions. Les pièges sont ceux des élèves : parts mangées au lieu des parts restantes, fraction à l'envers (4/3), mauvais nombre de parts.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 – Servir : la pizza est déjà coupée. Le client commande « 3/4 de pizza » : l'élève touche les parts à mettre sur l'assiette, puis sert.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 – Couper et servir : l'élève choisit d'abord en combien de parts égales couper la pizza, puis sert la commande. Une pizza coupée en 8 permet aussi de servir 1/2 : 4/8 = 1/2, le jeu le fait remarquer.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau, les fractions (demis, tiers, quarts ; jusqu'aux huitièmes ; jusqu'aux dixièmes) et le nombre de commandes (10, 15 ou 20).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Erreur : une aide s'affiche (« Compte les parts de la pizza entière, même celles qui manquent »), l'élève réessaie. À la deuxième erreur, le jeu montre la bonne réponse et l'explique.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une étoile par commande réussie du premier coup ; les résultats sont notés dans la tour de contrôle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les options pour l'enseignant",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Commande écrite en lettres (« trois quarts ») au lieu des chiffres : pour travailler le lien entre le nom et l'écriture de la fraction.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Au niveau 1, demander parfois la part mangée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lecture de la commande à voix haute, bouton « Réécouter », plein écran pour projeter en classe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-pizzeria-des-fractions.html",
+       "containerData": {
+        "height": {
+         "custom": "900"
+        }
+       }
+      }
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Illustrations : Canva.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Bilan de maths CE1",
    "slug": "bilan-de-maths",
