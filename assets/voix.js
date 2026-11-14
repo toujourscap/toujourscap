@@ -1,20 +1,27 @@
 /* Voix de Fabrice dans les jeux (enregistrées dans le studio /admin/studio).
    Ce script se place devant la synthèse vocale : quand un jeu demande de dire un texte
-   et que tous ses morceaux ont été enregistrés (ex. « 234 » = « deux cents » + « trente-quatre »),
-   on joue les enregistrements ; sinon, la voix de l'ordinateur parle comme avant.
-   Aucun changement n'est nécessaire dans les jeux : il suffit d'ajouter <script src="voix.js"></script>. */
+   et qu'on peut le reconstituer entièrement avec des enregistrements (un texte, une question,
+   chaque réponse… ou un nombre : 234 = « deux cents » + « trente-quatre »), on joue les enregistrements ;
+   sinon, la voix de l'ordinateur parle comme avant.
+   Il suffit d'ajouter <script src="voix.js"></script> dans un jeu. Le studio utilise les mêmes outils (window.VoixFabrice). */
 (function () {
-  if (!("speechSynthesis" in window) || window.__voixFabrice) return;
-  window.__voixFabrice = true;
-  var ss = window.speechSynthesis, manifeste = null, jeton = 0, enCours = false, lecteurs = [];
-
-  fetch("/api/voix").then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) { if (d && d.voix) manifeste = d.voix; }).catch(function () {});
+  if (window.VoixFabrice) return;
 
   function slug(t) {
     return String(t).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
       .replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   }
+  function fnv(s) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return ("0000000" + h.toString(16)).slice(-8);
+  }
+  // Nom de l'enregistrement d'un texte (les textes longs sont raccourcis + empreinte).
+  function cleMots(s) { return s.length <= 60 ? s : s.slice(0, 40).replace(/-+$/, "") + "-" + fnv(s); }
+  function prep(t) {
+    return String(t || "").replace(/\+/g, " plus ").replace(/=/g, " égal ").replace(/(\d)[\s  ]+(?=\d{3}\b)/g, "$1");
+  }
+  function cle(t) { return cleMots(slug(prep(t))); }
   function nombre(n) {
     n = parseInt(n, 10);
     if (n <= 100) return ["n" + n];
@@ -23,23 +30,46 @@
     var c = Math.floor(n / 100) * 100, r = n % 100;
     return r ? ["n" + c, "n" + r] : ["n" + c];
   }
-  // Découpe le texte en enregistrements ; null s'il en manque un.
-  function decouper(texte) {
-    if (!manifeste) return null;
-    var t = String(texte || "").trim();
-    if (!t) return null;
-    var entier = slug(t);
-    if (entier && manifeste[entier]) return [entier];
-    t = t.replace(/\+/g, " plus ").replace(/=/g, " égal ").replace(/(\d)\s+(?=\d{3}\b)/g, "$1");
-    var cles = [], morceaux = t.split(/(\d+)/);
-    for (var i = 0; i < morceaux.length; i++) {
-      var m = morceaux[i];
-      if (/^\d+$/.test(m)) { var l = nombre(m); if (!l) return null; cles = cles.concat(l); }
-      else { var s = slug(m); if (s) cles.push(s); }
+  // Reconstitue le texte avec des enregistrements ; renvoie la liste des clés, ou { manque } si impossible.
+  function decouper(texte, voix) {
+    var mots = slug(prep(texte)).split("-").filter(Boolean), n = mots.length;
+    if (!n) return { manque: "(texte vide)" };
+    var prev = new Array(n + 1), atteint = new Array(n + 1);
+    atteint[0] = true;
+    for (var i = 0; i < n; i++) {
+      if (!atteint[i]) continue;
+      // Empreinte calculée au fur et à mesure (même résultat que cleMots, sans tout recalculer).
+      var s = "", h = 0x811c9dc5, debut = null;
+      for (var j = i + 1; j <= n && j - i <= 250; j++) {
+        var ajout = (s ? "-" : "") + mots[j - 1];
+        for (var q = 0; q < ajout.length; q++) { h ^= ajout.charCodeAt(q); h = Math.imul(h, 0x01000193) >>> 0; }
+        if (debut === null || s.length <= 60) s += ajout; else s = s.length > 61 ? s : s + ajout;
+        var k;
+        if (debut === null && s.length <= 60) k = s;
+        else { if (debut === null) debut = s.slice(0, 40).replace(/-+$/, ""); k = debut + "-" + ("0000000" + h.toString(16)).slice(-8); }
+        if (voix[k] && !atteint[j]) { atteint[j] = true; prev[j] = { i: i, cles: [k] }; }
+      }
+      if (/^\d+$/.test(mots[i]) && !atteint[i + 1]) {
+        var l = nombre(mots[i]);
+        if (l && l.every(function (c) { return voix[c]; })) { atteint[i + 1] = true; prev[i + 1] = { i: i, cles: l }; }
+      }
     }
-    for (var j = 0; j < cles.length; j++) if (!manifeste[cles[j]]) return null;
-    return cles.length ? cles : null;
+    if (!atteint[n]) {
+      var loin = 0; for (var m = 0; m <= n; m++) if (atteint[m]) loin = m;
+      return { manque: mots.slice(loin, loin + 8).join(" ") + (n - loin > 8 ? "…" : "") };
+    }
+    var cles = [], p = n;
+    while (p > 0) { cles = prev[p].cles.concat(cles); p = prev[p].i; }
+    return { cles: cles };
   }
+
+  var V = window.VoixFabrice = { slug: slug, cle: cle, decouper: decouper, manifeste: null };
+  fetch("/api/voix").then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && d.voix && !V.manifeste) V.manifeste = d.voix; }).catch(function () {});
+
+  if (!("speechSynthesis" in window)) return;
+  var ss = window.speechSynthesis, jeton = 0, enCours = false, lecteurs = [];
+
   function evenement(u, type) {
     var e;
     try { e = new SpeechSynthesisEvent(type, { utterance: u }); } catch (x) { e = new Event(type); }
@@ -56,8 +86,8 @@
 
   function jouer(cles, u) {
     arreter();
-    var moi = jeton, i = 0;
-    lecteurs = cles.map(function (c) { var a = new Audio("/api/voix/" + c + "?v=" + manifeste[c]); a.preload = "auto"; return a; });
+    var moi = jeton, i = 0, voix = V.manifeste;
+    lecteurs = cles.map(function (c) { var a = new Audio("/api/voix/" + c + "?v=" + voix[c]); a.preload = "auto"; return a; });
     enCours = true;
     var suivant = function () {
       if (moi !== jeton) return;
@@ -76,10 +106,10 @@
 
   try {
     ss.speak = function (u) {
-      var cles = u && u.volume !== 0 ? decouper(u.text) : null;
-      if (!cles) return vraiSpeak(u);
+      var r = u && u.volume !== 0 && V.manifeste && String(u.text || "").trim() ? decouper(u.text, V.manifeste) : null;
+      if (!r || !r.cles) return vraiSpeak(u);
       vraiCancel();
-      jouer(cles, u);
+      jouer(r.cles, u);
     };
     ss.cancel = function () { arreter(); vraiCancel(); };
     Object.defineProperty(ss, "speaking", { configurable: true, get: function () {
