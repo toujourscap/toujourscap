@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le kiosque des mots : encoder des mots simples, une case par lettre</title>
+<!-- Images Canva :
+     décor place de Paris, kiosque à journaux, terrasse de café, tour Eiffel MAHbBDFNziI (images/kiosque/place.jpg, deux moitiés recollées 1067×600,
+     titres des journaux du kiosque floutés) ; vendeur.jpg = recadrage du décor (fiches).
+     Mots nouveaux (images/kiosque/mots/) : sac MAHbBMepO54, bol MAHbBGsYa_E, ski MAHbBIYODVo, café MAHbBEhnkvM, cube MAHbBGTWbUQ.
+     Les autres images de mots sont celles des fusées des syllabes (images/fusees-syllabes/mots/). -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #km-jeu{background:#f5f1e6;border:2px solid #c9bf9f;border-radius:12px;padding:16px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden}
+  #km-jeu:fullscreen{max-width:none;border-radius:0;overflow:auto;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#1f4e79}
+  .intro{margin:0 auto 12px;max-width:760px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e9e2cc;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.98)}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#e6f6df}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
+  .cache{display:none!important}
+  .go{background:#1f4e79;font-size:1.3rem;padding:14px 30px;margin:4px}
+  .papier{background:#fff;border:2px dashed #b9ad86}
+  .papier .imp{background:#7048e8;font-size:1.15rem;margin-top:8px}
+
+  /* ---------- Partie ---------- */
+  #scene{margin:0 auto;position:relative;border-radius:12px;overflow:hidden;border:2px solid #c9bf9f;background:#d8c9a4}
+  #scene svg{display:block;width:100%;height:auto}
+  #haut{position:absolute;top:8px;left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none;z-index:3}
+  .pastille{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  #consigne{font-size:clamp(1rem,2.2vw,1.25rem);font-weight:bold;color:#212529;margin:8px auto 4px;min-height:1.4em;max-width:900px}
+  #cases{display:flex;justify-content:center;flex-wrap:nowrap;gap:4px;margin:6px auto 8px;max-width:100%}
+  .syl{display:flex;gap:4px;padding:4px 0;border-radius:10px}
+  .avecSyl .syl{padding:4px}
+  .avecSyl .syl:nth-child(odd){background:#d0ebff}
+  .avecSyl .syl:nth-child(even){background:#ffe8cc}
+  .avecSyl #cases{gap:12px}
+  .case{width:clamp(34px,6.4vw,58px);height:clamp(44px,8vw,70px);border:3px solid #1f4e79;border-radius:8px;background:#fff;font-size:clamp(1.5rem,4.6vw,2.5rem);font-weight:bold;color:#1d3557;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;font-family:'Andika','Open Sans',Arial,sans-serif}
+  .case.active{box-shadow:0 0 0 4px #ffd43b;border-color:#e8590c}
+  .case.muette{border-style:dashed;background:#f1f3f5;color:#868e96}
+  .case.juste{background:#d3f9d8;border-color:#2f9e44}
+  .case.faux{background:#ffe3e3;border-color:#e03131;color:#c92a2a}
+  .case.donnee{background:#fff3bf;border-color:#f08c00}
+  @keyframes secoue{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .case.secoue{animation:secoue .3s ease 2}
+  #clavier{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:900px;margin:0 auto 6px}
+  #clavier button{background:#fff;color:#1d3557;border:2px solid #1f4e79;box-shadow:0 3px 0 #9fb7d1;min-width:clamp(38px,6vw,54px);padding:6px 8px;font-size:clamp(1.2rem,3vw,1.6rem);font-family:'Andika','Open Sans',Arial,sans-serif}
+  #clavier button.outil{background:#f1f3f5;border-color:#868e96;box-shadow:0 3px 0 #ced4da;font-size:1.1rem}
+  #actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:2px 0 4px}
+  #valider{background:#2f9e44;font-size:1.2rem;padding:9px 26px}
+  #valider:disabled{background:#adb5bd;cursor:default}
+  #msg{min-height:1.4em;font-size:1.05rem;color:#495057;max-width:860px;margin:0 auto 4px;line-height:1.45}
+  #msg.erreur{color:#c92a2a;font-weight:600}
+  #msg.bravo{color:#2b8a3e;font-weight:600}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+  .bas button{background:#6c757d;font-size:1rem;padding:9px 16px}
+  #ecouter{background:#1971c2}
+  #lentement{background:#1971c2}
+  #continuer{background:#2f9e44;font-size:1.2rem}
+  #continuer kbd{display:inline-block;margin-left:8px;padding:0 9px;border:2px solid #fff;border-bottom-width:4px;border-radius:7px;background:rgba(255,255,255,.18);font-family:inherit;font-size:1rem;line-height:1.05;vertical-align:1px}
+  @keyframes bulle{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+  #bulle{transform-box:fill-box;transform-origin:0% 100%}
+  #bulle.montre{animation:bulle .45s ease forwards}
+  @keyframes imprime{0%{transform:rotate(-2deg) translateY(30px);opacity:.3}100%{transform:rotate(-2deg) translateY(0);opacity:1}}
+  #journal{transform-box:fill-box;transform-origin:50% 50%}
+  #journal.nouveau{animation:imprime .45s ease}
+
+  /* ---------- Fin ---------- */
+  #fin .grand{font-size:2.3rem;font-weight:bold;color:#1f4e79;margin:16px 0 4px}
+  #finScore{font-size:1.3rem;color:#212529}
+  #finEtoiles{font-size:2.6rem;letter-spacing:6px;margin:4px 0 10px}
+  .confetti{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:tombe linear forwards;z-index:9}
+  @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
+  @media (max-width:560px){#clavier button{min-width:34px;padding:5px 4px}.bas button{padding:8px 10px;font-size:.95rem}}
+
+  /* ---------- Fiches à imprimer ---------- */
+  #impression{display:none}
+  @media print{
+    @page{size:A4 portrait;margin:11mm}
+    body>*:not(#impression){display:none!important}
+    #km-jeu{display:none!important}
+    #impression{display:block}
+    .fiche{height:272mm;page-break-after:always;break-after:page;position:relative;font-family:'Andika','Open Sans',Arial,sans-serif;color:#000;overflow:hidden}
+    .fiche:last-child{page-break-after:auto;break-after:auto}
+  }
+  .f-tete{display:flex;align-items:center;gap:4mm;border-bottom:.6mm solid #1f4e79;padding-bottom:2mm;margin-bottom:3mm}
+  .f-tete img{width:17mm;height:17mm;border-radius:50%;object-fit:cover;border:.5mm solid #1f4e79}
+  .f-tete .t{flex:1;text-align:left}
+  .f-tete .t b{display:block;font-size:15pt;color:#1f4e79}
+  .f-tete .t span{font-size:10.5pt}
+  .f-tete .nom{font-size:10.5pt;text-align:right;line-height:1.9;white-space:nowrap;flex-shrink:0}
+  .f-badge{display:inline-block;background:#c92a2a;color:#fff;font-weight:bold;padding:.5mm 2.5mm;border-radius:2mm;font-size:10pt;margin-left:2mm}
+  .f-grille{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:57mm;gap:3mm}
+  .f-mot{min-width:0;border:.4mm solid #adb5bd;border-radius:3mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2mm;padding:2mm}
+  .f-mot img{width:31mm;height:31mm;object-fit:contain}
+  .f-cases{display:flex;gap:1.8mm;justify-content:center}
+  .f-syl{display:flex;gap:.8mm}
+  .f-case{width:7mm;height:9.5mm;border:.45mm solid #000;border-radius:1mm;display:flex;align-items:center;justify-content:center;font-size:15pt;font-weight:bold}
+  .f-case.m{border-style:dashed;border-color:#868e96}
+  .f-case.g{color:#1f4e79;background:#f1f3f5}
+  .f-case.r{color:#c92a2a}
+  .f-lettres{display:flex;gap:1.6mm;justify-content:center;flex-wrap:wrap}
+  .f-lettres span{border:.35mm solid #868e96;border-radius:1.5mm;padding:0 1.6mm;font-size:13pt;line-height:1.35;background:#fff8e1}
+  .f-ligne{width:72mm;height:11mm;border-bottom:.4mm solid #000;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2.65mm,#cfd8e3 2.65mm,#cfd8e3 2.75mm);font-size:18pt;font-weight:bold;color:#c92a2a;text-align:center;line-height:11mm}
+  .f-pied{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:8.5pt;color:#868e96}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
+<body>
+<div id="km-jeu">
+
+  <!-- ===== Réglages ===== -->
+  <div id="reglages">
+    <h1>🗞️ Le kiosque des mots</h1>
+    <p class="intro">Bonjour ! Je suis Gaston, le vendeur de journaux de la place, à Paris. Pour la une de ma gazette, j'ai besoin de toi : regarde le dessin, <b>écoute le mot</b> et écris-le, <b>une lettre dans chaque case</b>. Extra ! Extra !</p>
+
+    <div class="groupe">
+      <h2>1. Choisis le niveau</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="1" aria-pressed="true">🥐 Niveau 1<small>Mots très courts :<br>chaque lettre s'entend (sac, moto)</small></button>
+        <button data-v="2" aria-pressed="false">☕ Niveau 2<small>Mots plus longs, sons simples<br>(tomate, banane, tapis)</small></button>
+        <button data-v="3" aria-pressed="false">🎩 Niveau 3<small>Sons de deux lettres :<br>ou, on, an, in, ch, eau…</small></button>
+        <button data-v="4" aria-pressed="false">🗼 Niveau 4<small>Mots difficiles : ill, gn, qu,<br>lettres doubles et muettes</small></button>
+        <button data-v="0" aria-pressed="false">🚶 Le grand tour<small>Du plus simple au plus difficile :<br>3 mots de chaque niveau</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Combien de mots ?</h2>
+      <div class="choix" id="choixNb">
+        <button data-v="6" aria-pressed="false">6</button>
+        <button data-v="10" aria-pressed="true">10</button>
+        <button data-v="12" aria-pressed="false">12</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Quelles lettres proposer ?</h2>
+      <div class="choix" id="choixClavier">
+        <button data-v="mot" aria-pressed="true">🔤 Les lettres du mot<small>et quelques intrus</small></button>
+        <button data-v="tout" aria-pressed="false">⌨️ Tout l'alphabet<small>a b c d… é è ê â ç</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>4. Aides et options</h2>
+      <label class="opt"><input type="checkbox" id="optSyl"> Montrer les syllabes (cases groupées en couleur)</label>
+      <label class="opt"><input type="checkbox" id="optMuette" checked> Montrer les lettres muettes (case en pointillés)</label>
+      <label class="opt"><input type="checkbox" id="optDirect"> Corriger chaque lettre tout de suite</label>
+      <label class="opt"><input type="checkbox" id="optCap"> Écrire en CAPITALES</label>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur dit le mot à voix haute</label>
+    </div>
+
+    <button class="go" id="jouer">🗞️ Ouvrir le kiosque</button>
+
+    <div class="groupe papier">
+      <h2>🖨️ Version papier : des fiches à imprimer</h2>
+      <p style="margin:0 0 6px;color:#495057">8 mots par fiche, du niveau choisi (1.), avec les aides cochées (syllabes, lettres muettes, capitales).</p>
+      <label class="opt"><input type="checkbox" id="fi1" checked> Fiche 1 : j'écris le mot dans les cases</label>
+      <label class="opt"><input type="checkbox" id="fi2" checked> Fiche 2 : je remets les lettres dans l'ordre</label>
+      <label class="opt"><input type="checkbox" id="fi3" checked> Fiche 3 : je complète le mot</label>
+      <label class="opt"><input type="checkbox" id="fi4"> Fiche 4 : j'écris le mot sans cases</label>
+      <label class="opt"><input type="checkbox" id="fiCorr" checked> Ajouter le corrigé</label>
+      <br><button class="imp" id="imprimer">🖨️ Imprimer les fiches</button>
+    </div>
+  </div>
+
+  <!-- ===== Partie ===== -->
+  <div id="partie" class="cache">
+    <div id="scene">
+      <div id="haut">
+        <span class="pastille" id="numQ">Mot 1 / 10</span>
+        <span class="pastille" id="score">⭐ 0</span>
+      </div>
+      <svg id="dessin" viewBox="0 0 1600 900" role="img" aria-label="Une place de Paris : Gaston le vendeur de journaux dans son kiosque, la tour Eiffel au fond, une terrasse de café, et la gazette du jour avec le dessin du mot">
+        <image href="/images/kiosque/place.jpg" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
+        <!-- bulle de Gaston -->
+        <g id="bulle" opacity="0">
+          <path d="M390 150h330a26 26 0 0 1 26 26v92a26 26 0 0 1-26 26H470l-62 52 14-52h-32a26 26 0 0 1-26-26v-92a26 26 0 0 1 26-26z" fill="#fffdf6" stroke="#1f4e79" stroke-width="5"/>
+          <text id="bulleTxt" x="555" y="240" text-anchor="middle" font-size="46" font-weight="bold" fill="#c92a2a" font-family="Georgia,serif">Extra ! Extra !</text>
+        </g>
+        <!-- la gazette -->
+        <g id="journal" transform="rotate(-2 1310 455)">
+          <rect x="1086" y="70" width="460" height="770" rx="6" fill="#000" opacity=".25" transform="translate(10 12)"/>
+          <rect x="1086" y="70" width="460" height="770" rx="6" fill="#fbf7ea" stroke="#c9bf9f" stroke-width="3"/>
+          <text x="1316" y="142" text-anchor="middle" font-size="50" font-weight="bold" fill="#1d1d1d" font-family="Georgia,'Times New Roman',serif">La Gazette des mots</text>
+          <line x1="1110" y1="162" x2="1522" y2="162" stroke="#1d1d1d" stroke-width="4"/>
+          <text id="jEdition" x="1316" y="190" text-anchor="middle" font-size="22" fill="#495057" font-family="Georgia,serif" letter-spacing="2">ÉDITION SPÉCIALE — N° 1</text>
+          <line x1="1110" y1="204" x2="1522" y2="204" stroke="#1d1d1d" stroke-width="2"/>
+          <rect x="1151" y="222" width="330" height="330" fill="#fff" stroke="#adb5bd" stroke-width="2"/>
+          <image id="jImage" href="" x="1156" y="227" width="320" height="320" preserveAspectRatio="xMidYMid meet"/>
+          <rect x="1110" y="572" width="412" height="104" rx="6" fill="#fff" stroke="#1d1d1d" stroke-width="3"/>
+          <text id="jTitre" x="1316" y="648" text-anchor="middle" font-size="64" font-weight="bold" fill="#1d3557" font-family="Georgia,'Times New Roman',serif">?</text>
+          <g fill="#adb5bd">
+            <rect x="1110" y="700" width="196" height="9" rx="4"/><rect x="1326" y="700" width="196" height="9" rx="4"/>
+            <rect x="1110" y="724" width="180" height="9" rx="4"/><rect x="1326" y="724" width="170" height="9" rx="4"/>
+            <rect x="1110" y="748" width="196" height="9" rx="4"/><rect x="1326" y="748" width="196" height="9" rx="4"/>
+            <rect x="1110" y="772" width="150" height="9" rx="4"/><rect x="1326" y="772" width="186" height="9" rx="4"/>
+            <rect x="1110" y="796" width="190" height="9" rx="4"/><rect x="1326" y="796" width="120" height="9" rx="4"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div id="consigne"></div>
+    <div id="cases"></div>
+    <div id="clavier"></div>
+    <div id="actions"><button id="valider" disabled>✅ Valider</button></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache" title="Touche → du clavier (ou Entrée)">Mot suivant <kbd>→</kbd></button>
+      <button id="ecouter">🔊 Écouter</button>
+      <button id="lentement">🐢 Lentement</button>
+      <button id="ecran">⛶ Plein écran</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <img src="/images/kiosque/vendeur.jpg" alt="" width="130" height="130" style="display:block;margin:8px auto 0;border-radius:50%;border:4px solid #1f4e79">
+    <div class="grand">🗞️ Extra ! Extra !</div>
+    <div id="finEtoiles"></div>
+    <p id="finScore"></p>
+    <button class="go" id="rejouer">🔁 Rejouer</button>
+    <button class="go cache" id="monter" style="background:#2f9e44">⬆️ Niveau suivant</button>
+    <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
+  </div>
+</div>
+
+<div id="impression"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+/* Les mots : syllabes séparées par « - », lettres muettes entre crochets. i = nom de l'image. */
+const F = "/images/fusees-syllabes/mots/", K = "/images/kiosque/mots/";
+const MOTS = {
+  1: [["sac", K + "sac"], ["bol", K + "bol"], ["ski", K + "ski"], ["ca-fé", K + "cafe"], ["cu-be", K + "cube"], ["mo-to", F + "moto"],
+      ["la-ma", F + "lama"], ["ki-wi", F + "kiwi"], ["lu-ne", F + "lune"], ["vé-lo", F + "velo"], ["bé-bé", F + "bebe"], ["ju-pe", F + "jupe"]],
+  2: [["to-ma-te", F + "tomate"], ["sa-la-de", F + "salade"], ["ba-na-ne", F + "banane"], ["tu-li-pe", F + "tulipe"], ["pi-ra-te", F + "pirate"],
+      ["do-mi-no", F + "domino"], ["la-va-bo", F + "lavabo"], ["ca-na-pé", F + "canape"], ["ta-pi[s]", F + "tapis"], ["ra-di[s]", F + "radis"],
+      ["ro-bo[t]", F + "robot"], ["tor-tu-e", F + "tortue"]],
+  3: [["mou-ton", F + "mouton"], ["la-pin", F + "lapin"], ["bon-bon", F + "bonbon"], ["cha-peau", F + "chapeau"], ["ba-teau", F + "bateau"],
+      ["pois-son", F + "poisson"], ["ca-deau", F + "cadeau"], ["gâ-teau", F + "gateau"], ["sa-pin", F + "sapin"], ["pan-da", F + "panda"],
+      ["bam-bou", F + "bambou"], ["ca-nar[d]", F + "canard"], ["mai-son", F + "maison"], ["ci-tron", F + "citron"], ["mou-lin", F + "moulin"],
+      ["din-don", F + "dindon"], ["cho-co-la[t]", F + "chocolat"], ["cra-yon", F + "crayon"], ["re-quin", F + "requin"], ["dau-phin", F + "dauphin"]],
+  4: [["es-car-go[t]", F + "escargot"], ["per-ro-que[t]", F + "perroquet"], ["é-lé-phan[t]", F + "elephant"], ["cham-pi-gnon", F + "champignon"],
+      ["ci-trouil-le", F + "citrouille"], ["gre-nouil-le", F + "grenouille"], ["é-cu-reuil", F + "ecureuil"], ["pa-pil-lon", F + "papillon"],
+      ["pa-ra-pluie", F + "parapluie"], ["trom-pet-te", F + "trompette"], ["pin-gouin", F + "pingouin"], ["fram-boi-se", F + "framboise"],
+      ["pas-tè-que", F + "pasteque"], ["mous-ti-que", F + "moustique"], ["cas-quet-te", F + "casquette"], ["pou-bel-le", F + "poubelle"],
+      ["ser-pen[t]", F + "serpent"], ["trac-teur", F + "tracteur"], ["ca-rot-te", F + "carotte"], ["poi-reau", F + "poireau"], ["dra-peau", F + "drapeau"]]
+};
+/* Un mot décodé : lettres (avec muette ou non), syllabes, mot entier. */
+function lire(spec) {
+  const [s, img] = spec, syls = [], lettres = [];
+  s.split("-").forEach((sy, k) => {
+    const t = []; let muet = false;
+    for (const c of sy) { if (c === "[") { muet = true; continue; } if (c === "]") { muet = false; continue; } t.push({ c, m: muet, s: k }); lettres.push({ c, m: muet, s: k }); }
+    syls.push(t);
+  });
+  const mot = lettres.map(l => l.c).join("");
+  return { mot, lettres, syls, img: img + ".jpg", dit: syls.map(t => t.filter(l => !l.m).map(l => l.c).join("")) };
+}
+const R_ = { niveau: 1, nb: 10, clavier: "mot", syl: false, muette: true, direct: false, cap: false, voix: true };
+const S = { i: 0, score: 0, liste: [] };
+const hasard = n => Math.floor(Math.random() * n);
+const melange = t => { for (let i = t.length - 1; i > 0; i--) { const j = hasard(i + 1); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+const aff = c => R_.cap ? c.toLocaleUpperCase("fr") : c;
+const ALPHA = "abcdefghijklmnopqrstuvwxyz".split("").concat(["é", "è", "ê", "â", "ç"]);
+const VOISINS = { b: "dp", d: "bt", p: "bq", q: "pg", m: "n", n: "mu", f: "v", v: "f", s: "z", z: "s", t: "d", o: "a", a: "o", u: "n", i: "l", l: "i", c: "k", k: "c", g: "j", j: "g", r: "l", e: "é", "é": "e", "è": "é", "ê": "è", "â": "a", h: "n", w: "v", y: "i", x: "s" };
+
+/* ---------- Réglages ---------- */
+function choix(id, cle, conv) {
+  $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    R_[cle] = conv ? conv(b.dataset.v) : b.dataset.v;
+  }));
+}
+choix("choixNiveau", "niveau", Number); choix("choixNb", "nb", Number); choix("choixClavier", "clavier");
+function lireOptions() {
+  R_.syl = $("optSyl").checked; R_.muette = $("optMuette").checked; R_.direct = $("optDirect").checked;
+  R_.cap = $("optCap").checked; R_.voix = $("optVoix").checked;
+}
+
+/* ---------- Voix ---------- */
+function dire(...phrases) {
+  if (!R_.voix || !("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const voix = speechSynthesis.getVoices().find(v => /^fr/i.test(v.lang));
+    phrases.forEach(p => {
+      const [t, vite] = Array.isArray(p) ? p : [p, .85];
+      const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = vite; if (voix) u.voice = voix;
+      speechSynthesis.speak(u);
+    });
+  } catch (e) {}
+}
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) {}
+function direMot(lent) {
+  const v = R_.voix; R_.voix = true;
+  if (lent) dire(...Q.dit.map(s => [s, .6]), [Q.mot, .75]); else dire(Q.mot);
+  R_.voix = v;
+}
+
+/* ---------- Choix des mots ---------- */
+function tirer(niv, n) {
+  const t = melange(MOTS[niv].slice()).slice(0, n).map(lire);
+  return t.sort((a, b) => a.lettres.length - b.lettres.length);   // du plus court au plus long
+}
+function listePartie() {
+  if (R_.niveau === 0) { const k = Math.max(1, Math.round(R_.nb / 4)); let t = []; [1, 2, 3, 4].forEach(n => t = t.concat(tirer(n, k))); return t.slice(0, Math.max(R_.nb, 4)); }
+  return tirer(R_.niveau, Math.min(R_.nb, MOTS[R_.niveau].length));
+}
+
+/* ---------- Une question ---------- */
+let Q = {}, saisie = [], pos = 0;
+function question() {
+  Q = Object.assign({ err: 0, fini: false, essais: {} }, S.liste[S.i]);
+  saisie = Q.lettres.map(() => ""); pos = 0;
+  $("numQ").textContent = `Mot ${S.i + 1} / ${S.liste.length}`;
+  $("score").textContent = "⭐ " + S.score;
+  $("msg").textContent = ""; $("msg").className = "";
+  $("continuer").classList.add("cache"); $("valider").classList.toggle("cache", R_.direct);
+  $("jImage").setAttribute("href", Q.img); $("jEdition").textContent = "ÉDITION SPÉCIALE — N° " + (S.i + 1);
+  $("bulle").classList.remove("montre"); $("bulle").setAttribute("opacity", "0");
+  const j = $("journal"); j.classList.remove("nouveau"); void j.getBBox(); j.classList.add("nouveau");
+  $("consigne").textContent = `Écris le mot : ${Q.lettres.length} lettre${Q.lettres.length > 1 ? "s" : ""}, une dans chaque case.`;
+  dessineCases(); dessineClavier(); majTitre();
+  setTimeout(() => direMot(false), 350);
+}
+function dessineCases() {
+  const z = $("cases"); z.innerHTML = ""; z.parentElement.classList.toggle("avecSyl", R_.syl);
+  let k = 0;
+  Q.syls.forEach(sy => {
+    const g = document.createElement("div"); g.className = "syl";
+    sy.forEach(l => {
+      const i = k++, c = document.createElement("div");
+      c.className = "case" + (R_.muette && l.m ? " muette" : ""); c.dataset.i = i;
+      c.setAttribute("role", "button"); c.setAttribute("aria-label", `Case ${i + 1}` + (R_.muette && l.m ? " (lettre muette)" : ""));
+      c.addEventListener("click", () => { if (Q.fini) return; pos = i; if (saisie[i] && !c.classList.contains("juste")) { saisie[i] = ""; c.classList.remove("faux"); } majCases(); });
+      g.appendChild(c);
+    });
+    z.appendChild(g);
+  });
+  majCases();
+}
+function majCases() {
+  document.querySelectorAll("#cases .case").forEach((c, i) => {
+    c.textContent = saisie[i] ? aff(saisie[i]) : "";
+    c.classList.toggle("active", !Q.fini && i === pos);
+  });
+  $("valider").disabled = Q.fini || saisie.some(x => !x);
+  majTitre();
+}
+function majTitre() {
+  const t = $("jTitre");
+  const txt = Q.fini ? aff(Q.mot) : saisie.some(x => x) ? saisie.map(x => x ? aff(x) : "_").join(" ") : "?";
+  t.textContent = txt;
+  const n = txt.length; t.setAttribute("font-size", n > 16 ? 34 : n > 12 ? 42 : n > 9 ? 52 : 64);
+  t.setAttribute("fill", Q.fini ? "#2b8a3e" : "#1d3557");
+}
+function dessineClavier() {
+  const z = $("clavier"); z.innerHTML = "";
+  let lettres;
+  if (R_.clavier === "tout") lettres = ALPHA;
+  else {
+    const set = new Set(Q.lettres.map(l => l.c));
+    const intrus = [];
+    [...set].forEach(c => (VOISINS[c] || "").split("").forEach(v => { if (v && !set.has(v)) intrus.push(v); }));
+    melange(intrus); const nb = Math.min(4, Math.max(2, Math.ceil(set.size / 2)));
+    intrus.slice(0, nb).forEach(c => set.add(c));
+    while (set.size < 6) set.add(ALPHA[hasard(26)]);
+    lettres = [...set].sort((a, b) => a.localeCompare(b, "fr"));
+  }
+  lettres.forEach(c => {
+    const b = document.createElement("button"); b.textContent = aff(c); b.dataset.c = c; b.setAttribute("aria-label", "Lettre " + c);
+    b.addEventListener("click", () => taper(c)); z.appendChild(b);
+  });
+  const ef = document.createElement("button"); ef.className = "outil"; ef.textContent = "⌫"; ef.setAttribute("aria-label", "Effacer");
+  ef.addEventListener("click", effacer); z.appendChild(ef);
+}
+
+/* ---------- Saisie ---------- */
+function prochaineVide(depuis) {
+  for (let k = 0; k < saisie.length; k++) { const i = (depuis + k) % saisie.length; if (!saisie[i]) return i; }
+  return -1;
+}
+function taper(c) {
+  if (Q.fini) return;
+  if (pos < 0 || pos >= saisie.length) pos = prochaineVide(0);
+  if (pos < 0) return;
+  const cs = document.querySelectorAll("#cases .case"), cell = cs[pos];
+  if (cell.classList.contains("juste") && saisie[pos]) { pos = prochaineVide(pos); if (pos < 0) return; }
+  if (R_.direct) {
+    if (c !== Q.lettres[pos].c) {
+      Q.err++; Q.essais[pos] = (Q.essais[pos] || 0) + 1;
+      const x = cs[pos]; x.textContent = aff(c); x.classList.add("faux", "secoue");
+      setTimeout(() => { x.classList.remove("faux", "secoue"); majCases(); }, 650);
+      if (Q.essais[pos] >= 3) { // on donne la lettre
+        saisie[pos] = Q.lettres[pos].c; setTimeout(() => { cs[pos].classList.add("donnee"); }, 0);
+        $("msg").className = ""; $("msg").innerHTML = `Voici la lettre : <b>${aff(Q.lettres[pos].c)}</b>.`;
+        pos = prochaineVide(pos); majCases(); if (pos < 0) finir(); return;
+      }
+      $("msg").className = "erreur"; $("msg").textContent = "Écoute bien le mot et essaie une autre lettre.";
+      return;
+    }
+    saisie[pos] = c; cs[pos].classList.add("juste"); $("msg").textContent = "";
+    pos = prochaineVide(pos); majCases(); if (pos < 0) finir();
+    return;
+  }
+  saisie[pos] = c; cell.classList.remove("faux");
+  const n = prochaineVide(pos); pos = n < 0 ? pos : n; majCases();
+}
+function effacer() {
+  if (Q.fini) return;
+  const cs = document.querySelectorAll("#cases .case");
+  let i = pos;
+  if (!saisie[i] || cs[i].classList.contains("juste")) { i = -1; for (let k = saisie.length - 1; k >= 0; k--) if (saisie[k] && !cs[k].classList.contains("juste") && !cs[k].classList.contains("donnee")) { i = k; break; } }
+  if (i < 0) return;
+  saisie[i] = ""; cs[i].classList.remove("faux"); pos = i; majCases();
+}
+
+/* ---------- Correction ---------- */
+$("valider").addEventListener("click", verifier);
+function verifier() {
+  if (Q.fini || saisie.some(x => !x)) return;
+  const cs = document.querySelectorAll("#cases .case");
+  const fautes = Q.lettres.map((l, i) => saisie[i] !== l.c);
+  if (!fautes.some(Boolean)) { finir(); return; }
+  Q.err++;
+  if (Q.err >= 2) {
+    Q.lettres.forEach((l, i) => { if (fautes[i]) { saisie[i] = l.c; cs[i].classList.remove("faux"); cs[i].classList.add("donnee"); } else cs[i].classList.add("juste"); });
+    echec(); return;
+  }
+  fautes.forEach((f, i) => { cs[i].classList.toggle("faux", f); cs[i].classList.toggle("juste", !f); });
+  pos = fautes.indexOf(true); majCases();
+  const n = fautes.filter(Boolean).length;
+  $("msg").className = "erreur";
+  $("msg").textContent = `Presque ! ${n === 1 ? "Une lettre n'est pas la bonne" : n + " lettres ne sont pas les bonnes"} (en rouge). Écoute encore le mot et corrige.`;
+  direMot(true);
+}
+function finir() {
+  Q.fini = true;
+  const premier = Q.err === 0;
+  if (premier) S.score++;
+  document.querySelectorAll("#cases .case").forEach(c => { if (!c.classList.contains("donnee")) c.classList.add("juste"); c.classList.remove("faux"); });
+  $("score").textContent = "⭐ " + S.score; majCases();
+  $("msg").className = "bravo"; $("msg").innerHTML = (premier ? "Bravo, du premier coup ! " : "Bravo ! ") + `Tu as écrit <b>${aff(Q.mot)}</b>.` + astuce();
+  bulle(premier ? "Extra ! Extra !" : "Bravo !");
+  dire([premier ? "Extra ! Extra !" : "Bravo !", 1], Q.mot);
+  suite();
+}
+function echec() {
+  Q.fini = true; majCases();
+  $("msg").className = ""; $("msg").innerHTML = `📖 Le mot s'écrit <b>${aff(Q.mot)}</b> (les lettres en jaune sont celles qu'il fallait).` + astuce();
+  bulle("À la une !");
+  direMot(true); suite();
+}
+function astuce() {
+  const m = Q.lettres.filter(l => l.m).map(l => aff(l.c));
+  return m.length ? ` Attention, ${m.length > 1 ? "les lettres" : "la lettre"} <b>${m.join(", ")}</b> ne s'entend${m.length > 1 ? "ent" : ""} pas !` : "";
+}
+function bulle(t) { $("bulleTxt").textContent = t; const b = $("bulle"); b.setAttribute("opacity", "1"); b.classList.remove("montre"); void b.getBBox(); b.classList.add("montre"); }
+function suite() { $("valider").disabled = true; $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true }); }
+let tSuivant = 0;
+function suivant() {
+  if ($("continuer").classList.contains("cache") || Date.now() - tSuivant < 400) return;
+  tSuivant = Date.now(); S.i++; if (S.i >= S.liste.length) fin(); else question();
+}
+$("continuer").addEventListener("click", suivant);
+
+/* Clavier de l'ordinateur : lettres, ⌫, Entrée = valider, → = mot suivant. */
+document.addEventListener("keydown", e => {
+  if ($("partie").classList.contains("cache") || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (!$("continuer").classList.contains("cache")) {
+    if (["ArrowRight", "PageDown", "Enter", " ", "Spacebar"].includes(e.key) && !e.repeat) { e.preventDefault(); suivant(); }
+    return;
+  }
+  const k = e.key.toLowerCase();
+  if (k.length === 1 && /[a-zàâçéèêëîïôûùü]/.test(k)) { e.preventDefault(); taper(k); }
+  else if (e.key === "Backspace") { e.preventDefault(); effacer(); }
+  else if (e.key === "Enter") { e.preventDefault(); verifier(); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); pos = Math.max(0, pos - 1); majCases(); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); pos = Math.min(saisie.length - 1, pos + 1); majCases(); }
+});
+
+/* ---------- Partie ---------- */
+function demarrer() {
+  lireOptions(); S.i = 0; S.score = 0; S.liste = listePartie();
+  $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+  question(); ajuste();
+}
+function fin() {
+  $("partie").classList.add("cache"); $("fin").classList.remove("cache");
+  const t = S.liste.length, r = S.score / t, et = r >= .9 ? 3 : r >= .6 ? 2 : r > 0 ? 1 : 0;
+  $("finEtoiles").textContent = "⭐".repeat(et) + "☆".repeat(3 - et);
+  $("finScore").textContent = `${S.score} mot${S.score > 1 ? "s" : ""} écrit${S.score > 1 ? "s" : ""} du premier coup sur ${t}.`;
+  $("monter").classList.toggle("cache", !(R_.niveau >= 1 && R_.niveau < 4 && r >= .8));
+  const nom = R_.niveau ? `Niveau ${R_.niveau}` : "Le grand tour";
+  try { TDC.note({ s: S.score, n: t, g: r >= .8, niv: nom, d: `${S.score} / ${t} mots écrits du premier coup (${nom}${R_.syl ? ", avec les syllabes" : ""})` }); } catch (e) {}
+  if (et >= 2) confettis();
+  dire(["Extra ! Extra !", 1], `${S.score} mots écrits du premier coup sur ${t}.`);
+}
+function confettis() {
+  const z = $("km-jeu");
+  for (let k = 0; k < 28; k++) {
+    const c = document.createElement("div"); c.className = "confetti"; c.textContent = ["🗞️", "🥐", "☕", "⭐", "🗼"][k % 5];
+    c.style.left = Math.random() * 100 + "%"; c.style.animationDuration = (2.2 + Math.random() * 2) + "s"; c.style.animationDelay = Math.random() + "s";
+    z.appendChild(c); setTimeout(() => c.remove(), 4500);
+  }
+}
+$("jouer").addEventListener("click", demarrer);
+$("rejouer").addEventListener("click", demarrer);
+$("monter").addEventListener("click", () => {
+  R_.niveau++; $("choixNiveau").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v == R_.niveau)); demarrer();
+});
+$("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("arreter").addEventListener("click", () => { try { speechSynthesis.cancel(); } catch (e) {} $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("ecouter").addEventListener("click", () => direMot(false));
+$("lentement").addEventListener("click", () => direMot(true));
+function ajuste() {
+  const partie = $("partie"), scene = $("scene"); if (partie.classList.contains("cache")) return;
+  const autres = partie.offsetHeight - scene.offsetHeight;
+  const cadre = $("km-jeu"), marge = cadre.offsetHeight - partie.offsetHeight + 6;
+  const h = Math.max(150, window.innerHeight - autres - marge);
+  scene.style.maxWidth = Math.min(cadre.clientWidth, h * 16 / 9) + "px";
+}
+addEventListener("resize", ajuste);
+document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
+try { const ro = new ResizeObserver(() => ajuste()); ["consigne", "cases", "clavier", "actions", "msg"].forEach(id => ro.observe($(id))); ro.observe(document.querySelector("#partie .bas")); } catch (e) {}
+$("ecran").addEventListener("click", () => { const z = $("km-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
+
+/* ---------- Fiches à imprimer ---------- */
+const NOMS_NIV = { 0: "du plus simple au plus difficile", 1: "niveau 1 : mots très courts", 2: "niveau 2 : mots plus longs", 3: "niveau 3 : sons de deux lettres", 4: "niveau 4 : mots difficiles" };
+function motsFiche() {
+  if (R_.niveau === 0) { let t = []; [1, 2, 3, 4].forEach(n => t = t.concat(tirer(n, 2))); return t; }
+  return tirer(R_.niveau, 8);
+}
+function casesHTML(w, quoi, corr) {
+  // quoi : "vide" | "complete" (une lettre sur deux donnée, jamais la muette) ; corr : réponses en rouge
+  if (quoi === "complete" && !w._donnees) {
+    w._donnees = new Set();
+    const idx = w.lettres.map((l, i) => i).filter(i => !w.lettres[i].m);
+    melange(idx).slice(0, Math.max(1, Math.floor(idx.length / 2))).forEach(i => w._donnees.add(i));
+  }
+  const d = quoi === "complete" ? w._donnees : new Set();
+  let k = 0;
+  return `<div class="f-cases">` + w.syls.map(sy => `<div class="f-syl"${R_.syl ? ` style="background:${k % 2 ? "#ffe8cc" : "#d0ebff"};padding:.8mm;border-radius:1.5mm"` : ""}>` + sy.map(l => {
+    const i = k++, cl = "f-case" + (R_.muette && l.m ? " m" : "") + (d.has(i) ? " g" : corr ? " r" : "");
+    return `<div class="${cl}">${d.has(i) || corr ? aff(l.c) : ""}</div>`;
+  }).join("") + `</div>`).join("") + `</div>`;
+}
+function ficheHTML(n, mots, corr) {
+  const titres = { 1: "J'écris le mot dans les cases", 2: "Je remets les lettres dans l'ordre", 3: "Je complète le mot", 4: "J'écris le mot" };
+  const consignes = { 1: "Regarde le dessin, dis le mot dans ta tête et écris une lettre dans chaque case.",
+    2: "Les lettres du mot sont mélangées. Écris-les dans le bon ordre, une dans chaque case.",
+    3: "Des lettres sont déjà écrites. Écris celles qui manquent.",
+    4: "Regarde le dessin et écris le mot sur la ligne." };
+  const cellules = mots.map(w => {
+    let corps;
+    if (n === 4) corps = `<div class="f-ligne">${corr ? aff(w.mot) : ""}</div>`;
+    else if (n === 2) {
+      let m; do { m = melange(w.lettres.map(l => l.c)); } while (m.join("") === w.mot && w.mot.length > 1 && new Set(m).size > 1);
+      corps = `<div class="f-lettres">${(w._melange = w._melange || m).map(c => `<span>${aff(c)}</span>`).join("")}</div>` + casesHTML(w, "vide", corr);
+    }
+    else corps = casesHTML(w, n === 3 ? "complete" : "vide", corr);
+    return `<div class="f-mot"><img src="${w.img}" alt="">${corps}</div>`;
+  }).join("");
+  return `<div class="fiche"><div class="f-tete"><img src="/images/kiosque/vendeur.jpg" alt="">
+    <div class="t"><b>🗞️ Le kiosque des mots — ${titres[n]}${corr ? '<span class="f-badge">CORRIGÉ</span>' : ""}</b><span>${consignes[n]} <i>(${NOMS_NIV[R_.niveau]})</i></span></div>
+    <div class="nom">Prénom : ………………<br>Date : ………………</div></div>
+    <div class="f-grille">${cellules}</div>
+    <div class="f-pied">toujourscap.com — Le kiosque des mots — CC BY-NC-SA 4.0</div></div>`;
+}
+$("imprimer").addEventListener("click", () => {
+  lireOptions();
+  const choisies = [1, 2, 3, 4].filter(n => $("fi" + n).checked);
+  if (!choisies.length) { alert("Coche au moins une fiche."); return; }
+  const pages = [], corriges = [];
+  choisies.forEach(n => { const m = motsFiche(); pages.push(ficheHTML(n, m, false)); corriges.push(ficheHTML(n, m, true)); });
+  const z = $("impression"); z.innerHTML = pages.join("") + ($("fiCorr").checked ? corriges.join("") : "");
+  const imgs = [...z.querySelectorAll("img")];
+  let reste = imgs.length;
+  const go = () => setTimeout(() => window.print(), 150);
+  if (!reste) return go();
+  imgs.forEach(im => { if (im.complete) { if (--reste === 0) go(); } else im.onload = im.onerror = () => { if (--reste === 0) go(); }; });
+});
+</script>
+</body>
+</html>

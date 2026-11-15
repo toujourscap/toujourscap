@@ -1,6 +1,489 @@
 {
- "count": 54,
+ "count": 55,
  "posts": [
+  {
+   "title": "Le kiosque des mots",
+   "slug": "le-kiosque-des-mots",
+   "cat": "etude-langue",
+   "excerpt": "Sur une place de Paris, Gaston le vendeur de journaux prépare la une de sa gazette : l'élève regarde le dessin, écoute le mot et l'écrit, une lettre dans chaque case. Quatre niveaux, du plus simple (sac, moto) au plus difficile (grenouille, champignon), et des fiches à imprimer.",
+   "date": "2026-11-15T20:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "GS",
+     "CP",
+     "CE1"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "imprimable",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Extra ! Extra ! Sur une place de Paris, entre la tour Eiffel et la terrasse du café, Gaston le vendeur de journaux prépare la une de sa « Gazette des mots ». Un dessin apparaît sur le journal et l'ordinateur dit le mot : l'élève l'écrit, une lettre dans chaque case. Au fur et à mesure, ses lettres s'impriment en gros titre sur la gazette.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ce que travaillent les élèves",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "L'encodage de mots : passer de l'oral à l'écrit en faisant correspondre chaque son à une ou plusieurs lettres. Le nombre de cases donne le nombre de lettres, ce qui aide l'élève à contrôler son écriture (« il me reste une case : il manque une lettre ! »).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Quatre niveaux, du plus simple au plus difficile",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 – Mots très courts : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "chaque lettre s'entend (sac, bol, ski, café, moto, lama, vélo, jupe…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 – Mots plus longs, sons simples : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "trois syllabes et les premières lettres muettes (tomate, banane, domino, tapis, robot…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 – Sons de deux lettres : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "ou, on, an, in, ch, oi, ai, au, eau (mouton, lapin, chapeau, poisson, gâteau, dauphin…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 4 – Mots difficiles : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "ill, gn, qu, euil, lettres doubles et muettes (grenouille, champignon, perroquet, éléphant, trompette…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le grand tour : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "quelques mots de chaque niveau, dans l'ordre, du plus simple au plus difficile.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Dans chaque niveau, les mots arrivent du plus court au plus long. Avec 3 étoiles ou presque, le jeu propose de passer au niveau suivant.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau, le nombre de mots (6, 10 ou 12) et les lettres proposées : seulement les lettres du mot avec quelques intrus (b/d, p/q, m/n, f/v…), ou tout l'alphabet avec é, è, ê, â, ç.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le mot est dit à voix haute. Boutons « Écouter » et « Lentement » (syllabe par syllabe).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "L'élève touche les lettres (ou tape au clavier). Il peut toucher une case pour la corriger ; ⌫ efface.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "« Valider » : les lettres justes passent en vert, les autres en rouge, et l'élève corrige. À la deuxième erreur, le jeu montre le mot et signale les lettres muettes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Une étoile par mot écrit du premier coup ; les résultats sont notés dans la tour de contrôle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les aides pour l'enseignant",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Montrer les syllabes : les cases sont groupées par syllabe, en couleurs alternées.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Montrer les lettres muettes : leur case est en pointillés (le s de tapis, le t de chocolat).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Corriger chaque lettre tout de suite : pour les élèves les plus fragiles, une lettre fausse est refusée aussitôt ; au troisième essai, le jeu donne la lettre.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écrire en CAPITALES, voix, plein écran pour projeter en classe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-kiosque-des-mots.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les fiches à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sous les réglages du jeu, le cadre « Version papier » imprime des fiches de 8 mots illustrés, du niveau choisi et avec les mêmes aides (syllabes, lettres muettes, capitales) : fiche 1, j'écris le mot dans les cases ; fiche 2, je remets les lettres dans l'ordre ; fiche 3, je complète le mot (la moitié des lettres est donnée) ; fiche 4, j'écris le mot sur une ligne, sans cases. Les mots changent à chaque impression ; le corrigé peut suivre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Illustrations : Canva.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "Le jour du marché",
    "slug": "le-jour-du-marche",
