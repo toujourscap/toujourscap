@@ -24,6 +24,8 @@
   .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
   .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
   .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#e6f6df}
+  .etapes button{min-width:150px;padding:7px 10px}
+  .etapes button b{display:block;font-size:1.05rem}
   label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
   .cache{display:none!important}
   .go{background:#1f4e79;font-size:1.3rem;padding:14px 30px;margin:4px}
@@ -97,17 +99,17 @@
   .f-tete .t span{font-size:10.5pt}
   .f-tete .nom{font-size:10.5pt;text-align:right;line-height:1.9;white-space:nowrap;flex-shrink:0}
   .f-badge{display:inline-block;background:#c92a2a;color:#fff;font-weight:bold;padding:.5mm 2.5mm;border-radius:2mm;font-size:10pt;margin-left:2mm}
-  .f-grille{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:57mm;gap:3mm}
+  .f-grille{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:76mm;gap:4mm}
   .f-mot{min-width:0;border:.4mm solid #adb5bd;border-radius:3mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2mm;padding:2mm}
-  .f-mot img{width:31mm;height:31mm;object-fit:contain}
+  .f-mot img{width:42mm;height:42mm;object-fit:contain}
   .f-cases{display:flex;gap:1.8mm;justify-content:center}
   .f-syl{display:flex;gap:.8mm}
-  .f-case{width:7mm;height:9.5mm;border:.45mm solid #000;border-radius:1mm;display:flex;align-items:center;justify-content:center;font-size:15pt;font-weight:bold}
+  .f-case{width:8.5mm;height:11mm;border:.45mm solid #000;border-radius:1mm;display:flex;align-items:center;justify-content:center;font-size:17pt;font-weight:bold}
   .f-case.m{border-style:dashed;border-color:#868e96}
   .f-case.g{color:#1f4e79;background:#f1f3f5}
   .f-case.r{color:#c92a2a}
   .f-lettres{display:flex;gap:1.6mm;justify-content:center;flex-wrap:wrap}
-  .f-lettres span{border:.35mm solid #868e96;border-radius:1.5mm;padding:0 1.6mm;font-size:13pt;line-height:1.35;background:#fff8e1}
+  .f-lettres span{border:.35mm solid #868e96;border-radius:1.5mm;padding:0 2mm;font-size:15pt;line-height:1.35;background:#fff8e1}
   .f-ligne{width:72mm;height:11mm;border-bottom:.4mm solid #000;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2.65mm,#cfd8e3 2.65mm,#cfd8e3 2.75mm);font-size:18pt;font-weight:bold;color:#c92a2a;text-align:center;line-height:11mm}
   .f-pied{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:8.5pt;color:#868e96}
 </style>
@@ -121,27 +123,13 @@
     <p class="intro">Bonjour ! Je suis Gaston, le vendeur de journaux de la place, à Paris. Pour la une de ma gazette, j'ai besoin de toi : regarde le dessin, <b>écoute le mot</b> et écris-le, <b>une lettre dans chaque case</b>. Extra ! Extra !</p>
 
     <div class="groupe">
-      <h2>1. Choisis le niveau</h2>
-      <div class="choix" id="choixNiveau">
-        <button data-v="1" aria-pressed="true">🥐 Niveau 1<small>Mots très courts :<br>chaque lettre s'entend (sac, moto)</small></button>
-        <button data-v="2" aria-pressed="false">☕ Niveau 2<small>Mots plus longs, sons simples<br>(tomate, banane, tapis)</small></button>
-        <button data-v="3" aria-pressed="false">🎩 Niveau 3<small>Sons de deux lettres :<br>ou, on, an, in, ch, eau…</small></button>
-        <button data-v="4" aria-pressed="false">🗼 Niveau 4<small>Mots difficiles : ill, gn, qu,<br>lettres doubles et muettes</small></button>
-        <button data-v="0" aria-pressed="false">🚶 Le grand tour<small>Du plus simple au plus difficile :<br>3 mots de chaque niveau</small></button>
-      </div>
+      <h2>1. Choisis l'étape</h2>
+      <div class="choix etapes" id="choixNiveau"></div>
+      <p id="etapeMots" style="margin:8px 0 0;color:#495057"></p>
     </div>
 
     <div class="groupe">
-      <h2>2. Combien de mots ?</h2>
-      <div class="choix" id="choixNb">
-        <button data-v="6" aria-pressed="false">6</button>
-        <button data-v="10" aria-pressed="true">10</button>
-        <button data-v="12" aria-pressed="false">12</button>
-      </div>
-    </div>
-
-    <div class="groupe">
-      <h2>3. Quelles lettres proposer ?</h2>
+      <h2>2. Quelles lettres proposer ?</h2>
       <div class="choix" id="choixClavier">
         <button data-v="mot" aria-pressed="true">🔤 Les lettres du mot<small>et quelques intrus</small></button>
         <button data-v="tout" aria-pressed="false">⌨️ Tout l'alphabet<small>a b c d… é è ê â ç</small></button>
@@ -149,7 +137,7 @@
     </div>
 
     <div class="groupe">
-      <h2>4. Aides et options</h2>
+      <h2>3. Aides et options</h2>
       <label class="opt"><input type="checkbox" id="optSyl"> Montrer les syllabes (cases groupées en couleur)</label>
       <label class="opt"><input type="checkbox" id="optMuette" checked> Montrer les lettres muettes (case en pointillés)</label>
       <label class="opt"><input type="checkbox" id="optDirect"> Corriger chaque lettre tout de suite</label>
@@ -161,13 +149,16 @@
 
     <div class="groupe papier">
       <h2>🖨️ Version papier : des fiches à imprimer</h2>
-      <p style="margin:0 0 6px;color:#495057">8 mots par fiche, du niveau choisi (1.), avec les aides cochées (syllabes, lettres muettes, capitales).</p>
-      <label class="opt"><input type="checkbox" id="fi1" checked> Fiche 1 : j'écris le mot dans les cases</label>
-      <label class="opt"><input type="checkbox" id="fi2" checked> Fiche 2 : je remets les lettres dans l'ordre</label>
-      <label class="opt"><input type="checkbox" id="fi3" checked> Fiche 3 : je complète le mot</label>
-      <label class="opt"><input type="checkbox" id="fi4"> Fiche 4 : j'écris le mot sans cases</label>
+      <p style="margin:0 0 6px;color:#495057">Une fiche par étape : les 6 mots illustrés de l'étape, avec les aides cochées (syllabes, lettres muettes, capitales).</p>
+      <div class="choix" id="choixFiche">
+        <button data-v="1" aria-pressed="true">✏️ Cases vides<small>j'écris le mot</small></button>
+        <button data-v="2" aria-pressed="false">🔀 Lettres mélangées<small>je les remets dans l'ordre</small></button>
+        <button data-v="3" aria-pressed="false">🧩 À compléter<small>des lettres sont données</small></button>
+        <button data-v="4" aria-pressed="false">📝 Sur une ligne<small>sans cases</small></button>
+      </div>
       <label class="opt"><input type="checkbox" id="fiCorr" checked> Ajouter le corrigé</label>
-      <br><button class="imp" id="imprimer">🖨️ Imprimer les fiches</button>
+      <br><button class="imp" id="imprimer">🖨️ Imprimer la fiche de l'étape choisie</button>
+      <button class="imp" id="imprimer10" style="background:#1f4e79">🖨️ Imprimer les 10 fiches (étapes 1 à 10)</button>
     </div>
   </div>
 
@@ -227,7 +218,7 @@
     <div id="finEtoiles"></div>
     <p id="finScore"></p>
     <button class="go" id="rejouer">🔁 Rejouer</button>
-    <button class="go cache" id="monter" style="background:#2f9e44">⬆️ Niveau suivant</button>
+    <button class="go cache" id="monter" style="background:#2f9e44">⬆️ Étape suivante</button>
     <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
   </div>
 </div>
@@ -236,24 +227,20 @@
 
 <script>
 const $ = id => document.getElementById(id);
-/* Les mots : syllabes séparées par « - », lettres muettes entre crochets. i = nom de l'image. */
+/* Les 10 étapes, du plus simple au plus difficile : syllabes séparées par « - », lettres muettes entre crochets, puis l'image. */
 const F = "/images/fusees-syllabes/mots/", K = "/images/kiosque/mots/";
-const MOTS = {
-  1: [["sac", K + "sac"], ["bol", K + "bol"], ["ski", K + "ski"], ["ca-fé", K + "cafe"], ["cu-be", K + "cube"], ["mo-to", F + "moto"],
-      ["la-ma", F + "lama"], ["ki-wi", F + "kiwi"], ["lu-ne", F + "lune"], ["vé-lo", F + "velo"], ["bé-bé", F + "bebe"], ["ju-pe", F + "jupe"]],
-  2: [["to-ma-te", F + "tomate"], ["sa-la-de", F + "salade"], ["ba-na-ne", F + "banane"], ["tu-li-pe", F + "tulipe"], ["pi-ra-te", F + "pirate"],
-      ["do-mi-no", F + "domino"], ["la-va-bo", F + "lavabo"], ["ca-na-pé", F + "canape"], ["ta-pi[s]", F + "tapis"], ["ra-di[s]", F + "radis"],
-      ["ro-bo[t]", F + "robot"], ["tor-tu-e", F + "tortue"]],
-  3: [["mou-ton", F + "mouton"], ["la-pin", F + "lapin"], ["bon-bon", F + "bonbon"], ["cha-peau", F + "chapeau"], ["ba-teau", F + "bateau"],
-      ["pois-son", F + "poisson"], ["ca-deau", F + "cadeau"], ["gâ-teau", F + "gateau"], ["sa-pin", F + "sapin"], ["pan-da", F + "panda"],
-      ["bam-bou", F + "bambou"], ["ca-nar[d]", F + "canard"], ["mai-son", F + "maison"], ["ci-tron", F + "citron"], ["mou-lin", F + "moulin"],
-      ["din-don", F + "dindon"], ["cho-co-la[t]", F + "chocolat"], ["cra-yon", F + "crayon"], ["re-quin", F + "requin"], ["dau-phin", F + "dauphin"]],
-  4: [["es-car-go[t]", F + "escargot"], ["per-ro-que[t]", F + "perroquet"], ["é-lé-phan[t]", F + "elephant"], ["cham-pi-gnon", F + "champignon"],
-      ["ci-trouil-le", F + "citrouille"], ["gre-nouil-le", F + "grenouille"], ["é-cu-reuil", F + "ecureuil"], ["pa-pil-lon", F + "papillon"],
-      ["pa-ra-pluie", F + "parapluie"], ["trom-pet-te", F + "trompette"], ["pin-gouin", F + "pingouin"], ["fram-boi-se", F + "framboise"],
-      ["pas-tè-que", F + "pasteque"], ["mous-ti-que", F + "moustique"], ["cas-quet-te", F + "casquette"], ["pou-bel-le", F + "poubelle"],
-      ["ser-pen[t]", F + "serpent"], ["trac-teur", F + "tracteur"], ["ca-rot-te", F + "carotte"], ["poi-reau", F + "poireau"], ["dra-peau", F + "drapeau"]]
-};
+const ETAPES = [
+  { t: "Une syllabe", d: "a, i, o, u", m: [["sac", K + "sac.jpg"], ["bol", K + "bol.jpg"], ["ski", K + "ski.jpg"], ["bus", K + "bus.jpg"], ["fil", K + "fil.jpg"], ["lac", K + "lac.jpg"]] },
+  { t: "Deux syllabes", d: "a, i, o, u", m: [["mo-to", F + "moto.jpg"], ["la-ma", F + "lama.jpg"], ["ki-wi", F + "kiwi.jpg"], ["pu-ma", K + "puma.jpg"], ["do-mi-no", F + "domino.jpg"], ["la-va-bo", F + "lavabo.jpg"]] },
+  { t: "Un e à la fin", d: "lune, jupe…", m: [["lu-ne", F + "lune.jpg"], ["ju-pe", F + "jupe.jpg"], ["cu-be", K + "cube.jpg"], ["tu-li-pe", F + "tulipe.jpg"], ["to-ma-te", F + "tomate.jpg"], ["sa-la-de", F + "salade.jpg"]] },
+  { t: "Avec é", d: "vélo, bébé…", m: [["dé", K + "de.jpg"], ["vé-lo", F + "velo.jpg"], ["bé-bé", F + "bebe.jpg"], ["ca-fé", K + "cafe.jpg"], ["é-pée", K + "epee.jpg"], ["ca-na-pé", F + "canape.jpg"]] },
+  { t: "Lettres muettes, lettres doubles", d: "tapis, pomme…", m: [["ta-pi[s]", F + "tapis.jpg"], ["ra-di[s]", F + "radis.jpg"], ["ro-bo[t]", F + "robot.jpg"], ["pom-me", "/images/jumeaux/pomme.png"], ["piz-za", "/images/pizzeria/pizza.jpg"], ["ca-rot-te", F + "carotte.jpg"]] },
+  { t: "Mots plus longs", d: "sons simples", m: [["vis", K + "vis.jpg"], ["cac-tus", K + "cactus.jpg"], ["ba-na-ne", F + "banane.jpg"], ["pi-ra-te", F + "pirate.jpg"], ["tor-tu-e", F + "tortue.jpg"], ["gi-ra-fe", F + "girafe.jpg"]] },
+  { t: "ou, on", d: "mouton, bonbon…", m: [["lou[p]", "/images/maison-de-briques/loup.png"], ["lou-pe", F + "loupe.jpg"], ["bam-bou", F + "bambou.jpg"], ["bon-bon", F + "bonbon.jpg"], ["mou-ton", F + "mouton.jpg"], ["ci-tron", F + "citron.jpg"]] },
+  { t: "an, en, in", d: "panda, lapin…", m: [["pan-da", F + "panda.jpg"], ["la-pin", F + "lapin.jpg"], ["sa-pin", F + "sapin.jpg"], ["din-don", F + "dindon.jpg"], ["mou-lin", F + "moulin.jpg"], ["ser-pen[t]", F + "serpent.jpg"]] },
+  { t: "oi, ch, ai, eau", d: "poisson, chapeau…", m: [["cou-teau", F + "couteau.jpg"], ["mai-son", F + "maison.jpg"], ["pois-son", F + "poisson.jpg"], ["ba-teau", F + "bateau.jpg"], ["ca-deau", F + "cadeau.jpg"], ["cha-peau", F + "chapeau.jpg"]] },
+  { t: "Les plus difficiles", d: "ill, gn, qu…", m: [["es-car-go[t]", F + "escargot.jpg"], ["pa-pil-lon", F + "papillon.jpg"], ["per-ro-que[t]", F + "perroquet.jpg"], ["é-lé-phan[t]", F + "elephant.jpg"], ["gre-nouil-le", F + "grenouille.jpg"], ["cham-pi-gnon", F + "champignon.jpg"]] }
+];
 /* Un mot décodé : lettres (avec muette ou non), syllabes, mot entier. */
 function lire(spec) {
   const [s, img] = spec, syls = [], lettres = [];
@@ -263,9 +250,9 @@ function lire(spec) {
     syls.push(t);
   });
   const mot = lettres.map(l => l.c).join("");
-  return { mot, lettres, syls, img: img + ".jpg", dit: syls.map(t => t.filter(l => !l.m).map(l => l.c).join("")) };
+  return { mot, lettres, syls, img, dit: syls.map(t => t.filter(l => !l.m).map(l => l.c).join("")) };
 }
-const R_ = { niveau: 1, nb: 10, clavier: "mot", syl: false, muette: true, direct: false, cap: false, voix: true };
+const R_ = { niveau: 1, clavier: "mot", syl: false, muette: true, direct: false, cap: false, voix: true };
 const S = { i: 0, score: 0, liste: [] };
 const hasard = n => Math.floor(Math.random() * n);
 const melange = t => { for (let i = t.length - 1; i > 0; i--) { const j = hasard(i + 1); [t[i], t[j]] = [t[j], t[i]]; } return t; };
@@ -280,7 +267,18 @@ function choix(id, cle, conv) {
     R_[cle] = conv ? conv(b.dataset.v) : b.dataset.v;
   }));
 }
-choix("choixNiveau", "niveau", Number); choix("choixNb", "nb", Number); choix("choixClavier", "clavier");
+ETAPES.forEach((e, k) => {
+  const b = document.createElement("button"); b.dataset.v = k + 1; b.setAttribute("aria-pressed", k === 0);
+  b.innerHTML = `<b>Étape ${k + 1}</b>${e.t}<small>${e.d}</small>`; $("choixNiveau").appendChild(b);
+});
+const b0 = document.createElement("button"); b0.dataset.v = 0; b0.setAttribute("aria-pressed", "false");
+b0.innerHTML = "<b>🚶 Le grand tour</b>un mot de chaque étape<small>du plus simple au plus dur</small>"; $("choixNiveau").appendChild(b0);
+R_.fiche = 1;
+choix("choixNiveau", "niveau", Number); choix("choixClavier", "clavier"); choix("choixFiche", "fiche", Number);
+function montreMots() {
+  $("etapeMots").innerHTML = R_.niveau ? "Les mots : <b>" + ETAPES[R_.niveau - 1].m.map(w => lire(w).mot).join(", ") + "</b>" : "Un mot au hasard de chaque étape, de l'étape 1 à l'étape 10.";
+}
+$("choixNiveau").addEventListener("click", () => setTimeout(montreMots, 0)); montreMots();
 function lireOptions() {
   R_.syl = $("optSyl").checked; R_.muette = $("optMuette").checked; R_.direct = $("optDirect").checked;
   R_.cap = $("optCap").checked; R_.voix = $("optVoix").checked;
@@ -307,13 +305,12 @@ function direMot(lent) {
 }
 
 /* ---------- Choix des mots ---------- */
-function tirer(niv, n) {
-  const t = melange(MOTS[niv].slice()).slice(0, n).map(lire);
-  return t.sort((a, b) => a.lettres.length - b.lettres.length);   // du plus court au plus long
+function tirer(niv) {
+  return melange(ETAPES[niv - 1].m.map(lire)).sort((a, b) => a.lettres.length - b.lettres.length);   // du plus court au plus long
 }
 function listePartie() {
-  if (R_.niveau === 0) { const k = Math.max(1, Math.round(R_.nb / 4)); let t = []; [1, 2, 3, 4].forEach(n => t = t.concat(tirer(n, k))); return t.slice(0, Math.max(R_.nb, 4)); }
-  return tirer(R_.niveau, Math.min(R_.nb, MOTS[R_.niveau].length));
+  if (R_.niveau === 0) return ETAPES.map(e => lire(e.m[hasard(e.m.length)]));
+  return tirer(R_.niveau);
 }
 
 /* ---------- Une question ---------- */
@@ -499,8 +496,8 @@ function fin() {
   const t = S.liste.length, r = S.score / t, et = r >= .9 ? 3 : r >= .6 ? 2 : r > 0 ? 1 : 0;
   $("finEtoiles").textContent = "⭐".repeat(et) + "☆".repeat(3 - et);
   $("finScore").textContent = `${S.score} mot${S.score > 1 ? "s" : ""} écrit${S.score > 1 ? "s" : ""} du premier coup sur ${t}.`;
-  $("monter").classList.toggle("cache", !(R_.niveau >= 1 && R_.niveau < 4 && r >= .8));
-  const nom = R_.niveau ? `Niveau ${R_.niveau}` : "Le grand tour";
+  $("monter").classList.toggle("cache", !(R_.niveau >= 1 && R_.niveau < 10 && r >= .8));
+  const nom = R_.niveau ? `Étape ${R_.niveau} (${ETAPES[R_.niveau - 1].t})` : "Le grand tour";
   try { TDC.note({ s: S.score, n: t, g: r >= .8, niv: nom, d: `${S.score} / ${t} mots écrits du premier coup (${nom}${R_.syl ? ", avec les syllabes" : ""})` }); } catch (e) {}
   if (et >= 2) confettis();
   dire(["Extra ! Extra !", 1], `${S.score} mots écrits du premier coup sur ${t}.`);
@@ -516,7 +513,7 @@ function confettis() {
 $("jouer").addEventListener("click", demarrer);
 $("rejouer").addEventListener("click", demarrer);
 $("monter").addEventListener("click", () => {
-  R_.niveau++; $("choixNiveau").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v == R_.niveau)); demarrer();
+  R_.niveau++; $("choixNiveau").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v == R_.niveau)); montreMots(); demarrer();
 });
 $("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("reglages").classList.remove("cache"); });
 $("arreter").addEventListener("click", () => { try { speechSynthesis.cancel(); } catch (e) {} $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
@@ -535,11 +532,6 @@ try { const ro = new ResizeObserver(() => ajuste()); ["consigne", "cases", "clav
 $("ecran").addEventListener("click", () => { const z = $("km-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
 
 /* ---------- Fiches à imprimer ---------- */
-const NOMS_NIV = { 0: "du plus simple au plus difficile", 1: "niveau 1 : mots très courts", 2: "niveau 2 : mots plus longs", 3: "niveau 3 : sons de deux lettres", 4: "niveau 4 : mots difficiles" };
-function motsFiche() {
-  if (R_.niveau === 0) { let t = []; [1, 2, 3, 4].forEach(n => t = t.concat(tirer(n, 2))); return t; }
-  return tirer(R_.niveau, 8);
-}
 function casesHTML(w, quoi, corr) {
   // quoi : "vide" | "complete" (une lettre sur deux donnée, jamais la muette) ; corr : réponses en rouge
   if (quoi === "complete" && !w._donnees) {
@@ -554,7 +546,7 @@ function casesHTML(w, quoi, corr) {
     return `<div class="${cl}">${d.has(i) || corr ? aff(l.c) : ""}</div>`;
   }).join("") + `</div>`).join("") + `</div>`;
 }
-function ficheHTML(n, mots, corr) {
+function ficheHTML(n, etape, mots, corr) {
   const titres = { 1: "J'écris le mot dans les cases", 2: "Je remets les lettres dans l'ordre", 3: "Je complète le mot", 4: "J'écris le mot" };
   const consignes = { 1: "Regarde le dessin, dis le mot dans ta tête et écris une lettre dans chaque case.",
     2: "Les lettres du mot sont mélangées. Écris-les dans le bon ordre, une dans chaque case.",
@@ -571,24 +563,24 @@ function ficheHTML(n, mots, corr) {
     return `<div class="f-mot"><img src="${w.img}" alt="">${corps}</div>`;
   }).join("");
   return `<div class="fiche"><div class="f-tete"><img src="/images/kiosque/vendeur.jpg" alt="">
-    <div class="t"><b>🗞️ Le kiosque des mots — ${titres[n]}${corr ? '<span class="f-badge">CORRIGÉ</span>' : ""}</b><span>${consignes[n]} <i>(${NOMS_NIV[R_.niveau]})</i></span></div>
+    <div class="t"><b>🗞️ Le kiosque des mots — Étape ${etape} — ${titres[n]}${corr ? '<span class="f-badge">CORRIGÉ</span>' : ""}</b><span>${consignes[n]} <i>(étape ${etape} : ${ETAPES[etape - 1].t.toLowerCase()})</i></span></div>
     <div class="nom">Prénom : ………………<br>Date : ………………</div></div>
     <div class="f-grille">${cellules}</div>
     <div class="f-pied">toujourscap.com — Le kiosque des mots — CC BY-NC-SA 4.0</div></div>`;
 }
-$("imprimer").addEventListener("click", () => {
+function imprimer(etapes) {
   lireOptions();
-  const choisies = [1, 2, 3, 4].filter(n => $("fi" + n).checked);
-  if (!choisies.length) { alert("Coche au moins une fiche."); return; }
-  const pages = [], corriges = [];
-  choisies.forEach(n => { const m = motsFiche(); pages.push(ficheHTML(n, m, false)); corriges.push(ficheHTML(n, m, true)); });
+  const n = R_.fiche, pages = [], corriges = [];
+  etapes.forEach(e => { const m = ETAPES[e - 1].m.map(lire); pages.push(ficheHTML(n, e, m, false)); corriges.push(ficheHTML(n, e, m, true)); });
   const z = $("impression"); z.innerHTML = pages.join("") + ($("fiCorr").checked ? corriges.join("") : "");
   const imgs = [...z.querySelectorAll("img")];
   let reste = imgs.length;
   const go = () => setTimeout(() => window.print(), 150);
   if (!reste) return go();
   imgs.forEach(im => { if (im.complete) { if (--reste === 0) go(); } else im.onload = im.onerror = () => { if (--reste === 0) go(); }; });
-});
+}
+$("imprimer").addEventListener("click", () => imprimer(R_.niveau ? [R_.niveau] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
+$("imprimer10").addEventListener("click", () => imprimer([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 </script>
 </body>
 </html>

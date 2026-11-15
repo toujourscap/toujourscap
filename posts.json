@@ -5,7 +5,7 @@
    "title": "Le kiosque des mots",
    "slug": "le-kiosque-des-mots",
    "cat": "etude-langue",
-   "excerpt": "Sur une place de Paris, Gaston le vendeur de journaux prépare la une de sa gazette : l'élève regarde le dessin, écoute le mot et l'écrit, une lettre dans chaque case. Quatre niveaux, du plus simple (sac, moto) au plus difficile (grenouille, champignon), et des fiches à imprimer.",
+   "excerpt": "Sur une place de Paris, Gaston le vendeur de journaux prépare la une de sa gazette : l'élève regarde le dessin, écoute le mot et l'écrit, une lettre dans chaque case. 10 étapes, des mots les plus simples (sac, bol, moto) aux plus difficiles (grenouille, champignon), et 10 fiches à imprimer.",
    "date": "2026-11-15T20:30:00.000Z",
    "categoryIds": [],
    "media": {
@@ -75,7 +75,19 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Quatre niveaux, du plus simple au plus difficile",
+         "text": "10 étapes, du plus simple au plus difficile",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les premières étapes n'ont que des sons simples : une lettre = un son, avec seulement a, i, o, u, puis le e final et le é. Les sons de deux lettres (ou, on, an, in, oi, ch, eau…) n'arrivent qu'à partir de l'étape 7.",
          "decorations": []
         }
        }
@@ -93,7 +105,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 1 – Mots très courts : ",
+             "text": "Étape 1 – une syllabe : ",
              "decorations": [
               {
                "type": "BOLD"
@@ -104,7 +116,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "chaque lettre s'entend (sac, bol, ski, café, moto, lama, vélo, jupe…).",
+             "text": "sac, bol, ski, bus, fil, lac.",
              "decorations": []
             }
            }
@@ -121,7 +133,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 2 – Mots plus longs, sons simples : ",
+             "text": "Étape 2 – deux syllabes : ",
              "decorations": [
               {
                "type": "BOLD"
@@ -132,7 +144,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "trois syllabes et les premières lettres muettes (tomate, banane, domino, tapis, robot…).",
+             "text": "moto, lama, kiwi, puma, domino, lavabo.",
              "decorations": []
             }
            }
@@ -149,7 +161,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 3 – Sons de deux lettres : ",
+             "text": "Étape 3 – un e à la fin : ",
              "decorations": [
               {
                "type": "BOLD"
@@ -160,7 +172,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "ou, on, an, in, ch, oi, ai, au, eau (mouton, lapin, chapeau, poisson, gâteau, dauphin…).",
+             "text": "lune, jupe, cube, tulipe, tomate, salade.",
              "decorations": []
             }
            }
@@ -177,7 +189,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Niveau 4 – Mots difficiles : ",
+             "text": "Étape 4 – avec é : ",
              "decorations": [
               {
                "type": "BOLD"
@@ -188,7 +200,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "ill, gn, qu, euil, lettres doubles et muettes (grenouille, champignon, perroquet, éléphant, trompette…).",
+             "text": "dé, vélo, bébé, café, épée, canapé.",
              "decorations": []
             }
            }
@@ -205,7 +217,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le grand tour : ",
+             "text": "Étape 5 – lettres muettes, lettres doubles : ",
              "decorations": [
               {
                "type": "BOLD"
@@ -216,7 +228,147 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "quelques mots de chaque niveau, dans l'ordre, du plus simple au plus difficile.",
+             "text": "tapis, radis, robot, pomme, pizza, carotte.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Étape 6 – mots plus longs : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "vis, cactus, banane, pirate, tortue, girafe.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Étape 7 – ou, on : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "loup, loupe, bambou, bonbon, mouton, citron.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Étape 8 – an, en, in : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "panda, lapin, sapin, dindon, moulin, serpent.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Étape 9 – oi, ch, ai, eau : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "maison, poisson, bateau, cadeau, couteau, chapeau.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Étape 10 – les plus difficiles : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "escargot, papillon, perroquet, éléphant, grenouille, champignon.",
              "decorations": []
             }
            }
@@ -232,7 +384,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Dans chaque niveau, les mots arrivent du plus court au plus long. Avec 3 étoiles ou presque, le jeu propose de passer au niveau suivant.",
+         "text": "Chaque étape a 6 mots illustrés, du plus court au plus long. Avec presque tout juste, le jeu propose l'étape suivante. « Le grand tour » prend un mot de chaque étape.",
          "decorations": []
         }
        }
@@ -265,7 +417,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Choisir le niveau, le nombre de mots (6, 10 ou 12) et les lettres proposées : seulement les lettres du mot avec quelques intrus (b/d, p/q, m/n, f/v…), ou tout l'alphabet avec é, è, ê, â, ç.",
+             "text": "Choisir l'étape et les lettres proposées : seulement les lettres du mot avec quelques intrus (b/d, p/q, m/n, f/v…), ou tout l'alphabet avec é, è, ê, â, ç.",
              "decorations": []
             }
            }
@@ -463,7 +615,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Sous les réglages du jeu, le cadre « Version papier » imprime des fiches de 8 mots illustrés, du niveau choisi et avec les mêmes aides (syllabes, lettres muettes, capitales) : fiche 1, j'écris le mot dans les cases ; fiche 2, je remets les lettres dans l'ordre ; fiche 3, je complète le mot (la moitié des lettres est donnée) ; fiche 4, j'écris le mot sur une ligne, sans cases. Les mots changent à chaque impression ; le corrigé peut suivre.",
+         "text": "Sous les réglages du jeu, le cadre « Version papier » imprime une fiche par étape, avec les 6 mots illustrés de l'étape : soit la fiche de l'étape choisie, soit les 10 fiches d'un coup (étapes 1 à 10), avec leur corrigé. Quatre présentations au choix : cases vides, lettres mélangées à remettre dans l'ordre, mot à compléter (la moitié des lettres est donnée), ou mot à écrire sur une ligne, sans cases. Les aides cochées (syllabes, lettres muettes, capitales) s'appliquent aussi aux fiches.",
          "decorations": []
         }
        }
