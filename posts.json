@@ -1,6 +1,298 @@
 {
- "count": 55,
+ "count": 56,
  "posts": [
+  {
+   "title": "L'atelier des barres",
+   "slug": "l-atelier-des-barres",
+   "cat": "calcul",
+   "excerpt": "Additionner et soustraire des dizaines et des centaines entières en manipulant le matériel à l'écran : barres de 10 et plaques de 100, échanges (10 barres = 1 plaque), intervalle de nombres au choix. Du CP au CE2.",
+   "date": "2026-11-16T10:30:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": ["addition", "soustraction"],
+    "niveaux": ["CP", "CE1", "CE2"],
+    "joueurs": "1 joueur ou la classe",
+    "supports": ["ecran", "projetable"]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "340 + 250 ? Avec le matériel de numération, c'est facile : une barre vaut 10, une plaque vaut 100. L'élève pose les plaques et les barres, les ajoute ou les enlève, puis compte : 5 plaques et 9 barres, c'est 590. Dix barres font une plaque !",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 3 niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 1 – Les dizaines (CP – CE1) : 30 + 40, 80 − 50, jusqu'à 100. On manipule les barres.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 2 – Les centaines (CE1) : 300 + 400, 900 − 600, jusqu'à 1 000. On manipule les plaques.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 3 – Dizaines et centaines (CE1 – CE2) : 340 + 250, 760 − 30, 590 − 400… On manipule les deux.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau, les calculs (additions, soustractions ou les deux), l'intervalle des nombres (par exemple de 100 à 500) et le nombre de calculs (10, 15 ou 20).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le premier nombre est posé sur le plateau. Pour une addition, l'élève touche (ou fait glisser) « + 1 plaque » et « + 1 barre » : ce qu'il ajoute est entouré de vert. Pour une soustraction, il touche les plaques et les barres à enlever.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Il compte ce qui reste sur le plateau et écrit le résultat avec le pavé de chiffres (ou le clavier).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Erreur : une aide s'affiche selon ce qui est sur le plateau (« Tu as ajouté 240, mais il fallait ajouter 250 »). À la deuxième erreur, le jeu montre la bonne réponse et l'explique.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Options",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Avec des échanges : 10 barres contre 1 plaque (270 + 50) et casser une plaque en 10 barres (320 − 50). Sans cette option, aucun calcul ne demande d'échange.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Intervalle des nombres : le premier nombre et le résultat restent dans l'intervalle choisi.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Afficher combien il y a de plaques et de barres, pour les élèves qui ont du mal à compter le matériel.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Lecture du calcul à voix haute, bouton « Réécouter », plein écran pour projeter en classe. Les résultats sont notés dans la tour de contrôle.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/l-atelier-des-barres.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "Le kiosque des mots",
    "slug": "le-kiosque-des-mots",

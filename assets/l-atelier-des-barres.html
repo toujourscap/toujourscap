@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'atelier des barres : additions et soustractions de dizaines et centaines entières</title>
+<!-- Matériel de numération dessiné en CSS : barre = 1 dizaine (10 cubes), plaque = 1 centaine (10 barres). -->
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;background:transparent}
+  #ab-jeu{--u:8px;background:#f4f8ff;border:2px solid #b9cdf0;border-radius:12px;padding:14px;max-width:1100px;margin:0 auto;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.1);position:relative;overflow:hidden;user-select:none;-webkit-user-select:none}
+  #ab-jeu:fullscreen{max-width:none;border-radius:0;overflow:auto;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:1.5rem;margin:2px 0 6px;color:#1c4fa1}
+  .intro{margin:0 auto 12px;max-width:780px;color:#495057;font-size:1rem}
+  h2{font-size:1.05rem;margin:4px 0 8px;color:#495057}
+  .groupe{background:#e3ecfb;border-radius:8px;padding:12px;margin-bottom:12px}
+  .choix{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{padding:12px 22px;font-size:1.1rem;cursor:pointer;border:none;border-radius:8px;color:#fff;font-weight:bold;transition:opacity .2s,transform .1s;font-family:inherit}
+  button:hover{opacity:.92} button:active{transform:scale(.97)}
+  button:disabled{opacity:.4;cursor:default}
+  .choix button{background:#fff;color:#212529;border:2px solid #ced4da;font-weight:600;padding:9px 14px;font-size:1rem}
+  .choix button small{display:block;font-weight:400;font-size:.8rem;color:#6c757d}
+  .choix button[aria-pressed="true"]{border-color:#2f9e44;background:#e6f6df}
+  input.nombre{width:5.2em;font-size:1.15rem;font-family:inherit;font-weight:bold;padding:5px 6px;border:2px solid #1c64d8;border-radius:8px;text-align:center;color:#1d3557}
+  #choixIntervalle{margin-top:6px} #choixIntervalle button{padding:6px 12px;font-size:.95rem}
+  label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer;text-align:left}
+  .cache{display:none!important}
+  .go{background:#1c64d8;font-size:1.3rem;padding:14px 30px;margin:4px}
+
+  /* ---------- Matériel ---------- */
+  .plaque{width:calc(var(--u)*10 + 2px);height:calc(var(--u)*10 + 2px);border:1px solid #9a4a00;border-radius:2px;flex:none;
+    background-color:#ff9f1c;
+    background-image:linear-gradient(#9a4a0066 1px,transparent 1px),linear-gradient(90deg,#9a4a0066 1px,transparent 1px);
+    background-size:var(--u) var(--u);background-position:-1px -1px;box-shadow:2px 2px 0 rgba(0,0,0,.18)}
+  .barre{width:calc(var(--u) + 2px);height:calc(var(--u)*10 + 2px);border:1px solid #13408c;border-radius:2px;flex:none;
+    background-color:#4d8dff;background-image:linear-gradient(#13408c66 1px,transparent 1px);background-size:100% var(--u);background-position:0 -1px;
+    box-shadow:2px 2px 0 rgba(0,0,0,.18)}
+  .bloc{position:relative;transition:transform .25s,opacity .25s}
+  .bloc.ajout{outline:3px solid #2f9e44;outline-offset:1px}
+  .bloc.nouveau{animation:pop .3s ease}
+  @keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+  .bloc.part{transform:translateY(-40px) scale(.4);opacity:0}
+  .clic .bloc{cursor:pointer}
+
+  /* ---------- Partie ---------- */
+  #haut{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+  .pastille{background:#fff;border-radius:20px;padding:5px 12px;font-weight:bold;color:#495057;font-size:1rem;box-shadow:0 2px 4px rgba(0,0,0,.12)}
+  #operation{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:bold;color:#1d3557;margin:0 auto 6px;display:flex;justify-content:center;align-items:center;gap:.3em;flex-wrap:wrap}
+  #operation .signe{color:#c92a2a}
+  #case{display:inline-block;min-width:3.2em;padding:0 .2em;border:3px dashed #1c64d8;border-radius:10px;background:#fff;color:#1c64d8;min-height:1.25em;line-height:1.2}
+  #case.bon{border:3px solid #2f9e44;background:#2f9e44;color:#fff}
+  #case.mauvais{border-color:#e03131;color:#e03131;animation:secoue .35s}
+  @keyframes secoue{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  #plateau{display:flex;gap:10px;justify-content:center;align-items:stretch}
+  .colonne{background:#fff;border:3px solid #b9cdf0;border-radius:10px;padding:6px 8px 8px;display:flex;flex-direction:column;min-width:0}
+  .colonne.cible{border-color:#2f9e44;background:#f1fbef}
+  #colC{flex:1.7} #colD{flex:1}
+  .colonne h3{margin:0 0 6px;font-size:1rem;color:#495057;display:flex;justify-content:space-between;gap:6px}
+  .colonne h3 .compte{color:#1c64d8}
+  .zone{flex:1;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;min-height:calc(var(--u)*21 + 18px)}
+  #zoneD{gap:3px;min-height:calc(var(--u)*10 + 14px)} #zoneD .barre:nth-child(5n){margin-right:7px}
+  #outils{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
+  .reserve{display:flex;align-items:center;gap:8px;background:#fff;border:2px dashed #1c64d8;color:#1d3557;padding:6px 12px;font-size:1rem;touch-action:none}
+  .reserve .plaque{--u:4.4px} .reserve .barre{--u:4.4px}
+  .reserve b{font-size:1rem}
+  .outil{background:#5c7cfa;font-size:1rem;padding:9px 14px}
+  #recommencer{background:#868e96}
+  #pave{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
+  #pave button{background:#fff;color:#1d3557;border:2px solid #1c64d8;box-shadow:0 3px 0 #9fbaf0;min-width:44px;padding:7px 0;font-size:1.35rem}
+  #pave button.eff{min-width:60px;border-color:#868e96;box-shadow:0 3px 0 #ced4da}
+  #pave button.val{min-width:100px;background:#2f9e44;border-color:#2f9e44;color:#fff;box-shadow:0 3px 0 #8ccf96}
+  #msg{min-height:1.4em;font-size:1.05rem;color:#495057;max-width:880px;margin:2px auto 4px;line-height:1.45}
+  #msg.erreur{color:#c92a2a;font-weight:600}
+  #msg.bravo{color:#2b8a3e;font-weight:600}
+  .bas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+  .bas button{background:#6c757d;font-size:1rem;padding:9px 16px}
+  #continuer{background:#2f9e44;font-size:1.2rem}
+  #continuer kbd{display:inline-block;margin-left:8px;padding:0 9px;border:2px solid #fff;border-bottom-width:4px;border-radius:7px;background:rgba(255,255,255,.18);font-family:inherit;font-size:1rem;line-height:1.05;vertical-align:1px}
+  #fantome{position:fixed;pointer-events:none;z-index:50;opacity:.85;transform:translate(-50%,-50%)}
+
+  /* ---------- Fin ---------- */
+  #fin .grand{font-size:2.4rem;font-weight:bold;color:#1c4fa1;margin:16px 0 4px}
+  #finScore{font-size:1.3rem;color:#212529}
+  #finEtoiles{font-size:2.6rem;letter-spacing:6px;margin:4px 0 10px}
+  .confetti{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:tombe linear forwards;z-index:9}
+  @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
+  .exemple{display:inline-flex;gap:14px;align-items:flex-end;justify-content:center;margin:2px 0 8px;font-size:.95rem;color:#495057}
+  .exemple span{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .exemple .plaque,.exemple .barre{--u:5px}
+  @media (max-width:640px){#plateau{flex-direction:column}#pave button{min-width:40px;font-size:1.2rem}.outil{font-size:.92rem;padding:8px 10px}}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
+<body>
+<div id="ab-jeu">
+
+  <!-- ===== Réglages ===== -->
+  <div id="reglages">
+    <h1>🧱 L'atelier des barres</h1>
+    <p class="intro">Pour calculer avec des <b>dizaines</b> et des <b>centaines entières</b>, on manipule le matériel : une <b>barre</b> vaut 10, une <b>plaque</b> vaut 100. Dix barres font une plaque !</p>
+    <div class="exemple">
+      <span><i class="plaque"></i>1 plaque = 100</span>
+      <span><i class="barre"></i>1 barre = 10</span>
+    </div>
+
+    <div class="groupe">
+      <h2>1. Choisis le niveau</h2>
+      <div class="choix" id="choixNiveau">
+        <button data-v="1" aria-pressed="true">🔵 Niveau 1 : les dizaines<small>30 + 40 ; 80 − 50<br>jusqu'à 100 (CP – CE1)</small></button>
+        <button data-v="2" aria-pressed="false">🟧 Niveau 2 : les centaines<small>300 + 400 ; 900 − 600<br>jusqu'à 1 000 (CE1)</small></button>
+        <button data-v="3" aria-pressed="false">🧱 Niveau 3 : dizaines et centaines<small>340 + 250 ; 760 − 30<br>jusqu'à 1 000 (CE1 – CE2)</small></button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>2. Quels calculs ?</h2>
+      <div class="choix" id="choixOp">
+        <button data-v="add" aria-pressed="false">➕ Additions</button>
+        <button data-v="sous" aria-pressed="false">➖ Soustractions</button>
+        <button data-v="les2" aria-pressed="true">➕➖ Les deux</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>3. Intervalle des nombres</h2>
+      <label class="opt">Les nombres du calcul et le résultat vont de
+        <input type="number" id="nMin" class="nombre" min="0" max="1000" step="10" value="0"> à
+        <input type="number" id="nMax" class="nombre" min="0" max="1000" step="10" value="100"></label>
+      <div class="choix" id="choixIntervalle"></div>
+    </div>
+
+    <div class="groupe">
+      <h2>4. Combien de calculs ?</h2>
+      <div class="choix" id="choixNb">
+        <button data-v="10" aria-pressed="true">10</button>
+        <button data-v="15" aria-pressed="false">15</button>
+        <button data-v="20" aria-pressed="false">20</button>
+      </div>
+    </div>
+
+    <div class="groupe">
+      <h2>5. Options</h2>
+      <label class="opt"><input type="checkbox" id="optEchange"> Avec des <b>échanges</b> : 10 barres contre 1 plaque, casser une plaque en 10 barres (niveaux 1 et 3)</label><br>
+      <label class="opt"><input type="checkbox" id="optCompte"> Afficher combien il y a de plaques et de barres (aide au comptage)</label><br>
+      <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur lit le calcul à voix haute</label>
+    </div>
+
+    <button class="go" id="jouer">🧱 Ouvrir l'atelier</button>
+  </div>
+
+  <!-- ===== Partie ===== -->
+  <div id="partie" class="cache">
+    <div id="haut">
+      <span class="pastille" id="numQ">Calcul 1 / 10</span>
+      <span class="pastille" id="score">⭐ 0</span>
+    </div>
+    <div id="operation"><span id="opA"></span><span class="signe" id="opS"></span><span id="opB"></span><span>=</span><span id="case"></span></div>
+    <div id="plateau">
+      <div class="colonne" id="colC"><h3><span>Centaines <small>(plaques de 100)</small></span><span class="compte" id="nbC"></span></h3><div class="zone" id="zoneC"></div></div>
+      <div class="colonne" id="colD"><h3><span>Dizaines <small>(barres de 10)</small></span><span class="compte" id="nbD"></span></h3><div class="zone" id="zoneD"></div></div>
+    </div>
+    <div id="outils">
+      <button class="reserve" id="resC" title="Touche ou fais glisser sur le plateau"><i class="plaque"></i><b>+ 1 plaque</b></button>
+      <button class="reserve" id="resD" title="Touche ou fais glisser sur le plateau"><i class="barre"></i><b>+ 1 barre</b></button>
+      <button class="outil" id="grouper">🔁 10 barres → 1 plaque</button>
+      <button class="outil" id="casser">🔨 1 plaque → 10 barres</button>
+      <button class="outil" id="recommencer">↩ Recommencer</button>
+    </div>
+    <div id="pave"></div>
+    <div id="msg"></div>
+    <div class="bas">
+      <button id="continuer" class="cache" title="Touche → du clavier (ou Entrée)">Calcul suivant <kbd>→</kbd></button>
+      <button id="ecouter">🔊 Réécouter</button>
+      <button id="ecran">⛶ Plein écran</button>
+      <button id="arreter">⏹ Arrêter</button>
+    </div>
+  </div>
+
+  <div id="fin" class="cache">
+    <div class="exemple" style="margin-top:14px"><span><i class="plaque"></i></span><span><i class="plaque"></i></span><span><i class="barre"></i></span><span><i class="barre"></i></span><span><i class="barre"></i></span></div>
+    <div class="grand">🧱 Bravo, l'atelier est rangé !</div>
+    <div id="finEtoiles"></div>
+    <p id="finScore"></p>
+    <button class="go" id="rejouer">🔁 Rejouer</button>
+    <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const R_ = { niveau: 1, min: 0, max: 100, op: "les2", nb: 10, echange: false, compte: false, voix: true };
+const S = { i: 0, score: 0, erreurs: 0, fini: false, deja: [] };
+let Q = null;            // calcul en cours : { a, b, op, r }
+let blocs = [];          // plateau : { id, t: "c" | "d", ajout }
+let nid = 0, saisie = "";
+const hasard = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const signe = op => op === "+" ? "+" : "−";
+const C = n => Math.floor(n / 100), D = n => Math.floor(n / 10) % 10;
+const pl = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+
+/* ---------- Réglages ---------- */
+function choix(id, cle, conv) {
+  $(id).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    R_[cle] = conv ? conv(b.dataset.v) : b.dataset.v;
+  }));
+}
+choix("choixOp", "op"); choix("choixNb", "nb", Number);
+
+/* ---------- Intervalle des nombres (proposé selon le niveau, modifiable) ---------- */
+const INTERVALLES = { 1: [[0, 50], [0, 100]], 2: [[0, 500], [0, 1000]], 3: [[100, 500], [100, 1000], [500, 1000]] };
+function pas() { return R_.niveau === 2 ? 100 : 10; }
+function poseIntervalle(a, b) {
+  $("nMin").value = a; $("nMax").value = b;
+  $("choixIntervalle").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.a === a && +x.dataset.b === b));
+}
+function boutonsIntervalle() {
+  const z = $("choixIntervalle"); z.innerHTML = "";
+  ["nMin", "nMax"].forEach(id => $(id).step = pas());
+  INTERVALLES[R_.niveau].forEach(([a, b]) => {
+    const bt = document.createElement("button"); bt.dataset.a = a; bt.dataset.b = b; bt.textContent = `de ${a} à ${b}`;
+    bt.addEventListener("click", () => poseIntervalle(a, b)); z.appendChild(bt);
+  });
+  const [a, b] = INTERVALLES[R_.niveau][R_.niveau === 3 ? 1 : INTERVALLES[R_.niveau].length - 1]; poseIntervalle(a, b);
+}
+["nMin", "nMax"].forEach(id => $(id).addEventListener("input", () => $("choixIntervalle").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", false))));
+/* Lit l'intervalle : arrondi à la dizaine (à la centaine au niveau 2), entre 0 et 1 000, assez large pour faire des calculs. */
+function litIntervalle() {
+  const p = pas(), ar = v => Math.round((parseInt(v, 10) || 0) / p) * p;
+  let a = Math.max(0, Math.min(1000, ar($("nMin").value))), b = Math.max(0, Math.min(1000, ar($("nMax").value)));
+  if (a > b) [a, b] = [b, a];
+  if (b - a < 3 * p) { b = Math.min(1000, a + 3 * p); a = Math.min(a, b - 3 * p); }
+  if (R_.niveau === 1) { b = Math.min(b, 100); a = Math.min(a, b - 30); }
+  R_.min = Math.max(0, a); R_.max = b; $("nMin").value = R_.min; $("nMax").value = R_.max;
+}
+$("choixNiveau").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+  $("choixNiveau").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  R_.niveau = Number(b.dataset.v); boutonsIntervalle();
+}));
+boutonsIntervalle();
+
+/* ---------- Voix ---------- */
+function dire(t) {
+  if (!R_.voix || !("speechSynthesis" in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t); u.lang = "fr-FR"; u.rate = .9;
+    const v = speechSynthesis.getVoices().find(v => /^fr/i.test(v.lang)); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) {}
+const lu = q => `${q.a} ${q.op === "+" ? "plus" : "moins"} ${q.b}`;
+
+/* ---------- Tirage des calculs ---------- */
+function tirage(op) {
+  const N = R_.niveau, ech = R_.echange;
+  const dansIntervalle = (a, b, r) => Math.min(a, r) >= R_.min && Math.max(a, b, r) <= R_.max;
+  for (let essai = 0; essai < 3000; essai++) {
+    let a, b;
+    if (N === 1 || N === 2) {
+      const k = N === 1 ? 10 : 100, max = N === 1 ? (ech ? 10 : 9) : 10;  // 100 = 10 barres : seulement avec les échanges
+      if (op === "+") { a = hasard(1, max - 1); b = hasard(1, max - a); }
+      else { a = hasard(2, max); b = hasard(1, a - 1); }
+      a *= k; b *= k;
+    } else {
+      const avecEch = ech && Math.random() < .6;
+      const forme = Math.random();             // b : dizaines seules, centaines seules ou les deux
+      if (op === "+") {
+        a = hasard(11, 89) * 10;
+        let bc = forme < .3 ? 0 : hasard(1, 8), bd = forme > .75 ? 0 : hasard(1, 9);
+        if (bc === 0 && bd === 0) bd = 1;
+        b = bc * 100 + bd * 10;
+      } else {
+        a = hasard(11, 99) * 10;
+        let bc = forme < .35 ? 0 : hasard(1, 8), bd = forme > .75 ? 0 : hasard(1, 9);
+        if (bc === 0 && bd === 0) bd = 1;
+        b = bc * 100 + bd * 10;
+      }
+      const r = op === "+" ? a + b : a - b;
+      if (r <= 0 || r > 1000) continue;
+      const echange = op === "+" ? D(a) + D(b) >= 10 : D(b) > D(a);
+      if (echange !== avecEch && essai < 2500) continue;
+      if (op === "+" && r === 1000 && !ech) continue;
+    }
+    const r = op === "+" ? a + b : a - b;
+    if (r < 0 || r > 1000) continue;
+    if (!dansIntervalle(a, b, r) && essai < 2800) continue;
+    const cle = a + op + b;
+    if (S.deja.includes(cle) && essai < 2000) continue;
+    S.deja.push(cle);
+    return { a, b, op, r };
+  }
+  return { a: 30, b: 20, op: "+", r: 50 };
+}
+
+/* ---------- Plateau ---------- */
+function valeur() { return blocs.reduce((s, x) => s + (x.t === "c" ? 100 : 10), 0); }
+function remplir(n, ajout) {
+  blocs = [];
+  for (let k = 0; k < (n === 1000 ? 10 : C(n)); k++) blocs.push({ id: ++nid, t: "c", ajout });
+  for (let k = 0; k < D(n); k++) blocs.push({ id: ++nid, t: "d", ajout });
+}
+function dessine(nouveaux = []) {
+  ["c", "d"].forEach(t => {
+    const z = $(t === "c" ? "zoneC" : "zoneD"); z.innerHTML = "";
+    blocs.filter(x => x.t === t).forEach(x => {
+      const e = document.createElement("i");
+      e.className = (t === "c" ? "plaque" : "barre") + " bloc" + (x.ajout ? " ajout" : "") + (nouveaux.includes(x.id) ? " nouveau" : "");
+      e.dataset.id = x.id;
+      e.title = Q && Q.op === "−" ? "Touche pour enlever" : (x.ajout ? "Touche pour reprendre" : "");
+      z.appendChild(e);
+    });
+  });
+  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.length - nc;
+  $("nbC").textContent = R_.compte ? nc : ""; $("nbD").textContent = R_.compte ? nd : "";
+  $("grouper").classList.toggle("cache", !(R_.echange || nd >= 10) || R_.niveau === 2);
+  $("casser").classList.toggle("cache", !R_.echange || R_.niveau === 2);
+  $("grouper").disabled = S.fini || nd < 10 || nc >= 10;
+  $("casser").disabled = S.fini || nc < 1 || nd > 10;
+  $("resC").classList.toggle("cache", !Q || Q.op !== "+" || R_.niveau === 1);
+  $("resD").classList.toggle("cache", !Q || Q.op !== "+" || R_.niveau === 2);
+  $("resC").disabled = S.fini || nc >= 10 || valeur() + 100 > 1000;
+  $("resD").disabled = S.fini || nd >= 19 || valeur() + 10 > 1000;
+  $("recommencer").disabled = S.fini;
+}
+function ajoute(t) {
+  if (S.fini || Q.op !== "+") return;
+  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.length - nc;
+  if (t === "c" && (nc >= 10 || valeur() + 100 > 1000)) return;
+  if (t === "d" && (nd >= 19 || valeur() + 10 > 1000)) { if (nd >= 19) message("Il y a beaucoup de barres : échange 10 barres contre 1 plaque !", ""); return; }
+  const b = { id: ++nid, t, ajout: true };
+  blocs.push(b); blocs.sort((x, y) => (x.t > y.t) - (x.t < y.t)); dessine([b.id]);
+}
+function enleve(id) {
+  if (S.fini) return;
+  const b = blocs.find(x => x.id == id); if (!b) return;
+  if (Q.op === "+" && !b.ajout) { message("Ces barres et ces plaques font " + Q.a + " : ajoute plutôt " + Q.b + " avec les boutons du bas.", ""); return; }
+  const e = document.querySelector(`.bloc[data-id="${id}"]`);
+  if (e) e.classList.add("part");
+  blocs = blocs.filter(x => x !== b);
+  setTimeout(() => dessine(), 230);
+}
+$("plateau").addEventListener("click", e => { const b = e.target.closest(".bloc"); if (b) enleve(b.dataset.id); });
+$("grouper").addEventListener("click", () => {
+  const ds = blocs.filter(x => x.t === "d"); if (ds.length < 10 || blocs.length - ds.length >= 10) return;
+  const ret = ds.slice(-10); ret.forEach(x => { const e = document.querySelector(`.bloc[data-id="${x.id}"]`); if (e) e.classList.add("part"); });
+  setTimeout(() => {
+    const aj = ret.some(x => x.ajout);
+    blocs = blocs.filter(x => !ret.includes(x));
+    const p = { id: ++nid, t: "c", ajout: aj && Q.op === "+" }; blocs.unshift(p); dessine([p.id]);
+    message("10 barres = 10 dizaines = 1 centaine : voilà une plaque !", "");
+  }, 260);
+});
+$("casser").addEventListener("click", () => {
+  const cs = blocs.filter(x => x.t === "c"); if (!cs.length) return;
+  const p = cs[cs.length - 1]; const e = document.querySelector(`.bloc[data-id="${p.id}"]`); if (e) e.classList.add("part");
+  setTimeout(() => {
+    blocs = blocs.filter(x => x !== p); const nv = [];
+    for (let k = 0; k < 10; k++) { const b = { id: ++nid, t: "d", ajout: p.ajout }; blocs.push(b); nv.push(b.id); }
+    dessine(nv); message("1 plaque = 1 centaine = 10 dizaines : voilà 10 barres !", "");
+  }, 260);
+});
+$("recommencer").addEventListener("click", () => { remplir(Q.a, false); dessine(); message("", ""); });
+
+/* Glisser une plaque ou une barre de la réserve vers le plateau (un simple toucher marche aussi). */
+let glisse = null;
+["resC", "resD"].forEach(id => {
+  const t = id === "resC" ? "c" : "d", bt = $(id);
+  bt.addEventListener("pointerdown", e => { if (bt.disabled) return; glisse = { t, x: e.clientX, y: e.clientY, bouge: false, f: null }; bt.setPointerCapture(e.pointerId); });
+  bt.addEventListener("pointermove", e => {
+    if (!glisse) return;
+    if (!glisse.bouge && Math.hypot(e.clientX - glisse.x, e.clientY - glisse.y) > 10) {
+      glisse.bouge = true; const f = document.createElement("i"); f.id = "fantome"; f.className = t === "c" ? "plaque" : "barre";
+      f.style.setProperty("--u", getComputedStyle($("ab-jeu")).getPropertyValue("--u")); document.body.appendChild(f); glisse.f = f;
+    }
+    if (glisse.f) {
+      glisse.f.style.left = e.clientX + "px"; glisse.f.style.top = e.clientY + "px";
+      const r = $("plateau").getBoundingClientRect(), dans = e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom;
+      $("colC").classList.toggle("cible", dans && t === "c"); $("colD").classList.toggle("cible", dans && t === "d");
+    }
+  });
+  const finit = e => {
+    if (!glisse) return; const g = glisse; glisse = null;
+    $("colC").classList.remove("cible"); $("colD").classList.remove("cible");
+    if (g.f) { g.f.remove(); const r = $("plateau").getBoundingClientRect(); if (e.type === "pointerup" && e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom) ajoute(g.t); }
+    else if (e.type === "pointerup") ajoute(g.t);
+  };
+  bt.addEventListener("pointerup", finit); bt.addEventListener("pointercancel", finit);
+  bt.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); ajoute(t); } });
+});
+
+/* ---------- Pavé numérique ---------- */
+(function () {
+  const p = $("pave");
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].forEach(n => { const b = document.createElement("button"); b.textContent = n; b.addEventListener("click", () => tape(String(n))); p.appendChild(b); });
+  const e = document.createElement("button"); e.className = "eff"; e.textContent = "⌫"; e.title = "Effacer"; e.addEventListener("click", () => tape("eff")); p.appendChild(e);
+  const v = document.createElement("button"); v.className = "val"; v.id = "valider"; v.textContent = "✔ Valider"; v.addEventListener("click", () => tape("ok")); p.appendChild(v);
+})();
+function tape(k) {
+  if (S.fini || !Q) return;
+  const c = $("case"); c.classList.remove("mauvais");
+  if (k === "eff") saisie = saisie.slice(0, -1);
+  else if (k === "ok") { if (saisie) verifie(); return; }
+  else if (saisie.length < 4) saisie = (saisie + k).replace(/^0+(?=\d)/, "");
+  c.textContent = saisie;
+}
+document.addEventListener("keydown", e => {
+  if ($("partie").classList.contains("cache") || S.fini) return;
+  if (/^[0-9]$/.test(e.key)) { e.preventDefault(); tape(e.key); }
+  else if (e.key === "Backspace") { e.preventDefault(); tape("eff"); }
+  else if (e.key === "Enter" && !e.target.closest(".reserve")) { e.preventDefault(); tape("ok"); }
+});
+
+/* ---------- Questions ---------- */
+function message(t, cl) { const m = $("msg"); m.innerHTML = t; m.className = cl || ""; }
+function question() {
+  const op = R_.op === "add" ? "+" : R_.op === "sous" ? "−" : (Math.random() < .5 ? "+" : "−");
+  Q = tirage(op); S.erreurs = 0; S.fini = false; saisie = "";
+  $("opA").textContent = Q.a; $("opS").textContent = signe(Q.op); $("opB").textContent = Q.b;
+  const c = $("case"); c.textContent = ""; c.className = "";
+  $("numQ").textContent = `Calcul ${S.i + 1} / ${R_.nb}`; $("score").textContent = "⭐ " + S.score;
+  $("continuer").classList.add("cache"); $("pave").classList.remove("cache"); $("outils").classList.remove("cache");
+  $("colC").classList.toggle("cache", R_.niveau === 1 && !R_.echange && Q.a < 100 && Q.r < 100);
+  $("colD").classList.toggle("cache", R_.niveau === 2);
+  $("plateau").classList.add("clic");
+  remplir(Q.a, false); dessine();
+  message(Q.op === "+" ? `Voici ${Q.a}. Ajoute ${Q.b} avec les plaques et les barres, puis écris le résultat.`
+                       : `Voici ${Q.a}. Enlève ${Q.b} : touche les plaques et les barres à retirer, puis écris le résultat.`, "");
+  dire(lu(Q));
+  ajuste();
+}
+function decrit(n) {
+  const c = n === 1000 ? 10 : C(n), d = D(n), t = [];
+  if (c) t.push(pl(c, "plaque")); if (d) t.push(pl(d, "barre"));
+  return t.join(" et ") || "rien";
+}
+function aide() {
+  const v = valeur(), fait = Q.op === "+" ? v - Q.a : Q.a - v;
+  if (v === Q.r) return `Ton plateau est juste ! Compte bien : ${decrit(v)}. Une plaque vaut 100, une barre vaut 10.`;
+  if (fait === 0) return Q.op === "+" ? `Utilise les barres : ${Q.b}, c'est ${decrit(Q.b)}. Ajoute-les au plateau.` : `Utilise les barres : ${Q.b}, c'est ${decrit(Q.b)}. Touche-les pour les enlever.`;
+  const c = Q.op === "+" ? "ajouté" : "enlevé";
+  if (fait !== Q.b) return `Tu as ${c} ${fait}, mais il fallait ${c.replace("é", "er")} ${Q.b} (${decrit(Q.b)}). Clique sur ↩ Recommencer si besoin.`;
+  return `Compte ce qu'il y a sur le plateau : ${R_.compte ? decrit(v) + "." : "combien de plaques ? combien de barres ?"}`;
+}
+function explication() {
+  const a = Q.a, b = Q.b, r = Q.r, s = Q.op === "+" ? "+" : "−";
+  const ca = C(a), da = D(a), cb = C(b), db = D(b);
+  let t = "";
+  const dz = n => pl(n, "dizaine"), ct = n => pl(n, "centaine");
+  if (R_.niveau === 1) t = `${dz(a === 100 ? 10 : da)} ${s} ${dz(db)} = ${dz(r === 100 ? 10 : D(r))}`;
+  else if (R_.niveau === 2) t = `${ct(ca)} ${s} ${ct(cb)} = ${ct(C(r))}`;
+  else {
+    t = `centaines : ${ca} ${s} ${cb} ; dizaines : ${da} ${s} ${db}`;
+    if (Q.op === "+" && da + db >= 10) t += ` = ${da + db} dizaines, on échange 10 barres contre 1 plaque`;
+    if (Q.op === "−" && db > da) t += ` : pas assez de barres, on casse une plaque en 10 barres`;
+  }
+  return `${t}. Résultat : ${decrit(r)}, c'est <b>${r}</b>.`;
+}
+function verifie() {
+  const n = parseInt(saisie, 10), c = $("case");
+  if (n === Q.r) {
+    if (S.erreurs === 0) S.score++;
+    c.className = "bon"; S.fini = true; $("score").textContent = "⭐ " + S.score;
+    message(["Bravo !", "Super !", "C'est ça !", "Excellent !"][Math.floor(Math.random() * 4)] + ` ${Q.a} ${signe(Q.op)} ${Q.b} = ${Q.r}`, "bravo");
+    dire(`Bravo ! ${lu(Q)} égale ${Q.r}`);
+    return termine();
+  }
+  S.erreurs++;
+  c.classList.remove("mauvais"); void c.offsetWidth; c.classList.add("mauvais");
+  if (S.erreurs === 1) { message("Pas tout à fait… " + aide(), "erreur"); saisie = ""; setTimeout(() => { if (!S.fini && !saisie) c.textContent = ""; }, 700); return; }
+  S.fini = true; c.className = "bon"; c.style.background = "#868e96"; c.style.borderColor = "#868e96"; c.textContent = Q.r;
+  remplir(Q.r, false); dessine();
+  message("La bonne réponse était " + Q.r + ". " + explication(), "erreur");
+  dire(`${lu(Q)} égale ${Q.r}`);
+  termine();
+}
+function termine() {
+  $("plateau").classList.remove("clic"); dessine(); $("outils").classList.add("cache");
+  $("pave").classList.add("cache");
+  $("continuer").classList.remove("cache"); $("continuer").focus({ preventScroll: true });
+  ajuste();
+}
+let tSuivant = 0;
+function suivant() {
+  if ($("continuer").classList.contains("cache") || Date.now() - tSuivant < 400) return;
+  tSuivant = Date.now(); $("case").style.background = ""; $("case").style.borderColor = "";
+  S.i++; if (S.i >= R_.nb) fin(); else question();
+}
+$("continuer").addEventListener("click", suivant);
+document.addEventListener("keydown", e => {
+  if (!["ArrowRight", "PageDown", "Enter", " ", "Spacebar"].includes(e.key) || e.repeat) return;
+  if ($("partie").classList.contains("cache") || $("continuer").classList.contains("cache")) return;
+  e.preventDefault(); suivant();
+});
+
+/* ---------- Partie ---------- */
+function demarrer() {
+  litIntervalle(); R_.echange = $("optEchange").checked; R_.compte = $("optCompte").checked; R_.voix = $("optVoix").checked;
+  S.i = 0; S.score = 0; S.deja = []; document.querySelectorAll(".confetti").forEach(c => c.remove());
+  $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
+  question();
+}
+const NOMS = { 1: "les dizaines", 2: "les centaines", 3: "dizaines et centaines" }, OPS = { add: "additions", sous: "soustractions", les2: "additions et soustractions" };
+function fin() {
+  $("partie").classList.add("cache"); $("fin").classList.remove("cache");
+  const t = R_.nb, r = S.score / t, et = r >= .9 ? 3 : r >= .6 ? 2 : r > 0 ? 1 : 0;
+  $("finEtoiles").textContent = "⭐".repeat(et) + "☆".repeat(3 - et);
+  $("finScore").textContent = `${S.score} calcul${S.score > 1 ? "s" : ""} réussi${S.score > 1 ? "s" : ""} du premier coup sur ${t}.`;
+  try { TDC.note({ s: S.score, n: t, g: r >= .8, niv: `Niveau ${R_.niveau} (${NOMS[R_.niveau]})`, d: `${S.score} / ${t} ${OPS[R_.op]} réussies du premier coup (${NOMS[R_.niveau]}, de ${R_.min} à ${R_.max}${R_.echange ? ", avec échanges" : ""})` }); } catch (e) {}
+  if (et >= 2) confettis();
+  dire(`Bravo ! ${S.score} calculs réussis sur ${t}.`);
+}
+function confettis() {
+  const z = $("ab-jeu");
+  for (let k = 0; k < 28; k++) {
+    const c = document.createElement("div"); c.className = "confetti"; c.textContent = ["🧱", "⭐", "🟧", "🔵", "🎉"][k % 5];
+    c.style.left = Math.random() * 100 + "%"; c.style.animationDuration = (2.2 + Math.random() * 2) + "s"; c.style.animationDelay = Math.random() + "s";
+    z.appendChild(c); setTimeout(() => c.remove(), 4500);
+  }
+}
+$("jouer").addEventListener("click", demarrer);
+$("rejouer").addEventListener("click", demarrer);
+$("changer").addEventListener("click", () => { $("fin").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("arreter").addEventListener("click", () => { try { speechSynthesis.cancel(); } catch (e) {} $("partie").classList.add("cache"); $("reglages").classList.remove("cache"); });
+$("ecouter").addEventListener("click", () => { const v = R_.voix; R_.voix = true; if (Q) dire(lu(Q)); R_.voix = v; });
+
+/* La partie tient dans la hauteur de l'écran (ou du cadre) : la taille des cubes s'adapte. */
+function ajuste() {
+  const jeu = $("ab-jeu"), partie = $("partie"); if (partie.classList.contains("cache")) return;
+  const sansC = $("colC").classList.contains("cache"), sansD = $("colD").classList.contains("cache");
+  let u = sansC ? 14 : sansD ? 11 : 9; jeu.style.setProperty("--u", u + "px");
+  const large = $("plateau").getBoundingClientRect().width;
+  const parLigne = innerWidth <= 640 || sansD ? 1 : 1.7 / 2.7;      // part de largeur donnée aux centaines
+  if (!sansC) u = Math.min(u, (large * parLigne - 24 - 4 * 6) / 5 / 10.3);   // 5 plaques par ligne
+  jeu.style.setProperty("--u", Math.max(3.5, u).toFixed(2) + "px");
+  for (let k = 0; k < 14 && jeu.scrollHeight > innerHeight + 2 && u > 3.6; k++) { u -= .4; jeu.style.setProperty("--u", u.toFixed(2) + "px"); }
+}
+addEventListener("resize", ajuste);
+document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
+$("ecran").addEventListener("click", () => { const z = $("ab-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
+</script>
+</body>
+</html>
