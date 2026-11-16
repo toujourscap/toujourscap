@@ -5,7 +5,7 @@
    "title": "L'atelier des barres",
    "slug": "l-atelier-des-barres",
    "cat": "calcul",
-   "excerpt": "Additionner et soustraire des dizaines et des centaines entières en manipulant le matériel à l'écran : barres de 10 et plaques de 100, échanges (10 barres = 1 plaque), intervalle de nombres au choix. Du CP au CE2.",
+   "excerpt": "Additionner et soustraire des dizaines et des centaines entières en manipulant le matériel à l'écran : barres de 10 et plaques de 100, échanges (10 barres = 1 plaque), premier nombre avec ou sans unités (347 + 20), intervalle de nombres au choix. Du CP au CE2.",
    "date": "2026-11-16T10:30:00.000Z",
    "categoryIds": [],
    "media": {
@@ -236,6 +236,23 @@
             "type": "TEXT",
             "textData": {
              "text": "Intervalle des nombres : le premier nombre et le résultat restent dans l'intervalle choisi.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Le premier nombre peut avoir des unités (347 + 20, 563 − 300) : des cubes verts s'ajoutent au plateau, et l'élève voit que les unités ne bougent pas. Option cochée au départ ; décochée, le premier nombre finit toujours par 0.",
              "decorations": []
             }
            }

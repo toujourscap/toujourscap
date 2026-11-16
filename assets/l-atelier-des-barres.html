@@ -35,6 +35,7 @@
   .barre{width:calc(var(--u) + 2px);height:calc(var(--u)*10 + 2px);border:1px solid #13408c;border-radius:2px;flex:none;
     background-color:#4d8dff;background-image:linear-gradient(#13408c66 1px,transparent 1px);background-size:100% var(--u);background-position:0 -1px;
     box-shadow:2px 2px 0 rgba(0,0,0,.18)}
+  .cube{width:calc(var(--u) + 2px);height:calc(var(--u) + 2px);border:1px solid #1e7a34;border-radius:2px;flex:none;background:#51cf66;box-shadow:1px 1px 0 rgba(0,0,0,.18)}
   .bloc{position:relative;transition:transform .25s,opacity .25s}
   .bloc.ajout{outline:3px solid #2f9e44;outline-offset:1px}
   .bloc.nouveau{animation:pop .3s ease}
@@ -54,7 +55,8 @@
   #plateau{display:flex;gap:10px;justify-content:center;align-items:stretch}
   .colonne{background:#fff;border:3px solid #b9cdf0;border-radius:10px;padding:6px 8px 8px;display:flex;flex-direction:column;min-width:0}
   .colonne.cible{border-color:#2f9e44;background:#f1fbef}
-  #colC{flex:1.7} #colD{flex:1}
+  #colC{flex:1.7} #colD{flex:1} #colU{flex:.5}
+  #zoneU{gap:3px;width:calc(var(--u)*3 + 16px);margin:0 auto;align-content:flex-start}
   .colonne h3{margin:0 0 6px;font-size:1rem;color:#495057;display:flex;justify-content:space-between;gap:6px}
   .colonne h3 .compte{color:#1c64d8}
   .zone{flex:1;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;min-height:calc(var(--u)*21 + 18px)}
@@ -100,6 +102,7 @@
     <div class="exemple">
       <span><i class="plaque"></i>1 plaque = 100</span>
       <span><i class="barre"></i>1 barre = 10</span>
+      <span><i class="cube"></i>1 cube = 1</span>
     </div>
 
     <div class="groupe">
@@ -140,6 +143,7 @@
     <div class="groupe">
       <h2>5. Options</h2>
       <label class="opt"><input type="checkbox" id="optEchange"> Avec des <b>échanges</b> : 10 barres contre 1 plaque, casser une plaque en 10 barres (niveaux 1 et 3)</label><br>
+      <label class="opt"><input type="checkbox" id="optUnites" checked> Le premier nombre peut avoir des <b>unités</b> (347 + 20 ; 563 − 300 : les unités ne bougent pas)</label><br>
       <label class="opt"><input type="checkbox" id="optCompte"> Afficher combien il y a de plaques et de barres (aide au comptage)</label><br>
       <label class="opt"><input type="checkbox" id="optVoix" checked> L'ordinateur lit le calcul à voix haute</label>
     </div>
@@ -157,6 +161,7 @@
     <div id="plateau">
       <div class="colonne" id="colC"><h3><span>Centaines <small>(plaques de 100)</small></span><span class="compte" id="nbC"></span></h3><div class="zone" id="zoneC"></div></div>
       <div class="colonne" id="colD"><h3><span>Dizaines <small>(barres de 10)</small></span><span class="compte" id="nbD"></span></h3><div class="zone" id="zoneD"></div></div>
+      <div class="colonne" id="colU"><h3><span>Unités <small>(cubes)</small></span><span class="compte" id="nbU"></span></h3><div class="zone" id="zoneU"></div></div>
     </div>
     <div id="outils">
       <button class="reserve" id="resC" title="Touche ou fais glisser sur le plateau"><i class="plaque"></i><b>+ 1 plaque</b></button>
@@ -187,7 +192,7 @@
 
 <script>
 const $ = id => document.getElementById(id);
-const R_ = { niveau: 1, min: 0, max: 100, op: "les2", nb: 10, echange: false, compte: false, voix: true };
+const R_ = { niveau: 1, min: 0, max: 100, unites: true, op: "les2", nb: 10, echange: false, compte: false, voix: true };
 const S = { i: 0, score: 0, erreurs: 0, fini: false, deja: [] };
 let Q = null;            // calcul en cours : { a, b, op, r }
 let blocs = [];          // plateau : { id, t: "c" | "d", ajout }
@@ -282,8 +287,9 @@ function tirage(op) {
       if (echange !== avecEch && essai < 2500) continue;
       if (op === "+" && r === 1000 && !ech) continue;
     }
+    if (R_.unites && Math.random() < .65) a += (N === 2 ? hasard(0, 9) * 10 : 0) + hasard(1, 9);  // le 1er nombre ne finit pas forcément par 0
     const r = op === "+" ? a + b : a - b;
-    if (r < 0 || r > 1000) continue;
+    if (r < 0 || r > 1000 || (N === 1 && r > 100) || (a % 10 && r > 999)) continue;
     if (!dansIntervalle(a, b, r) && essai < 2800) continue;
     const cle = a + op + b;
     if (S.deja.includes(cle) && essai < 2000) continue;
@@ -294,25 +300,26 @@ function tirage(op) {
 }
 
 /* ---------- Plateau ---------- */
-function valeur() { return blocs.reduce((s, x) => s + (x.t === "c" ? 100 : 10), 0); }
+function valeur() { return blocs.reduce((s, x) => s + (x.t === "c" ? 100 : x.t === "d" ? 10 : 1), 0); }
 function remplir(n, ajout) {
   blocs = [];
   for (let k = 0; k < (n === 1000 ? 10 : C(n)); k++) blocs.push({ id: ++nid, t: "c", ajout });
   for (let k = 0; k < D(n); k++) blocs.push({ id: ++nid, t: "d", ajout });
+  for (let k = 0; k < n % 10; k++) blocs.push({ id: ++nid, t: "u", ajout });
 }
 function dessine(nouveaux = []) {
-  ["c", "d"].forEach(t => {
-    const z = $(t === "c" ? "zoneC" : "zoneD"); z.innerHTML = "";
+  ["c", "d", "u"].forEach(t => {
+    const z = $(t === "c" ? "zoneC" : t === "d" ? "zoneD" : "zoneU"); z.innerHTML = "";
     blocs.filter(x => x.t === t).forEach(x => {
       const e = document.createElement("i");
-      e.className = (t === "c" ? "plaque" : "barre") + " bloc" + (x.ajout ? " ajout" : "") + (nouveaux.includes(x.id) ? " nouveau" : "");
+      e.className = (t === "c" ? "plaque" : t === "d" ? "barre" : "cube") + " bloc" + (x.ajout ? " ajout" : "") + (nouveaux.includes(x.id) ? " nouveau" : "");
       e.dataset.id = x.id;
       e.title = Q && Q.op === "−" ? "Touche pour enlever" : (x.ajout ? "Touche pour reprendre" : "");
       z.appendChild(e);
     });
   });
-  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.length - nc;
-  $("nbC").textContent = R_.compte ? nc : ""; $("nbD").textContent = R_.compte ? nd : "";
+  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.filter(x => x.t === "d").length, nu = blocs.filter(x => x.t === "u").length;
+  $("nbC").textContent = R_.compte ? nc : ""; $("nbD").textContent = R_.compte ? nd : ""; $("nbU").textContent = R_.compte ? nu : "";
   $("grouper").classList.toggle("cache", !(R_.echange || nd >= 10) || R_.niveau === 2);
   $("casser").classList.toggle("cache", !R_.echange || R_.niveau === 2);
   $("grouper").disabled = S.fini || nd < 10 || nc >= 10;
@@ -325,15 +332,16 @@ function dessine(nouveaux = []) {
 }
 function ajoute(t) {
   if (S.fini || Q.op !== "+") return;
-  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.length - nc;
+  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.filter(x => x.t === "d").length;
   if (t === "c" && (nc >= 10 || valeur() + 100 > 1000)) return;
   if (t === "d" && (nd >= 19 || valeur() + 10 > 1000)) { if (nd >= 19) message("Il y a beaucoup de barres : échange 10 barres contre 1 plaque !", ""); return; }
   const b = { id: ++nid, t, ajout: true };
-  blocs.push(b); blocs.sort((x, y) => (x.t > y.t) - (x.t < y.t)); dessine([b.id]);
+  blocs.push(b); blocs.sort((x, y) => "cdu".indexOf(x.t) - "cdu".indexOf(y.t)); dessine([b.id]);
 }
 function enleve(id) {
   if (S.fini) return;
   const b = blocs.find(x => x.id == id); if (!b) return;
+  if (b.t === "u") { message(`On ${Q.op === "+" ? "ajoute" : "enlève"} seulement des ${R_.niveau === 2 ? "centaines" : R_.niveau === 1 ? "dizaines" : "dizaines et des centaines"} : les unités ne bougent pas !`, ""); return; }
   if (Q.op === "+" && !b.ajout) { message("Ces barres et ces plaques font " + Q.a + " : ajoute plutôt " + Q.b + " avec les boutons du bas.", ""); return; }
   const e = document.querySelector(`.bloc[data-id="${id}"]`);
   if (e) e.classList.add("part");
@@ -342,7 +350,7 @@ function enleve(id) {
 }
 $("plateau").addEventListener("click", e => { const b = e.target.closest(".bloc"); if (b) enleve(b.dataset.id); });
 $("grouper").addEventListener("click", () => {
-  const ds = blocs.filter(x => x.t === "d"); if (ds.length < 10 || blocs.length - ds.length >= 10) return;
+  const ds = blocs.filter(x => x.t === "d"); if (ds.length < 10 || blocs.filter(x => x.t === "c").length >= 10) return;
   const ret = ds.slice(-10); ret.forEach(x => { const e = document.querySelector(`.bloc[data-id="${x.id}"]`); if (e) e.classList.add("part"); });
   setTimeout(() => {
     const aj = ret.some(x => x.ajout);
@@ -357,6 +365,7 @@ $("casser").addEventListener("click", () => {
   setTimeout(() => {
     blocs = blocs.filter(x => x !== p); const nv = [];
     for (let k = 0; k < 10; k++) { const b = { id: ++nid, t: "d", ajout: p.ajout }; blocs.push(b); nv.push(b.id); }
+    blocs.sort((x, y) => "cdu".indexOf(x.t) - "cdu".indexOf(y.t));
     dessine(nv); message("1 plaque = 1 centaine = 10 dizaines : voilà 10 barres !", "");
   }, 260);
 });
@@ -421,7 +430,8 @@ function question() {
   $("numQ").textContent = `Calcul ${S.i + 1} / ${R_.nb}`; $("score").textContent = "⭐ " + S.score;
   $("continuer").classList.add("cache"); $("pave").classList.remove("cache"); $("outils").classList.remove("cache");
   $("colC").classList.toggle("cache", R_.niveau === 1 && !R_.echange && Q.a < 100 && Q.r < 100);
-  $("colD").classList.toggle("cache", R_.niveau === 2);
+  $("colD").classList.toggle("cache", R_.niveau === 2 && D(Q.a) === 0);
+  $("colU").classList.toggle("cache", Q.a % 10 === 0);
   $("plateau").classList.add("clic");
   remplir(Q.a, false); dessine();
   message(Q.op === "+" ? `Voici ${Q.a}. Ajoute ${Q.b} avec les plaques et les barres, puis écris le résultat.`
@@ -431,16 +441,16 @@ function question() {
 }
 function decrit(n) {
   const c = n === 1000 ? 10 : C(n), d = D(n), t = [];
-  if (c) t.push(pl(c, "plaque")); if (d) t.push(pl(d, "barre"));
+  if (c) t.push(pl(c, "plaque")); if (d) t.push(pl(d, "barre")); if (n % 10) t.push(pl(n % 10, "cube"));
   return t.join(" et ") || "rien";
 }
 function aide() {
   const v = valeur(), fait = Q.op === "+" ? v - Q.a : Q.a - v;
-  if (v === Q.r) return `Ton plateau est juste ! Compte bien : ${decrit(v)}. Une plaque vaut 100, une barre vaut 10.`;
+  if (v === Q.r) return `Ton plateau est juste ! Compte bien : ${decrit(v)}. Une plaque vaut 100, une barre vaut 10${v % 10 ? ", un cube vaut 1" : ""}.`;
   if (fait === 0) return Q.op === "+" ? `Utilise les barres : ${Q.b}, c'est ${decrit(Q.b)}. Ajoute-les au plateau.` : `Utilise les barres : ${Q.b}, c'est ${decrit(Q.b)}. Touche-les pour les enlever.`;
   const c = Q.op === "+" ? "ajouté" : "enlevé";
   if (fait !== Q.b) return `Tu as ${c} ${fait}, mais il fallait ${c.replace("é", "er")} ${Q.b} (${decrit(Q.b)}). Clique sur ↩ Recommencer si besoin.`;
-  return `Compte ce qu'il y a sur le plateau : ${R_.compte ? decrit(v) + "." : "combien de plaques ? combien de barres ?"}`;
+  return `Compte ce qu'il y a sur le plateau : ${R_.compte ? decrit(v) + "." : "combien de plaques ? combien de barres ?" + (v % 10 ? " combien de cubes ?" : "")}`;
 }
 function explication() {
   const a = Q.a, b = Q.b, r = Q.r, s = Q.op === "+" ? "+" : "−";
@@ -454,6 +464,7 @@ function explication() {
     if (Q.op === "+" && da + db >= 10) t += ` = ${da + db} dizaines, on échange 10 barres contre 1 plaque`;
     if (Q.op === "−" && db > da) t += ` : pas assez de barres, on casse une plaque en 10 barres`;
   }
+  if (a % 10) t += a % 10 === 1 ? " ; l'unité ne bouge pas" : ` ; les ${a % 10} unités ne bougent pas`;
   return `${t}. Résultat : ${decrit(r)}, c'est <b>${r}</b>.`;
 }
 function verifie() {
@@ -495,7 +506,7 @@ document.addEventListener("keydown", e => {
 
 /* ---------- Partie ---------- */
 function demarrer() {
-  litIntervalle(); R_.echange = $("optEchange").checked; R_.compte = $("optCompte").checked; R_.voix = $("optVoix").checked;
+  litIntervalle(); R_.unites = $("optUnites").checked; R_.echange = $("optEchange").checked; R_.compte = $("optCompte").checked; R_.voix = $("optVoix").checked;
   S.i = 0; S.score = 0; S.deja = []; document.querySelectorAll(".confetti").forEach(c => c.remove());
   $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
   question();
@@ -530,7 +541,8 @@ function ajuste() {
   const sansC = $("colC").classList.contains("cache"), sansD = $("colD").classList.contains("cache");
   let u = sansC ? 14 : sansD ? 11 : 9; jeu.style.setProperty("--u", u + "px");
   const large = $("plateau").getBoundingClientRect().width;
-  const parLigne = innerWidth <= 640 || sansD ? 1 : 1.7 / 2.7;      // part de largeur donnée aux centaines
+  const avecU = !$("colU").classList.contains("cache");
+  const parLigne = innerWidth <= 640 ? 1 : 1.7 / (1.7 + (sansD ? 0 : 1) + (avecU ? .5 : 0));      // part de largeur donnée aux centaines
   if (!sansC) u = Math.min(u, (large * parLigne - 24 - 4 * 6) / 5 / 10.3);   // 5 plaques par ligne
   jeu.style.setProperty("--u", Math.max(3.5, u).toFixed(2) + "px");
   for (let k = 0; k < 14 && jeu.scrollHeight > innerHeight + 2 && u > 3.6; k++) { u -= .4; jeu.style.setProperty("--u", u.toFixed(2) + "px"); }
