@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les cristaux de la planète Sonora — sons complexes</title><link rel="canonical" href="https://toujourscap.com/post/les-cristaux-de-la-planete-sonora/"><meta name="description" content="Sur une planète lointaine, la fusée de Zouk est en panne : chaque mot a perdu son son complexe. L&#x27;élève retrouve le bon cristal (ou, oi, an, en, au, eau, ai…">
+<style>
+:root{--nuit:#0d1030;--violet:#5b3fa8;--cyan:#3fe0ff;--or:#ffd34d;--rose:#ff6fa8;--vert:#5df0a0;--texte:#f4f1ff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Trebuchet MS",Verdana,system-ui,sans-serif;color:var(--texte);background:var(--nuit);overflow-x:hidden}
+.ciel{position:fixed;inset:0;z-index:0;
+ background:
+  radial-gradient(1.5px 1.5px at 12% 18%,#fff 60%,transparent),radial-gradient(1px 1px at 28% 42%,#fff 60%,transparent),
+  radial-gradient(2px 2px at 44% 12%,#fff8 60%,transparent),radial-gradient(1px 1px at 63% 30%,#fff 60%,transparent),
+  radial-gradient(1.5px 1.5px at 78% 9%,#fff 60%,transparent),radial-gradient(1px 1px at 88% 38%,#fffa 60%,transparent),
+  radial-gradient(1px 1px at 6% 60%,#fff 60%,transparent),radial-gradient(1.5px 1.5px at 35% 66%,#fff9 60%,transparent),
+  radial-gradient(1px 1px at 93% 62%,#fff 60%,transparent),radial-gradient(2px 2px at 55% 52%,#fff6 60%,transparent),
+  radial-gradient(circle at 85% 16%,#ff9bd0 0 38px,transparent 39px),
+  radial-gradient(ellipse 140% 55% at 50% 118%,#7a4fd0 0 60%,#4a2f8f 61% 64%,transparent 65%),
+  linear-gradient(#0b0d2a,#1d1550 70%,#2b1c63)}
+.ciel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+main{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:14px 14px 40px;min-height:100%}
+h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color:var(--or);text-shadow:0 0 12px #ffd34d88}
+.sous{text-align:center;margin:0 0 1em;opacity:.9}
+.ecran{display:none}.ecran.actif{display:block}
+.carte{background:#1b1946e6;border:2px solid #6c5cd6;border-radius:20px;padding:16px 18px;margin:12px 0;box-shadow:0 6px 24px #0008}
+.carte h2{margin:0 0 .5em;font-size:1.15rem;color:var(--cyan)}
+.histoire{display:flex;gap:14px;align-items:center}
+.zouk{width:92px;height:92px;flex:none;display:grid;place-items:center;font-size:64px}
+.zouk img{width:100%;height:100%;object-fit:contain}
+.puces{display:flex;flex-wrap:wrap;gap:8px}
+.son{font:inherit;font-size:1.35rem;font-weight:bold;min-width:64px;padding:.35em .6em;border-radius:14px;border:2px solid #8b7ee8;background:#2a2763;color:#fff;cursor:pointer}
+.son.on{background:linear-gradient(#5ce1ff,#2a8fd6);border-color:#bff3ff;color:#06203a;box-shadow:0 0 12px #3fe0ff88}
+.series{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.mini{font:inherit;font-size:.9rem;padding:.3em .7em;border-radius:999px;border:1px solid #8b7ee8;background:#221f55;color:#ddd;cursor:pointer}
+.mini:hover{background:#34307a}
+.choix{display:flex;flex-wrap:wrap;gap:8px}
+.choix label{display:flex;align-items:center;gap:6px;padding:.4em .8em;border-radius:12px;background:#2a2763;border:2px solid #4b43a0;cursor:pointer}
+.choix input{accent-color:var(--cyan);width:1.1em;height:1.1em}
+.options label{display:flex;gap:8px;align-items:flex-start;margin:.45em 0;cursor:pointer}
+.options input{accent-color:var(--cyan);width:1.2em;height:1.2em;margin-top:.15em}
+.btn{font:inherit;font-weight:bold;font-size:1.2rem;padding:.6em 1.4em;border-radius:16px;border:0;cursor:pointer;background:linear-gradient(#ffe27a,#ffb627);color:#3a2300;box-shadow:0 4px 0 #b77a00}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b77a00}
+.btn.sec{background:linear-gradient(#8f84ff,#5b4fd6);color:#fff;box-shadow:0 4px 0 #3a2f9e}
+.centre{text-align:center}
+.alerte{color:#ffb3c8;min-height:1.3em;margin:.4em 0 0}
+/* jeu */
+.barre{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.jauge{flex:1;min-width:220px;display:flex;align-items:center;gap:8px}
+.reservoir{flex:1;display:flex;gap:4px;padding:5px;border-radius:12px;background:#120f33;border:2px solid #6c5cd6}
+.reservoir i{flex:1;height:18px;border-radius:5px;background:#2a2660;transition:background .4s}
+.reservoir i.plein{background:linear-gradient(#9dffcf,#2fd68a);box-shadow:0 0 8px #5df0a0}
+.fusee-mini{font-size:28px}
+.quitter{font:inherit;background:none;border:1px solid #8b7ee8;color:#ddd;border-radius:10px;padding:.3em .7em;cursor:pointer}
+.scene{position:relative;margin:14px auto 8px;max-width:760px;background:#151340d9;border:3px solid #7a6cf0;border-radius:26px;padding:18px 14px 22px;text-align:center;box-shadow:0 0 30px #5b3fa877}
+.revision{position:absolute;top:10px;left:14px;font-size:.85rem;background:#ff6fa8;color:#2b0016;border-radius:999px;padding:.15em .7em;font-weight:bold;display:none}
+.image{font-size:clamp(70px,14vw,120px);line-height:1.1;height:1.15em;display:flex;justify-content:center;align-items:center}
+.image img{height:100%;object-fit:contain}
+.image.cache{visibility:hidden}
+.mot{font-family:"Comic Sans MS","Andika","Trebuchet MS",sans-serif;font-size:clamp(2.6rem,9vw,4.6rem);font-weight:bold;letter-spacing:.04em;margin:.15em 0;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:.05em;min-height:1.3em}
+.trou{display:inline-flex;align-items:center;justify-content:center;min-width:2.3em;height:1.15em;margin:0 .06em;border-radius:.25em;border:.07em dashed var(--cyan);background:#3fe0ff1a;color:var(--or);animation:pulse 1.6s infinite}
+.trou.rempli{border-style:solid;border-color:var(--or);background:#ffd34d22;animation:none;padding:0 .1em}
+@keyframes pulse{50%{box-shadow:0 0 18px #3fe0ffaa}}
+.ecoute{font:inherit;font-size:1.05rem;padding:.4em 1em;border-radius:999px;border:2px solid #8b7ee8;background:#2a2763;color:#fff;cursor:pointer}
+.message{min-height:2.7em;margin:.6em auto 0;max-width:620px;font-size:1.08rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.message .z{font-size:30px}
+.cristaux{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(10px,3vw,26px);margin:16px 0 6px}
+.cristal{font:inherit;font-family:"Comic Sans MS","Andika","Trebuchet MS",sans-serif;font-weight:bold;font-size:clamp(1.9rem,6vw,2.8rem);width:clamp(110px,22vw,150px);height:clamp(120px,24vw,165px);border:0;cursor:pointer;color:#14123a;position:relative;
+ clip-path:polygon(50% 0,92% 22%,100% 62%,50% 100%,0 62%,8% 22%);
+ background:linear-gradient(160deg,#ffffffcc 0 18%,transparent 19%),linear-gradient(var(--c1),var(--c2));transition:transform .15s,filter .3s,opacity .4s}
+.cristal:hover{transform:translateY(-4px) scale(1.04)}
+.cristal.c0{--c1:#8ff3ff;--c2:#2aa6e0}.cristal.c1{--c1:#ffb3dc;--c2:#e8559b}.cristal.c2{--c1:#c9ff9a;--c2:#4cc76a}.cristal.c3{--c1:#ffe08a;--c2:#f0a020}
+.cristal.faux{animation:secoue .4s;filter:grayscale(1) brightness(.6);opacity:.45;pointer-events:none}
+.cristal.montre{animation:brille 1s infinite}
+.cristal.bon{animation:envol .6s forwards}
+@keyframes secoue{25%{transform:translateX(-9px) rotate(-4deg)}75%{transform:translateX(9px) rotate(4deg)}}
+@keyframes brille{50%{filter:brightness(1.35) drop-shadow(0 0 14px #fff)}}
+@keyframes envol{to{transform:translateY(-140px) scale(.4);opacity:0}}
+.compteur{text-align:center;opacity:.8;font-size:.95rem}
+/* fin */
+.decollage{height:200px;position:relative;overflow:hidden}
+.fusee{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-size:90px;width:120px;text-align:center}
+.fusee img{width:100%}
+.fusee.part{animation:decolle 2.8s ease-in forwards}
+@keyframes decolle{0%{bottom:10px}15%{bottom:14px;transform:translateX(-52%)}20%{transform:translateX(-48%)}100%{bottom:120%}}
+.bilan{font-size:1.25rem;text-align:center;margin:.4em 0}
+.carnet{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.ligne{background:#221f55;border-radius:12px;padding:.4em .7em;display:flex;gap:8px;align-items:center;font-size:1.25rem}
+.ligne b{color:var(--or)}
+.ligne .e{font-size:1.5rem;width:1.6em;text-align:center}
+.ligne .r{margin-left:auto;font-size:1rem}
+.regle{background:#2d2461;border-left:5px solid var(--or);padding:.5em .8em;border-radius:8px;margin:.6em 0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
+@media (max-height:520px) and (orientation:landscape){.image{font-size:60px}.mot{font-size:2.4rem}.cristal{height:100px;width:96px;font-size:1.7rem}.scene{padding:8px}}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+</head>
+<body>
+<div class="ciel"><img src="/images/planete-sons/decor.jpg" alt="" onerror="this.remove()"></div>
+<main>
+
+<!-- ===== RÉGLAGES ===== -->
+<section id="reglages" class="ecran actif">
+ <h1>Les cristaux de la planète Sonora</h1>
+ <p class="sous">Mémoriser l'écriture des sons complexes — CP, CE1</p>
+
+ <div class="carte histoire">
+  <div class="zouk"><img src="/images/planete-sons/zouk.png" alt="" onerror="this.replaceWith('👽')"></div>
+  <p>Je m'appelle <b>Zouk</b>. Ma fusée est en panne sur la planète Sonora ! Les mots de ma planète ont perdu leurs sons. Retrouve le <b>cristal-son</b> qui manque dans chaque mot : chaque bon cristal remplit mon réservoir.</p>
+ </div>
+
+ <div class="carte">
+  <h2>1. Les sons à travailler</h2>
+  <div class="puces" id="puces"></div>
+  <div class="series">
+   <button class="mini" data-s="ou oi">ou · oi</button>
+   <button class="mini" data-s="an en">an · en</button>
+   <button class="mini" data-s="au eau">au · eau</button>
+   <button class="mini" data-s="ai ei">ai · ei</button>
+   <button class="mini" data-s="on om">on · om</button>
+   <button class="mini" data-s="in im">in · im</button>
+   <button class="mini" data-s="eu ou oi">eu · ou · oi</button>
+   <button class="mini" data-s="tous">Tous</button>
+   <button class="mini" data-s="">Aucun</button>
+  </div>
+ </div>
+
+ <div class="carte">
+  <h2>2. Nombre de cristaux proposés</h2>
+  <div class="choix">
+   <label><input type="radio" name="nb" value="2"> 2 cristaux</label>
+   <label><input type="radio" name="nb" value="3" checked> 3 cristaux</label>
+   <label><input type="radio" name="nb" value="4"> 4 cristaux</label>
+  </div>
+  <h2 style="margin-top:14px">3. Nombre de mots</h2>
+  <div class="choix">
+   <label><input type="radio" name="mots" value="10" checked> 10 mots</label>
+   <label><input type="radio" name="mots" value="15"> 15 mots</label>
+   <label><input type="radio" name="mots" value="20"> 20 mots</label>
+  </div>
+ </div>
+
+ <div class="carte options">
+  <h2>4. Options</h2>
+  <label><input type="checkbox" id="optPieges" checked> <span><b>Cristaux pièges</b> : proposer le son qui se prononce pareil (an / en, au / eau, ai / ei, on / om, in / im)</span></label>
+  <label><input type="checkbox" id="optVoix" checked> <span>Lire le mot à voix haute quand il apparaît</span></label>
+  <label><input type="checkbox" id="optImage" checked> <span>Montrer l'image du mot</span></label>
+  <label><input type="checkbox" id="optRevision" checked> <span>Un mot raté revient un peu plus tard (révision)</span></label>
+ </div>
+
+ <p class="centre"><button class="btn" id="go">🚀 Partir en mission</button></p>
+ <p class="centre alerte" id="alerte"></p>
+</section>
+
+<!-- ===== JEU ===== -->
+<section id="jeu" class="ecran">
+ <div class="barre">
+  <div class="jauge"><span class="fusee-mini">🚀</span><div class="reservoir" id="reservoir"></div></div>
+  <button class="quitter" id="quitter">✖ Arrêter</button>
+ </div>
+ <div class="scene">
+  <span class="revision" id="revision">🔁 Révision</span>
+  <div class="image" id="image"></div>
+  <div class="mot" id="mot"></div>
+  <button class="ecoute" id="ecoute">🔊 Écouter le mot</button>
+  <div class="message" id="message"></div>
+ </div>
+ <div class="cristaux" id="cristaux"></div>
+ <p class="compteur" id="compteur"></p>
+</section>
+
+<!-- ===== FIN ===== -->
+<section id="fin" class="ecran">
+ <div class="decollage"><div class="fusee" id="fusee"><img src="/images/planete-sons/fusee.png" alt="" onerror="this.replaceWith('🚀')"></div></div>
+ <h1>Réservoir plein, la fusée décolle !</h1>
+ <p class="bilan" id="bilan"></p>
+ <div class="carte">
+  <h2>📒 Carnet de bord de Zouk</h2>
+  <div class="carnet" id="carnet"></div>
+  <div id="regles"></div>
+ </div>
+ <div class="actions">
+  <button class="btn" id="rejouer">🔄 Nouvelle mission</button>
+  <button class="btn sec" id="rates">🔁 Revoir les mots ratés</button>
+  <button class="btn sec" id="changer">⚙️ Changer les sons</button>
+ </div>
+</section>
+</main>
+
+<script>
+/* ---------- Les mots : [son] à trouver | image ---------- */
+const MOTS={
+ ou:["l[ou]p|🐺","p[ou]le|🐔","s[ou]pe|🍲","hib[ou]|🦉","ch[ou]|🥬","[ou]rs|🐻","b[ou]che|👄","b[ou]gie|🕯️","t[ou]r|🗼","m[ou]ton|🐑"],
+ oi:["r[oi]|🤴","p[oi]re|🍐","ét[oi]le|⭐","v[oi]ture|🚗","p[oi]sson|🐟","[oi]seau|🐦","b[oi]s|🪵"],
+ an:["mam[an]|👩","[an]ge|👼","or[an]ge|🍊","éléph[an]t|🐘","g[an]t|🧤","p[an]da|🐼","k[an]gourou|🦘","p[an]talon|👖"],
+ en:["d[en]t|🦷","v[en]t|🌬️","t[en]te|⛺","serp[en]t|🐍","[en]fant|🧒","c[en]t|💯","cal[en]drier|📅","p[en]dule|🕰️"],
+ au:["[au]to|🚙","ch[au]ssure|👟","dinos[au]re|🦕","astron[au]te|🧑‍🚀","j[au]ne|💛","s[au]terelle|🦗","s[au]cisse|🌭","[au]bergine|🍆"],
+ eau:["bat[eau]|⛵","gât[eau]|🎂","chap[eau]|🎩","cad[eau]|🎁","chât[eau]|🏰","cout[eau]|🔪","pinc[eau]|🖌️","drap[eau]|🚩","ois[eau]|🐦"],
+ ai:["l[ai]t|🥛","m[ai]son|🏠","fr[ai]se|🍓","bal[ai]|🧹","[ai]gle|🦅","ch[ai]se|🪑","r[ai]sin|🍇","écl[ai]r|⚡"],
+ ei:["n[ei]ge|❄️","bal[ei]ne|🐋","r[ei]ne|👸","s[ei]ze|16","tr[ei]ze|13","pl[ei]ne lune|🌕"],
+ on:["ball[on]|🎈","mout[on]|🐑","b[on]bon|🍬","li[on]|🦁","coch[on]|🐷","avi[on]|✈️","poiss[on]|🐟","citr[on]|🍋","cray[on]|✏️","drag[on]|🐉"],
+ om:["p[om]pier|🧑‍🚒","tr[om]pette|🎺","conc[om]bre|🥒","tr[om]bone|📎","col[om]be|🕊️","n[om]bre|🔢"],
+ in:["lap[in]|🐰","sap[in]|🎄","dauph[in]|🐬","s[in]ge|🐒","pouss[in]|🐥","lut[in]|🧝","requ[in]|🦈","p[in]gouin|🐧","pat[in]|⛸️","d[in]don|🦃"],
+ im:["t[im]bre|✉️","[im]primante|🖨️","ch[im]panzé|🐒","gr[im]per|🧗","[im]perméable|🧥"],
+ eu:["f[eu]|🔥","j[eu]|🎲","bl[eu]|💙","d[eu]x|2️⃣","chev[eu]x|💇","n[eu]f|9️⃣","fl[eu]r|🌸","h[eu]re|⏰","b[eu]rre|🧈","fact[eu]r|📬"]
+};
+const SONS=["ou","oi","an","en","au","eau","ai","ei","on","om","in","im","eu"];
+const PAREIL={an:"en",en:"an",au:"eau",eau:"au",ai:"ei",ei:"ai",on:"om",om:"on",in:"im",im:"in"};
+const RESSEMBLE={ou:["oi","on","eu"],oi:["ou","on"],eu:["ou","au"],an:["on","in"],en:["an","in"],on:["an","ou"],in:["an","on"],au:["ou","eau"],eau:["au","eu"],ai:["ei","au"],ei:["ai","eu"],om:["on","im"],im:["in","om"]};
+/* image facultative : /images/planete-sons/mots/<mot>.png (sinon l'émoji) */
+const DOSSIER_IMAGES="/images/planete-sons/mots/";
+
+const $=id=>document.getElementById(id);
+const melange=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function lire(s){const [m,img]=s.split("|");const r=m.match(/^(.*)\[(.+)\](.*)$/);return{avant:r[1],son:r[2],apres:r[3],mot:r[1]+r[2]+r[3],img}}
+const sansAccent=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ /g,"-");
+
+/* ---------- Réglages ---------- */
+let choisis=new Set(["ou","oi"]);
+try{const r=JSON.parse(localStorage.getItem("sonora-reglages")||"null");if(r){choisis=new Set(r.sons);document.querySelector(`[name=nb][value="${r.nb}"]`)?.click();document.querySelector(`[name=mots][value="${r.mots}"]`)?.click();$("optPieges").checked=r.pieges;$("optVoix").checked=r.voix;$("optImage").checked=r.image;$("optRevision").checked=r.revision!==false}}catch(e){}
+function dessinePuces(){$("puces").innerHTML="";SONS.forEach(s=>{const b=document.createElement("button");b.className="son"+(choisis.has(s)?" on":"");b.textContent=s;b.onclick=()=>{choisis.has(s)?choisis.delete(s):choisis.add(s);dessinePuces()};$("puces").appendChild(b)})}
+dessinePuces();
+document.querySelectorAll(".mini").forEach(b=>b.onclick=()=>{const v=b.dataset.s;choisis=new Set(v==="tous"?SONS:v?v.split(" "):[]);dessinePuces()});
+
+/* ---------- Voix ---------- */
+let voixFr=null;
+function chargeVoix(){const v=speechSynthesis.getVoices();voixFr=v.find(x=>/^fr(-|_)FR/i.test(x.lang)&&/google|amélie|thomas|hortense|denise/i.test(x.name))||v.find(x=>/^fr/i.test(x.lang))||null}
+if("speechSynthesis" in window){chargeVoix();speechSynthesis.onvoiceschanged=chargeVoix}
+function dire(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";if(voixFr)u.voice=voixFr;u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+let ctx=null;
+function bip(ok){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);const t=ctx.currentTime;
+ if(ok){o.type="triangle";o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(990,t+.09);o.frequency.setValueAtTime(1320,t+.18)}else{o.type="sine";o.frequency.setValueAtTime(220,t);o.frequency.linearRampToValueAtTime(140,t+.25)}
+ g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36)}catch(e){}}
+
+/* ---------- Partie ---------- */
+let R,file,pos,total,faits,resultats,essais,bloque;
+function reglages(){return{sons:[...choisis],nb:+document.querySelector("[name=nb]:checked").value,mots:+document.querySelector("[name=mots]:checked").value,pieges:$("optPieges").checked,voix:$("optVoix").checked,image:$("optImage").checked,revision:$("optRevision").checked}}
+function construireFile(sons,n){
+ const paquets=sons.map(s=>melange(MOTS[s].map(lire)));const out=[];let i=0,vus=new Set();
+ while(out.length<n){const p=paquets[i%paquets.length];if(!p.length){paquets.splice(i%paquets.length,1);if(!paquets.length)break;continue}
+  const m=p.shift();if(!vus.has(m.mot+m.son)){vus.add(m.mot+m.son);out.push(m)}i++}
+ // si pas assez de mots différents, on recommence un tour
+ if(out.length<n){const base=out.slice();while(out.length<n)out.push(...melange(base).slice(0,n-out.length))}
+ return melange(out).map(m=>({...m,revision:false}));
+}
+function demarrer(liste){
+ R=reglages();
+ if(!liste&&!R.sons.length){$("alerte").textContent="Choisis au moins un son.";return}
+ $("alerte").textContent="";
+ try{localStorage.setItem("sonora-reglages",JSON.stringify(R))}catch(e){}
+ file=liste?melange(liste).map(m=>({...m,revision:false})):construireFile(R.sons,R.mots);
+ total=file.length;pos=0;faits=0;resultats=[];
+ $("reservoir").innerHTML="<i></i>".repeat(total);
+ montre("jeu");question();
+}
+function montre(id){document.querySelectorAll(".ecran").forEach(e=>e.classList.toggle("actif",e.id===id));scrollTo(0,0)}
+function choixPour(son){
+ const pool=[];
+ if(R.pieges&&PAREIL[son])pool.push(PAREIL[son]);
+ melange(R.sons.filter(s=>s!==son)).forEach(s=>pool.push(s));
+ melange(RESSEMBLE[son]||[]).forEach(s=>pool.push(s));
+ melange(SONS).forEach(s=>pool.push(s));
+ const d=[];for(const s of pool){if(s!==son&&!d.includes(s)&&!(!R.pieges&&PAREIL[son]===s))d.push(s);if(d.length>=R.nb-1)break}
+ return melange([son,...d]);
+}
+function question(){
+ if(pos>=file.length)return finir();
+ const q=file[pos];essais=0;bloque=false;
+ $("revision").style.display=q.revision?"block":"none";
+ const im=$("image");im.classList.toggle("cache",!R.image);im.innerHTML="";
+ const img=new Image();img.alt="";img.src=DOSSIER_IMAGES+sansAccent(q.mot)+".png";
+ img.onload=()=>{im.innerHTML="";im.appendChild(img)};im.textContent=q.img;
+ $("mot").innerHTML=`<span>${q.avant}</span><span class="trou" id="trou">&nbsp;</span><span>${q.apres}</span>`;
+ $("message").innerHTML="";
+ const c=$("cristaux");c.innerHTML="";
+ choixPour(q.son).forEach((s,i)=>{const b=document.createElement("button");b.className="cristal c"+i;b.textContent=s;b.onclick=()=>repondre(b,s);c.appendChild(b)});
+ $("compteur").textContent=q.revision?"Mot à revoir":`Mot ${Math.min(faits+1,total)} sur ${total}`;
+ if(R.voix)setTimeout(()=>dire(q.mot),350);
+}
+function conseil(q,s){
+ const lettre=(q.apres[0]||"").toLowerCase();
+ if((q.son==="om"||q.son==="im")&&(s==="on"||s==="in"))return`Regarde la lettre après : <b>${lettre}</b>. Devant <b>m, b, p</b>, on écrit <b>${q.son}</b> !`;
+ if((q.son==="on"||q.son==="in")&&(s==="om"||s==="im"))return`Après, il y a <b>${lettre||"rien"}</b> : pas de m, b ou p, alors on écrit <b>${q.son}</b>.`;
+ if(PAREIL[q.son]===s)return`« ${s} » fait bien le même son… mais pas dans ce mot. Ouvre l'œil, essaie encore !`;
+ return`Écoute bien le mot : quel son entends-tu ?`;
+}
+function repondre(b,s){
+ if(bloque)return;const q=file[pos];
+ if(s===q.son){
+  bloque=true;bip(true);b.classList.add("bon");
+  const t=$("trou");t.textContent=q.son;t.classList.add("rempli");
+  $("message").innerHTML=`<span class="z">👽</span> ${["Bravo !","Super !","Bien vu !","Génial !","Exact !"][Math.random()*5|0]} <b>${q.avant}<span style="color:var(--or)">${q.son}</span>${q.apres}</b>`;
+  setTimeout(()=>dire(q.mot),150);
+  if(!q.revision){resultats.push({...q,premier:essais===0});faits++;const cases=$("reservoir").children;if(cases[faits-1])cases[faits-1].classList.add("plein")}
+  else{const r=resultats.find(x=>x.mot===q.mot&&x.son===q.son);if(r)r.revu=true}
+  pos++;setTimeout(question,1700);
+ }else{
+  essais++;bip(false);b.classList.add("faux");
+  if(essais===1){
+   $("message").innerHTML=`<span class="z">👽</span> ${conseil(q,s)}`;
+  }else{
+   $("message").innerHTML=`<span class="z">👽</span> Le bon cristal brille. Touche-le et retiens bien : <b>${q.mot}</b> s'écrit avec <b>${q.son}</b>.`;
+   [...$("cristaux").children].forEach(x=>{if(x.textContent===q.son)x.classList.add("montre")});
+  }
+  if(essais===1&&R.revision&&!q.revision){file.splice(Math.min(pos+3,file.length),0,{...q,revision:true})}
+ }
+}
+$("ecoute").onclick=()=>dire(file[pos].mot);
+$("go").onclick=()=>demarrer();
+$("quitter").onclick=()=>{speechSynthesis.cancel?.();montre("reglages")};
+
+/* ---------- Fin ---------- */
+function finir(){
+ montre("fin");
+ const f=$("fusee");f.classList.remove("part");void f.offsetWidth;setTimeout(()=>f.classList.add("part"),400);
+ const premiers=resultats.filter(r=>r.premier).length;
+ $("bilan").innerHTML=`Trouvés du premier coup : <b>${premiers} / ${resultats.length}</b> ${premiers===resultats.length?"🌟 Mission parfaite !":""}`;
+ const tri=resultats.slice().sort((a,b)=>SONS.indexOf(a.son)-SONS.indexOf(b.son));
+ $("carnet").innerHTML=tri.map(r=>`<div class="ligne"><span class="e">${r.img}</span><span>${r.avant}<b>${r.son}</b>${r.apres}</span><span class="r">${r.premier?"✅":"🔁"}</span></div>`).join("");
+ const sons=new Set(resultats.map(r=>r.son));let rg="";
+ if(sons.has("om")||sons.has("im"))rg+=`<p class="regle">📌 Devant <b>m, b, p</b>, on écrit <b>om</b>, <b>im</b> (et am, em) : pompier, timbre.</p>`;
+ if(sons.has("an")&&sons.has("en"))rg+=`<p class="regle">📌 <b>an</b> et <b>en</b> font le même son : il faut retenir comment s'écrit chaque mot (maman, dent).</p>`;
+ if(sons.has("au")&&sons.has("eau"))rg+=`<p class="regle">📌 <b>eau</b> est souvent à la fin du mot : bateau, gâteau.</p>`;
+ $("regles").innerHTML=rg;
+ try{TDC.note({s:premiers,n:resultats.length,g:premiers>=resultats.length*.8,niv:"Sons : "+[...sons].join(", "),d:`${premiers} / ${resultats.length} mots trouvés du premier coup (sons : ${[...sons].join(", ")})`})}catch(e){}
+ $("rates").style.display=resultats.some(r=>!r.premier)?"":"none";
+ if(premiers===resultats.length)setTimeout(()=>dire("Mission parfaite ! Merci, ma fusée peut repartir !"),900);
+ else setTimeout(()=>dire("Merci ! Ma fusée peut repartir !"),900);
+}
+$("rejouer").onclick=()=>demarrer();
+$("rates").onclick=()=>{const l=resultats.filter(r=>!r.premier).map(({premier,revu,...m})=>m);demarrer(l.length?l:null)};
+$("changer").onclick=()=>montre("reglages");
+</script>
+</body>
+</html>

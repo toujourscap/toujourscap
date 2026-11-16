@@ -1,6 +1,282 @@
 {
- "count": 56,
+ "count": 57,
  "posts": [
+  {
+   "title": "Les cristaux de la planète Sonora",
+   "slug": "les-cristaux-de-la-planete-sonora",
+   "excerpt": "Sur une planète lointaine, la fusée de Zouk est en panne : chaque mot a perdu son son complexe. L'élève retrouve le bon cristal (ou, oi, an, en, au, eau, ai, ei, on, om, in, im, eu) pour remplir le réservoir. Cristaux pièges, révision des mots ratés, plus de 100 mots illustrés.",
+   "date": "2026-11-16T14:50:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "competence": ["mots"],
+    "niveaux": ["CP", "CE1"],
+    "joueurs": "1 joueur ou la classe",
+    "supports": ["ecran", "projetable"]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Zouk, un petit extraterrestre, est en panne sur la planète Sonora. Sur sa planète, les mots ont perdu leurs sons ! Un mot apparaît avec un trou à la place du son complexe (p▢da) ; l'ordinateur le lit à voix haute. L'élève touche le cristal qui manque. Chaque bonne réponse remplit le réservoir de la fusée ; quand il est plein, la fusée décolle.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/les-cristaux-de-la-planete-sonora.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ce que travaillent les élèves",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "La mémorisation de l'écriture des sons complexes : ",
+         "decorations": []
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "ou, oi, an, en, au, eau, ai, ei, on, om, in, im, eu",
+         "decorations": [
+          {
+           "type": "BOLD"
+          }
+         ]
+        }
+       },
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": ". Le trou a toujours la même taille : il ne laisse pas deviner la réponse (au et eau prennent la même place). L'élève doit se souvenir de l'écriture du mot.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les réglages",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Les sons : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "au choix, ou par séries (ou · oi, an · en, au · eau, ai · ei, on · om, in · im, eu · ou · oi, tous).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "2, 3 ou 4 cristaux ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "proposés, et 10, 15 ou 20 mots.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Cristaux pièges : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "le jeu propose le son qui se prononce pareil (an / en, au / eau, ai / ei, on / om, in / im).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Révision : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "un mot raté revient un peu plus tard ; à la fin, « Revoir les mots ratés » relance une mission avec eux.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Voix et image : ",
+             "decorations": [
+              {
+               "type": "BOLD"
+              }
+             ]
+            }
+           },
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "lecture du mot à voix haute et image du mot, chacune peut être retirée.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Une aide à chaque erreur",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "À la première erreur, Zouk donne un conseil : « Devant m, b, p, on écrit om ! », ou « an fait bien le même son… mais pas dans ce mot ». À la deuxième, le bon cristal brille. En fin de partie, le carnet de bord de Zouk récapitule les mots, le son en couleur, et rappelle les règles utiles.",
+         "decorations": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
   {
    "title": "L'atelier des barres",
    "slug": "l-atelier-des-barres",
