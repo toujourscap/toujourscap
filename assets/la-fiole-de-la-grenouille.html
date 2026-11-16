@@ -21,7 +21,8 @@
   label.opt{display:inline-flex;align-items:center;gap:8px;margin:6px 10px;font-size:1rem;color:#495057;cursor:pointer}
   select{font-size:1rem;padding:4px 6px;border-radius:6px;border:1px solid #ced4da}
   textarea{width:95%;height:80px;padding:10px;font-size:1rem;border:1px solid #ced4da;border-radius:6px;resize:vertical;margin-top:6px}
-  #perso{display:none}
+  #perso,#texteBloc{display:none}
+  #texte{height:130px}
   .note{font-size:.85rem;color:#6c757d;margin:6px 0 0}
   .cache{display:none!important}
   .go{background:#2f8f46;font-size:1.3rem;padding:14px 30px;margin:4px}
@@ -142,10 +143,15 @@
         <button data-l="5">🍀 Niveau 4<small>début de CE1</small></button>
         <button data-l="4">🏔️ Niveau 5<small>fin de CE1</small></button>
         <button data-l="perso">✏️ Ma liste<small>mes mots</small></button>
+        <button data-l="texte">📄 Un texte<small>mots piochés</small></button>
       </div>
       <div id="perso">
         <textarea id="mots" placeholder="Écris ou colle tes mots, séparés par des espaces, des virgules ou des retours à la ligne."></textarea>
         <p class="note">La liste reste enregistrée sur cet ordinateur.</p>
+      </div>
+      <div id="texteBloc">
+        <textarea id="texte" placeholder="Colle ici un texte (une histoire lue en classe, une poésie, un texte du manuel…)."></textarea>
+        <p class="note" id="noteTexte"></p>
       </div>
     </div>
 
@@ -292,7 +298,7 @@
     5: "peinture ceinture copain plein frein sommeil corbeille chevreuil fenêtre forêt tempête bougie nuage orage genou caillou hibou cartable trousse cahier escalier panier tablier sanglier jardin requin pingouin coussin histoire armoire mouchoir couloir étoile brosse chaussure chaussette ruisseau pinceau couteau chapeau tortue cheminée épaule autruche boulanger lumière rivière pluie fruit juillet",
     4: "anniversaire bibliothèque ordinateur hélicoptère dictionnaire crocodile extraordinaire récréation attention addition gentiment rapidement doucement parapluie kangourou aquarium hippopotame orchestre chorale monsieur femme oignon automne album examen parfum second ville tranquille aiguille accident exemple exactement explorateur squelette kilomètre thermomètre rhinocéros yaourt journaliste quatorze vingt cinquante déguisement gymnastique magnifique escargot ascenseur piscine maintenant"
   };
-  const NOMS = {1:"Niveau 1 (début CP)",2:"Niveau 2 (milieu CP)",3:"Niveau 3 (fin CP)",5:"Niveau 4 (début CE1)",4:"Niveau 5 (fin CE1)",perso:"Ma liste"};
+  const NOMS = {1:"Niveau 1 (début CP)",2:"Niveau 2 (milieu CP)",3:"Niveau 3 (fin CP)",5:"Niveau 4 (début CE1)",4:"Niveau 5 (fin CE1)",perso:"Ma liste",texte:"Mon texte"};
   // Ce que la reconnaissance vocale écrit parfois en chiffres ou en abrégé
   const ECRITS = {"14":"quatorze","20":"vingt","50":"cinquante","2nd":"second","2e":"second","m":"monsieur","mr":"monsieur"};
 
@@ -300,12 +306,30 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const store = {get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 
+  // ---------- Un texte : l'ordinateur pioche les mots (ou reprend les phrases) ----------
+  function piocheMots(t){
+    t = t.replace(/[’`]/g,"'");
+    const re = /[A-Za-zÀ-ÖØ-öø-ÿŒœÆæ]+(?:[-'][A-Za-zÀ-ÖØ-öø-ÿŒœÆæ]+)*/g;
+    const vus = new Map(); let m;
+    while ((m = re.exec(t))){
+      let w = m[0];
+      const debut = /[.!?…:«»"—–\n]\s*$/.test(t.slice(Math.max(0,m.index-3), m.index)) || m.index===0;
+      if (w.includes("'")){ const p = w.split("'"); w = p[p.length-1]; }
+      if (w.length<2) continue;
+      const k = w.toLowerCase();
+      const e = vus.get(k) || {mot:w, min:false, propre:false, n:vus.size};
+      if (w===k) e.min = true; else if (!debut) e.propre = true;
+      vus.set(k, e);
+    }
+    return [...vus.entries()].sort((a,b)=>a[1].n-b[1].n).map(([k,e])=> (e.propre && !e.min) ? e.mot : k);
+  }
   let liste = store.get("fiole-liste","1"), mode = store.get("fiole-mode","adulte");
   let objectif = parseInt(store.get("fiole-objectif","50"),10);
   if (![20,50,100,200].includes(objectif)) objectif = 50;
-  if (!LISTES[liste] && liste!=="perso") liste="1";
+  if (!LISTES[liste] && liste!=="perso" && liste!=="texte") liste="1";
   if (mode==="micro" && !SR) mode="adulte";
   $("mots").value = store.get("fiole-mots", store.get("tachi-mots","maison poisson château garçon lapin bouton oiseau peinture cloche dragon"));
+  $("texte").value = store.get("fiole-texte", store.get("tachi-texte","Le petit chat joue dans le jardin. Il voit un oiseau sur la branche du pommier. Le chat saute, mais l'oiseau s'envole ! Alors le chat retourne dormir au soleil."));
   $("temps").value = store.get("fiole-temps","5");
   $("relaisN").value = store.get("fiole-relais","5");
   $("melange").checked = store.get("fiole-melange","1")==="1";
@@ -320,6 +344,9 @@
     document.querySelectorAll("#modes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
     document.querySelectorAll("#objectifs button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.o===objectif)));
     $("perso").style.display = liste==="perso" ? "block" : "none";
+    $("texteBloc").style.display = liste==="texte" ? "block" : "none";
+    if (liste==="texte"){ const n = piocheMots($("texte").value).length;
+      $("noteTexte").textContent = "L'ordinateur pioche les mots du texte, sans doublon ("+n+" mot"+(n>1?"s":"")+" différent"+(n>1?"s":"")+"). Le texte reste enregistré sur cet ordinateur."; }
     $("noteMode").textContent = mode==="micro"
       ? "L'élève lit à voix haute : la goutte tombe dès que le micro a reconnu le mot. S'il n'a pas bien entendu, l'élève peut relire une fois. L'adulte peut toujours aider avec ✅ / ➡️."
       : "L'élève lit, l'adulte clique ✅ si le mot est juste (une goutte tombe), ➡️ sinon (on passe au mot suivant).";
@@ -334,6 +361,7 @@
     if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
     mode=b.dataset.m;store.set("fiole-mode",mode);marquer();});
   $("mots").oninput=()=>store.set("fiole-mots",$("mots").value);
+  $("texte").oninput=()=>{ store.set("fiole-texte",$("texte").value); marquer(); };
   $("temps").onchange=()=>store.set("fiole-temps",$("temps").value);
   $("relaisN").onchange=()=>store.set("fiole-relais",$("relaisN").value);
   $("melange").onchange=()=>store.set("fiole-melange",$("melange").checked?"1":"0");
@@ -429,8 +457,11 @@
   // ---------- Partie ----------
   let mots=[], i=0, gouttes=0, lus=0, lecteur=1, bons=0, actif=false, tMot=null, essai=0, rec=null, ecoute=false, depuis=0, finie=false;
   function charger(){
-    const src = liste==="perso" ? $("mots").value : LISTES[liste];
-    mots = src.replace(/[,;]/g," ").split(/\s+/).map(m=>m.trim()).filter(Boolean);
+    if (liste==="texte") mots = piocheMots($("texte").value);
+    else {
+      const src = liste==="perso" ? $("mots").value : LISTES[liste];
+      mots = src.replace(/[,;]/g," ").split(/\s+/).map(m=>m.trim()).filter(Boolean);
+    }
     if ($("melange").checked) melanger();
   }
   function melanger(){ for (let k=mots.length-1;k>0;k--){ const j=Math.floor(Math.random()*(k+1)); [mots[k],mots[j]]=[mots[j],mots[k]]; } }
@@ -438,7 +469,7 @@
 
   function demarrer(reprise){
     charger();
-    if (!mots.length){ $("noteMode").textContent="⚠️ La liste est vide : écris des mots dans « Ma liste »."; return; }
+    if (!mots.length){ $("noteMode").textContent = liste==="texte" ? "⚠️ Colle d'abord un texte dans « Un texte »." : "⚠️ La liste est vide : écris des mots dans « Ma liste »."; return; }
     const e = enCours();
     if (reprise && e){ objectif=e.obj; gouttes=e.n; } else { gouttes=0; store.set("fiole-encours","null"); }
     $("reglages").classList.add("cache"); $("partie").classList.remove("cache");
