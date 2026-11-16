@@ -59,8 +59,21 @@
   #zoneU{gap:3px;width:calc(var(--u)*3 + 16px);margin:0 auto;align-content:flex-start}
   .colonne h3{margin:0 0 6px;font-size:1rem;color:#495057;display:flex;justify-content:space-between;gap:6px}
   .colonne h3 .compte{color:#1c64d8}
-  .zone{flex:1;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;min-height:calc(var(--u)*21 + 18px)}
-  #zoneD{gap:3px;min-height:calc(var(--u)*10 + 14px)} #zoneD .barre:nth-child(5n){margin-right:7px}
+  .zone{flex:1;display:flex;justify-content:center;align-items:flex-start;min-height:calc(var(--u)*10 + 14px)}
+  .ens{display:inline-flex;flex-direction:column;align-items:stretch;max-width:100%}
+  .paire{display:flex;gap:calc(var(--u)*2.6 + 8px);justify-content:center;align-items:flex-start}
+  .grp{display:flex;flex-direction:column;align-items:center;min-width:0;flex:0 1 auto}
+  .blocs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:flex-start}
+  #zoneD .blocs,#zoneU .blocs{gap:3px} #zoneD .barre:nth-child(5n){margin-right:7px} #zoneD .barre:last-child{margin-right:0}
+  .grp.g2{padding:3px;border-radius:8px}
+  .grp.plus{background:#ebfbee} .grp.moins{background:#fff0f0}
+  .acc{display:flex;flex-direction:column;align-items:center;color:#495057;margin-top:2px;line-height:1.1}
+  .acc svg{display:block;overflow:visible}
+  .acc span{font-weight:bold;font-size:1.05rem}
+  .plus .acc{color:#2b8a3e} .moins .acc{color:#c92a2a}
+  .acc.total{color:#1c64d8;margin-top:4px} .acc.total span{font-size:1.25rem}
+  .bloc.enleve{opacity:.35;filter:grayscale(.6)}
+  .bloc.enleve::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1.5px),#c92a2a calc(50% - 1.5px),#c92a2a calc(50% + 1.5px),transparent calc(50% + 1.5px))}
   #outils{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
   .reserve{display:flex;align-items:center;gap:8px;background:#fff;border:2px dashed #1c64d8;color:#1d3557;padding:6px 12px;font-size:1rem;touch-action:none}
   .reserve .plaque{--u:4.4px} .reserve .barre{--u:4.4px}
@@ -254,6 +267,20 @@ function dire(t) {
   } catch (e) {}
 }
 try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) {}
+/* Petit son immédiat (bonne ou mauvaise réponse) : la voix arrive parfois avec un temps de retard. */
+let ctxSon = null;
+function son(bon) {
+  try {
+    ctxSon = ctxSon || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = ctxSon.currentTime;
+    (bon ? [660, 880, 1320] : [220, 180]).forEach((f, k) => {
+      const o = ctxSon.createOscillator(), g = ctxSon.createGain(), t = t0 + k * (bon ? .09 : .14);
+      o.type = bon ? "triangle" : "square"; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(bon ? .25 : .08, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + (bon ? .25 : .2));
+      o.connect(g).connect(ctxSon.destination); o.start(t); o.stop(t + .3);
+    });
+  } catch (e) {}
+}
 const lu = q => `${q.a} ${q.op === "+" ? "plus" : "moins"} ${q.b}`;
 
 /* ---------- Tirage des calculs ---------- */
@@ -300,25 +327,52 @@ function tirage(op) {
 }
 
 /* ---------- Plateau ---------- */
-function valeur() { return blocs.reduce((s, x) => s + (x.t === "c" ? 100 : x.t === "d" ? 10 : 1), 0); }
+function valeur() { return blocs.reduce((s, x) => s + (x.enleve ? 0 : x.t === "c" ? 100 : x.t === "d" ? 10 : 1), 0); }
 function remplir(n, ajout) {
   blocs = [];
   for (let k = 0; k < (n === 1000 ? 10 : C(n)); k++) blocs.push({ id: ++nid, t: "c", ajout });
   for (let k = 0; k < D(n); k++) blocs.push({ id: ++nid, t: "d", ajout });
   for (let k = 0; k < n % 10; k++) blocs.push({ id: ++nid, t: "u", ajout });
 }
+/* Chaque colonne : deux groupes séparés (le 1er nombre | ce qu'on ajoute ou ce qu'on enlève),
+   une accolade sous chacun et une grande accolade pour le total de la colonne.
+   L'accolade de ce qu'on cherche (le total pour une addition, ce qui reste pour une soustraction) affiche « ? » jusqu'à la réponse. */
+const VAL = { c: 100, d: 10, u: 1 };
+function nouveauBloc(x, t, nouveaux) {
+  const e = document.createElement("i");
+  e.className = (t === "c" ? "plaque" : t === "d" ? "barre" : "cube") + " bloc" + (x.ajout ? " ajout" : "") + (x.enleve ? " enleve" : "") + (nouveaux.includes(x.id) ? " nouveau" : "");
+  e.dataset.id = x.id;
+  e.title = !Q ? "" : Q.op === "−" ? (x.enleve ? "Touche pour remettre" : "Touche pour enlever") : (x.ajout ? "Touche pour reprendre" : "");
+  return e;
+}
+function groupe(liste, t, nouveaux, cl, etiquette) {
+  const g = document.createElement("div"); g.className = "grp " + cl;
+  const b = document.createElement("div"); b.className = "blocs"; liste.forEach(x => b.appendChild(nouveauBloc(x, t, nouveaux)));
+  g.appendChild(b);
+  if (etiquette != null) { const a = document.createElement("div"); a.className = "acc"; a.innerHTML = `<svg></svg><span>${etiquette}</span>`; g.appendChild(a); }
+  return g;
+}
 function dessine(nouveaux = []) {
+  const sous = Q && Q.op === "−";
   ["c", "d", "u"].forEach(t => {
     const z = $(t === "c" ? "zoneC" : t === "d" ? "zoneD" : "zoneU"); z.innerHTML = "";
-    blocs.filter(x => x.t === t).forEach(x => {
-      const e = document.createElement("i");
-      e.className = (t === "c" ? "plaque" : t === "d" ? "barre" : "cube") + " bloc" + (x.ajout ? " ajout" : "") + (nouveaux.includes(x.id) ? " nouveau" : "");
-      e.dataset.id = x.id;
-      e.title = Q && Q.op === "−" ? "Touche pour enlever" : (x.ajout ? "Touche pour reprendre" : "");
-      z.appendChild(e);
-    });
+    const tous = blocs.filter(x => x.t === t);
+    if (t === "u" || !Q) { z.appendChild(groupe(tous, t, nouveaux, "seul", null)); return; }
+    const g1 = tous.filter(x => !x.ajout && !x.enleve), g2 = tous.filter(x => sous ? x.enleve : x.ajout);
+    const v1 = g1.length * VAL[t], v2 = g2.length * VAL[t], cache = "<b>?</b>";
+    const ens = document.createElement("div"); ens.className = "ens";
+    const paire = document.createElement("div"); paire.className = "paire";
+    paire.appendChild(groupe(g1, t, nouveaux, "g1", g1.length ? (sous && g2.length && !S.fini ? cache : v1) : null));
+    if (g2.length) paire.appendChild(groupe(g2, t, nouveaux, sous ? "g2 moins" : "g2 plus", (sous ? "− " : "+ ") + v2));
+    ens.appendChild(paire);
+    if (g1.length && g2.length) {
+      const a = document.createElement("div"); a.className = "acc total";
+      a.innerHTML = `<svg></svg><span>${sous ? v1 + v2 : (S.fini ? v1 + v2 : cache)}</span>`; ens.appendChild(a);
+    }
+    z.appendChild(ens);
   });
-  const nc = blocs.filter(x => x.t === "c").length, nd = blocs.filter(x => x.t === "d").length, nu = blocs.filter(x => x.t === "u").length;
+  const vivants = blocs.filter(x => !x.enleve);
+  const nc = vivants.filter(x => x.t === "c").length, nd = vivants.filter(x => x.t === "d").length, nu = vivants.filter(x => x.t === "u").length;
   $("nbC").textContent = R_.compte ? nc : ""; $("nbD").textContent = R_.compte ? nd : ""; $("nbU").textContent = R_.compte ? nu : "";
   $("grouper").classList.toggle("cache", !(R_.echange || nd >= 10) || R_.niveau === 2);
   $("casser").classList.toggle("cache", !R_.echange || R_.niveau === 2);
@@ -329,6 +383,22 @@ function dessine(nouveaux = []) {
   $("resC").disabled = S.fini || nc >= 10 || valeur() + 100 > 1000;
   $("resD").disabled = S.fini || nd >= 19 || valeur() + 10 > 1000;
   $("recommencer").disabled = S.fini;
+  retrecit(); requestAnimationFrame(accolades);
+}
+/* Pendant la manipulation, les blocs rapetissent si le plateau dépasse de l'écran (ils ne regrandissent qu'au calcul suivant). */
+function retrecit() {
+  const jeu = $("ab-jeu"); if ($("partie").classList.contains("cache")) return;
+  let u = parseFloat(getComputedStyle(jeu).getPropertyValue("--u")) || 9;
+  for (let k = 0; k < 14 && jeu.scrollHeight > innerHeight + 2 && u > 3.6; k++) { u -= .4; jeu.style.setProperty("--u", u.toFixed(2) + "px"); }
+}
+/* Accolade horizontale à la largeur exacte de ce qu'elle regroupe. */
+function accolades() {
+  document.querySelectorAll("#plateau .acc").forEach(a => {
+    const cible = a.classList.contains("total") ? a.parentNode.querySelector(".paire") : a.parentNode.querySelector(".blocs");
+    const w = Math.max(24, cible.getBoundingClientRect().width), h = 14, m = w / 2, r = Math.min(8, w / 6);
+    const svg = a.querySelector("svg"); svg.setAttribute("width", w); svg.setAttribute("height", h + 2); svg.setAttribute("viewBox", `0 0 ${w} ${h + 2}`);
+    svg.innerHTML = `<path d="M1.5 1 Q1.5 ${h / 2} ${r} ${h / 2} L${m - r} ${h / 2} Q${m} ${h / 2} ${m} ${h} Q${m} ${h / 2} ${m + r} ${h / 2} L${w - r} ${h / 2} Q${w - 1.5} ${h / 2} ${w - 1.5} 1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`;
+  });
 }
 function ajoute(t) {
   if (S.fini || Q.op !== "+") return;
@@ -343,6 +413,7 @@ function enleve(id) {
   const b = blocs.find(x => x.id == id); if (!b) return;
   if (b.t === "u") { message(`On ${Q.op === "+" ? "ajoute" : "enlève"} seulement des ${R_.niveau === 2 ? "centaines" : R_.niveau === 1 ? "dizaines" : "dizaines et des centaines"} : les unités ne bougent pas !`, ""); return; }
   if (Q.op === "+" && !b.ajout) { message("Ces barres et ces plaques font " + Q.a + " : ajoute plutôt " + Q.b + " avec les boutons du bas.", ""); return; }
+  if (Q.op === "−") { b.enleve = !b.enleve; dessine([b.id]); return; }   // soustraction : le bloc passe dans le groupe « enlevé » (ou revient)
   const e = document.querySelector(`.bloc[data-id="${id}"]`);
   if (e) e.classList.add("part");
   blocs = blocs.filter(x => x !== b);
@@ -350,7 +421,7 @@ function enleve(id) {
 }
 $("plateau").addEventListener("click", e => { const b = e.target.closest(".bloc"); if (b) enleve(b.dataset.id); });
 $("grouper").addEventListener("click", () => {
-  const ds = blocs.filter(x => x.t === "d"); if (ds.length < 10 || blocs.filter(x => x.t === "c").length >= 10) return;
+  const ds = blocs.filter(x => x.t === "d" && !x.enleve); if (ds.length < 10 || blocs.filter(x => x.t === "c" && !x.enleve).length >= 10) return;
   const ret = ds.slice(-10); ret.forEach(x => { const e = document.querySelector(`.bloc[data-id="${x.id}"]`); if (e) e.classList.add("part"); });
   setTimeout(() => {
     const aj = ret.some(x => x.ajout);
@@ -360,7 +431,7 @@ $("grouper").addEventListener("click", () => {
   }, 260);
 });
 $("casser").addEventListener("click", () => {
-  const cs = blocs.filter(x => x.t === "c"); if (!cs.length) return;
+  const cs = blocs.filter(x => x.t === "c" && !x.enleve); if (!cs.length) return;
   const p = cs[cs.length - 1]; const e = document.querySelector(`.bloc[data-id="${p.id}"]`); if (e) e.classList.add("part");
   setTimeout(() => {
     blocs = blocs.filter(x => x !== p); const nv = [];
@@ -435,7 +506,7 @@ function question() {
   $("plateau").classList.add("clic");
   remplir(Q.a, false); dessine();
   message(Q.op === "+" ? `Voici ${Q.a}. Ajoute ${Q.b} avec les plaques et les barres, puis écris le résultat.`
-                       : `Voici ${Q.a}. Enlève ${Q.b} : touche les plaques et les barres à retirer, puis écris le résultat.`, "");
+                       : `Voici ${Q.a}. Enlève ${Q.b} : touche les plaques et les barres à retirer (elles se mettent à part), puis écris le résultat.`, "");
   dire(lu(Q));
   ajuste();
 }
@@ -473,10 +544,10 @@ function verifie() {
     if (S.erreurs === 0) S.score++;
     c.className = "bon"; S.fini = true; $("score").textContent = "⭐ " + S.score;
     message(["Bravo !", "Super !", "C'est ça !", "Excellent !"][Math.floor(Math.random() * 4)] + ` ${Q.a} ${signe(Q.op)} ${Q.b} = ${Q.r}`, "bravo");
-    dire(`Bravo ! ${lu(Q)} égale ${Q.r}`);
+    son(true); dire(`${lu(Q)} égale ${Q.r}`);
     return termine();
   }
-  S.erreurs++;
+  S.erreurs++; son(false);
   c.classList.remove("mauvais"); void c.offsetWidth; c.classList.add("mauvais");
   if (S.erreurs === 1) { message("Pas tout à fait… " + aide(), "erreur"); saisie = ""; setTimeout(() => { if (!S.fini && !saisie) c.textContent = ""; }, 700); return; }
   S.fini = true; c.className = "bon"; c.style.background = "#868e96"; c.style.borderColor = "#868e96"; c.textContent = Q.r;
@@ -545,9 +616,9 @@ function ajuste() {
   const parLigne = innerWidth <= 640 ? 1 : 1.7 / (1.7 + (sansD ? 0 : 1) + (avecU ? .5 : 0));      // part de largeur donnée aux centaines
   if (!sansC) u = Math.min(u, (large * parLigne - 24 - 4 * 6) / 5 / 10.3);   // 5 plaques par ligne
   jeu.style.setProperty("--u", Math.max(3.5, u).toFixed(2) + "px");
-  for (let k = 0; k < 14 && jeu.scrollHeight > innerHeight + 2 && u > 3.6; k++) { u -= .4; jeu.style.setProperty("--u", u.toFixed(2) + "px"); }
+  retrecit(); accolades();
 }
-addEventListener("resize", ajuste);
+addEventListener("resize", () => { ajuste(); accolades(); });
 document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
 $("ecran").addEventListener("click", () => { const z = $("ab-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
 </script>
