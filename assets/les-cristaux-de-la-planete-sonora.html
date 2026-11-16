@@ -27,7 +27,7 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
 .carte{background:#1b1946e6;border:2px solid #6c5cd6;border-radius:20px;padding:16px 18px;margin:12px 0;box-shadow:0 6px 24px #0008}
 .carte h2{margin:0 0 .5em;font-size:1.15rem;color:var(--cyan)}
 .histoire{display:flex;gap:14px;align-items:center}
-.zouk{width:92px;height:92px;flex:none;display:grid;place-items:center;font-size:64px}
+.zouk{width:120px;height:120px;flex:none;display:grid;place-items:center;font-size:64px}
 .zouk img{width:100%;height:100%;object-fit:contain}
 .puces{display:flex;flex-wrap:wrap;gap:8px}
 .son{font:inherit;font-size:1.35rem;font-weight:bold;min-width:64px;padding:.35em .6em;border-radius:14px;border:2px solid #8b7ee8;background:#2a2763;color:#fff;cursor:pointer}
@@ -65,6 +65,7 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
 .ecoute{font:inherit;font-size:1.05rem;padding:.4em 1em;border-radius:999px;border:2px solid #8b7ee8;background:#2a2763;color:#fff;cursor:pointer}
 .message{min-height:2.7em;margin:.6em auto 0;max-width:620px;font-size:1.08rem;display:flex;align-items:center;justify-content:center;gap:8px}
 .message .z{font-size:30px}
+.message img.z{height:58px;width:auto;flex:none}
 .cristaux{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(10px,3vw,26px);margin:16px 0 6px}
 .cristal{font:inherit;font-family:"Comic Sans MS","Andika","Trebuchet MS",sans-serif;font-weight:bold;font-size:clamp(1.9rem,6vw,2.8rem);width:clamp(110px,22vw,150px);height:clamp(120px,24vw,165px);border:0;cursor:pointer;color:#14123a;position:relative;
  clip-path:polygon(50% 0,92% 22%,100% 62%,50% 100%,0 62%,8% 22%);
@@ -79,7 +80,7 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
 @keyframes envol{to{transform:translateY(-140px) scale(.4);opacity:0}}
 .compteur{text-align:center;opacity:.8;font-size:.95rem}
 /* fin */
-.decollage{height:200px;position:relative;overflow:hidden}
+.decollage{height:290px;position:relative;overflow:hidden}
 .fusee{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font-size:90px;width:120px;text-align:center}
 .fusee img{width:100%}
 .fusee.part{animation:decolle 2.8s ease-in forwards}
@@ -212,6 +213,8 @@ const RESSEMBLE={ou:["oi","on","eu"],oi:["ou","on"],eu:["ou","au"],an:["on","in"
 const DOSSIER_IMAGES="/images/planete-sons/mots/";
 
 const $=id=>document.getElementById(id);
+let zoukOK=false;{const t=new Image();t.onload=()=>zoukOK=true;t.src="/images/planete-sons/zouk.png"}
+const ZZ=()=>zoukOK?'<img class="z" src="/images/planete-sons/zouk.png" alt="">':'<span class="z">👽</span>';
 const melange=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 function lire(s){const [m,img]=s.split("|");const r=m.match(/^(.*)\[(.+)\](.*)$/);return{avant:r[1],son:r[2],apres:r[3],mot:r[1]+r[2]+r[3],img}}
 const sansAccent=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ /g,"-");
@@ -290,7 +293,7 @@ function repondre(b,s){
  if(s===q.son){
   bloque=true;bip(true);b.classList.add("bon");
   const t=$("trou");t.textContent=q.son;t.classList.add("rempli");
-  $("message").innerHTML=`<span class="z">👽</span> ${["Bravo !","Super !","Bien vu !","Génial !","Exact !"][Math.random()*5|0]} <b>${q.avant}<span style="color:var(--or)">${q.son}</span>${q.apres}</b>`;
+  $("message").innerHTML=`${ZZ()} ${["Bravo !","Super !","Bien vu !","Génial !","Exact !"][Math.random()*5|0]} <b>${q.avant}<span style="color:var(--or)">${q.son}</span>${q.apres}</b>`;
   setTimeout(()=>dire(q.mot),150);
   if(!q.revision){resultats.push({...q,premier:essais===0});faits++;const cases=$("reservoir").children;if(cases[faits-1])cases[faits-1].classList.add("plein")}
   else{const r=resultats.find(x=>x.mot===q.mot&&x.son===q.son);if(r)r.revu=true}
@@ -298,9 +301,9 @@ function repondre(b,s){
  }else{
   essais++;bip(false);b.classList.add("faux");
   if(essais===1){
-   $("message").innerHTML=`<span class="z">👽</span> ${conseil(q,s)}`;
+   $("message").innerHTML=`${ZZ()} ${conseil(q,s)}`;
   }else{
-   $("message").innerHTML=`<span class="z">👽</span> Le bon cristal brille. Touche-le et retiens bien : <b>${q.mot}</b> s'écrit avec <b>${q.son}</b>.`;
+   $("message").innerHTML=`${ZZ()} Le bon cristal brille. Touche-le et retiens bien : <b>${q.mot}</b> s'écrit avec <b>${q.son}</b>.`;
    [...$("cristaux").children].forEach(x=>{if(x.textContent===q.son)x.classList.add("montre")});
   }
   if(essais===1&&R.revision&&!q.revision){file.splice(Math.min(pos+3,file.length),0,{...q,revision:true})}
