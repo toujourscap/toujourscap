@@ -98,6 +98,35 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .scene.merci{opacity:.45;transition:opacity .3s}
 .eleve-bas{justify-content:center}
 label.indispo{opacity:.45}
+
+.synth{border:2px solid #24527a;border-radius:12px;padding:10px 14px;margin:14px 0}
+.synth h3{margin:.2em 0 .5em}.synth table{width:100%;border-collapse:collapse}.synth td,.synth th{border-bottom:1px solid #dde3ea;padding:6px;text-align:left;vertical-align:top}
+.st-a{color:#1d6b40;font-weight:700}.st-e{color:#a35a00;font-weight:700}.st-n{color:#b3261e;font-weight:700}
+/* ---------- Document à imprimer ---------- */
+#docPages{max-width:210mm;margin:0 auto}
+.dpage{background:#fff;color:#222;padding:12mm 13mm;margin:0 0 14px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:"Andika","Comic Sans MS",Arial,sans-serif}
+.dpage h1{font-size:17pt;margin:0 0 2mm;color:#24527a}
+.dpage h2{font-size:13pt;margin:6mm 0 2mm;color:#24527a;border-bottom:1.5px solid #24527a;padding-bottom:1mm;break-after:avoid}
+.dent{display:flex;gap:6mm;flex-wrap:wrap;font-size:11pt;margin:0 0 3mm}.dent span{border-bottom:1px dotted #777;padding:0 2mm 1mm 0;min-width:30mm}
+.dtag{display:inline-block;font-size:9pt;font-weight:700;padding:1px 8px;border-radius:10px;background:#24527a;color:#fff;vertical-align:middle;margin-left:6px}.dtag.e{background:#e8912d}
+.dcons{font-size:10pt;background:#fff8e1;border-left:3px solid #e8912d;padding:1.5mm 3mm;margin:1mm 0 2mm}
+.dgrille{display:grid;grid-template-columns:repeat(auto-fill,minmax(40mm,1fr));gap:3mm;margin:2mm 0 4mm}
+.dgrille div{border:1.5px solid #bbb;border-radius:3mm;text-align:center;padding:3mm 2mm;font-size:22pt;position:relative;break-inside:avoid}
+.dgrille.xl div{font-size:40pt}.dgrille.s{grid-template-columns:1fr}.dgrille.s div{font-size:14pt;text-align:left;padding:3mm 4mm 3mm 9mm}
+.dgrille div i,.ditem i{position:absolute;top:1mm;left:2mm;font-size:8pt;color:#999;font-style:normal}
+.ditem{border-bottom:1px solid #ddd;padding:2.5mm 0 2.5mm 7mm;position:relative;break-inside:avoid}
+.dq{font-size:15pt;margin-bottom:1.5mm}.dfig{margin:1mm 0}.dfig svg{max-height:45mm;max-width:100%}
+.dch{display:flex;flex-wrap:wrap;gap:4mm}.dch span{border:1.5px solid #bbb;border-radius:3mm;padding:1mm 4mm;font-size:16pt;min-width:12mm;text-align:center}
+.dtexte{font-size:17pt;line-height:1.9;margin:2mm 0 5mm}
+.dtexteA{font-size:12pt;line-height:2}.dtexteA sup{font-size:7pt;color:#999;margin-left:1px}
+.dpage table{width:100%;border-collapse:collapse;font-size:10.5pt;margin-bottom:2mm}
+.dpage th,.dpage td{border:1px solid #aaa;padding:1.2mm 2mm;text-align:left;vertical-align:top}
+.dpage th{background:#eef3f9}.dpage td.c{width:8mm;text-align:center;color:#bbb}
+.dtot{font-size:10.5pt;margin:1mm 0 3mm}.dtot b{display:inline-block;min-width:22mm;border-bottom:1px solid #555}
+.dcalc{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;font-size:10.5pt;margin:2mm 0 4mm}.dcalc div{border:1px solid #aaa;border-radius:2mm;padding:2mm;min-height:12mm}
+.dlignes div{border-bottom:1px solid #bbb;height:8mm}
+.dcartes{display:grid;grid-template-columns:repeat(3,1fr)}.dcartes div{border:1px dashed #999;height:30mm;display:flex;align-items:center;justify-content:center;font-size:40pt}
+@media print{@page{size:A4;margin:12mm}#docPages{max-width:none}.dpage{box-shadow:none;margin:0;padding:0;page-break-after:always;break-after:page}.dpage:last-child{page-break-after:auto;break-after:auto}}
 @media print{header,.actions,.noprint{display:none!important}body{background:#fff}.carte{box-shadow:none;border:0}}
 .support{display:flex;gap:8px;justify-content:center;margin:0 0 10px}
 .support button{font-family:inherit;font-size:16px;padding:6px 14px;border-radius:12px;border:2px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer}
@@ -752,7 +781,7 @@ function accueil(){
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
   <h3>Réglages</h3>
   <div class="grille"><label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre (casse la progression)</label></div>
-  <div class="actions"><button class="b prim" id="go">▶ Commencer le bilan</button></div>
+  <div class="actions"><button class="b prim" id="go">▶ Commencer le bilan</button><button class="b" id="docImpr">🖨 Document à imprimer</button></div>
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">${VERSIONS[reglages.version||'debut'].reperes}</p>`;
@@ -765,6 +794,7 @@ function accueil(){
  $('#rien').onclick=()=>{$$('.groupe input.ep').forEach(c=>c.checked=false);majGroupes()};
  $$('[data-voir]').forEach(b=>b.onclick=()=>modal(h[b.dataset.voir].texte));
  if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
+ $('#docImpr').onclick=documentImprimable;
  $('#go').onclick=()=>{
   lireForm();
   if(!reglages.version||!reglages.classe){$('#go').textContent='⚠ Indiquez le niveau';window.scrollTo(0,0);return}
@@ -953,11 +983,13 @@ function bilan(){
   texteL.push(`- ${r.titre} : ${score} — ${nv}.`+(debut?` ${debut}`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:''));
  });
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
+ const SY=synthese(ids,pctMaths,ATT_M[reglages.version]||{},LIENS_M,VERSIONS[reglages.version].lab);texteL.push('',...SY.lignes);
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
  ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment<br>(sans valeur statistique)</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Calculs (tables, doubles, calcul mental) : pas de compte à rebours ; la durée mesurée est donnée à titre indicatif, à comparer aux repères de ${V0.att} du programme 2025, selon le moment de l'année.</p>
  <p class="note">⚠️ Moyenne du site : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
+ ${SY.html}
  <h3>Prénom de l'élève (pour le document)</h3>
  <input type="text" id="prenomFin" value="${esc(reglages.prenom)}" placeholder="facultatif, jamais enregistré sur le site" style="width:100%;max-width:320px">
  <h3>Observations de l'adulte</h3>
@@ -983,6 +1015,7 @@ function bilan(){
 <h1>${esc(t)}</h1>${pr?`<p><b>Élève :</b> ${esc(pr)} · <b>Niveau :</b> ${esc(reglages.classe)} · <b>Moment :</b> ${esc(age)} · <b>Date :</b> ${dateFr(reglages.date)}</p>`:''}
 <p>Épreuves : ${esc(V0.titre)}.${auto()?' Passation en autonomie (correction automatique, à vérifier).':''}</p>
 ${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
+${$('#synth')?$('#synth').outerHTML.replace(/<p class="note">.*?<\/p>/,''):''}
 <h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
 <p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %. Repères officiels de ${V0.att} (programme 2025).</p></body></html>`;
   const nom=('Bilan de maths '+(pr||reglages.classe)+' '+(reglages.date||'')).replace(/[\\/:*?"<>|]/g,'').trim()+'.doc';
@@ -1005,6 +1038,85 @@ async function envoyer(ids){
 }
 // Autonomie : arrêter l'exercice en cours et passer au suivant
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#stopEpE')&&R&&R.ep){try{arreterReco()}catch(x){}try{speechSynthesis.cancel()}catch(x){}finEpreuve()}});
+
+/* ---------- Document à imprimer (adapté au niveau choisi) ---------- */
+const texteBrut=h=>String(h).replace(/<[^>]+>/g,'');
+const docEnt=()=>`<div class="dent"><span>Prénom :</span><span>Niveau : ${esc(reglages.classe||'')}</span><span>Moment : ${reglages.classe?esc(PERIODES[reglages.periode]):''}</span><span>Date :</span></div>`;
+const ligneCases=n=>`<td class="c">□</td><td class="c">□</td><td class="c">□</td><td></td>`;
+function documentImprimable(){
+ lireForm();
+ if(!reglages.classe){const g=$('#go');if(g)g.textContent='⚠ Indiquez le niveau';window.scrollTo(0,0);return}
+ const choisies=$$('.groupe input.ep:checked').map(c=>c.value);
+ const D=EPREUVES.filter(e=>choisies.includes(e.id)).map(ep=>({ep,items:ep.items?ep.items():[]}));
+ if(!D.length){$('#docImpr').textContent='Cochez au moins une épreuve';return}
+ stopTimers&&stopTimers();onKey=null;
+ const pl=D.map(docPlanche).filter(Boolean),pa=D.map(docPassation),cartes=docCartes(D);
+ const titreDoc=DOC_TITRE();
+ const pages={
+  eleve:pl.length?`<div class="dpage"><h1>${titreDoc} <span class="dtag e">Élève</span></h1><p class="dcons">L'élève lit, montre ou entoure ses réponses sur ces planches. Les numéros correspondent à la feuille de passation.</p>${pl.join('')}</div>`:'',
+  adulte:`<div class="dpage"><h1>${titreDoc} <span class="dtag">Feuille de passation</span></h1>${docEnt()}<p class="dcons">✔ juste · ≈ hésitant ou autocorrigé (compté juste) · ✘ erreur. Acquis ≥ 80 % · en cours 50–79 % · non acquis &lt; 50 %. Après 3 erreurs de suite, on peut arrêter l'épreuve.</p>${pa.join('')}</div>`,
+  cartes:cartes?`<div class="dpage"><h1>Cartes à découper <span class="dtag">Adulte</span></h1><p class="dcons">Collez-les sur du carton. Montrez chaque carte environ ½ seconde, puis cachez-la.</p>${cartes}</div>`:'',
+  bilan:`<div class="dpage"><h1>Fiche bilan — ${titreDoc}</h1>${docEnt()}<table><tr><th>Épreuve</th><th>Score</th><th>Acquis</th><th>En cours</th><th>Non acquis</th><th>Remarques</th></tr>${D.map(({ep,items})=>`<tr><td>${esc(ep.titre)}</td><td style="width:22mm">… / ${ep.type==='texte'?'MCLM':items.length}</td><td class="c">□</td><td class="c">□</td><td class="c">□</td><td style="width:45mm"></td></tr>`).join('')}</table>
+   <h2>Points d'appui</h2><div class="dlignes"><div></div><div></div><div></div></div><h2>Difficultés observées</h2><div class="dlignes"><div></div><div></div><div></div></div><h2>Pistes de travail</h2><div class="dlignes"><div></div><div></div><div></div></div></div>`};
+ const parts=Object.keys(pages).filter(k=>pages[k]);
+ const noms={eleve:'Planches élève',adulte:'Feuille de passation',cartes:'Cartes à découper',bilan:'Fiche bilan'};
+ app.innerHTML=`<div class="carte noprint"><h2>🖨 Document à imprimer — ${esc(DOC_NIVEAU())}</h2>
+  <p class="note" style="margin-top:0">Les épreuves cochées, dans le même ordre que sur l'écran. Le prénom n'est écrit que sur le papier.</p>
+  <div class="grille">${parts.map(k=>`<label><input type="checkbox" data-part="${k}" checked> ${noms[k]}</label>`).join('')}</div>
+  <div class="actions"><button class="b prim" id="docGo">🖨 Imprimer</button><button class="b" id="docRetour">↶ Retour</button></div><p class="note" id="docMsg"></p></div>
+  <div id="docPages">${parts.map(k=>`<div data-bloc="${k}">${pages[k]}</div>`).join('')}</div>`;
+ $$('[data-part]').forEach(c=>c.onchange=()=>{$(`[data-bloc="${c.dataset.part}"]`).style.display=c.checked?'':'none'});
+ $('#docGo').onclick=()=>{try{window.print()}catch(e){$('#docMsg').textContent="Impression impossible ici : ouvrez le bilan sur le site pour imprimer."}};
+ $('#docRetour').onclick=()=>accueil();
+ window.scrollTo(0,0);
+}
+
+const DOC_TITRE=()=>'Bilan de maths — '+esc(VERSIONS[reglages.version||'debut'].titre);
+const DOC_NIVEAU=()=>`${reglages.classe}, ${PERIODES[reglages.periode]} : ${VERSIONS[reglages.version||'debut'].titre}`;
+function docPlanche(d){
+ const {ep,items}=d;
+ if(ep.cache||ep.id==='m1'||(reglages.version==='gs'&&ep.mode==='valider'&&ep.taille==='s'))return ''; // oral : rien à montrer à l'élève
+ const tete=`<h2>${esc(ep.titre)}</h2>${ep.question?`<p class="dq">${mx(ep.question)}</p>`:''}`;
+ if(ep.mode==='valider'){
+  const cl=ep.taille==='s'?'s':ep.taille==='xl'?'xl':'';
+  return tete+`<div class="dgrille ${cl}">${items.map((it,i)=>`<div><i>${i+1}</i>${mx(it.q)}</div>`).join('')}</div>`;
+ }
+ return tete+items.map((it,i)=>`<div class="ditem"><i>${i+1}</i>${it.q?`<div class="dq">${mx(it.q)}</div>`:''}${it.fig?`<div class="dfig">${it.fig}</div>`:''}<div class="dch">${it.choix.map(c=>`<span>${mx(c)}</span>`).join('')}</div></div>`).join('');
+}
+function docPassation(d){
+ const {ep,items}=d;
+ const lib=(it,i)=>ep.cache?`à dire : « ${esc(it.q)} »`:it.q?mx(it.q):`figure ${i+1}`;
+ return `<h2>${esc(ep.groupe)} — ${esc(ep.titre)}</h2><div class="dcons">${esc(texteBrut(ep.consigne||''))}</div>
+ <table><tr><th>N°</th><th>Item</th><th>Réponse attendue</th><th>✔</th><th>≈</th><th>✘</th><th>Ce que l'élève a répondu</th></tr>${items.map((it,i)=>`<tr><td>${i+1}</td><td>${lib(it,i)}</td><td>${mx(it.att!==undefined?it.att:it.bonne)}</td>${ligneCases()}</tr>`).join('')}</table>
+ <div class="dtot">Score : <b></b> / ${items.length}${ep.repere?` · Durée : <b></b> (repère : ${ep.attendu} justes en ${ep.repere>=120?Math.round(ep.repere/60)+' min':'1 min'})`:''}</div>`;
+}
+const docCartes=()=> '';
+
+/* ---------- Synthèse par rapport aux attendus du niveau ---------- */
+function synthese(ids,pctDe,att,liens,lab){
+ const G={};
+ ids.forEach(id=>{const r=resultats[id],p=pctDe(r);if(p==null)return;(G[r.groupe]=G[r.groupe]||[]).push(p)});
+ const rows=Object.entries(G).map(([g,ps])=>{const m=Math.round(ps.reduce((a,b)=>a+b,0)/ps.length);
+  const st=m>=80?['✅ Atteint','st-a']:m>=50?['🟠 En cours','st-e']:['❌ Pas encore','st-n'];return {g,m,st,a:att[g]||'',l:liens[g]||''}});
+ if(!rows.length)return {html:'',lignes:[]};
+ const ok=rows.filter(r=>r.m>=80),prio=rows.filter(r=>r.m<80).sort((a,b)=>a.m-b.m);
+ const html=`<div class="synth" id="synth"><h3>🎯 Par rapport aux attendus de ${esc(lab)}</h3>
+  <table><tr><th>Domaine</th><th>Attendu officiel (Éduscol)</th><th>Résultat</th></tr>${rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${esc(r.a)}</td><td><span class="${r.st[1]}">${r.st[0]}</span> (${r.m} %)</td></tr>`).join('')}</table>
+  <p><b>Points d'appui :</b> ${ok.length?ok.map(r=>esc(r.g)).join(', '):'aucun domaine atteint pour l\'instant.'}</p>
+  <p><b>Priorités :</b> ${prio.length?prio.map(r=>`${esc(r.g)}${r.l?` (<a href="${r.l}" target="_blank" rel="noopener">jeux du site</a>)`:''}`).join(' ; '):'tous les domaines évalués sont atteints : on peut proposer le bilan du niveau suivant.'}</p>
+  <p class="note">Synthèse automatique, sur peu d'items : elle aide à repérer les priorités, elle ne remplace pas le regard de l'enseignant. Seules les épreuves passées sont prises en compte.</p></div>`;
+ const lignes=['PAR RAPPORT AUX ATTENDUS DE '+lab.toUpperCase()].concat(rows.map(r=>`- ${r.g} : ${r.st[0].replace(/^\S+ /,'')} (${r.m} %) — attendu : ${r.a}`),
+  ['Points d\'appui : '+(ok.length?ok.map(r=>r.g).join(', '):'aucun pour l\'instant')+'.','Priorités : '+(prio.length?prio.map(r=>r.g).join(', '):'aucune')+'.']);
+ return {html,lignes};
+}
+
+const ATT_M={
+ gs:{"Nombres jusqu'à 30":"Dire la suite des nombres jusqu'à 30 ; lire les nombres jusqu'à 10.","Quantités":"Dénombrer, comparer, composer et décomposer des quantités jusqu'à 10.","Problèmes":"Résoudre de petits problèmes d'ajout et de retrait.","Formes et suites":"Reconnaître les formes simples ; prolonger une suite organisée."},
+ debut:{"Nombres jusqu'à 100":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 100.","Calcul":"Tables d'addition (8 égalités en 1 min), doubles et moitiés, calcul mental (9 en 3 min), addition posée.","Résolution de problèmes":"Résoudre des problèmes additifs et multiplicatifs simples, en une ou deux étapes.","Grandeurs et mesures":"Lire l'heure (heures entières), comparer des longueurs et des masses, utiliser la monnaie.","Espace et géométrie":"Reconnaître les figures et solides usuels ; se repérer, alignement.","Organiser des données":"Lire un tableau et un diagramme simples."},
+ fin:{"Nombres jusqu'à 1 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 1 000.","Fractions":"Lire, comparer, additionner et soustraire des fractions simples (dénominateurs 2 à 10).","Calcul":"Tables d'addition (12 en 1 min) et de multiplication (8 en 1 min), calcul mental (12 en 3 min), additions et soustractions posées.","Résolution de problèmes":"Résoudre des problèmes en une ou deux étapes (parties-tout, transformation, comparaison, multiplication, partage).","Grandeurs et mesures":"Lire l'heure (demi-heures, quarts d'heure), durées, longueurs, masses, monnaie.","Espace et géométrie":"Figures et solides, angle droit, alignement, se repérer et coder un déplacement.","Organiser des données":"Lire un tableau à double entrée et un diagramme en barres."},
+ ce2:{"Nombres jusqu'à 10 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 10 000.","Fractions":"Fractions inférieures ou égales à 1 (dénominateurs jusqu'à 12) : comparer, additionner, fractions égales.","Calcul":"Tables d'addition (15 en 1 min) et de multiplication de 2 à 9 (12 en 1 min), calcul mental (15 en 3 min), opérations posées dont la multiplication.","Résolution de problèmes":"Résoudre des problèmes en une ou deux étapes, dont multiplicatifs, « fois plus » et partage.","Grandeurs et mesures":"Heures et minutes, durées, conversions (m, km, g, kg, L, dL, cL), prix à virgule, périmètre.","Espace et géométrie":"Cercle, angle droit, symétrie axiale, cube et pavé.","Organiser des données":"Lire un tableau à double entrée et un diagramme en barres."}};
+const LIENS_M={"Nombres jusqu'à 30":"/maths/numeration/","Quantités":"/maths/numeration/","Nombres jusqu'à 100":"/maths/numeration/","Nombres jusqu'à 1 000":"/maths/numeration/","Nombres jusqu'à 10 000":"/maths/numeration/","Calcul":"/maths/calcul/","Fractions":"/maths/","Problèmes":"/maths/problemes/","Résolution de problèmes":"/maths/problemes/","Grandeurs et mesures":"/maths/","Espace et géométrie":"/maths/","Formes et suites":"/maths/","Organiser des données":"/maths/"};
+const pctMaths=r=>{if(!r||!r.faits)return null;const j=r.ok+r.hes.length;return Math.round(j/(r.arret?r.prevus:r.faits)*100)};
 majEntete();accueil();
 </script>
 </body>
