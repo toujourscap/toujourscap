@@ -44,7 +44,7 @@ CATS = {
     "metacognition": {"name": "Métacognition", "desc": "Jeux pour aider les élèves à réfléchir à leur façon d'apprendre : nommer les attitudes qui aident, vérifier, demander de l'aide, apprendre de ses erreurs.", "domain": "divers"},
     "memorisation": {"name": "Mémorisation", "desc": "Ressources pour aider les élèves à comprendre comment fonctionne leur mémoire et à apprendre leurs leçons efficacement.", "domain": "divers"},
     "methode": {"name": "Méthode", "desc": "Des modes d'emploi à donner aux élèves et aux familles pour apprendre efficacement : dictée, leçons, mots à retenir.", "domain": "divers"},
-    "evaluations": {"name": "Évaluations", "desc": "Des bilans à faire passer en tête-à-tête à un élève du cycle 2, validés par l'adulte, avec un bilan écrit à la fin.", "domain": "divers"},
+    "evaluations": {"name": "Évaluations", "desc": "Des bilans à faire passer à un élève du cycle 2, avec l'enseignant ou en autonomie, avec un bilan écrit à la fin.", "domain": "divers"},
     "calcul": {"name": "Calcul", "desc": "Jeux pour automatiser le calcul mental au cycle 2 : tables d'addition et de multiplication, additions et soustractions jusqu'à 1000.", "domain": "maths"},
 }
 # Jeux de lecture : compétence travaillée (filtres de la page Lecture) et repères affichés sur les vignettes.
@@ -718,7 +718,10 @@ def main():
             ("etude-langue", "Étude de la langue", CATS["etude-langue"]["desc"], edl),
             # Raccourci vers les jeux de discrimination visuelle (ils restent aussi dans Lecture-compréhension)
             ("discrimination-visuelle", "Discrimination visuelle", "Jeux pour bien regarder les lettres et ne plus les confondre (b, d, p, q, m, n, u…) et pour garder plusieurs lettres en tête d'un seul coup d'œil.",
-             sorted([q for q in lec if "discrimination-visuelle" in comps(q)], key=lambda q: q["date"], reverse=True))]
+             sorted([q for q in lec if "discrimination-visuelle" in comps(q)], key=lambda q: q["date"], reverse=True)),
+            # Rubrique « Évaluations » de Français : les bilans de français (aussi rangés dans Divers › Évaluations)
+            ("evaluations", "Évaluations", "Des bilans de lecture à faire passer à un élève du cycle 2, avec l'enseignant ou en autonomie, avec un bilan écrit et des documents papier.",
+             epingles_d_abord([q for q in fr if "evaluations" in q["aussi"]]))]
     # Lecture-compréhension : vignette prise sur un jeu qui n'est pas de discrimination visuelle (ceux-ci ont leur propre vignette)
     vimg_fr = lambda k, lst: cover_of([q for q in lst if "discrimination-visuelle" not in comps(q)]) if k == "lecture" else cover_of(lst)
     vignettes = '<div class="grid quatre">' + "".join(f"""<a class="card" href="/francais/{k}/">
@@ -751,8 +754,11 @@ def main():
   {grid(lst)}
 </section>""", "/francais/", d))
     msubs = [(k, CATS[k]["name"], CATS[k]["desc"], epingles_d_abord([p for p in posts if p["cat"] == k])) for k in ("numeration", "calcul", "problemes")]
+    # Rubrique « Évaluations » de Maths : les bilans de maths (aussi rangés dans Divers › Évaluations)
+    msubs.append(("evaluations", "Évaluations", "Des bilans de maths à faire passer à un élève du cycle 2, avec l'enseignant ou en autonomie, avec un bilan écrit à télécharger à la fin.",
+                  epingles_d_abord([p for p in posts if "evaluations" in p["aussi"] and CATS.get(p["cat"], {}).get("domain") == "maths"])))
     # Image choisie pour une vignette de sous-rubrique (sinon : couverture du premier article)
-    VIGNETTES = {"calcul": "/images/domaines/calcul.jpg", "problemes": "/images/domaines/problemes.jpg"}
+    VIGNETTES = {"calcul": "/images/domaines/calcul.jpg", "problemes": "/images/domaines/problemes.jpg", "evaluations": "/images/jeux/bilan-de-maths.jpg"}
     vimg = lambda k, lst: VIGNETTES.get(k) or cover_of(lst)
     mvignettes = '<div class="grid">' + "".join(f"""<a class="card" href="/maths/{k}/">
   <div class="card-img">{f'<img src="{esc(vimg(k, lst))}" alt="{esc(t)}" loading="lazy">' if vimg(k, lst) else f'<div class="card-ph">{t[:1]}</div>'}</div>
