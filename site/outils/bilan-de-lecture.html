@@ -208,7 +208,10 @@ const EPREUVES=[
   consigne:"Même consigne avec trois lettres, dans le bon ordre."}
 ];
 
-let reglages={mode:'adulte',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
+const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
+// Moment proposé d'après la date : sept.–déc. début, janv.–mars milieu, avril–août fin.
+const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<=3?'milieu':'fin'};
+let reglages={mode:'adulte',prenom:'',classe:'',periode:periodeAuto(),date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
@@ -260,7 +263,7 @@ function ecouter(fin,pendant){
 }
 function barreEleve(){
  const ep=R.ep,n=R.items?R.items.length:0;
- return `<div class="barre"><span><b>${ep.titre}</b></span><span>${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
+ return `<div class="barre"><span><b>${ep.titre}</b></span><span><button class="b petit" id="stopEpE" title="Arrêter cet exercice et passer au suivant">⏭ Exercice suivant</button> ${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
  <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):n?R.k/n*100:0}%"></i></div>`;
 }
 // Écran de l'élève : sp = {html, parle, jouer, saisie:'pave'|'texte'|'voix'|'choix', choix, juste(réponse)}
@@ -381,7 +384,7 @@ function ecranTexteAuto(){
   $('#ctrl').innerHTML='<span class="lab">👂 J\'écoute…</span><button class="b ok gros" id="fini">✅ J\'ai fini</button>';$('#fini').onclick=finir;
   timers.push(setInterval(()=>{const s=(Date.now()-t0)/1000;if(s>=limite)finir()},250))};
 }
-function lireForm(){reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value)}
+function lireForm(){reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.periode=$('#periode').value;reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value)}
 const cle=t=>t.toLowerCase().replace(/œ/g,'oe').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 // Voix enregistrée si le fichier existe (/audio/bilan-lecture/<cle>.mp3), sinon voix de l'ordinateur.
 let sonEnCours=null;
@@ -392,11 +395,7 @@ function lierCache(t){if(!$('#voir'))return;const v=$('#voir'),m=$('#mot');
  v.addEventListener('pointerdown',e=>{e.preventDefault();m.classList.add('vu')});['pointerup','pointerleave','pointercancel'].forEach(x=>v.addEventListener(x,()=>m.classList.remove('vu')));
  $('#dire').onclick=()=>jouer(t)}
 function dire(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=.85;const v=speechSynthesis.getVoices().find(v=>/^fr/i.test(v.lang));if(v)u.voice=v;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
-function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,ageTexte(ageMois()),dateFr(reglages.date)].filter(Boolean).join(' · ')}
-const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-// Sans mois de naissance (facultatif), l'âge est estimé au milieu de l'année (juillet).
-function ageMois(m=reglages.moisN,a=reglages.anneeN,d=reglages.date){if(!a||!d)return null;m=m||7;const [y,mo]=d.split('-').map(Number);const n=(y-a)*12+(mo-m);return n>=36&&n<=144?n:null}
-function ageTexte(n,approx=!reglages.moisN){return n==null?'':approx?'environ '+Math.floor(n/12)+' ans':Math.floor(n/12)+' ans'+(n%12?' '+(n%12)+' mois':'')}
+function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,reglages.classe?PERIODES[reglages.periode]:'',dateFr(reglages.date)].filter(Boolean).join(' · ')}
 const API='/api/bilan-lecture';
 function dateFr(d){if(!d)return'';const [y,m,j]=d.split('-');return j+'/'+m+'/'+y}
 function duree(s){s=Math.round(s);return s<60?s+' s':Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s'}
@@ -413,13 +412,10 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
-  <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
+  <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
-   <label>Mois de naissance (facultatif)<br><select id="moisN"><option value="">— mois —</option>${MOIS.map((m,i)=>`<option value="${i+1}" ${i+1==reglages.moisN?'selected':''}>${m}</option>`).join('')}</select></label>
-   <label>Année de naissance <b style="color:var(--rouge)">*</b><br><select id="anneeN"><option value="">— année —</option>${Array.from({length:10},(_,i)=>new Date().getFullYear()-4-i).map(a=>`<option ${a==reglages.anneeN?'selected':''}>${a}</option>`).join('')}</select></label>
-   <label>Date de la passation<br><input type="date" id="date" value="${reglages.date}"></label>
-   <label>Âge le jour du test<br><b id="age" style="font-size:1.2rem">—</b></label>
+   <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="periode">${Object.entries(PERIODES).map(([k,l])=>`<option value="${k}" ${k===reglages.periode?'selected':''}>${l[0].toUpperCase()+l.slice(1)}</option>`).join('')}</select></label>
    <label>Prénom (facultatif)<br><input type="text" id="prenom" value="${esc(reglages.prenom)}" placeholder="affiché, jamais enregistré"></label>
   </div>
  </div>
@@ -438,8 +434,6 @@ function accueil(){
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">Repères de fluence (mots correctement lus en une minute, attendus de fin d'année, Éduscol) : CP 50 · CE1 70 · CE2 90.</p>`;
  $$('.mode input').forEach(r=>r.onchange=()=>{const c=reglages.choisies;lireForm();reglages.choisies=[...new Set(reglages.choisies.concat(c))];reglages.mode=r.value;accueil()});
- const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n,!$('#moisN').value)};
- ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
  // Case du titre d'un groupe : coche ou décoche tout le groupe en un clic
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
  $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep:not(:disabled)').forEach(c=>c.checked=t.checked);majGroupes()});
@@ -449,9 +443,8 @@ function accueil(){
  $$('[data-voir]').forEach(b=>b.onclick=()=>modal(h[b.dataset.voir].texte));
  if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
  $('#go').onclick=()=>{
-  reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;
-  reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;
-  if(!reglages.classe||ageMois()==null){$('#go').textContent='⚠ Indiquez le niveau, l\'année de naissance';window.scrollTo(0,0);return}
+  reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.periode=$('#periode').value;
+  if(!reglages.classe){$('#go').textContent='⚠ Indiquez le niveau';window.scrollTo(0,0);return}
   reglages.aleatoire=$('#alea').checked;reglages.uneMinute=$('#unemin').checked;reglages.duree=+$('#duree').value;
   reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value);
   if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
@@ -634,7 +627,7 @@ function bilan(){
  const ids=EPREUVES.map(e=>e.id).filter(id=>resultats[id]);
  const rep=REPERES[reglages.classe];
  const lignes=[],texteL=[];
- const age=ageTexte(ageMois());
+ const age=PERIODES[reglages.periode];
  const titreAnon=`Bilan de lecture — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
  const titre=reglages.prenom?`Bilan de lecture — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
  texteL.push('TITRE',auto()?'Passation en autonomie (correction automatique, à vérifier).':'');
@@ -659,12 +652,14 @@ function bilan(){
  });
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
- ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même âge</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Fluence : mots correctement lus en une minute, comparés aux attendus de fin d'année (Éduscol : CP 50, CE1 70, CE2 90), à adapter selon le moment de l'année et les besoins de l'élève.</p>
+ <h3>Prénom de l'élève (pour le document)</h3>
+ <input type="text" id="prenomFin" value="${esc(reglages.prenom)}" placeholder="facultatif, jamais enregistré sur le site" style="width:100%;max-width:320px">
  <h3>Observations de l'adulte</h3>
  <textarea id="obs" rows="4" style="width:100%" placeholder="Stratégies, attitude, fatigue, confusions observées…"></textarea>
- <div class="actions"><button class="b prim" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
+ <div class="actions"><button class="b prim" id="telech">📄 Télécharger le bilan (Word)</button><button class="b" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
  <p class="note" id="msg"></p></div>`;
  const texteFinal=(t=titre)=>texteL.join('\n').replace('TITRE',t)+($('#obs').value.trim()?'\n\nObservations : '+$('#obs').value.trim():'');
  const enregistrer=()=>{if(!ids.length)return;const h=lireHisto();if(bilanEnregistre)h.shift();h.unshift({titre:titreAnon,texte:texteFinal(titreAnon)});ecrireHisto(h);bilanEnregistre=true};
@@ -673,22 +668,41 @@ function bilan(){
  $('#copier').onclick=async()=>{enregistrer();const t=texteFinal();try{await navigator.clipboard.writeText(t);$('#msg').textContent='Bilan copié : collez-le dans votre document.'}catch(e){modal(t);$('#msg').textContent='Sélectionnez le texte affiché pour le copier.'}};
  $('#impr').onclick=()=>{enregistrer();try{window.print()}catch(e){$('#msg').textContent="Impression impossible ici : utilisez « Copier le bilan »."}};
  $('#nouveau').onclick=()=>{enregistrer();accueil()};
+ $('#prenomFin').oninput=()=>{reglages.prenom=$('#prenomFin').value.trim();majEntete()};
+ // Document Word (fichier .doc lisible par Word et LibreOffice), avec le prénom ; rien n'est envoyé au site.
+ $('#telech').onclick=()=>{enregistrer();
+  const pr=$('#prenomFin').value.trim(),t=pr?`Bilan de lecture — ${pr} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
+  const src=$('.carte table');const tab=src?src.cloneNode(true):null;
+  if(tab)tab.querySelectorAll('tr').forEach(tr=>{const c=tr.lastElementChild;if(c)c.remove()});
+  const obs=$('#obs').value.trim();
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t)}</title>
+<style>body{font-family:Arial,sans-serif;font-size:11pt}h1{font-size:16pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px;vertical-align:top;font-size:10pt}th{background:#eee}</style></head><body>
+<h1>${esc(t)}</h1>${pr?`<p><b>Élève :</b> ${esc(pr)} · <b>Niveau :</b> ${esc(reglages.classe)} · <b>Moment :</b> ${esc(age)} · <b>Date :</b> ${dateFr(reglages.date)}</p>`:''}
+${auto()?'<p>Passation en autonomie (correction automatique, à vérifier).</p>':''}
+${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
+<h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
+<p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %.</p></body></html>`;
+  const nom=('Bilan de lecture '+(pr||reglages.classe)+' '+(reglages.date||'')).replace(/[\\/:*?"<>|]/g,'').trim()+'.doc';
+  try{const u=URL.createObjectURL(new Blob(['\ufeff'+html],{type:'application/msword'}));const a=document.createElement('a');a.href=u;a.download=nom;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);$('#msg').textContent='Document téléchargé : '+nom}
+  catch(e){$('#msg').textContent='Téléchargement impossible ici : utilisez « Copier le bilan ».'}};
 }
 
-// Envoi anonyme (niveau, âge en mois, scores) puis affichage des moyennes du site.
+// Envoi anonyme (niveau, moment de l'année, scores) puis affichage des moyennes du site.
 async function envoyer(ids){
- const age=ageMois(),r={};
+ const per=reglages.periode,r={};
  ids.forEach(id=>{const x=resultats[id];
   if(x.type==='texte')r[id]={pct:x.lus?Math.round((x.lus-x.nbErr)/x.lus*100):0,mclm:x.mclm};
   else if(x.faits===x.prevus||x.anticipe)r[id]={pct:Math.round((x.ok+x.hes.length)/x.faits*100)}});
  try{
-  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
-  const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&age=${age}`)).json();
-  const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.age||[]).forEach(x=>A[x.epreuve]=x);
+  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,periode:per,r})})}
+  const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&periode=${per}`)).json();
+  const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.periode||[]).forEach(x=>A[x.epreuve]=x);
   const f=(x,id)=>!x?'—':(id==='ts'||id==='tc'?`${x.mclm} MCLM`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
-  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe} : ${f(C[id],id)}<br>${Math.floor(age/12)} ans : ${f(A[id],id)}`});
+  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe}, ${PERIODES[per]} : ${f(A[id],id)}<br>${reglages.classe}, toute l'année : ${f(C[id],id)}`});
  }catch(e){$$('td.moy').forEach(td=>td.innerHTML='<span class="note">indisponible dans cet aperçu</span>')}
 }
+// Autonomie : arrêter l'exercice en cours et passer au suivant
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#stopEpE')&&R&&R.ep){try{arreterReco()}catch(x){}try{speechSynthesis.cancel()}catch(x){}finEpreuve()}});
 majEntete();accueil();
 </script>
 </body>

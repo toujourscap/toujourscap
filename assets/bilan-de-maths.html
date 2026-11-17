@@ -253,7 +253,7 @@ const EP_FIN=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'n2',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[64,'soixante-quatre'],[81,'quatre-vingt-un'],[150,'cent-cinquante'],[520,'cinq-cent-vingt'],[742,'sept-cent-quarante-deux'],[416,'quatre-cent-seize'],[307,'trois-cent-sept'],[999,'neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). L'élève écrit sur sa feuille (vous validez) ou « ⌨️ Sur l'écran » avec le pavé de chiffres (correction automatique) ; on passe aussitôt au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
+  consigne:"Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). « 📝 Sur la feuille » : l'élève écrit, vous validez. « ⌨️ Sur l'écran » : l'élève tape le nombre sur le pavé puis ✔, l'ordinateur corrige tout seul et passe au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
  {id:'n3',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[15,'quinze'],[60,'soixante'],[200,'deux-cents'],[635,'six-cent-trente-cinq']].map(([n,l])=>V(nb(n),l)),
   consigne:"« Écris ce nombre en lettres. » Comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots)."},
@@ -405,7 +405,7 @@ const EP_DEBUT=[
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'a2',groupe:G,titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
   items:()=>ordre([[14,'quatorze'],[25,'vingt-cinq'],[38,'trente-huit'],[52,'cinquante-deux'],[67,'soixante-sept'],[70,'soixante-dix'],[81,'quatre-vingt-un'],[96,'quatre-vingt-seize']]).map(([n,l])=>V(l,String(n),{dire:l})),
-  consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). L'élève écrit sur sa feuille (vous validez) ou « ⌨️ Sur l'écran » avec le pavé de chiffres (correction automatique) ; on passe aussitôt au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
+  consigne:"Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). « 📝 Sur la feuille » : l'élève écrit, vous validez. « ⌨️ Sur l'écran » : l'élève tape le nombre sur le pavé puis ✔, l'ordinateur corrige tout seul et passe au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
  {id:'a3',groupe:G,titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[7,'sept'],[12,'douze'],[30,'trente'],[45,'quarante-cinq']].map(([n,l])=>V(String(n),l)),
   consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. Comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case."},
@@ -518,7 +518,7 @@ function ecouter(fin,pendant){
 }
 function barreEleve(){
  const ep=R.ep,n=R.items?R.items.length:0;
- return `<div class="barre"><span><b>${ep.titre}</b></span><span>${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
+ return `<div class="barre"><span><b>${ep.titre}</b></span><span><button class="b petit" id="stopEpE" title="Arrêter cet exercice et passer au suivant">⏭ Exercice suivant</button> ${ep.temps?`<span class="chrono" id="chr">${duree(Math.max(0,Math.ceil((R.fin-Date.now())/1000)))}</span>`:`${Math.min(R.k+1,n)} / ${n}`}</span></div>
  <div class="prog"><i style="width:${ep.temps?100-Math.max(0,R.fin-Date.now())/(ep.temps*10):n?R.k/n*100:0}%"></i></div>`;
 }
 // Écran de l'élève : sp = {html, parle, jouer, saisie:'pave'|'texte'|'voix'|'choix', choix, juste(réponse)}
@@ -727,16 +727,18 @@ function enonce(it,ep){
 function ecranValider(){
  const ep=R.ep,it=R.items[R.k];
  if(auto())return ecranEleve(specMaths(ep,it),(v,rep)=>{R.res.push({item:ep.cache?it.att:it.q,v,rep:v==='ok'?'':rep});R.k++;suivant()});
- const ecran=ep.cache&&surEcran;
+ const ecran=ep.cache&&surEcran; // sur l'écran : correction automatique ; sur la feuille : l'adulte valide
  const haut=ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`+(ecran?`<div class="question">Écris le nombre.</div><div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`:`<div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div>`)+`</div>`
   :cache(String(it.att),!!it.dire)+`<div class="scene">${ep.question?`<div class="question">${mx(ep.question)}</div>`:''}<div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>${it.type?`<p class="note noprint" style="margin:14px 0 0">${esc(it.type)}</p>`:''}</div>`;
- app.innerHTML=barre()+haut+`
+ app.innerHTML=barre()+haut+(ecran?`
+ <div class="adulte"><span class="lab">Correction automatique :</span> l'élève tape le nombre puis ✔. <input type="hidden" id="rep">
+  <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`:`
  <div class="adulte"><span class="lab">Adulte :</span>
   <button class="b ok" data-v="ok">✔ Juste<kbd>←</kbd></button>
   <button class="b hes" data-v="hes">≈ Hésitant / autocorrigé<kbd>↑</kbd></button>
   <button class="b ko" data-v="ko">✘ Erreur<kbd>→</kbd></button>
   <input type="text" id="rep" placeholder="Réponse de l'élève (facultatif)">
-  <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`;
+  <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`);
  lierBarre();lierCache(it.dire||it.q);
  if(ep.cache&&it.dire)timers.push(setTimeout(()=>dire(it.dire),400));
  const noter=v=>{R.res.push({item:ep.cache?it.att:it.q,v,rep:$('#rep').value.trim()});R.k++;suivant()};
@@ -750,8 +752,9 @@ function ecranValider(){
   let saisie='',fini=false;const aff=$('#nbE'),bv=$('#pave .val');
   const maj=()=>{aff.textContent=saisie;bv.disabled=!saisie};
   const touche=c=>{if(fini)return;if(c==='x')saisie=saisie.slice(0,-1);else if(c==='ok'){if(!saisie)return;fini=true;
-    // Mode enseignant : rien n'est corrigé automatiquement, l'adulte valide ce qui est écrit.
-    aff.classList.add('fige');$('#rep').value=saisie;$('#pave').style.opacity=.4;return}
+    // Correction automatique : juste si le nombre tapé est le bon, puis nombre suivant.
+    aff.classList.add('fige');$('#pave').style.opacity=.4;const juste=saisie===chiffres(it.att);
+    R.res.push({item:it.att,v:juste?'ok':'ko',rep:juste?'':saisie});R.k++;timers.push(setTimeout(suivant,350));return}
    else if(saisie.length<5)saisie+=c;maj()};
   $$('#pave button').forEach(b=>b.onclick=()=>touche(b.dataset.c));
   onKey=e=>{if(/^\d$/.test(e.key))touche(e.key);else if(e.key==='Backspace'){e.preventDefault();touche('x')}else if(e.key==='Enter'){e.preventDefault();touche('ok')}};
@@ -865,6 +868,8 @@ async function envoyer(ids){
   $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe}, ${PERIODES[per]} : ${f(A[id],id)}<br>${reglages.classe}, toute l'année : ${f(C[id],id)}`});
  }catch(e){$$('td.moy').forEach(td=>td.innerHTML='<span class="note">indisponible dans cet aperçu</span>')}
 }
+// Autonomie : arrêter l'exercice en cours et passer au suivant
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#stopEpE')&&R&&R.ep){try{arreterReco()}catch(x){}try{speechSynthesis.cancel()}catch(x){}finEpreuve()}});
 majEntete();accueil();
 </script>
 </body>
