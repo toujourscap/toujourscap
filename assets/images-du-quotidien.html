@@ -93,6 +93,9 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .endstars span{color:var(--line)}
 .end{position:relative;overflow:hidden}
 @media (prefers-reduced-motion:reduce){.badge,.strip.good,.pill.bump,.confetti i{animation:none}.confetti{display:none}}
+#next.auto{position:relative;overflow:hidden}
+#next.auto::after{content:"";position:absolute;left:0;bottom:0;height:5px;width:0;background:rgba(255,255,255,.85);animation:remplit var(--d,3s) linear forwards}
+@keyframes remplit{to{width:100%}}
 </style>
 <style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
 <script src="tour-de-controle.js"></script></head>
@@ -141,7 +144,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   </section>
 
   <div class="actions foot">
-    <span>Le haut-parleur lit la phrase. Une étoile ★ quand la bonne phrase est trouvée du premier coup, sans l'écouter.</span>
+    <span>Le haut-parleur lit la phrase. Une étoile ★ quand la bonne phrase est trouvée du premier coup, sans l'écouter. Après une bonne réponse, l'image suivante arrive toute seule au bout de 3 secondes.</span>
     <button type="button" class="btn ghost" id="quit" hidden>Changer de niveau</button>
   </div>
 </div>
@@ -178,13 +181,15 @@ function burst(box,n,stars){const c=document.createElement("div");c.className="c
   box.appendChild(c);setTimeout(()=>c.remove(),1400)}
 function say(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 
-let level=0,order=[],pos=0,stars=0,tries=0,solved=false,heard=false;
-function show(view){["menu","game","end"].forEach(v=>$(v).hidden=v!==view);$("stats").hidden=view==="menu";$("quit").hidden=view!=="game";
+let level=0,order=[],pos=0,stars=0,tries=0,solved=false,heard=false,auto=null;
+const DELAI=3000; /* passage automatique à l'image suivante (ms) */
+function stopAuto(){clearTimeout(auto);auto=null;$("next").classList.remove("auto")}
+function show(view){stopAuto();["menu","game","end"].forEach(v=>$(v).hidden=v!==view);$("stats").hidden=view==="menu";$("quit").hidden=view!=="game";
   $("consigne").textContent=view==="menu"?"Choisis un niveau.":view==="game"?"Regarde l'image et choisis la bonne phrase.":"Partie terminée.";}
 function start(l){level=l;order=shuffle(ITEMS.map((_,i)=>i));pos=0;stars=0;show("game");$("niv").textContent=`Niveau ${l+1}`;draw();}
 function draw(){
   const it=ITEMS[order[pos]], set=it.lv[level];
-  tries=0;solved=false;heard=false;
+  stopAuto();tries=0;solved=false;heard=false;
   $("pic").innerHTML=it.img?`<img src="${it.img}" alt="Image à décrire">`:`<svg viewBox="0 0 100 100" role="img" aria-label="Image à décrire">${it.svg}</svg>`;
   $("phrases").innerHTML=shuffle(set.map((p,k)=>({p,k}))).map(o=>`<div class="strip" data-k="${o.k}"><button type="button" class="say" aria-label="Écouter la phrase">${SPK}</button><button type="button" class="txt">${o.p}</button></div>`).join("");
   $("prog").textContent=`Image ${pos+1} / ${ITEMS.length}`;
@@ -205,13 +210,14 @@ $("phrases").addEventListener("click",e=>{
     burst(pic,first?30:16,first);chime();
     if(first){stars++;const sc=$("score");sc.textContent=`${stars} ★`;sc.classList.remove("bump");void sc.offsetWidth;sc.classList.add("bump")}
     $("msg").textContent=first?"🎉 Bravo, du premier coup !":heard&&tries===1?"✔ Oui ! Tu as écouté : pas d'étoile cette fois.":"✔ Oui, c'est la bonne phrase !";$("msg").className="msg ok";
-    $("next").textContent=pos>=ITEMS.length-1?"Voir le résultat":"Image suivante";$("next").hidden=false;$("next").focus();
+    $("next").textContent=pos>=ITEMS.length-1?"Voir le résultat":"Image suivante";const nx=$("next");nx.hidden=false;nx.focus();nx.style.setProperty("--d",DELAI+"ms");nx.classList.add("auto");auto=setTimeout(suivant,DELAI);
   }else{
     s.classList.add("wrong","shake");setTimeout(()=>s.classList.remove("shake"),450);
     $("msg").textContent="Pas cette phrase. Relis bien.";$("msg").className="msg no";
   }
 });
-$("next").addEventListener("click",()=>{
+function suivant(){
+  stopAuto();
   if(pos>=ITEMS.length-1){
     show("end");
     $("endTitle").textContent=stars>=ITEMS.length*.8?"Bravo !":stars>=ITEMS.length*.5?"Bien joué !":"Continue, tu progresses !";
@@ -220,7 +226,8 @@ $("next").addEventListener("click",()=>{
     if(stars>=ITEMS.length*.5){chime();setTimeout(()=>burst($("end"),40,true),150)}
   }else{pos++;draw();}
   window.scrollTo({top:0,behavior:"smooth"});
-});
+}
+$("next").addEventListener("click",suivant);
 document.querySelectorAll(".lvl").forEach(b=>b.addEventListener("click",()=>start(+b.dataset.l)));
 $("again").addEventListener("click",()=>start(level));
 $("toMenu").addEventListener("click",()=>show("menu"));
