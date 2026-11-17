@@ -17,8 +17,8 @@ const SCHEMA = [
   )`,
   "CREATE INDEX IF NOT EXISTS idx_bilan_maths_classe ON bilan_maths (classe, epreuve)",
 ];
-const CLASSES = new Set(["CP", "CE1", "CE2", "Autre"]);
-const EPREUVES = new Set(["n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "f1", "f2", "f3", "c1", "c2", "c3", "c4", "c5", "c6", "pb", "g1", "g2", "g3", "g4", "g5", "s1", "s2", "s3", "s4", "d1", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "apb", "a14", "a15", "a16", "a17", "a18", "a19", "a20"]);
+const CLASSES = new Set(["GS", "CP", "CE1", "CE2", "Autre"]);
+const EPREUVES = new Set(["n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "f1", "f2", "f3", "c1", "c2", "c3", "c4", "c5", "c6", "pb", "g1", "g2", "g3", "g4", "g5", "s1", "s2", "s3", "s4", "d1", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "apb", "a14", "a15", "a16", "a17", "a18", "a19", "a20", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12", "k13", "k14", "kpb", "k15", "k16", "k17", "k18", "k19"]);
 const CHRONO = new Set(["c1", "c2", "c4", "a9", "a10", "a11"]);
 const ID_RE = /^[a-z0-9]{8,24}$/;
 

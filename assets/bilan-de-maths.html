@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bilan de maths — CE1</title>
+<title>Bilan de maths — cycle 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -112,7 +112,7 @@ label.indispo{opacity:.45}
 </style>
 </head>
 <body>
-<header><h1>🔢 Bilan de maths — CE1</h1><span id="hdrInfo"></span></header>
+<header><h1>🔢 Bilan de maths — GS au CE2</h1><span id="hdrInfo"></span></header>
 <main id="app"></main>
 <script>
 "use strict";
@@ -479,18 +479,141 @@ const EP_DEBUT=[
    C('Combien d\'élèves préfèrent la pomme ?','6',['4','6','9','5'],{fig:barres()}),C('Combien y a-t-il de ronds bleus ?','2',['4','2','3','5'],{fig:tableau2()}),C('Combien y a-t-il de carrés rouges ?','3',['3','5','4','8'],{fig:tableau2()})],
   consigne:"Lisez la question. Diagramme en barres (le plus, le moins), puis tableau à double entrée (forme et couleur)."}
 ];
+
+// ---------- Fin de GS (attendus de fin d'école maternelle) ----------
+const tas=(e,n)=>`<span class="rang" style="display:inline-block;font-size:min(7vw,48px);letter-spacing:3px">${e.repeat(n)}</span>`;
+const EP_GS=[
+ {id:'m1',groupe:'Nombres jusqu\'à 30',titre:'Comptine numérique',mode:'valider',taille:'s',
+  items:()=>[['Compte jusqu\'à 10.','1, 2, 3… 10'],['Compte jusqu\'à 20.','… 20'],['Compte à partir de 7.','7, 8, 9…'],['Compte à rebours de 10 à 1.','10, 9, 8… 1'],['Compte jusqu\'à 30.','… 30'],['Compte à partir de 16.','16, 17, 18…']].map(([q,a])=>V(q,a,{dire:q})),
+  consigne:"« Compte… » L'élève récite à l'oral. Validez si la suite est juste jusqu'au bout ; notez où il s'arrête ou se trompe (ex. « 13, 15 »). Attendu de fin de GS : dire la suite des nombres jusqu'à 30, à partir de n'importe quel nombre."},
+ {id:'m2',groupe:'Nombres jusqu\'à 30',titre:'Avant, après',mode:'choix',
+  items:()=>ordre([C('Quel nombre vient juste après 4 ?','5',['3','5','6','4']),C('Quel nombre vient juste après 9 ?','10',['8','10','11','19']),C('Quel nombre vient juste avant 6 ?','5',['7','5','4','6']),
+   C('Quel nombre vient juste après 15 ?','16',['14','16','51','17']),C('Quel nombre vient juste avant 20 ?','19',['21','18','19','10'])]),
+  consigne:"Lisez la question à l'élève. « Montre-moi le bon nombre. »"},
+ {id:'m3',groupe:'Nombres jusqu\'à 30',titre:'Lire les nombres jusqu\'à 10',mode:'valider',taille:'xl',question:'Lis ce nombre.',
+  items:()=>ordre([[1,'un'],[3,'trois'],[2,'deux'],[5,'cinq'],[4,'quatre'],[7,'sept'],[6,'six'],[8,'huit'],[9,'neuf'],[10,'dix']]).map(([n,l])=>V(String(n),l)),
+  consigne:"Montrez l'écran : « Comment s'appelle ce nombre ? »"},
+ {id:'m4',groupe:'Quantités',titre:'Dénombrer une collection',mode:'choix',question:'Combien y en a-t-il ?',
+  items:()=>ordre([[3,'🍎'],[5,'⭐'],[4,'🐟'],[7,'🌸'],[6,'🚗'],[8,'🍓'],[10,'🎈']]).map(([n,e])=>C('',String(n),melange([n-1,n,n+1,n+2].map(String)),{fig:tas(e,n)})),
+  consigne:"« Combien y en a-t-il ? Montre le bon nombre. » Observez s'il pointe chaque objet une seule fois et s'il dit le dernier nombre comme réponse (à noter dans les observations)."},
+ {id:'m5',groupe:'Quantités',titre:'Comparer deux collections',mode:'choix',question:'Y a-t-il plus de ronds bleus ou de ronds rouges ?',
+  items:()=>ordre([[2,5],[6,3],[4,4],[7,8],[9,6]]).map(([a,b])=>C('',a>b?'les bleus':a<b?'les rouges':'autant',['les bleus','les rouges','autant'],{fig:tas('🔵',a)+'<span style="display:inline-block;width:48px"></span>'+tas('🔴',b)})),
+  consigne:"« Y a-t-il plus de ronds bleus ou de ronds rouges ? Ou bien autant ? » L'élève peut compter ou faire des paires."},
+ {id:'m6',groupe:'Quantités',titre:'Composer, décomposer jusqu\'à 10',mode:'choix',
+  items:()=>ordre([C('3 et encore 2, ça fait…','5',['4','5','6','32']),C('4 et encore 4, ça fait…','8',['6','7','8','44']),C('Dans 6, il y a 4 et encore…','2',['1','2','3','10']),
+   C('5 et encore 3, ça fait…','8',['7','8','9','53']),C('Pour faire 10, il faut 7 et encore…','3',['2','3','4','17']),C('Dans 9, il y a 5 et encore…','4',['3','4','5','14'])]),
+  consigne:"Lisez la question. L'élève peut utiliser ses doigts. « Montre-moi la bonne réponse. »"},
+ {id:'m7',groupe:'Problèmes',titre:'Petits problèmes',mode:'valider',taille:'s',
+  items:()=>[["Tu as 3 bonbons. On t'en donne 2. Combien en as-tu maintenant ?","5 bonbons","Ajout"],["Il y a 5 oiseaux sur l'arbre. 1 oiseau s'envole. Combien en reste-t-il ?","4 oiseaux","Retrait"],
+   ["Léo a 2 billes. Lina a 4 billes. Combien de billes ont-ils tous les deux ?","6 billes","Réunion"],["Dans la boîte, il y a 7 crayons. On en enlève 3. Combien en reste-t-il ?","4 crayons","Retrait"]].map(([q,a,t])=>V(q,a,{dire:q,type:t})),
+  consigne:"Lisez l'énoncé (ou 🔊). L'élève peut dessiner, utiliser ses doigts ou des jetons. Validez la réponse."},
+ {id:'m8',groupe:'Formes et suites',titre:'Reconnaître les formes',mode:'choix',question:'Comment s\'appelle cette forme ?',
+  items:()=>[['carre','carré'],['triangle','triangle'],['disque','rond'],['rectangle','rectangle']].map(([f,n])=>C('',n,['carré','triangle','rond','rectangle'],{fig:figure(f)})),
+  consigne:"« Comment s'appelle cette forme ? Montre le bon mot. » (rond ou disque acceptés)"},
+ {id:'m9',groupe:'Formes et suites',titre:'Suites organisées',mode:'choix',question:'Qu\'est-ce qui vient ensuite ?',
+  items:()=>[C('🔴🔵🔴🔵🔴🔵 …','🔴',['🔵','🔴','🟢'],{rang:true}),C('⭐⭐🌙⭐⭐🌙⭐⭐ …','🌙',['⭐','🌙','☀️'],{rang:true}),C('🍎🍐🍌🍎🍐🍌🍎 …','🍐',['🍎','🍐','🍌'],{rang:true})],
+  consigne:"« Regarde bien comment c'est construit. Qu'est-ce qui vient ensuite ? »"}];
+
+// ---------- Fin de CE2 ----------
+function tablesMulCE2(){return paliers(
+ tirer(4,()=>{const a=hasard([2,5,10]),b=de(2,10);return[`${a} × ${b} = …`,a*b]}),
+ tirer(4,()=>{const a=hasard([3,4]),b=de(2,10);return[`${a} × ${b} = …`,a*b]}),
+ tirer(4,()=>{const a=hasard([6,7,8,9]),b=de(2,9);return Math.random()<.5?[`${a} × ${b} = …`,a*b]:[`${b} × ${a} = …`,a*b]}),
+ tirer(4,()=>{const a=de(2,9),b=de(2,9);return Math.random()<.5?[`${a} × … = ${a*b}`,b]:[`${a*b} = ${a} × …`,b]}))}
+const CALCUL_CE2=[['345 + 10',355],['670 − 10',660],['230 + 400',630],['900 − 300',600],['120 + 80',200],['58 + 9',67],['74 − 9',65],['36 × 10',360],['7 × 100',700],['126 + 19',145],['83 − 19',64],['450 + 350',800],['4 × 25',100],['la moitié de 300',150],['1 000 − 250',750],['250 + 250',500],['le double de 45',90],['8 × 30',240]];
+const PROBLEMES_CE2=[
+ ["Un livre a 120 pages. Tom en a lu 45. Combien de pages lui reste-t-il à lire ?","75 pages","Parties-tout"],
+ ["Dans une salle, il y a 7 rangées de 9 chaises. Combien y a-t-il de chaises ?","63 chaises","Multiplicatif (rangées)"],
+ ["Un fleuriste a 48 roses. Il fait des bouquets de 6 roses. Combien de bouquets peut-il faire ?","8 bouquets","Multiplicatif : nombre de parts"],
+ ["Lou a 15 €. Son frère a 3 fois plus d'argent que Lou. Combien d'argent a son frère ?","45 €","Comparaison multiplicative"],
+ ["Un car part avec 52 passagers. Au premier arrêt, 18 passagers descendent et 9 montent. Combien de passagers y a-t-il maintenant ?","43 passagers","Deux étapes"],
+ ["Un cahier coûte 3 € et un stylo coûte 2 €. Combien coûtent 4 cahiers et 1 stylo ?","14 €","Deux étapes : multiplicative puis additive"],
+ ["On partage 24 billes entre 4 enfants. Chacun en a autant. Combien de billes a chaque enfant ?","6 billes","Partage : valeur d'une part"]];
+const EP_CE2=[
+ {id:'k1',groupe:'Nombres jusqu\'à 10 000',titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
+  items:()=>ordre([[1000,'mille'],[1200,'mille-deux-cents'],[2500,'deux-mille-cinq-cents'],[4300,'quatre-mille-trois-cents'],[3047,'trois-mille-quarante-sept'],[5080,'cinq-mille-quatre-vingts'],[7438,'sept-mille-quatre-cent-trente-huit'],[9005,'neuf-mille-cinq'],[6999,'six-mille-neuf-cent-quatre-vingt-dix-neuf'],[10000,'dix-mille']]).map(([n,l])=>V(nb(n),l)),
+  consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
+ {id:'k2',groupe:'Nombres jusqu\'à 10 000',titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
+  items:()=>ordre([[1500,'mille-cinq-cents'],[2030,'deux-mille-trente'],[4600,'quatre-mille-six-cents'],[3215,'trois-mille-deux-cent-quinze'],[8450,'huit-mille-quatre-cent-cinquante'],[6070,'six-mille-soixante-dix'],[7008,'sept-mille-huit'],[9999,'neuf-mille-neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
+  consigne:"Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). « 📝 Sur la feuille » : l'élève écrit, vous validez. « ⌨️ Sur l'écran » : l'élève tape le nombre sur le pavé puis ✔, l'ordinateur corrige tout seul. Notez ce qu'il a écrit en cas d'erreur (ex. 7 0008 pour 7 008)."},
+ {id:'k3',groupe:'Nombres jusqu\'à 10 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
+  items:()=>[[1100,'mille-cent'],[2500,'deux-mille-cinq-cents'],[3040,'trois-mille-quarante'],[7438,'sept-mille-quatre-cent-trente-huit']].map(([n,l])=>V(nb(n),l)),
+  consigne:"« Écris ce nombre en lettres. » « 📝 Sur la feuille » : comptez juste une écriture où les mots-nombres sont bien choisis et dans l'ordre ; notez l'orthographe. « ⌨️ Sur l'écran » : l'ordinateur corrige tout seul (accents, majuscules, espaces et traits d'union ne comptent pas)."},
+ {id:'k4',groupe:'Nombres jusqu\'à 10 000',titre:'Milliers, centaines, dizaines, unités',mode:'choix',
+  items:()=>ordre([C('Dans 4 725, quel est le chiffre des centaines ?','7',['4','7','2','47']),C('Dans 6 318, quel est le chiffre des milliers ?','6',['3','6','8','63']),
+   C('3 000 + 400 + 20 + 5 = …','3 425',['3 425','3 452','30 425','9']),C('5 milliers, 2 centaines et 7 unités, c\'est…','5 207',['527','5 270','5 207','50 207']),
+   C('1 millier = … centaines','10',['1','10','100','1 000']),C('Dans 2 600, combien y a-t-il de centaines en tout ?','26',['6','2','26','600'])]),
+  consigne:"Lisez la question à l'élève s'il le faut. « Montre-moi la bonne réponse. »"},
+ {id:'k5',groupe:'Nombres jusqu\'à 10 000',titre:'Comparer deux nombres',mode:'choix',taille:'l',
+  items:()=>ordre([['999','1 000','<'],['2 345','2 435','<'],['5 070','5 007','>'],['8 100','8 099','>'],['6 990','7 000','<'],['4 300','4 000 + 300','=']]).map(([a,b,s])=>C(`${a} … ${b}`,s,CMP,{grand:true})),
+  consigne:"« Quel signe faut-il mettre entre les deux nombres ? Montre-le. »"},
+ {id:'k6',groupe:'Nombres jusqu\'à 10 000',titre:'Droite graduée',mode:'choix',question:'Quel nombre est caché sous le point d\'interrogation ?',
+  items:()=>ordre([C('','5 000',['4 999','5 000','5 001','4 100'],{fig:droite(4996,1,8,4)}),C('','3 400',['3 040','3 400','3 500','4 000'],{fig:droite(3000,100,8,4)}),C('','7 530',['7 503','7 530','7 540','7 600'],{fig:droite(7500,10,7,3)}),C('','6 000',['600','5 000','6 000','7 000'],{fig:droite(0,1000,11,6)})]),
+  consigne:"« Quel nombre est caché sous le point d'interrogation ? » Bandes de 1 en 1, de 10 en 10, de 100 en 100, de 1 000 en 1 000."},
+ {id:'k7',groupe:'Fractions',titre:'Fractions',mode:'choix',
+  items:()=>ordre([C('Quelle part de la figure est coloriée ?','3/4',['1/4','3/4','4/3','3/3'],{fig:frac(4,3,'disque')}),C('Quelle part de la figure est coloriée ?','5/12',['5/7','7/12','5/12','12/5'],{fig:frac(12,5,'rect')}),
+   C('3/10 … 7/10','<',CMP,{grand:true}),C('1/3 … 1/6','>',CMP,{grand:true}),C('2/5 + 3/5 = …','1',['5/10','1','6/5','1/5'],{grand:true}),
+   C('1/2 = …','2/4',['1/4','2/4','2/2','4/2'],{grand:true}),C('5/10 = …','1/2',['1/5','1/2','5/5','2/1'],{grand:true})]),
+  consigne:"« Montre-moi la bonne réponse. » Fractions inférieures ou égales à 1, de dénominateur jusqu'à 12 : lire, comparer, additionner, fractions égales (programme de CE2)."},
+ {id:'k8',groupe:'Calcul',titre:'Tables d\'addition',mode:'valider',taille:'l',repere:60,attendu:15,
+  items:tablesAdd,consigne:"« Dis-moi le nombre qui manque. » Pas de compte à rebours : 16 calculs du plus facile au plus difficile ; la durée est indiquée dans le bilan. Repère de fin de CE2 : <b>15 égalités justes en 1 minute</b>."},
+ {id:'k9',groupe:'Calcul',titre:'Tables de multiplication',mode:'valider',taille:'l',repere:60,attendu:12,
+  items:tablesMulCE2,consigne:"Même passation (16 calculs, durée mesurée discrètement). Tables de 2 à 9, dans les deux sens (7 × … = 56 ; 42 = 6 × …). Repère de fin de CE2 : <b>12 égalités justes en 1 minute</b>."},
+ {id:'k10',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',
+  items:()=>ordre([['Le double de 8',16],['La moitié de 14',7],['Le double de 15',30],['La moitié de 30',15],['Le double de 25',50],['La moitié de 50',25],['Le double de 19',38],['La moitié de 38',19],['Le double de 60',120],['La moitié de 100',50]]).map(([q,a])=>V(q,a)),
+  consigne:"« Dis-moi le résultat. » Doubles des nombres de 1 à 20, de 25, 30… 100 ; moitiés des nombres pairs jusqu'à 40, de 50, 60, 100."},
+ {id:'k11',groupe:'Calcul',titre:'Calcul mental',mode:'valider',taille:'l',repere:180,attendu:15,
+  items:()=>ordre(CALCUL_CE2).map(([q,a])=>V(q.startsWith('la')||q.startsWith('le')?q[0].toUpperCase()+q.slice(1):q+' = …',a)),
+  consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE2 : <b>15 résultats justes en 3 minutes</b>."},
+ {id:'k12',groupe:'Calcul',titre:'Additions posées',mode:'valider',taille:'m',question:'Pose et calcule l\'addition sur ta feuille.',
+  items:()=>[['1 234 + 2 345',3579],['2 568 + 1 347',3915],['4 709 + 2 896',7605],['638 + 1 275 + 49',1962]].map(([q,a])=>V(q,a)),
+  consigne:"Donnez une feuille. « Pose l'addition en colonnes et calcule-la. » Notez une erreur d'alignement ou de retenue."},
+ {id:'k13',groupe:'Calcul',titre:'Soustractions posées',mode:'valider',taille:'m',question:'Pose et calcule la soustraction sur ta feuille.',
+  items:()=>[['4 856 − 1 234',3622],['5 372 − 2 145',3227],['3 150 − 987',2163],['6 004 − 2 378',3626]].map(([q,a])=>V(q,a)),
+  consigne:"« Pose la soustraction et calcule-la. » Du sans retenue au passage par des zéros (6 004)."},
+ {id:'k14',groupe:'Calcul',titre:'Multiplications posées',mode:'valider',taille:'m',question:'Pose et calcule la multiplication sur ta feuille.',
+  items:()=>[['23 × 3',69],['47 × 6',282],['125 × 4',500],['36 × 24',864]].map(([q,a])=>V(q,a)),
+  consigne:"« Pose la multiplication et calcule-la. » D'abord par un nombre à un chiffre, puis par un nombre à deux chiffres (si elle a été apprise ; sinon, arrêtez l'épreuve)."},
+ {id:'kpb',groupe:'Résolution de problèmes',titre:'Problèmes',mode:'valider',taille:'s',
+  items:()=>PROBLEMES_CE2.map(([q,a,t])=>V(q,a,{dire:q,type:t})),
+  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille puis donne sa réponse. Validez la réponse avec l'unité. Les nombres restent simples : on évalue le type de problème (parties-tout, multiplicatif, comparaison « fois plus », deux étapes, partage)."},
+ {id:'k15',groupe:'Grandeurs et mesures',titre:'Heures et durées',mode:'choix',
+  items:()=>[[2,10],[7,25],[11,40],[5,55]].map(([h,m])=>{const t=`${h} h ${String(m).padStart(2,'0')}`,f=[`${h} h ${String(m).padStart(2,'0')}`,`${(m/5)%12||12} h ${String(h*5%60).padStart(2,'0')}`,`${h+1} h ${String(m).padStart(2,'0')}`,`${h} h ${String((m+30)%60).padStart(2,'0')}`];return C('Quelle heure est-il ?',t,melange([...new Set(f)]),{fig:horloge(h,m)})})
+   .concat([C('Le film commence à 14 h et finit à 15 h 30. Combien de temps dure-t-il ?','1 h 30',['1 h','1 h 30','30 min','2 h 30']),C('1 heure = … minutes','60',['10','24','60','100'])]),
+  consigne:"« Quelle heure indique l'horloge ? » Heures et minutes (de 5 en 5), puis une durée et une équivalence."},
+ {id:'k16',groupe:'Grandeurs et mesures',titre:'Mesures',mode:'choix',
+  items:()=>[C('1 m = … cm','100',['10','100','1 000']),C('1 km = … m','1 000',['10','100','1 000']),C('1 kg = … g','1 000',['10','100','1 000']),C('1 L = … dL','10',['10','100','1 000']),
+   C('2 m 30 cm = … cm','230',['23','230','2 030','2 300']),C('Qu\'est-ce qui est le plus lourd ?','1 kg',['900 g','1 kg','pareil'])],
+  consigne:"« Montre-moi la bonne réponse. » Longueurs, masses et contenances."},
+ {id:'k17',groupe:'Grandeurs et mesures',titre:'Monnaie et prix',mode:'choix',
+  items:()=>[C('1 € = … centimes','100',['10','100','1 000']),C('2 € et 50 centimes s\'écrit…','2,50 €',['2,05 €','2,50 €','250 €','25 €']),C('J\'ai 5 €. J\'achète un jus à 1,50 €. On me rend…','3,50 €',['3,50 €','4,50 €','3,05 €','6,50 €'])],
+  consigne:"« Montre-moi la bonne réponse. » Prix écrits avec une virgule (programme de CE2)."},
+ {id:'k18',groupe:'Grandeurs et mesures',titre:'Périmètre',mode:'choix',
+  items:()=>[C('Un carré a des côtés de 5 cm. Quel est son périmètre ?','20 cm',['10 cm','20 cm','25 cm','15 cm']),C('Un rectangle mesure 6 cm sur 3 cm. Quel est son périmètre ?','18 cm',['9 cm','18 cm','12 cm','36 cm']),C('Un triangle a trois côtés de 4 cm. Quel est son périmètre ?','12 cm',['8 cm','12 cm','16 cm','4 cm'])],
+  consigne:"« Le périmètre, c'est la longueur du tour de la figure. » L'élève additionne les longueurs des côtés (aucune formule n'est attendue au CE2) ; il peut dessiner."},
+ {id:'k19',groupe:'Espace et géométrie',titre:'Géométrie',mode:'choix',
+  items:()=>[C('Comment s\'appelle cette figure ?','triangle rectangle',['triangle','triangle rectangle','carré','rectangle'],{fig:figure('trect')}),C('Combien de faces a un cube ?','6',['4','6','8','12']),
+   C('Le point au milieu d\'un cercle s\'appelle…','le centre',['le rayon','le centre','le sommet']),C('Une ligne qui partage une figure en deux parties qui se superposent en la pliant s\'appelle…','un axe de symétrie',['un angle droit','un axe de symétrie','un côté'])],
+  consigne:"« Montre-moi la bonne réponse. » Figures, solides, cercle, symétrie."}];
 const VERSIONS={
- debut:{lab:'début de CE1',court:'début CE1',titre:'acquis de fin de CP',ep:EP_DEBUT,att:'fin de CP',
+ debut:{lab:'fin de CP',court:'fin CP',titre:'attendus de fin de CP',ep:EP_DEBUT,att:'fin de CP',
   reperes:"Repères de fluence en calcul (fin de CP, programme 2025) : tables d'addition 8 égalités en 1 min · doubles et moitiés 8 en 1 min · calcul mental 9 résultats en 3 min."},
- fin:{lab:'fin de CE1 – début de CE2',court:'fin CE1',titre:'acquis de fin de CE1',ep:null,att:'fin de CE1',
+ fin:{lab:'fin de CE1',court:'fin CE1',titre:'attendus de fin de CE1',ep:null,att:'fin de CE1',
   reperes:"Repères de fluence en calcul (fin de CE1, programme 2025) : tables d'addition 12 égalités en 1 min · tables de multiplication 8 égalités en 1 min · calcul mental 12 résultats en 3 min."}};
 VERSIONS.fin.ep=EP_FIN;
+VERSIONS.gs={lab:'fin de GS',court:'fin GS',titre:'attendus de fin de GS',ep:EP_GS,att:'fin de GS',
+  reperes:"Attendus de fin d'école maternelle : dire la suite des nombres jusqu'à 30 ; dénombrer, comparer, composer et décomposer des quantités jusqu'à 10 ; lire les nombres écrits en chiffres jusqu'à 10."};
+VERSIONS.ce2={lab:'fin de CE2',court:'fin CE2',titre:'attendus de fin de CE2',att:'fin de CE2',
+  reperes:"Repères de fluence en calcul (fin de CE2) : tables d'addition 15 égalités en 1 min · tables de multiplication 12 égalités en 1 min · calcul mental 15 résultats en 3 min."};
+// d1 (tableaux et diagrammes) est commun avec la fin de CE1
+VERSIONS.ce2.ep=EP_CE2.concat(EP_FIN.filter(e=>e.id==='d1'));
 let EPREUVES=EP_DEBUT;
 const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
 // Moment proposé d'après la date : sept.–déc. début, janv.–mars milieu, avril–août fin.
 const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<=3?'milieu':'fin'};
 // Épreuves choisies d'après le niveau et le moment : objectifs de fin de CE1 en fin de CE1 et au CE2, sinon objectifs de fin de CP.
-const versionDe=(c,p)=>c==='CE2'||(c==='CE1'&&p==='fin')?'fin':c?'debut':'';
+// Début d'année : attendus du niveau précédent ; milieu et fin d'année : attendus du niveau.
+const versionDe=(c,p)=>({GS:'gs',CP:p==='debut'?'gs':'debut',CE1:p==='debut'?'debut':'fin',CE2:p==='debut'?'fin':'ce2',Autre:'debut'})[c]||'';
 let reglages={mode:'adulte',version:'',prenom:'',classe:'',periode:periodeAuto(),date:new Date().toISOString().slice(0,10),aleatoire:false,choisies:EPREUVES.map(e=>e.id)};
 let surEcran=(()=>{try{return localStorage.getItem('bilanMathsSupport')==='ecran'}catch(e){return false}})();
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
@@ -573,8 +696,8 @@ function blocMode(dispo){
 }
 
 /* Autonomie (maths) : ce que l'élève entend avant chaque épreuve, et comment il répond. */
-const NB_LUS=['n1','a1'],EN_LETTRES=['n3','a3'],POSEES=['c5','c6','a13'];
-const dispoAuto=ep=>!NB_LUS.includes(ep.id)||!!RECO;
+const NB_LUS=['n1','a1','m3','k1'],EN_LETTRES=['n3','a3','k3'],POSEES=['c5','c6','a13','k12','k13','k14'];
+const dispoAuto=ep=>ep.id!=='m1'&&(!NB_LUS.includes(ep.id)||!!RECO);
 const chiffres=s=>(String(s).replace(/(\d)[\s\u202f](?=\d{3})/g,'$1').match(/\d+/)||[''])[0];
 function consigneEleve(ep){
  if(NB_LUS.includes(ep.id))return "Lis chaque nombre à voix haute. Appuie sur le micro, puis dis le nombre.";
@@ -615,9 +738,9 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
-  <p class="note" style="margin-top:0">Les épreuves sont choisies d'après le niveau et le moment : objectifs de <b>fin de CP</b> (CP, CE1 en début ou milieu d'année) ou de <b>fin de CE1</b> (CE1 en fin d'année, CE2). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. L'adulte peut aussi arrêter une épreuve à tout moment (⏭).</p>
+  <p class="note" style="margin-top:0">Une évaluation par niveau, d'après les attendus de fin d'année (Éduscol) : <b>fin de GS</b>, <b>fin de CP</b>, <b>fin de CE1</b> ou <b>fin de CE2</b>. En début d'année, l'élève passe celle du niveau précédent ; en milieu et en fin d'année, celle de son niveau. Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. L'adulte peut aussi arrêter une épreuve à tout moment (⏭).</p>
   <div class="grille">
-   <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
+   <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
    <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="periode">${Object.entries(PERIODES).map(([k,l])=>`<option value="${k}" ${k===reglages.periode?'selected':''}>${l[0].toUpperCase()+l.slice(1)}</option>`).join('')}</select></label>
    <label>Prénom (facultatif)<br><input type="text" id="prenom" value="${esc(reglages.prenom)}" placeholder="affiché, jamais enregistré"></label>
   </div>

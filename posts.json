@@ -1890,11 +1890,11 @@
    }
   },
   {
-   "title": "Bilan de maths CE1",
+   "title": "Bilan de maths GS au CE2",
    "slug": "bilan-de-maths",
    "cat": "numeration",
    "aussi": ["evaluations"],
-   "excerpt": "Un bilan de mathématiques à faire passer en tête-à-tête à un élève de CE1, en deux versions d'après le programme 2025 : début de CE1 (acquis de fin de CP) et fin de CE1 – début de CE2. Nombres, calcul chronométré, problèmes, mesures, géométrie, données. L'adulte valide chaque réponse ; le bilan s'écrit tout seul, avec les moyennes du site.",
+   "excerpt": "Un bilan de mathématiques à faire passer en tête-à-tête à un élève, avec une évaluation par niveau d'après les attendus de fin d'année : fin de GS, fin de CP, fin de CE1 et fin de CE2. Avec l'enseignant ou en autonomie, bilan écrit à télécharger.",
    "date": "2026-11-13T12:00:00.000Z",
    "categoryIds": [],
    "media": {"displayed": true, "custom": false},
