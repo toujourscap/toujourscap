@@ -528,7 +528,7 @@ SEO_TITRES = {
     "/post/la-tour-de-controle/": "La tour de contrôle : carnet de vol des résultats de chaque élève dans tous les jeux",
     "/post/les-fleches-de-robin/": "Les flèches de Robin : jeu de discrimination visuelle et d'empan visuel GS-CP-CE1",
     "/post/bilan-de-lecture/": "Bilan de lecture cycle 2 : test de lecture GS-CP-CE1-CE2",
-    "/post/bilan-de-maths/": "Bilan de maths CE1 : évaluation début et fin d'année",
+    "/post/bilan-de-maths/": "Bilan de maths du cycle 2 : une évaluation par niveau",
     "/post/le-chemin-des-sons/": "Le chemin des sons : lire des mots avec ou, an, in, eu au CP",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
