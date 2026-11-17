@@ -235,17 +235,17 @@ function tablesMul(){return paliers(
  tirer(4,()=>{const a=hasard([2,3,4,5,10]),b=de(2,10);return Math.random()<.5?[`${a} × … = ${a*b}`,b]:[`${a*b} = ${a} × …`,b]}))}
 const CALCUL_MENTAL=[['157 − 5',152],['128 + 30',158],['234 + 60',294],['300 + 700',1000],['640 − 300',340],['354 + 500',854],['765 − 200',565],['45 + 9',54],['82 − 9',73],['8 × 4',32],['72 × 10',720],['541 − 20',521],['63 + 19',82],['523 − 7',516],['746 + 80',826],['25 + 75',100],['la moitié de 470',235],['13 × 7',91]];
 const PROBLEMES=[
- ["Paul a 45 billes. Il en gagne 32. Combien de billes a-t-il maintenant ?","77 billes","Transformation, recherche de l'état final"],
- ["Dans un sac, il y a 227 billes. 113 billes sont rouges, les autres sont bleues. Combien y a-t-il de billes bleues ?","114 billes bleues","Parties-tout, une étape"],
- ["Tom a 188 billes. Lucie a 75 billes de plus que Tom. Combien de billes a Lucie ?","263 billes","Comparaison, une étape"],
- ["Maman achète 8 paquets de 7 biscuits. Combien de biscuits a-t-elle en tout ?","56 biscuits","Multiplicatif : valeur du tout"],
- ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Multiplicatif : valeur d'une part"],
- ["Une bibliothèque a 83 livres. On en achète 18, puis les élèves en empruntent 27. Combien de livres reste-t-il ?","74 livres","Deux étapes additives"],
- ["Une tarte coûte 17 € et un gâteau coûte 26 €. Je paie avec un billet de 50 €. Combien d'argent me rend-on ?","7 €","Deux étapes (parties-tout)"],
- ["Léo avait des images. Il en a donné 56 à son frère. Il lui en reste 217. Combien d'images Léo avait-il au début ?","273 images","Transformation, recherche de l'état initial"],
- ["Dans une école, il y a 111 garçons et 257 filles. Combien y a-t-il de filles de plus que de garçons ?","146 filles de plus","Comparaison, recherche de l'écart"],
- ["60 élèves font des équipes de 5 élèves. Combien y a-t-il d'équipes ?","12 équipes","Multiplicatif : nombre de parts"],
- ["J'achète 7 litres d'huile à 2 € le litre. Je paie avec un billet de 20 €. Combien d'argent me rend-on ?","6 €","Deux étapes : multiplicative puis additive"]];
+ ["Paul a 15 billes. Il en gagne 10. Combien de billes a-t-il maintenant ?","25 billes","Transformation, recherche de l'état final"],
+ ["Dans un sac, il y a 30 billes. 10 billes sont rouges, les autres sont bleues. Combien y a-t-il de billes bleues ?","20 billes bleues","Parties-tout, une étape"],
+ ["Tom a 18 billes. Lucie a 5 billes de plus que Tom. Combien de billes a Lucie ?","23 billes","Comparaison, une étape"],
+ ["Maman achète 4 paquets de 5 biscuits. Combien de biscuits a-t-elle en tout ?","20 biscuits","Multiplicatif : valeur du tout"],
+ ["On partage 12 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","4 images","Multiplicatif : valeur d'une part"],
+ ["Une bibliothèque a 40 livres. On en achète 10, puis les élèves en empruntent 20. Combien de livres reste-t-il ?","30 livres","Deux étapes additives"],
+ ["Une tarte coûte 8 € et un gâteau coûte 10 €. Je paie avec un billet de 20 €. Combien d'argent me rend-on ?","2 €","Deux étapes (parties-tout)"],
+ ["Léo avait des images. Il en a donné 6 à son frère. Il lui en reste 20. Combien d'images Léo avait-il au début ?","26 images","Transformation, recherche de l'état initial"],
+ ["Dans une classe, il y a 12 garçons et 15 filles. Combien y a-t-il de filles de plus que de garçons ?","3 filles de plus","Comparaison, recherche de l'écart"],
+ ["20 élèves font des équipes de 5 élèves. Combien y a-t-il d'équipes ?","4 équipes","Multiplicatif : nombre de parts"],
+ ["J'achète 3 litres de lait à 2 € le litre. Je paie avec un billet de 10 €. Combien d'argent me rend-on ?","4 €","Deux étapes : multiplicative puis additive"]];
 const EP_FIN=[
  // Nombres
  {id:'n1',groupe:'Nombres jusqu\'à 1 000',titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
@@ -256,7 +256,7 @@ const EP_FIN=[
   consigne:"Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). « 📝 Sur la feuille » : l'élève écrit, vous validez. « ⌨️ Sur l'écran » : l'élève tape le nombre sur le pavé puis ✔, l'ordinateur corrige tout seul et passe au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
  {id:'n3',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[15,'quinze'],[60,'soixante'],[200,'deux-cents'],[635,'six-cent-trente-cinq']].map(([n,l])=>V(nb(n),l)),
-  consigne:"« Écris ce nombre en lettres. » Comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots)."},
+  consigne:"« Écris ce nombre en lettres. » « 📝 Sur la feuille » : comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots). « ⌨️ Sur l'écran » : l'élève écrit au clavier puis ✔ ; l'ordinateur corrige tout seul (accents, majuscules, espaces et traits d'union ne comptent pas, l'orthographe des mots oui)."},
  {id:'n4',groupe:'Nombres jusqu\'à 1 000',titre:'Unités, dizaines, centaines',mode:'choix',
   items:()=>ordre([C('Dans 482, quel est le chiffre des dizaines ?',8,[4,8,2,48]),C('Dans 635, quel est le chiffre des centaines ?',6,[3,5,6,63]),
    C('600 + 30 + 5 = …',635,[653,6305,635,95]),C('4 centaines et 6 unités, c\'est…',406,[46,460,406,4006]),C('Dans 900, combien y a-t-il de centaines ?',9,[9,90,900,0]),
@@ -316,7 +316,7 @@ const EP_FIN=[
  // Problèmes
  {id:'pb',groupe:'Résolution de problèmes',titre:'Problèmes',mode:'valider',taille:'s',
   items:()=>PROBLEMES.map(([q,a,t])=>V(q,a,{dire:q,type:t})),
-  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille (schéma, calcul) puis donne sa réponse. Validez la réponse avec l'unité. Notez dans la case ce qui bloque (compréhension, choix de l'opération, calcul). Structures : parties-tout, transformation, comparaison, problèmes multiplicatifs et en deux étapes, nombres jusqu'à 1 000."},
+  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille (schéma, calcul) puis donne sa réponse. Validez la réponse avec l'unité. Notez dans la case ce qui bloque (compréhension, choix de l'opération, calcul). Structures : parties-tout, transformation, comparaison, problèmes multiplicatifs et en deux étapes. Les nombres sont volontairement petits : on évalue la compréhension du type de problème, pas le calcul."},
  // Grandeurs et mesures
  {id:'g1',groupe:'Grandeurs et mesures',titre:'Lire l\'heure',mode:'choix',question:'Quelle heure est-il ?',
   items:()=>ordre([[3,0,['3 h','12 h 15','3 h 30','4 h']],[8,30,['8 h 30','6 h 40','9 h 30','8 h 15']],[10,15,['10 h 15','3 h 50','10 h 45','11 h 15']],[4,45,['4 h 45','5 h 45','9 h 20','4 h 15']],
@@ -389,15 +389,15 @@ function doublesCP(){const D=l=>l.map(n=>[`Le double de ${n}`,2*n]),M=l=>l.map(n
  return paliers(m(D([1,2,3,4,5])),m(M([2,4,6,8,10])),m(D([6,7,8,9,10])),m(M([12,14,16,18,20])),m(D([20,30,40,50])),m(M([40,60,80,100]))).map(([q,a])=>V(q,a))}
 const CALCUL_CP=[['63 + 2',65],['38 − 1',37],['32 + 4',36],['45 + 10',55],['58 + 20',78],['90 − 20',70],['76 − 30',46],['3 fois 20',60],['Combien faut-il ajouter à 74 pour faire 80 ?',6],['47 + 8',55],['37 + 9',46],['50 − 6',44],['la moitié de 46',23],['47 + 28',75]];
 const PROBLEMES_CP=[
- ["Zoé a 12 billes. Elle en gagne 5. Combien de billes a-t-elle maintenant ?","17 billes","Transformation, recherche de l'état final"],
- ["Léa a 35 billes. Tom a 10 billes de plus que Léa. Combien de billes a Tom ?","45 billes","Comparaison"],
- ["Anna a 43 cerises. Elle en mange 18. Combien de cerises lui reste-t-il ?","25 cerises","Parties-tout, une étape"],
- ["Hugo a 18 images. Il voudrait en avoir 30. Combien d'images lui manque-t-il ?","12 images","Transformation, recherche de l'écart"],
- ["Un train a trois wagons. Il y a 25 passagers dans le premier, 32 dans le deuxième et 18 dans le troisième. Combien y a-t-il de passagers en tout ?","75 passagers","Parties-tout, trois parties"],
- ["Maman achète 3 paquets de 7 biscuits. Combien de biscuits a-t-elle en tout ?","21 biscuits","Multiplicatif : valeur du tout"],
- ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Partage : valeur d'une part"],
- ["24 élèves font des équipes de 4 élèves. Combien y a-t-il d'équipes ?","6 équipes","Partage : nombre de parts"],
- ["Dans un bus, il y a 29 enfants. À l'arrêt, 12 enfants descendent et 7 enfants montent. Combien y a-t-il d'enfants dans le bus maintenant ?","24 enfants","Deux étapes (nombres jusqu'à 30)"]];
+ ["Zoé a 4 billes. Elle en gagne 3. Combien de billes a-t-elle maintenant ?","7 billes","Transformation, recherche de l'état final"],
+ ["Léa a 6 billes. Tom a 2 billes de plus que Léa. Combien de billes a Tom ?","8 billes","Comparaison"],
+ ["Anna a 9 cerises. Elle en mange 4. Combien de cerises lui reste-t-il ?","5 cerises","Parties-tout, une étape"],
+ ["Hugo a 7 images. Il voudrait en avoir 10. Combien d'images lui manque-t-il ?","3 images","Transformation, recherche de l'écart"],
+ ["Un train a trois wagons. Il y a 4 passagers dans le premier, 3 dans le deuxième et 2 dans le troisième. Combien y a-t-il de passagers en tout ?","9 passagers","Parties-tout, trois parties"],
+ ["Maman achète 3 paquets de 2 biscuits. Combien de biscuits a-t-elle en tout ?","6 biscuits","Multiplicatif : valeur du tout"],
+ ["On partage 6 images entre 2 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","3 images","Partage : valeur d'une part"],
+ ["8 élèves font des équipes de 2 élèves. Combien y a-t-il d'équipes ?","4 équipes","Partage : nombre de parts"],
+ ["Dans un bus, il y a 10 enfants. À l'arrêt, 3 enfants descendent et 2 enfants montent. Combien y a-t-il d'enfants dans le bus maintenant ?","9 enfants","Deux étapes"]];
 const G='Nombres jusqu\'à 100';
 const EP_DEBUT=[
  {id:'a1',groupe:G,titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
@@ -408,7 +408,7 @@ const EP_DEBUT=[
   consigne:"Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). « 📝 Sur la feuille » : l'élève écrit, vous validez. « ⌨️ Sur l'écran » : l'élève tape le nombre sur le pavé puis ✔, l'ordinateur corrige tout seul et passe au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 6010 pour 70)."},
  {id:'a3',groupe:G,titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[7,'sept'],[12,'douze'],[30,'trente'],[45,'quarante-cinq']].map(([n,l])=>V(String(n),l)),
-  consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. Comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case."},
+  consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. « 📝 Sur la feuille » : comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case. « ⌨️ Sur l'écran » : l'élève écrit au clavier puis ✔ ; l'ordinateur corrige tout seul (accents, majuscules, espaces et traits d'union ne comptent pas, l'orthographe des mots oui)."},
  {id:'a4',groupe:G,titre:'Dizaines et unités',mode:'choix',
   items:()=>ordre([C('1 dizaine = … unités','10',['1','2','10','100']),C('Combien y a-t-il de cubes ?','34',['43','34','7','304'],{fig:dizaines(3,4)}),C('Combien y a-t-il de cubes ?','50',['5','15','50','500'],{fig:dizaines(5,0)}),
    C('Combien y a-t-il de cubes ?','29',['92','11','29','209'],{fig:dizaines(2,9)}),C('Dans 57, quel est le chiffre des dizaines ?','5',['7','5','57','12']),
@@ -446,7 +446,7 @@ const EP_DEBUT=[
   consigne:"Donnez une feuille. « Pose l'addition en colonnes et calcule-la. » L'addition posée arrive en période 4 ou 5 du CP : si l'élève ne l'a pas apprise, passez cette épreuve."},
  {id:'apb',groupe:'Résolution de problèmes',titre:'Problèmes',mode:'valider',taille:'s',
   items:()=>PROBLEMES_CP.map(([q,a,t])=>V(q,a,{dire:q,type:t})),
-  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille (dessin, schéma, calcul) puis donne sa réponse. Validez la réponse avec l'unité. Notez dans la case ce qui bloque. Nombres jusqu'à 100 (jusqu'à 30 pour les problèmes en deux étapes et les problèmes multiplicatifs)."},
+  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille (dessin, schéma, calcul) puis donne sa réponse. Validez la réponse avec l'unité. Notez dans la case ce qui bloque. Les nombres sont volontairement petits (jusqu'à 10) : on évalue la compréhension du type de problème, pas le calcul."},
  {id:'a14',groupe:'Grandeurs et mesures',titre:'Lire l\'heure (heures entières)',mode:'choix',question:'Quelle heure est-il ?',
   items:()=>ordre([[3,['3 h','12 h','4 h','3 h 30']],[7,['7 h','12 h 35','8 h','6 h']],[12,['12 h','6 h','11 h','1 h']],[9,['9 h','12 h 45','10 h','3 h']],[5,['5 h','12 h 25','6 h','4 h']],[10,['10 h','12 h 50','11 h','2 h']]]).map(([h,c])=>C('',c[0],melange(c),{fig:horloge(h,0)})),
   consigne:"« Quelle heure indique l'horloge ? » Heures entières seulement (fin de CP). La petite aiguille est bleue, la grande est rouge."},
@@ -727,8 +727,12 @@ function enonce(it,ep){
 function ecranValider(){
  const ep=R.ep,it=R.items[R.k];
  if(auto())return ecranEleve(specMaths(ep,it),(v,rep)=>{R.res.push({item:ep.cache?it.att:it.q,v,rep:v==='ok'?'':rep});R.k++;suivant()});
- const ecran=ep.cache&&surEcran; // sur l'écran : correction automatique ; sur la feuille : l'adulte valide
- const haut=ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`+(ecran?`<div class="question">Écris le nombre.</div><div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`:`<div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div>`)+`</div>`
+ const lettres=EN_LETTRES.includes(ep.id);
+ const ecran=(ep.cache||lettres)&&surEcran; // sur l'écran : correction automatique ; sur la feuille : l'adulte valide
+ const support=`<div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`;
+ const haut=lettres?cache(String(it.att),false)+`<div class="scene">${support}<div class="question">${mx(ecran?'Écris ce nombre en lettres.':ep.question)}</div><div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>`
+  +(ecran?`<div class="lettres-saisie"><input type="text" id="saisieL" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="écris ici…" style="font-size:min(7vw,34px);padding:8px 12px;border-radius:14px;border:3px solid #cfd8e3;width:min(80vw,520px)"> <button class="b ok" id="valL">✔</button></div>`:'')+`</div>`
+  :ep.cache?cache(it.q+'  →  '+it.att,true)+`<div class="scene"><div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`+(ecran?`<div class="question">Écris le nombre.</div><div class="ecran-nb" id="nbE"></div><div class="pave" id="pave">${[1,2,3,4,5,6,7,8,9].map(c=>`<button data-c="${c}">${c}</button>`).join('')}<button class="eff" data-c="x">⌫</button><button data-c="0">0</button><button class="val" data-c="ok" disabled>✔</button></div>`:`<div class="question">${mx(ep.question)}</div><div class="stim l">${ep.icone}</div>`)+`</div>`
   :cache(String(it.att),!!it.dire)+`<div class="scene">${ep.question?`<div class="question">${mx(ep.question)}</div>`:''}<div class="stim ${ep.taille||'l'}">${mx(it.q)}</div>${it.type?`<p class="note noprint" style="margin:14px 0 0">${esc(it.type)}</p>`:''}</div>`;
  app.innerHTML=barre()+haut+(ecran?`
  <div class="adulte"><span class="lab">Correction automatique :</span> l'élève tape le nombre puis ✔. <input type="hidden" id="rep">
@@ -747,7 +751,14 @@ function ecranValider(){
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else{stopTimers();intro()}};
  onKey=e=>{const m={ArrowLeft:'ok',ArrowUp:'hes',ArrowRight:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
  $$('.support [data-s]').forEach(b=>b.onclick=()=>{surEcran=b.dataset.s==='ecran';try{localStorage.setItem('bilanMathsSupport',surEcran?'ecran':'feuille')}catch(e){}stopTimers();ecranValider()});
- if(ecran){
+ if(ecran&&lettres){
+  // L'élève écrit le nombre en lettres : correction automatique (accents, majuscules, espaces et traits d'union ne comptent pas), puis item suivant.
+  let fini=false;const champ=$('#saisieL');setTimeout(()=>champ.focus(),50);
+  const valider=()=>{const v=champ.value.trim();if(fini||!v)return;fini=true;champ.disabled=true;const juste=colle(v)===colle(it.att);
+   R.res.push({item:it.q,v:juste?'ok':'ko',rep:juste?'':v});R.k++;timers.push(setTimeout(suivant,350))};
+  $('#valL').onclick=valider;champ.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();valider()}});onKey=null;
+ }
+ if(ecran&&ep.cache){
   // L'élève tape le nombre : correction automatique, puis item suivant.
   let saisie='',fini=false;const aff=$('#nbE'),bv=$('#pave .val');
   const maj=()=>{aff.textContent=saisie;bv.disabled=!saisie};
