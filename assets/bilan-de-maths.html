@@ -217,52 +217,65 @@ function barres(){
 const V=(q,att,o={})=>Object.assign({q,att},o);               // l'adulte valide
 const C=(q,bonne,choix,o={})=>Object.assign({q,bonne,choix:choix.map(String)},o); // l'élève montre une réponse
 const CMP=['<','>','='];
-function tablesAdd(){const out=[],vu=new Set();let g=0;while(out.length<24&&g++<500){const a=1+Math.random()*9|0,b=1+Math.random()*9|0,s=a+b,k=Math.random()*4|0;
- const t=[[`${a} + … = ${s}`,b],[`… + ${b} = ${s}`,a],[`${s} = ${a} + …`,b],[`${a} + ${b} = …`,s]][k];if(vu.has(t[0]))continue;vu.add(t[0]);out.push(V(t[0],t[1]))}return out}
-function tablesMul(){const out=[],vu=new Set();let g=0;while(out.length<20&&g++<500){const a=hasard([2,3,4,5,10]),b=1+Math.random()*10|0,p=a*b,k=Math.random()*4|0;
- const t=[[`${a} × … = ${p}`,b],[`${p} = ${a} × …`,b],[`${b} × ${a} = …`,p],[`${a} × ${b} = …`,p]][k];if(vu.has(t[0]))continue;vu.add(t[0]);out.push(V(t[0],t[1]))}return out}
-const CALCUL_MENTAL=[['234 + 60',294],['541 − 20',521],['354 + 500',854],['765 − 200',565],['746 + 80',826],['72 × 10',720],['45 + 9',54],['63 + 19',82],['82 − 9',73],['157 − 5',152],['523 − 7',516],['la moitié de 470',235],['13 × 7',91],['8 × 4',32],['128 + 30',158],['640 − 300',340],['25 + 75',100],['300 + 700',1000]];
+function paliers(...ps){return reglages.aleatoire?melange(ps.flat()):ps.flat()}
+function tirer(n,f){const out=[],vu=new Set();let g=0;while(out.length<n&&g++<800){const t=f();if(!t||vu.has(t[0]))continue;vu.add(t[0]);out.push(V(t[0],t[1]))}return melange(out)}
+const de=(a,b)=>a+Math.random()*(b-a+1)|0;
+// CE1 : sommes ≤ 10 → sommes > 10 → terme manquant → égalité à l'envers
+function tablesAdd(){return paliers(
+ tirer(4,()=>{const a=de(1,8),b=de(1,9-a);return[`${a} + ${b} = …`,a+b]}),
+ tirer(4,()=>{const a=de(2,9),b=de(11-a,9);return b<1||a+b<11?null:[`${a} + ${b} = …`,a+b]}),
+ tirer(4,()=>{const a=de(1,9),b=de(1,9);return[`${a} + … = ${a+b}`,b]}),
+ tirer(4,()=>{const a=de(1,9),b=de(1,9);return Math.random()<.5?[`${a+b} = ${a} + …`,b]:[`… + ${b} = ${a+b}`,a]}))}
+
+// CE1 : ×10 et ×2 → ×5 → ×3 et ×4 → facteur manquant
+function tablesMul(){return paliers(
+ tirer(4,()=>{const a=hasard([2,10]),b=de(1,10);return Math.random()<.5?[`${a} × ${b} = …`,a*b]:[`${b} × ${a} = …`,a*b]}),
+ tirer(4,()=>{const b=de(1,10);return[`5 × ${b} = …`,5*b]}),
+ tirer(4,()=>{const a=hasard([3,4]),b=de(1,10);return[`${a} × ${b} = …`,a*b]}),
+ tirer(4,()=>{const a=hasard([2,3,4,5,10]),b=de(2,10);return Math.random()<.5?[`${a} × … = ${a*b}`,b]:[`${a*b} = ${a} × …`,b]}))}
+const CALCUL_MENTAL=[['157 − 5',152],['128 + 30',158],['234 + 60',294],['300 + 700',1000],['640 − 300',340],['354 + 500',854],['765 − 200',565],['45 + 9',54],['82 − 9',73],['8 × 4',32],['72 × 10',720],['541 − 20',521],['63 + 19',82],['523 − 7',516],['746 + 80',826],['25 + 75',100],['la moitié de 470',235],['13 × 7',91]];
 const PROBLEMES=[
+ ["Paul a 45 billes. Il en gagne 32. Combien de billes a-t-il maintenant ?","77 billes","Transformation, recherche de l'état final"],
  ["Dans un sac, il y a 227 billes. 113 billes sont rouges, les autres sont bleues. Combien y a-t-il de billes bleues ?","114 billes bleues","Parties-tout, une étape"],
- ["Léo avait des images. Il en a donné 56 à son frère. Il lui en reste 217. Combien d'images Léo avait-il au début ?","273 images","Transformation, recherche de l'état initial"],
  ["Tom a 188 billes. Lucie a 75 billes de plus que Tom. Combien de billes a Lucie ?","263 billes","Comparaison, une étape"],
- ["Dans une école, il y a 111 garçons et 257 filles. Combien y a-t-il de filles de plus que de garçons ?","146 filles de plus","Comparaison, recherche de l'écart"],
+ ["Maman achète 8 paquets de 7 biscuits. Combien de biscuits a-t-elle en tout ?","56 biscuits","Multiplicatif : valeur du tout"],
+ ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Multiplicatif : valeur d'une part"],
  ["Une bibliothèque a 83 livres. On en achète 18, puis les élèves en empruntent 27. Combien de livres reste-t-il ?","74 livres","Deux étapes additives"],
  ["Une tarte coûte 17 € et un gâteau coûte 26 €. Je paie avec un billet de 50 €. Combien d'argent me rend-on ?","7 €","Deux étapes (parties-tout)"],
- ["Maman achète 8 paquets de 7 biscuits. Combien de biscuits a-t-elle en tout ?","56 biscuits","Multiplicatif : valeur du tout"],
+ ["Léo avait des images. Il en a donné 56 à son frère. Il lui en reste 217. Combien d'images Léo avait-il au début ?","273 images","Transformation, recherche de l'état initial"],
+ ["Dans une école, il y a 111 garçons et 257 filles. Combien y a-t-il de filles de plus que de garçons ?","146 filles de plus","Comparaison, recherche de l'écart"],
  ["60 élèves font des équipes de 5 élèves. Combien y a-t-il d'équipes ?","12 équipes","Multiplicatif : nombre de parts"],
- ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Multiplicatif : valeur d'une part"],
  ["J'achète 7 litres d'huile à 2 € le litre. Je paie avec un billet de 20 €. Combien d'argent me rend-on ?","6 €","Deux étapes : multiplicative puis additive"]];
 const EP_FIN=[
  // Nombres
  {id:'n1',groupe:'Nombres jusqu\'à 1 000',titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
-  items:()=>ordre([[47,'quarante-sept'],[70,'soixante-dix'],[96,'quatre-vingt-seize'],[108,'cent-huit'],[315,'trois-cent-quinze'],[470,'quatre-cent-soixante-dix'],[506,'cinq-cent-six'],[699,'six-cent-quatre-vingt-dix-neuf'],[780,'sept-cent-quatre-vingts'],[1000,'mille']]).map(([n,l])=>V(nb(n),l)),
+  items:()=>ordre([[47,'quarante-sept'],[70,'soixante-dix'],[96,'quatre-vingt-seize'],[315,'trois-cent-quinze'],[470,'quatre-cent-soixante-dix'],[108,'cent-huit'],[506,'cinq-cent-six'],[780,'sept-cent-quatre-vingts'],[699,'six-cent-quatre-vingt-dix-neuf'],[1000,'mille']]).map(([n,l])=>V(nb(n),l)),
   consigne:"Montrez l'écran : « Lis ce nombre. » Validez chaque lecture (la réponse attendue s'affiche en maintenant 👁)."},
  {id:'n2',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres dictés',mode:'valider',cache:true,icone:'✏️',question:'Écris le nombre sur ta feuille.',
-  items:()=>ordre([[64,'soixante-quatre'],[81,'quatre-vingt-un'],[150,'cent-cinquante'],[307,'trois-cent-sept'],[520,'cinq-cent-vingt'],[742,'sept-cent-quarante-deux'],[416,'quatre-cent-seize'],[999,'neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
+  items:()=>ordre([[64,'soixante-quatre'],[81,'quatre-vingt-un'],[150,'cent-cinquante'],[520,'cinq-cent-vingt'],[742,'sept-cent-quarante-deux'],[416,'quatre-cent-seize'],[307,'trois-cent-sept'],[999,'neuf-cent-quatre-vingt-dix-neuf']]).map(([n,l])=>V(l,String(n),{dire:l})),
   consigne:"Donnez une feuille ou une ardoise. Le nombre est dit automatiquement à chaque écran (🔊 pour répéter, 👁 maintenu pour le voir). L'élève écrit sur sa feuille (vous validez) ou « ⌨️ Sur l'écran » avec le pavé de chiffres (correction automatique) ; on passe aussitôt au nombre suivant. Notez ce qu'il a écrit en cas d'erreur (ex. 30 07 pour 307)."},
  {id:'n3',groupe:'Nombres jusqu\'à 1 000',titre:'Écrire des nombres en lettres',mode:'valider',taille:'l',question:'Écris ce nombre en lettres sur ta feuille.',
   items:()=>[[15,'quinze'],[60,'soixante'],[200,'deux-cents'],[635,'six-cent-trente-cinq']].map(([n,l])=>V(nb(n),l)),
   consigne:"« Écris ce nombre en lettres. » Comptez juste une écriture lisible où les mots-nombres sont bien choisis et dans l'ordre ; notez les erreurs d'orthographe dans la case (programme 2025 : traits d'union entre tous les mots)."},
  {id:'n4',groupe:'Nombres jusqu\'à 1 000',titre:'Unités, dizaines, centaines',mode:'choix',
   items:()=>ordre([C('Dans 482, quel est le chiffre des dizaines ?',8,[4,8,2,48]),C('Dans 635, quel est le chiffre des centaines ?',6,[3,5,6,63]),
-   C('63 dizaines et 5 unités, c\'est…',635,[365,635,6305,68]),C('600 + 30 + 5 = …',635,[653,6305,635,95]),C('2 centaines, 8 dizaines et 17 unités, c\'est…',297,[2817,287,297,307]),
-   C('1 centaine = … dizaines',10,[1,10,100,1000]),C('4 centaines et 6 unités, c\'est…',406,[46,460,406,4006]),C('Dans 900, combien y a-t-il de centaines ?',9,[9,90,900,0])]),
+   C('600 + 30 + 5 = …',635,[653,6305,635,95]),C('4 centaines et 6 unités, c\'est…',406,[46,460,406,4006]),C('Dans 900, combien y a-t-il de centaines ?',9,[9,90,900,0]),
+   C('1 centaine = … dizaines',10,[1,10,100,1000]),C('63 dizaines et 5 unités, c\'est…',635,[365,635,6305,68]),C('2 centaines, 8 dizaines et 17 unités, c\'est…',297,[2817,287,297,307])]),
   consigne:"Lisez la question à l'élève s'il le faut. « Montre-moi la bonne réponse. » Cliquez sur la réponse qu'il montre."},
  {id:'n5',groupe:'Nombres jusqu\'à 1 000',titre:'Comparer deux nombres',mode:'choix',taille:'l',
-  items:()=>ordre([['243','234','>'],['99','101','<'],['508','580','<'],['700','699','>'],['365','300 + 60 + 5','='],['1 000','999','>'],['410','401','>'],['89','98','<']]).map(([a,b,s])=>C(`${a} … ${b}`,s,CMP,{grand:true})),
+  items:()=>ordre([['89','98','<'],['99','101','<'],['243','234','>'],['508','580','<'],['410','401','>'],['700','699','>'],['1 000','999','>'],['365','300 + 60 + 5','=']]).map(([a,b,s])=>C(`${a} … ${b}`,s,CMP,{grand:true})),
   consigne:"« Quel signe faut-il mettre entre les deux nombres : plus petit que, plus grand que ou égal ? Montre-le. »"},
  {id:'n6',groupe:'Nombres jusqu\'à 1 000',titre:'Ordonner, encadrer, suite des nombres',mode:'choix',
   items:()=>ordre([C('Quel est le plus petit nombre ?','229',['234','243','239','300','229'].map(x=>x)),C('Quel est le plus grand nombre ?','706',['607','670','706','699']),
-   C('Quel nombre est entre 398 et 400 ?','399',['389','399','401','309']),C('Quel nombre vient juste après 499 ?','500',['498','4 910','500','410']),
-   C('Quel nombre vient juste avant 600 ?','599',['601','500','599','610']),C('470, 480, 490, … Quel nombre vient ensuite ?','500',['491','500','4 100','590'])]),
+   C('Quel nombre est entre 398 et 400 ?','399',['389','399','401','309']),C('Quel nombre vient juste avant 600 ?','599',['601','500','599','610']),
+   C('Quel nombre vient juste après 499 ?','500',['498','4 910','500','410']),C('470, 480, 490, … Quel nombre vient ensuite ?','500',['491','500','4 100','590'])]),
   consigne:"Lisez la question. L'élève montre la réponse."},
  {id:'n7',groupe:'Nombres jusqu\'à 1 000',titre:'Droite graduée',mode:'choix',question:'Quel nombre est caché sous le point d\'interrogation ?',
-  items:()=>ordre([C('',395,[394,395,396,405],{fig:droite(391,1,8,4)}),C('',340,[304,350,340,400],{fig:droite(300,10,7,4)}),C('',700,[70,600,700,800],{fig:droite(0,100,11,7)}),
-   C('',91,[90,91,92,100],{fig:droite(85,1,8,6)}),C('',660,[651,660,670,6510],{fig:droite(650,10,6,1)})]),
+  items:()=>ordre([C('',91,[90,91,92,100],{fig:droite(85,1,8,6)}),C('',395,[394,395,396,405],{fig:droite(391,1,8,4)}),C('',340,[304,350,340,400],{fig:droite(300,10,7,4)}),
+   C('',660,[651,660,670,6510],{fig:droite(650,10,6,1)}),C('',700,[70,600,700,800],{fig:droite(0,100,11,7)})]),
   consigne:"« Quel nombre est caché sous le point d'interrogation ? Montre-le. » Bandes de 1 en 1, de 10 en 10, de 100 en 100."},
  {id:'n8',groupe:'Nombres jusqu\'à 1 000',titre:'Pair ou impair ?',mode:'choix',taille:'xl',
-  items:()=>ordre([48,75,120,333,506,769,1000,91]).map(n=>C(nb(n),n%2?'Impair':'Pair',['Pair','Impair'],{grand:true})),
+  items:()=>ordre([48,75,91,120,333,506,769,1000]).map(n=>C(nb(n),n%2?'Impair':'Pair',['Pair','Impair'],{grand:true})),
   consigne:"« Ce nombre est-il pair ou impair ? »"},
  {id:'n9',groupe:'Nombres jusqu\'à 1 000',titre:'Suites et régularités',mode:'choix',question:'Qu\'est-ce qui vient ensuite ?',
   items:()=>[C('🔴🔵🔴🔵🔴🔵 …','🔴',['🔵','🔴','🟢'],{rang:true}),C('⭐🌙🌙⭐🌙🌙⭐ …','🌙',['⭐','🌙','☀️'],{rang:true}),C('🍎🍐🍌🍎🍐🍌🍎🍐 …','🍌',['🍎','🍐','🍌'],{rang:true}),
@@ -284,21 +297,21 @@ const EP_FIN=[
    C('3/10 de la bande sont en orange. Quelle fraction est en rouge ?','7/10',['3/10','7/10','10/7','7/3'],{fig:frac(10,3,'rect',true)})]),
   consigne:"« Montre-moi le résultat. » Additions et soustractions de fractions de même dénominateur ; complément à 1."},
  // Calcul
- {id:'c1',groupe:'Calcul',titre:'Tables d\'addition (1 minute)',mode:'valider',taille:'l',temps:60,attendu:12,
-  items:tablesAdd,consigne:"« Dis-moi le nombre qui manque, le plus vite possible. » Le chrono démarre au premier calcul et s'arrête seul à 1 minute. Attendu de fin de CE1 : <b>12 égalités justes en 1 minute</b>, dans les deux sens (4 + … = 12 ; 10 = 7 + …)."},
- {id:'c2',groupe:'Calcul',titre:'Tables de multiplication (1 minute)',mode:'valider',taille:'l',temps:60,attendu:8,
-  items:tablesMul,consigne:"Même passation. Tables de 2, 3, 4, 5 et 10, dans les deux sens (4 × … = 12 ; 10 = 2 × …). Attendu de fin de CE1 : <b>8 égalités justes en 1 minute</b>. À adapter selon les tables déjà apprises (elles s'étalent sur toute l'année)."},
+ {id:'c1',groupe:'Calcul',titre:'Tables d\'addition',mode:'valider',taille:'l',repere:60,attendu:12,
+  items:tablesAdd,consigne:"« Dis-moi le nombre qui manque. » Pas de compte à rebours : 16 calculs du plus facile au plus difficile ; la durée est mesurée discrètement et indiquée dans le bilan. Repère de fin de CE1 : <b>12 égalités justes en 1 minute</b>, dans les deux sens (4 + … = 12 ; 10 = 7 + …)."},
+ {id:'c2',groupe:'Calcul',titre:'Tables de multiplication',mode:'valider',taille:'l',repere:60,attendu:8,
+  items:tablesMul,consigne:"Même passation (16 calculs, durée mesurée discrètement). Tables de 2, 3, 4, 5 et 10, dans les deux sens (4 × … = 12 ; 10 = 2 × …). Repère de fin de CE1 : <b>8 égalités justes en 1 minute</b>. À adapter selon les tables déjà apprises (elles s'étalent sur toute l'année)."},
  {id:'c3',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',
-  items:()=>ordre([['Le double de 7',14],['Le double de 15',30],['Le double de 35',70],['Le double de 250',500],['La moitié de 16',8],['La moitié de 30',15],['La moitié de 80',40],['La moitié de 600',300],['La moitié de 1 000',500],['4 fois 25',100]]).map(([q,a])=>V(q,a)),
+  items:()=>ordre([['Le double de 7',14],['La moitié de 16',8],['Le double de 15',30],['La moitié de 80',40],['La moitié de 30',15],['Le double de 35',70],['4 fois 25',100],['Le double de 250',500],['La moitié de 600',300],['La moitié de 1 000',500]]).map(([q,a])=>V(q,a)),
   consigne:"« Dis-moi le résultat. » Faits multiplicatifs à mémoriser : doubles, moitiés, multiples de 25. Notez « Hésitant » si l'élève recalcule longuement."},
- {id:'c4',groupe:'Calcul',titre:'Calcul mental (3 minutes)',mode:'valider',taille:'l',temps:180,attendu:12,
+ {id:'c4',groupe:'Calcul',titre:'Calcul mental',mode:'valider',taille:'l',repere:180,attendu:12,
   items:()=>ordre(CALCUL_MENTAL).map(([q,a])=>V(q.startsWith('la')?q[0].toUpperCase()+q.slice(1):q+' = …',a)),
-  consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Le chrono s'arrête seul à 3 minutes. Attendu de fin de CE1 : <b>12 résultats justes en 3 minutes</b> (ajouter des dizaines ou des centaines, ajouter 9 ou 19, retirer 9, multiplier par 10…)."},
+  consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE1 : <b>12 résultats justes en 3 minutes</b> (ajouter des dizaines ou des centaines, ajouter 9 ou 19, retirer 9, multiplier par 10…)."},
  {id:'c5',groupe:'Calcul',titre:'Additions posées',mode:'valider',taille:'m',question:'Pose et calcule l\'addition sur ta feuille.',
-  items:()=>[['245 + 437',682],['218 + 48',266],['76 + 7 + 568',651],['309 + 491',800]].map(([q,a])=>V(q,a)),
+  items:()=>[['324 + 152',476],['245 + 437',682],['218 + 48',266],['309 + 491',800],['76 + 7 + 568',651]].map(([q,a])=>V(q,a)),
   consigne:"Donnez une feuille. « Pose l'addition en colonnes et calcule-la. » Validez le résultat ; notez dans la case une erreur d'alignement ou de retenue."},
  {id:'c6',groupe:'Calcul',titre:'Soustractions posées',mode:'valider',taille:'m',question:'Pose et calcule la soustraction sur ta feuille.',
-  items:()=>[['87 − 35',52],['563 − 128',435],['481 − 73',408],['704 − 356',348]].map(([q,a])=>V(q,a)),
+  items:()=>[['87 − 35',52],['568 − 245',323],['481 − 73',408],['563 − 128',435],['704 − 356',348]].map(([q,a])=>V(q,a)),
   consigne:"« Pose la soustraction et calcule-la. » La soustraction posée est introduite au plus tard en période 3 du CE1 : en début d'année, passez cette épreuve."},
  // Problèmes
  {id:'pb',groupe:'Résolution de problèmes',titre:'Problèmes',mode:'valider',taille:'s',
@@ -366,19 +379,25 @@ function dizaines(d,u){
  return svg(Math.max(120,30+d*30+90),210,c)}
 const FORMES=[['● ronds',4,2],['■ carrés',3,5]];
 const tableau2=()=>`<table class="tab"><tr><th>Formes</th><th style="color:#d64545">rouges</th><th style="color:#2f6fb2">bleues</th></tr>${FORMES.map(([a,r,b])=>`<tr><th>${a}</th><td>${r}</td><td>${b}</td></tr>`).join('')}</table>`;
-function tablesAddCP(){const out=[],vu=new Set();let g=0;while(out.length<24&&g++<600){const a=Math.random()*11|0,b=Math.random()*11|0,s=a+b,k=Math.random()*4|0;
- const t=[[`${a} + … = ${s}`,b],[`… + ${b} = ${s}`,a],[`${s} = ${a} + …`,b],[`${a} + ${b} = …`,s]][k];if(vu.has(t[0])||a===0||b===0)continue;vu.add(t[0]);out.push(V(t[0],t[1]))}return out}
-function doublesCP(){const d=[1,2,3,4,5,6,7,8,9,10,20,30,40,50].map(n=>[`Le double de ${n}`,2*n]),m=[2,4,6,8,10,12,14,16,18,20,40,60,80,100].map(n=>[`La moitié de ${n}`,n/2]);return melange(d.concat(m)).map(([q,a])=>V(q,a))}
-const CALCUL_CP=[['76 − 30',46],['45 + 10',55],['63 + 2',65],['38 − 1',37],['Combien faut-il ajouter à 74 pour faire 80 ?',6],['32 + 4',36],['47 + 8',55],['37 + 9',46],['47 + 28',75],['la moitié de 46',23],['50 − 6',44],['3 fois 20',60],['58 + 20',78],['90 − 20',70]];
+// CP : sommes ≤ 5 → sommes ≤ 10 → sommes > 10 → terme manquant
+function tablesAddCP(){return paliers(
+ tirer(3,()=>{const a=de(1,4),b=de(1,5-a);return[`${a} + ${b} = …`,a+b]}),
+ tirer(4,()=>{const a=de(1,9),b=de(1,10-a);return a+b<6?null:[`${a} + ${b} = …`,a+b]}),
+ tirer(4,()=>{const a=de(2,10),b=de(1,10);return a+b<11?null:[`${a} + ${b} = …`,a+b]}),
+ tirer(5,()=>{const a=de(1,10),b=de(1,10);return[[`${a} + … = ${a+b}`,b],[`… + ${b} = ${a+b}`,a],[`${a+b} = ${a} + …`,b]][de(0,2)]}))}
+function doublesCP(){const D=l=>l.map(n=>[`Le double de ${n}`,2*n]),M=l=>l.map(n=>[`La moitié de ${n}`,n/2]),m=l=>melange(l).slice(0,3);
+ return paliers(m(D([1,2,3,4,5])),m(M([2,4,6,8,10])),m(D([6,7,8,9,10])),m(M([12,14,16,18,20])),m(D([20,30,40,50])),m(M([40,60,80,100]))).map(([q,a])=>V(q,a))}
+const CALCUL_CP=[['63 + 2',65],['38 − 1',37],['32 + 4',36],['45 + 10',55],['58 + 20',78],['90 − 20',70],['76 − 30',46],['3 fois 20',60],['Combien faut-il ajouter à 74 pour faire 80 ?',6],['47 + 8',55],['37 + 9',46],['50 − 6',44],['la moitié de 46',23],['47 + 28',75]];
 const PROBLEMES_CP=[
- ["Anna a 43 cerises. Elle en mange 18. Combien de cerises lui reste-t-il ?","25 cerises","Parties-tout, une étape"],
- ["Un train a trois wagons. Il y a 25 passagers dans le premier, 32 dans le deuxième et 18 dans le troisième. Combien y a-t-il de passagers en tout ?","75 passagers","Parties-tout, trois parties"],
+ ["Zoé a 12 billes. Elle en gagne 5. Combien de billes a-t-elle maintenant ?","17 billes","Transformation, recherche de l'état final"],
  ["Léa a 35 billes. Tom a 10 billes de plus que Léa. Combien de billes a Tom ?","45 billes","Comparaison"],
+ ["Anna a 43 cerises. Elle en mange 18. Combien de cerises lui reste-t-il ?","25 cerises","Parties-tout, une étape"],
  ["Hugo a 18 images. Il voudrait en avoir 30. Combien d'images lui manque-t-il ?","12 images","Transformation, recherche de l'écart"],
- ["Dans un bus, il y a 29 enfants. À l'arrêt, 12 enfants descendent et 7 enfants montent. Combien y a-t-il d'enfants dans le bus maintenant ?","24 enfants","Deux étapes (nombres jusqu'à 30)"],
+ ["Un train a trois wagons. Il y a 25 passagers dans le premier, 32 dans le deuxième et 18 dans le troisième. Combien y a-t-il de passagers en tout ?","75 passagers","Parties-tout, trois parties"],
  ["Maman achète 3 paquets de 7 biscuits. Combien de biscuits a-t-elle en tout ?","21 biscuits","Multiplicatif : valeur du tout"],
+ ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Partage : valeur d'une part"],
  ["24 élèves font des équipes de 4 élèves. Combien y a-t-il d'équipes ?","6 équipes","Partage : nombre de parts"],
- ["On partage 18 images entre 3 enfants. Chacun en a autant. Combien d'images a chaque enfant ?","6 images","Partage : valeur d'une part"]];
+ ["Dans un bus, il y a 29 enfants. À l'arrêt, 12 enfants descendent et 7 enfants montent. Combien y a-t-il d'enfants dans le bus maintenant ?","24 enfants","Deux étapes (nombres jusqu'à 30)"]];
 const G='Nombres jusqu\'à 100';
 const EP_DEBUT=[
  {id:'a1',groupe:G,titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
@@ -391,12 +410,12 @@ const EP_DEBUT=[
   items:()=>[[7,'sept'],[12,'douze'],[30,'trente'],[45,'quarante-cinq']].map(([n,l])=>V(String(n),l)),
   consigne:"« Écris ce nombre en lettres. » Fin de CP : jusqu'à cinquante. Comptez juste une écriture où les mots-nombres sont bien choisis ; notez l'orthographe dans la case."},
  {id:'a4',groupe:G,titre:'Dizaines et unités',mode:'choix',
-  items:()=>ordre([C('Combien y a-t-il de cubes ?','34',['43','34','7','304'],{fig:dizaines(3,4)}),C('Combien y a-t-il de cubes ?','50',['5','15','50','500'],{fig:dizaines(5,0)}),
+  items:()=>ordre([C('1 dizaine = … unités','10',['1','2','10','100']),C('Combien y a-t-il de cubes ?','34',['43','34','7','304'],{fig:dizaines(3,4)}),C('Combien y a-t-il de cubes ?','50',['5','15','50','500'],{fig:dizaines(5,0)}),
    C('Combien y a-t-il de cubes ?','29',['92','11','29','209'],{fig:dizaines(2,9)}),C('Dans 57, quel est le chiffre des dizaines ?','5',['7','5','57','12']),
-   C('4 dizaines et 8 unités, c\'est…','48',['84','12','48','408']),C('1 dizaine = … unités','10',['1','2','10','100'])]),
+   C('4 dizaines et 8 unités, c\'est…','48',['84','12','48','408'])]),
   consigne:"« Combien y a-t-il de cubes ? » Une barre = 10 cubes. Regardez si l'élève compte les barres de 10 en 10 ou recompte tous les cubes (à noter dans les observations)."},
  {id:'a5',groupe:G,titre:'Comparer deux nombres',mode:'choix',taille:'l',
-  items:()=>ordre([['49','53','<'],['27','72','<'],['80','79','>'],['35','35','='],['61','16','>'],['100','99','>']]).map(([a,b,s])=>C(`${a} … ${b}`,s,CMP,{grand:true})),
+  items:()=>ordre([['35','35','='],['49','53','<'],['80','79','>'],['27','72','<'],['61','16','>'],['100','99','>']]).map(([a,b,s])=>C(`${a} … ${b}`,s,CMP,{grand:true})),
   consigne:"« Quel signe faut-il mettre entre les deux nombres : plus petit que, plus grand que ou égal ? Montre-le. »"},
  {id:'a6',groupe:G,titre:'Compter, ordonner',mode:'choix',
   items:()=>ordre([C('Quel est le plus petit nombre ?','14',['41','14','40','44','19']),C('Quel est le plus grand nombre ?','86',['68','86','80','79']),
@@ -404,20 +423,20 @@ const EP_DEBUT=[
    C('40, 50, 60, … Quel nombre vient ensuite ?','70',['61','70','600','80']),C('20, 22, 24, … Quel nombre vient ensuite ?','26',['25','26','28','30']),C('35, 34, 33, … Quel nombre vient ensuite ?','32',['34','36','32','30'])]),
   consigne:"Lisez la question. L'élève montre la réponse. Compter de 1 en 1, de 2 en 2, de 10 en 10 et à rebours."},
  {id:'a7',groupe:G,titre:'Droite graduée',mode:'choix',question:'Quel nombre est caché sous le point d\'interrogation ?',
-  items:()=>ordre([C('','23',['22','23','24','32'],{fig:droite(20,1,8,3)}),C('','50',['49','50','51','410'],{fig:droite(45,1,8,5)}),C('','100',['99','100','910','101'],{fig:droite(93,1,8,7)}),C('','68',['67','68','69','86'],{fig:droite(66,1,8,2)})]),
+  items:()=>ordre([C('','23',['22','23','24','32'],{fig:droite(20,1,8,3)}),C('','68',['67','68','69','86'],{fig:droite(66,1,8,2)}),C('','50',['49','50','51','410'],{fig:droite(45,1,8,5)}),C('','100',['99','100','910','101'],{fig:droite(93,1,8,7)})]),
   consigne:"« Quel nombre est caché sous le point d'interrogation ? Montre-le. » Demi-droite graduée de 1 en 1."},
  {id:'a8',groupe:G,titre:'Suites et rangs',mode:'choix',
   items:()=>[C('🔴🔵🔴🔵🔴🔵 …','🔴',['🔵','🔴','🟢'],{rang:true,q0:'Qu\'est-ce qui vient ensuite ?'}),C('🍎🍐🍌🍎🍐🍌🍎🍐 …','🍌',['🍎','🍐','🍌'],{rang:true,q0:'Qu\'est-ce qui vient ensuite ?'}),
    C('En partant de la gauche, qui est le 3ᵉ ?','🧑',['👦','👧','🧑','👶'],{fig:'<div class="rang">👦👧🧑🧓👶</div>',emo:true}),
    C('A B A B A B… Quelle est la 19ᵉ lettre ?','A',['A','B']),C('1, 3, 5, 7, 9… Quel est le 7ᵉ nombre ?','13',['11','13','14','15'])],
   consigne:"« Qu'est-ce qui vient ensuite ? », puis les rangs (ordinaux jusqu'à vingtième). L'élève peut compter sur ses doigts ou sur une feuille."},
- {id:'a9',groupe:'Calcul',titre:'Tables d\'addition (1 minute)',mode:'valider',taille:'l',temps:60,attendu:8,
-  items:tablesAddCP,consigne:"« Dis-moi le nombre qui manque, le plus vite possible. » Le chrono démarre au premier calcul et s'arrête seul à 1 minute. Attendu de fin de CP : <b>8 égalités justes en 1 minute</b>, nombres de 0 à 10, dans les deux sens (4 + … = 12 ; 10 = 7 + …)."},
- {id:'a10',groupe:'Calcul',titre:'Doubles et moitiés (1 minute)',mode:'valider',taille:'m',temps:60,attendu:8,
-  items:doublesCP,consigne:"« Dis-moi le résultat. » Doubles de 1 à 10 et de 20, 30, 40, 50 ; moitiés des nombres pairs jusqu'à 20 et de 40, 60, 80, 100. Attendu de fin de CP : <b>8 justes en 1 minute</b>."},
- {id:'a11',groupe:'Calcul',titre:'Calcul mental (3 minutes)',mode:'valider',taille:'l',temps:180,attendu:9,
+ {id:'a9',groupe:'Calcul',titre:'Tables d\'addition',mode:'valider',taille:'l',repere:60,attendu:8,
+  items:tablesAddCP,consigne:"« Dis-moi le nombre qui manque. » Pas de compte à rebours : 16 calculs du plus facile au plus difficile ; la durée est mesurée discrètement et indiquée dans le bilan. Repère de fin de CP : <b>8 égalités justes en 1 minute</b>, nombres de 0 à 10, dans les deux sens (4 + … = 12 ; 10 = 7 + …)."},
+ {id:'a10',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',repere:60,attendu:8,
+  items:doublesCP,consigne:"« Dis-moi le résultat. » Doubles de 1 à 10 et de 20, 30, 40, 50 ; moitiés des nombres pairs jusqu'à 20 et de 40, 60, 80, 100. Pas de compte à rebours (18 calculs). Repère de fin de CP : <b>8 justes en 1 minute</b>."},
+ {id:'a11',groupe:'Calcul',titre:'Calcul mental',mode:'valider',taille:'l',repere:180,attendu:9,
   items:()=>ordre(CALCUL_CP).map(([q,a])=>V(/^[0-9]/.test(q)?q+' = …':q[0].toUpperCase()+q.slice(1),a)),
-  consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Le chrono s'arrête seul à 3 minutes. Attendu de fin de CP : <b>9 résultats justes en 3 minutes</b> (ajouter ou retirer 1, 2, 10, des dizaines ; compléter à la dizaine ; ajouter 9 ; casser une dizaine…)."},
+  consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CP : <b>9 résultats justes en 3 minutes</b> (ajouter ou retirer 1, 2, 10, des dizaines ; compléter à la dizaine ; ajouter 9 ; casser une dizaine…)."},
  {id:'a12',groupe:'Calcul',titre:'Addition, soustraction, « fois »',mode:'choix',
   items:()=>ordre([C('32 + 15 = 47, donc 47 − 32 = …','15',['15','79','47','17'],{grand:true}),C('20 + 30 = 50, donc 50 − 20 = …','30',['70','30','20','50'],{grand:true}),
    C('3 fois 20, c\'est…','20 + 20 + 20',['3 + 20','20 + 20 + 20','320']),C('5 + 5 + 5 + 5, c\'est…','4 fois 5',['4 + 5','4 fois 5','20 fois 5'])]),
@@ -467,7 +486,12 @@ const VERSIONS={
   reperes:"Repères de fluence en calcul (fin de CE1, programme 2025) : tables d'addition 12 égalités en 1 min · tables de multiplication 8 égalités en 1 min · calcul mental 12 résultats en 3 min."}};
 VERSIONS.fin.ep=EP_FIN;
 let EPREUVES=EP_DEBUT;
-let reglages={mode:'adulte',version:'',prenom:'',classe:'',moisN:'',anneeN:'',date:new Date().toISOString().slice(0,10),aleatoire:true,choisies:EPREUVES.map(e=>e.id)};
+const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
+// Moment proposé d'après la date : sept.–déc. début, janv.–mars milieu, avril–août fin.
+const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<=3?'milieu':'fin'};
+// Épreuves choisies d'après le niveau et le moment : objectifs de fin de CE1 en fin de CE1 et au CE2, sinon objectifs de fin de CP.
+const versionDe=(c,p)=>c==='CE2'||(c==='CE1'&&p==='fin')?'fin':c?'debut':'';
+let reglages={mode:'adulte',version:'',prenom:'',classe:'',periode:periodeAuto(),date:new Date().toISOString().slice(0,10),aleatoire:false,choisies:EPREUVES.map(e=>e.id)};
 let surEcran=(()=>{try{return localStorage.getItem('bilanMathsSupport')==='ecran'}catch(e){return false}})();
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
@@ -574,11 +598,7 @@ function cache(vu,son){return `<div class="cache noprint"><button class="b" id="
 function lierCache(t){if(!$('#voir'))return;const v=$('#voir'),m=$('#mot');
  v.addEventListener('pointerdown',e=>{e.preventDefault();m.classList.add('vu')});['pointerup','pointerleave','pointercancel'].forEach(x=>v.addEventListener(x,()=>m.classList.remove('vu')));
  if($('#dire'))$('#dire').onclick=()=>dire(t)}
-function majEntete(){$('#hdrInfo').textContent=[reglages.version?'Version '+VERSIONS[reglages.version].court:'',reglages.prenom,reglages.classe,ageTexte(ageMois()),dateFr(reglages.date)].filter(Boolean).join(' · ')}
-const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-// Sans mois de naissance (facultatif), l'âge est estimé au milieu de l'année (juillet).
-function ageMois(m=reglages.moisN,a=reglages.anneeN,d=reglages.date){if(!a||!d)return null;m=m||7;const [y,mo]=d.split('-').map(Number);const n=(y-a)*12+(mo-m);return n>=36&&n<=144?n:null}
-function ageTexte(n,approx=!reglages.moisN){return n==null?'':approx?'environ '+Math.floor(n/12)+' ans':Math.floor(n/12)+' ans'+(n%12?' '+(n%12)+' mois':'')}
+function majEntete(){$('#hdrInfo').textContent=[reglages.prenom,reglages.classe,reglages.classe?PERIODES[reglages.periode]:'',dateFr(reglages.date)].filter(Boolean).join(' · ')}
 const API='/api/bilan-maths';
 function dateFr(d){if(!d)return'';const [y,m,j]=d.split('-');return j+'/'+m+'/'+y}
 function duree(s){s=Math.round(s);return s<60?s+' s':Math.floor(s/60)+' min '+String(s%60).padStart(2,'0')+' s'}
@@ -595,32 +615,26 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
-  <p class="note" style="margin-top:0">Deux versions : <b>début de CE1</b> (objectifs de fin de CP) et <b>fin de CE1 – début de CE2</b> (objectifs de fin de CE1). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, l'âge et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5 au plus), l'épreuve est jugée acquise et on passe automatiquement à la suivante.</p>
+  <p class="note" style="margin-top:0">Les épreuves sont choisies d'après le niveau et le moment : objectifs de <b>fin de CP</b> (CP, CE1 en début ou milieu d'année) ou de <b>fin de CE1</b> (CE1 en fin d'année, CE2). Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. L'adulte peut aussi arrêter une épreuve à tout moment (⏭).</p>
   <div class="grille">
-   <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="version"><option value="">— choisir —</option><option value="debut" ${reglages.version==='debut'?'selected':''}>Début de CE1 (acquis de fin de CP)</option><option value="fin" ${reglages.version==='fin'?'selected':''}>Fin de CE1 – début de CE2</option></select></label>
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
-   <label>Mois de naissance (facultatif)<br><select id="moisN"><option value="">— mois —</option>${MOIS.map((m,i)=>`<option value="${i+1}" ${i+1==reglages.moisN?'selected':''}>${m}</option>`).join('')}</select></label>
-   <label>Année de naissance <b style="color:var(--rouge)">*</b><br><select id="anneeN"><option value="">— année —</option>${Array.from({length:10},(_,i)=>new Date().getFullYear()-4-i).map(a=>`<option ${a==reglages.anneeN?'selected':''}>${a}</option>`).join('')}</select></label>
-   <label>Date de la passation<br><input type="date" id="date" value="${reglages.date}"></label>
-   <label>Âge le jour du test<br><b id="age" style="font-size:1.2rem">—</b></label>
+   <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="periode">${Object.entries(PERIODES).map(([k,l])=>`<option value="${k}" ${k===reglages.periode?'selected':''}>${l[0].toUpperCase()+l.slice(1)}</option>`).join('')}</select></label>
    <label>Prénom (facultatif)<br><input type="text" id="prenom" value="${esc(reglages.prenom)}" placeholder="affiché, jamais enregistré"></label>
   </div>
  </div>
  <div class="carte">
-  <h2>2. Épreuves — ${reglages.version?VERSIONS[reglages.version].lab+' ('+VERSIONS[reglages.version].titre+')':'choisissez d\'abord le moment du bilan'}</h2>
+  <h2>2. Épreuves — ${reglages.version?VERSIONS[reglages.version].lab+' ('+VERSIONS[reglages.version].titre+')':'choisissez d\'abord le niveau'}</h2>
   <p class="note" style="margin-top:0">Tout le bilan prend environ 45 minutes : il peut se faire en deux ou trois fois (cochez seulement quelques domaines). Prévoyez une feuille, un crayon, une règle et une équerre.</p>
   <div class="grille" ${reglages.version?'':'style="display:none"'}>${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>{const non=auto()&&!dispoAuto(e);return `<label class="${non?'indispo':''}"><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)&&!non?'checked':''} ${non?'disabled':''}> ${e.titre}${non?' <span class="note">(adulte)</span>':''}</label>`}).join('')}</div>`).join('')}</div>
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
   <h3>Réglages</h3>
-  <div class="grille"><label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre</label></div>
+  <div class="grille"><label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre (casse la progression)</label></div>
   <div class="actions"><button class="b prim" id="go">▶ Commencer le bilan</button></div>
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
  <p class="note">${VERSIONS[reglages.version||'debut'].reperes}</p>`;
  $$('.mode input').forEach(r=>r.onchange=()=>{lireForm();reglages.mode=r.value;accueil()});
- $('#version').onchange=()=>{lireForm();reglages.version=$('#version').value;EPREUVES=VERSIONS[reglages.version||'debut'].ep;reglages.choisies=EPREUVES.map(e=>e.id);accueil()};
- const majAge=()=>{const n=ageMois($('#moisN').value,$('#anneeN').value,$('#date').value);$('#age').textContent=n==null?'—':ageTexte(n,!$('#moisN').value)};
- ['moisN','anneeN','date'].forEach(id=>$('#'+id).addEventListener('change',majAge));majAge();
+ ['classe','periode'].forEach(id=>$('#'+id).onchange=()=>{lireForm();const v=versionDe(reglages.classe,reglages.periode);if(v!==reglages.version){reglages.version=v;EPREUVES=VERSIONS[v||'debut'].ep;reglages.choisies=EPREUVES.map(e=>e.id)}accueil()});
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
  $$('.groupe input.tg').forEach(t=>t.onchange=()=>{t.closest('.groupe').querySelectorAll('input.ep:not(:disabled)').forEach(c=>c.checked=t.checked);majGroupes()});
  $$('.groupe input.ep').forEach(c=>c.onchange=majGroupes);majGroupes();
@@ -630,7 +644,7 @@ function accueil(){
  if($('#effacer'))$('#effacer').onclick=()=>{ecrireHisto([]);accueil()};
  $('#go').onclick=()=>{
   lireForm();
-  if(!reglages.version||!reglages.classe||ageMois()==null){$('#go').textContent='⚠ Indiquez le moment du bilan, le niveau, l\'année de naissance';window.scrollTo(0,0);return}
+  if(!reglages.version||!reglages.classe){$('#go').textContent='⚠ Indiquez le niveau';window.scrollTo(0,0);return}
   reglages.aleatoire=$('#alea').checked;
   reglages.choisies=$$('.groupe input.ep:checked').map(c=>c.value);
   if(!reglages.choisies.length){$('#go').textContent='Cochez au moins une épreuve';return}
@@ -639,7 +653,7 @@ function accueil(){
   intro();
  };
 }
-function lireForm(){reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.date=$('#date').value;reglages.moisN=$('#moisN').value;reglages.anneeN=$('#anneeN').value;reglages.aleatoire=$('#alea').checked}
+function lireForm(){reglages.prenom=$('#prenom').value.trim();reglages.classe=$('#classe').value;reglages.periode=$('#periode').value;reglages.aleatoire=$('#alea').checked}
 function modal(txt){
  const d=document.createElement('div');d.className='modal';
  d.innerHTML=`<div class="carte"><pre>${esc(txt)}</pre><div class="actions"><button class="b" id="mfermer">Fermer</button></div></div>`;
@@ -669,7 +683,7 @@ function tic(){const c=$('#chr');if(!R||!R.fin)return;const s=Math.max(0,Math.ce
  if(c){c.textContent=duree(s);c.classList.toggle('fin',s<=10)}
  if(s<=0){R.tempsEcoule=true;finEpreuve()}}
 const seuil=n=>Math.min(5,Math.ceil(n*.6));
-function peutPasser(){return !R.ep.temps&&R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
+function peutPasser(){return reglages.aleatoire&&!R.ep.temps&&R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
 function barre(){
  if(auto())return barreEleve();
  const ep=R.ep,n=R.items.length;
@@ -687,6 +701,8 @@ function suivant(){
  if(!R.ep.temps)stopTimers();
  if(R.k>=R.items.length)return finEpreuve();
  if(peutPasser()){R.anticipe=true;R.dejaAcquis=R.ep.titre;return finEpreuve()}
+ // Ordre progressif : 3 erreurs de suite → on arrête (les items suivants sont plus difficiles)
+ if(!reglages.aleatoire&&!R.ep.temps&&R.res.length>=3&&R.res.slice(-3).every(x=>x.v==='ko')){R.arret=true;return finEpreuve()}
  R.ep.mode==='valider'?ecranValider():ecranChoix();
 }
 function finEpreuve(versBilan){
@@ -694,10 +710,10 @@ function finEpreuve(versBilan){
  const ep=R.ep;
  if(R.res.length){
   const ok=R.res.filter(x=>x.v==='ok').length,hes=R.res.filter(x=>x.v==='hes'),err=R.res.filter(x=>x.v==='ko');
-  resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,ok,hes,err,
-   sec:(Date.now()-R.tEp)/1000,temps:ep.temps||0,attendu:ep.attendu||0,complet:!!(ep.temps?R.tempsEcoule||R.k>=R.items.length:R.res.length===R.items.length||R.anticipe)};
+  resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,arret:!!R.arret,repere:ep.repere||0,ok,hes,err,
+   sec:(Date.now()-R.tEp)/1000,temps:ep.temps||0,attendu:ep.attendu||0,complet:!!(ep.temps?R.tempsEcoule||R.k>=R.items.length:R.res.length===R.items.length||R.anticipe||R.arret)};
  }
- R.anticipe=false;R.tempsEcoule=false;R.fin=0;
+ R.anticipe=false;R.arret=false;R.tempsEcoule=false;R.fin=0;
  R.i++;
  versBilan===true?bilan():intro();
 }
@@ -774,7 +790,7 @@ function bilan(){
  stopTimers();onKey=null;
  const ids=EPREUVES.map(e=>e.id).filter(id=>resultats[id]);
  const lignes=[],texteL=[];
- const age=ageTexte(ageMois());
+ const age=PERIODES[reglages.periode];
  const V0=VERSIONS[reglages.version];
  const titreAnon=`Bilan de maths ${V0.court} — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
  const titre=reglages.prenom?`Bilan de maths ${V0.court} — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
@@ -792,8 +808,8 @@ function bilan(){
    score=`${juste} en ${duree(Math.min(r.sec,r.temps))}`;
    debut=`${juste} juste${juste>1?'s':''} en ${duree(Math.min(r.sec,r.temps))} (attendu ${V0.att} : ${r.attendu} en ${duree(r.temps)})`;
   }else{
-   const p=Math.round(juste/r.faits*100);[nv,cl]=niveau(p);score=`${juste} / ${r.faits} (${p} %)`;
-   debut=r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'';
+   const sur=r.arret?r.prevus:r.faits,p=Math.round(juste/sur*100);[nv,cl]=niveau(p);score=`${juste} / ${sur} (${p} %)`;
+   debut=(r.repere?`⏱ ${juste} juste${juste>1?'s':''} en ${duree(r.sec)} (repère ${V0.att} : ${r.attendu} justes en ${duree(r.repere)}). `:'')+(r.arret?`⛔ Arrêtée après 3 erreurs de suite (item ${r.faits} sur ${r.prevus}) : les items suivants, plus difficiles, sont comptés non réussis.`:r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'');
   }
   const det=[esc(debut),errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:''].filter(Boolean).join('<br>');
   lignes.push(`<tr><td>${r.titre}</td><td>${score}</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
@@ -801,12 +817,14 @@ function bilan(){
  });
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
- ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même âge</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
- <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Épreuves chronométrées : nombre de réponses justes comparé aux attendus de ${V0.att} du programme 2025, à adapter selon le moment de l'année.</p>
+ <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Calculs (tables, doubles, calcul mental) : pas de compte à rebours ; la durée mesurée est donnée à titre indicatif, à comparer aux repères de ${V0.att} du programme 2025, selon le moment de l'année.</p>
+ <h3>Prénom de l'élève (pour le document)</h3>
+ <input type="text" id="prenomFin" value="${esc(reglages.prenom)}" placeholder="facultatif, jamais enregistré sur le site" style="width:100%;max-width:320px">
  <h3>Observations de l'adulte</h3>
  <textarea id="obs" rows="4" style="width:100%" placeholder="Procédures utilisées (doigts, comptage, décomposition…), schémas, attitude, fatigue…"></textarea>
- <div class="actions"><button class="b prim" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
+ <div class="actions"><button class="b prim" id="telech">📄 Télécharger le bilan (Word)</button><button class="b" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
  <p class="note" id="msg"></p></div>`;
  const texteFinal=(t=titre)=>texteL.join('\n').replace('TITRE',t)+($('#obs').value.trim()?'\n\nObservations : '+$('#obs').value.trim():'');
  const enregistrer=()=>{if(!ids.length)return;const h=lireHisto();if(bilanEnregistre)h.shift();h.unshift({titre:titreAnon,texte:texteFinal(titreAnon)});ecrireHisto(h);bilanEnregistre=true};
@@ -815,19 +833,36 @@ function bilan(){
  $('#copier').onclick=async()=>{enregistrer();const t=texteFinal();try{await navigator.clipboard.writeText(t);$('#msg').textContent='Bilan copié : collez-le dans votre document.'}catch(e){modal(t);$('#msg').textContent='Sélectionnez le texte affiché pour le copier.'}};
  $('#impr').onclick=()=>{enregistrer();try{window.print()}catch(e){$('#msg').textContent="Impression impossible ici : utilisez « Copier le bilan »."}};
  $('#nouveau').onclick=()=>{enregistrer();accueil()};
+ $('#prenomFin').oninput=()=>{reglages.prenom=$('#prenomFin').value.trim();majEntete()};
+ // Document Word (fichier .doc lisible par Word et LibreOffice), avec le prénom ; rien n'est envoyé au site.
+ $('#telech').onclick=()=>{enregistrer();
+  const pr=$('#prenomFin').value.trim(),t=pr?`Bilan de maths ${V0.court} — ${pr} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
+  const tab=$('table.res')?$('table.res').cloneNode(true):null;
+  if(tab)tab.querySelectorAll('tr').forEach(tr=>{const c=tr.lastElementChild;if(c)c.remove()});
+  const obs=$('#obs').value.trim();
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t)}</title>
+<style>body{font-family:Arial,sans-serif;font-size:11pt}h1{font-size:16pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px;vertical-align:top;font-size:10pt}th{background:#eee}</style></head><body>
+<h1>${esc(t)}</h1>${pr?`<p><b>Élève :</b> ${esc(pr)} · <b>Niveau :</b> ${esc(reglages.classe)} · <b>Moment :</b> ${esc(age)} · <b>Date :</b> ${dateFr(reglages.date)}</p>`:''}
+<p>Épreuves : ${esc(V0.titre)}.${auto()?' Passation en autonomie (correction automatique, à vérifier).':''}</p>
+${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
+<h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
+<p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %. Repères officiels de ${V0.att} (programme 2025).</p></body></html>`;
+  const nom=('Bilan de maths '+(pr||reglages.classe)+' '+(reglages.date||'')).replace(/[\\/:*?"<>|]/g,'').trim()+'.doc';
+  try{const u=URL.createObjectURL(new Blob(['\ufeff'+html],{type:'application/msword'}));const a=document.createElement('a');a.href=u;a.download=nom;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);$('#msg').textContent='Document téléchargé : '+nom}
+  catch(e){$('#msg').textContent='Téléchargement impossible ici : utilisez « Copier le bilan ».'}};
 }
 
-// Envoi anonyme (niveau, âge en mois, scores) puis affichage des moyennes du site.
+// Envoi anonyme (niveau, moment de l'année, scores) puis affichage des moyennes du site.
 async function envoyer(ids){
- const age=ageMois(),r={};
+ const per=reglages.periode,r={};
  ids.forEach(id=>{const x=resultats[id];if(!x.complet)return;const juste=x.ok+x.hes.length;
-  r[id]=x.temps?{pct:Math.min(100,Math.round(juste/x.attendu*100)),nb:juste}:{pct:Math.round(juste/x.faits*100)}});
+  r[id]=x.temps?{pct:Math.min(100,Math.round(juste/x.attendu*100)),nb:juste}:{pct:Math.round(juste/(x.arret?x.prevus:x.faits)*100)}});
  try{
-  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,age,r})})}
-  const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&age=${age}`)).json();
-  const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.age||[]).forEach(x=>A[x.epreuve]=x);
+  if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,periode:per,r})})}
+  const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&periode=${per}`)).json();
+  const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.periode||[]).forEach(x=>A[x.epreuve]=x);
   const f=(x,id)=>!x?'—':(resultats[id].temps?`${x.nb} justes`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
-  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe} : ${f(C[id],id)}<br>${Math.floor(age/12)} ans : ${f(A[id],id)}`});
+  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe}, ${PERIODES[per]} : ${f(A[id],id)}<br>${reglages.classe}, toute l'année : ${f(C[id],id)}`});
  }catch(e){$$('td.moy').forEach(td=>td.innerHTML='<span class="note">indisponible dans cet aperçu</span>')}
 }
 majEntete();accueil();
