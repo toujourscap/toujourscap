@@ -128,10 +128,10 @@ const PROCHES={a:'oe',e:'cao',o:'aec',c:'eo',u:'nv',n:'mu',m:'n',i:'jl',l:'it',t
 const REPERES={CP:50,CE1:70,CE2:90};
 const HISTOIRE_FILOU="Le petit chat Filou a très faim. Il court à la cuisine pour manger, mais son bol est vide. Alors Filou va voir la fermière. Elle lui donne un grand bol de lait. Filou boit tout le lait, puis il s'endort au soleil.";
 const TEXTE_ZOE="Ce matin, Zoé part à la plage avec son papi. Elle prend son seau rouge et sa pelle. Sur le sable, elle construit un grand château. Soudain, une vague arrive et casse le château. Zoé rit : « Demain, j'en ferai un plus grand ! »";
-const SYL=[['Combien de syllabes dans','chocolat','3'],['Combien de syllabes dans','ballon','2'],['Combien de syllabes dans','éléphant','3'],['Combien de syllabes dans','lit','1'],['Combien de syllabes dans','locomotive','4'],['Combien de syllabes dans','banane','3'],
- ['Dis le mot sans la première syllabe :','lapin','pin'],['Dis le mot sans la première syllabe :','moto','to'],['Dis le mot sans la première syllabe :','camion','mion'],['Dis le mot sans la première syllabe :','radis','dis'],['Dis le mot sans la première syllabe :','domino','mino'],['Dis le mot sans la première syllabe :','chapeau','peau']];
-const PHO=[['Quel est le premier son de','moto','[m]'],['Quel est le premier son de','sapin','[s]'],['Quel est le premier son de','fusée','[f]'],['Quel est le premier son de','lune','[l]'],['Quel est le premier son de','ours','[ou]'],['Quel est le premier son de','rat','[r]'],
- ['Quel est le dernier son de','bol','[l]'],['Quel est le dernier son de','lavabo','[o]'],['Quel est le dernier son de','vache','[ch]'],['Quel est le dernier son de','robe','[b]'],['Quel est le dernier son de','nez','[é]'],['Quel est le dernier son de','four','[r]']];
+const SYL=[['Combien de syllabes dans','lit','1'],['Combien de syllabes dans','ballon','2'],['Combien de syllabes dans','banane','3'],['Combien de syllabes dans','chocolat','3'],['Combien de syllabes dans','éléphant','3'],['Combien de syllabes dans','locomotive','4'],
+ ['Dis le mot sans la première syllabe :','moto','to'],['Dis le mot sans la première syllabe :','vélo','lo'],['Dis le mot sans la première syllabe :','radis','dis'],['Dis le mot sans la première syllabe :','camion','mion'],['Dis le mot sans la première syllabe :','chapeau','peau'],['Dis le mot sans la première syllabe :','domino','mino']];
+const PHO=[['Quel est le premier son de','sapin','[s]'],['Quel est le premier son de','fusée','[f]'],['Quel est le premier son de','moto','[m]'],['Quel est le premier son de','lune','[l]'],['Quel est le premier son de','rat','[r]'],['Quel est le premier son de','ours','[ou]'],
+ ['Quel est le dernier son de','lavabo','[o]'],['Quel est le dernier son de','nez','[é]'],['Quel est le dernier son de','bol','[l]'],['Quel est le dernier son de','four','[r]'],['Quel est le dernier son de','vache','[ch]'],['Quel est le dernier son de','robe','[b]']];
 const ECR=[['R','cap','scr',['r','n','p','k']],['G','cap','scr',['g','q','p','j']],['B','cap','scr',['b','d','h','p']],
  ['f','scr','cur',['f','t','l','b']],['e','scr','cur',['e','l','a','o']],['h','scr','cur',['h','k','b','l']],
  ['a','cur','scr',['a','o','d','q']],['s','cur','scr',['s','z','r','c']],['m','cur','scr',['m','n','u','w']]];
@@ -142,9 +142,15 @@ const QFILOU=[["Qui a faim dans l'histoire ?",'🐱',['🐶','🐱','🐭']],["Q
 const DSYL=['la','mi','ro','tu','fé','cha','jo','pon','tri','bla'];
 const DMOT=['lune','vélo','salade','lapin','chapeau','maison','poisson','train'];
 const EPREUVES=[
+ {id:'cmo',groupe:'Compréhension orale',titre:'Mots entendus',type:'choix',sorte:'emoji',
+  items:()=>ordre(MOTS_ORAUX).map(([w,b,c])=>({label:w,dire:w,bonne:b,choix:c})),
+  consigne:"Dites le mot (maintenez 👁 pour le voir) ou faites-le écouter 🔊. « Montre-moi l'image du mot que j'ai dit. »"},
+ {id:'cto',groupe:'Compréhension orale',titre:'Histoire entendue',type:'choix',sorte:'emoji',histoire:HISTOIRE_FILOU,cleHistoire:'histoire-filou',
+  items:()=>QFILOU.map(([q,b,c])=>({label:q,q,dire:q,bonne:b,choix:c})),
+  consigne:"Lisez l'histoire à l'élève (ou faites-la écouter 🔊), une seule fois, sans la montrer. Puis posez chaque question : l'élève montre l'image."},
  {id:'sy1',groupe:'Conscience phonologique',titre:'Compter les syllabes',type:'oral',icone:'👂',
   items:()=>SYL.slice(0,6).map(([q,w,att])=>({q,w,att})),
-  consigne:"Tout se passe à l'oral. Maintenez 👁 pour voir le mot et la réponse attendue, dites-le à l'élève ou faites-le écouter 🔊. « Combien de syllabes dans… ? » L'élève peut frapper dans ses mains."},
+  consigne:"Tout se passe à l'oral. Maintenez 👁 pour voir le mot et la réponse attendue, dites-le à l'élève ou faites-le écouter 🔊. « Combien de syllabes dans… ? » L'élève peut frapper dans ses mains. Les mots vont de 1 à 4 syllabes."},
  {id:'sy2',groupe:'Conscience phonologique',titre:'Enlever la première syllabe',type:'oral',icone:'👂',
   items:()=>SYL.slice(6).map(([q,w,att])=>({q,w,att})),
   consigne:"À l'oral. « Dis le mot sans la première syllabe : lapin → pin. » Donnez cet exemple avant de commencer."},
@@ -154,17 +160,29 @@ const EPREUVES=[
  {id:'ph2',groupe:'Conscience phonologique',titre:'Dernier son',type:'oral',icone:'👂',
   items:()=>PHO.slice(6).map(([q,w,att])=>({q,w,att})),
   consigne:"À l'oral. « Quel est le dernier son que tu entends dans… ? » (bol → [l])."},
+ {id:'aud',groupe:'Discrimination auditive',titre:'b, d, p, c (auditif)',type:'choix',sorte:'auditif',
+  items:()=>ordre([['bébé','b'],['papa','p'],['dodo','d'],['canard','c'],['bulle','b'],['poule','p'],['dune','d'],['cube','c'],['bain','b'],['pain','p'],['dent','d'],['coq','c']]).map(([m,l])=>({label:m,bonne:l,choix:['b','d','p','c'],dire:m})),
+  consigne:"Maintenez le bouton 👁 pour voir le mot (sans le montrer), puis dites-le à l'élève (ou 🔊). « Par quelle lettre commence ce mot ? Montre-la. » Cliquez sur la lettre montrée. Sons proches à l'oreille : [b]/[p] et [d], avec [k] (c de canard, cube, coq)."},
+ {id:'par',groupe:'Discrimination auditive',titre:'Pareil ou différent ?',type:'choix',sorte:'pareil',
+  items:()=>ordre([['bain','pain'],['dent','dent'],['bon','don'],['pas','pas'],['bille','quille'],['dos','dos'],['pont','bon'],['qui','qui']]).map(([a,b])=>({label:a+' – '+b,bonne:a===b?'Pareil':'Différent',choix:['Pareil','Différent'],dire:a+' … '+b})),
+  consigne:"Dites les deux mots à l'élève (maintenez 👁 pour les voir). « Est-ce que j'ai dit deux fois le même mot ou deux mots différents ? » Cachez votre bouche si besoin."},
+ {id:'vis',groupe:'Discrimination visuelle',titre:'b, d, p, q (visuel)',type:'choix',sorte:'visuel',
+  items:genVisuel,
+  consigne:"« Regarde la lettre dans le cadre jaune. Montre-moi la même en dessous. » L'élève montre, vous cliquez sur sa réponse. Puis viennent des paires de lettres (bd, pq…)."},
+ {id:'ecr',groupe:'Discrimination visuelle',titre:'Les différentes écritures d\'une lettre',type:'choix',sorte:'ecritures',
+  items:()=>ECR.map(([l,mf,cf,c])=>({label:l,mf,cf,bonne:c[0],choix:melange(c)})),
+  consigne:"« Voici une lettre. Montre-moi la même lettre écrite autrement. » Capitale → script, script → cursive, cursive → script."},
  {id:'vs',groupe:'Lecture',titre:'Voyelles simples',type:'lire',taille:'xl',
-  items:()=>ordre(['a','e','i','o','u','y','é','è','ê']),
+  items:()=>ordre(['a','i','o','u','e','é','è','ê','y']),
   consigne:"Montrez l'écran à l'élève : « Dis-moi le son de cette lettre. » Validez chaque réponse. Le son est attendu (ex. y = [i]) ; si l'élève donne le nom de la lettre, demandez « Et quel son fait-elle ? »."},
  {id:'vc',groupe:'Lecture',titre:'Voyelles complexes',type:'lire',taille:'xl',
-  items:()=>ordre(['ou','oi','on','an','en','in','un','au','eau','ai','ei','eu','œu','oin','ain','ein']),
+  items:()=>ordre(['ou','on','an','oi','au','in','eau','ai','en','eu','un','ain','oin','ei','œu','ein']),
   consigne:"« Dis-moi le son que font ces lettres ensemble. » Accepter toute lecture juste (en = [an] ou [in] ; eu / œu = [eu] ouvert ou fermé)."},
  {id:'ms',groupe:'Lecture',titre:'Mots simples',type:'lire',taille:'l',
   items:()=>ordre(['ami','lune','moto','vélo','rame','pile','mule','sofa','robe','tomate','salade','domino','farine','cabane','malade','numéro']),
   consigne:"« Lis ce mot. » Mots réguliers aux syllabes simples. Notez une lecture syllabée lente en « Hésitant »."},
  {id:'mc',groupe:'Lecture',titre:'Mots avec voyelles complexes',type:'lire',taille:'l',
-  items:()=>ordre(['loup','roi','bonbon','lapin','maison','moulin','bateau','poule','raisin','lundi','peinture','coin','jardin','oiseau','chapeau','feuille']),
+  items:()=>ordre(['loup','roi','coin','poule','lapin','bonbon','moulin','lundi','bateau','maison','raisin','jardin','chapeau','oiseau','peinture','feuille']),
   consigne:"« Lis ce mot. » Chaque mot contient au moins un graphème complexe (ou, oi, on, in, ai, eau, ein…)."},
  {id:'ts',groupe:'Lecture',titre:'Texte simple',type:'texte',texte:TEXTE_SIMPLE,
   consigne:"« Lis ce texte à voix haute, le mieux possible. » Lancez le chrono quand l'élève commence. Touchez les mots mal lus (ils passent en rouge ; un mot autocorrigé n'est pas une erreur). Méthode des évaluations nationales : mots correctement lus par minute."},
@@ -176,30 +194,12 @@ const EPREUVES=[
  {id:'ctx',groupe:"Compréhension de l'écrit",titre:'Comprendre un texte lu seul',type:'choix',sorte:'comp',texte:TEXTE_ZOE,
   items:()=>QZOE.map(([q,b,c])=>({label:q,bonne:b,choix:c})),
   consigne:"L'élève lit le texte seul, dans sa tête. Puis lisez-lui chaque question et les réponses ; il montre la bonne. Le texte reste affiché (questions de prélèvement, d'inférence et de titre)."},
- {id:'cmo',groupe:'Compréhension orale',titre:'Mots entendus',type:'choix',sorte:'emoji',
-  items:()=>ordre(MOTS_ORAUX).map(([w,b,c])=>({label:w,dire:w,bonne:b,choix:c})),
-  consigne:"Dites le mot (maintenez 👁 pour le voir) ou faites-le écouter 🔊. « Montre-moi l'image du mot que j'ai dit. »"},
- {id:'cto',groupe:'Compréhension orale',titre:'Histoire entendue',type:'choix',sorte:'emoji',histoire:HISTOIRE_FILOU,cleHistoire:'histoire-filou',
-  items:()=>QFILOU.map(([q,b,c])=>({label:q,q,dire:q,bonne:b,choix:c})),
-  consigne:"Lisez l'histoire à l'élève (ou faites-la écouter 🔊), une seule fois, sans la montrer. Puis posez chaque question : l'élève montre l'image."},
  {id:'dsy',groupe:'Écriture',titre:'Syllabes dictées',type:'oral',icone:'✏️',question:"Écris la syllabe sur ta feuille.",
   items:()=>DSYL.map(w=>({w,att:w})),
   consigne:"Donnez une feuille ou une ardoise. Dites la syllabe (maintenez 👁) ou faites-la écouter 🔊 : « Écris la syllabe… ». Validez ce qu'il a écrit et notez son écriture en cas d'erreur."},
  {id:'dmo',groupe:'Écriture',titre:'Mots dictés',type:'oral',icone:'✏️',question:"Écris le mot sur ta feuille.",
   items:()=>DMOT.map(w=>({w,att:w})),
   consigne:"« Écris le mot… » Comptez juste une écriture phonologiquement correcte (« lapin », pas « lapain ») ; notez l'orthographe exacte dans la case si besoin."},
- {id:'vis',groupe:'Discrimination visuelle',titre:'b, d, p, q (visuel)',type:'choix',sorte:'visuel',
-  items:genVisuel,
-  consigne:"« Regarde la lettre dans le cadre jaune. Montre-moi la même en dessous. » L'élève montre, vous cliquez sur sa réponse. Puis viennent des paires de lettres (bd, pq…)."},
- {id:'ecr',groupe:'Discrimination visuelle',titre:'Les différentes écritures d\'une lettre',type:'choix',sorte:'ecritures',
-  items:()=>ECR.map(([l,mf,cf,c])=>({label:l,mf,cf,bonne:c[0],choix:melange(c)})),
-  consigne:"« Voici une lettre. Montre-moi la même lettre écrite autrement. » Capitale → script, script → cursive, cursive → script."},
- {id:'aud',groupe:'Discrimination auditive',titre:'b, d, p, q (auditif)',type:'choix',sorte:'auditif',
-  items:()=>ordre([['bébé','b'],['dodo','d'],['papa','p'],['quatre','q'],['bulle','b'],['poule','p'],['dune','d'],['quille','q'],['bain','b'],['pain','p'],['dent','d'],['queue','q']]).map(([m,l])=>({label:m,bonne:l,choix:['b','d','p','q'],dire:m})),
-  consigne:"Maintenez le bouton 👁 pour voir le mot (sans le montrer), puis dites-le à l'élève (ou 🔊). « Par quelle lettre commence ce mot ? Montre-la. » Cliquez sur la lettre montrée. (q se lit [k] : quatre, quille, queue.)"},
- {id:'par',groupe:'Discrimination auditive',titre:'Pareil ou différent ?',type:'choix',sorte:'pareil',
-  items:()=>ordre([['bain','pain'],['dent','dent'],['bon','don'],['pas','pas'],['bille','quille'],['dos','dos'],['pont','bon'],['qui','qui']]).map(([a,b])=>({label:a+' – '+b,bonne:a===b?'Pareil':'Différent',choix:['Pareil','Différent'],dire:a+' … '+b})),
-  consigne:"Dites les deux mots à l'élève (maintenez 👁 pour les voir). « Est-ce que j'ai dit deux fois le même mot ou deux mots différents ? » Cachez votre bouche si besoin."},
  {id:'e1',groupe:'Empan visuel',titre:'Empan : 1 lettre',type:'choix',sorte:'empan',n:1,items:()=>genEmpan(1),
   consigne:"« Une lettre va apparaître très vite puis se cacher. Regarde bien, puis montre-moi celle que tu as vue. » Cliquez sur « Montrer » quand l'élève est prêt et regarde l'écran."},
  {id:'e2',groupe:'Empan visuel',titre:'Empan : 2 lettres',type:'choix',sorte:'empan',n:2,items:()=>genEmpan(2),
@@ -211,7 +211,7 @@ const EPREUVES=[
 const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
 // Moment proposé d'après la date : sept.–déc. début, janv.–mars milieu, avril–août fin.
 const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<=3?'milieu':'fin'};
-let reglages={mode:'adulte',prenom:'',classe:'',periode:periodeAuto(),date:new Date().toISOString().slice(0,10),aleatoire:true,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
+let reglages={mode:'adulte',prenom:'',classe:'',periode:periodeAuto(),date:new Date().toISOString().slice(0,10),aleatoire:false,duree:500,uneMinute:true,choisies:EPREUVES.map(e=>e.id)};
 let R=null, resultats={}, timers=[], onKey=null, bilanEnregistre=false, envoye=false, passation='';
 
 function ordre(a){return reglages.aleatoire?melange(a):a.slice()}
@@ -412,7 +412,7 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
-  <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dès que l'élève réussit les premiers items sans erreur (5, ou 3 pour l'empan), le bouton « ⏩ Acquis : niveau supérieur » permet d'écourter l'épreuve.</p>
+  <p class="note" style="margin-top:0">L'élève lit ou montre, l'adulte valide chaque réponse. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. On peut aussi arrêter une épreuve à tout moment (⏭).</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
    <label>Moment du bilan <b style="color:var(--rouge)">*</b><br><select id="periode">${Object.entries(PERIODES).map(([k,l])=>`<option value="${k}" ${k===reglages.periode?'selected':''}>${l[0].toUpperCase()+l.slice(1)}</option>`).join('')}</select></label>
@@ -425,7 +425,7 @@ function accueil(){
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
   <h3>Réglages</h3>
   <div class="grille">
-   <label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre</label>
+   <label><input type="checkbox" id="alea" ${reglages.aleatoire?'checked':''}> Items dans le désordre (casse la progression)</label>
    <label><input type="checkbox" id="unemin" ${reglages.uneMinute?'checked':''}> Textes : arrêt à 1 minute</label>
    <label>Empan : lettres affichées <select id="duree">${[200,300,500,800,1000].map(d=>`<option value="${d}" ${d==reglages.duree?'selected':''}>${d} ms</option>`).join('')}</select></label>
   </div>
@@ -478,7 +478,7 @@ function intro(){
  onKey=e=>{if(e.key==='Enter'){e.preventDefault();go()}};
 }
 const seuil=n=>Math.min(5,Math.ceil(n*.6));
-function peutPasser(){return R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
+function peutPasser(){return reglages.aleatoire&&R.k<R.items.length&&R.res.length>=seuil(R.items.length)&&R.res.every(x=>x.v==='ok')}
 function barre(){
  if(auto())return barreEleve();
  const ep=R.ep,n=R.items.length;
@@ -495,17 +495,19 @@ function lierBarre(){
 function suivant(){
  stopTimers();
  if(R.k>=R.items.length)return finEpreuve();
+ // Ordre progressif : 3 erreurs de suite → on arrête (les items suivants sont plus difficiles)
+ if(!reglages.aleatoire&&R.res.length>=3&&R.res.slice(-3).every(x=>x.v==='ko')){R.arret=true;return finEpreuve()}
  (R.ep.type==='lire'||R.ep.type==='oral')?ecranLire():ecranChoix();
 }
 function finEpreuve(versBilan){
  stopTimers();
  const ep=R.ep;
  if(ep.type!=='texte'&&R.res.length){
-  const r={titre:ep.titre,groupe:ep.groupe,type:ep.type,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,
+  const r={titre:ep.titre,groupe:ep.groupe,type:ep.type,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,arret:!!R.arret,
    ok:R.res.filter(x=>x.v==='ok').length,hes:R.res.filter(x=>x.v==='hes'),err:R.res.filter(x=>x.v==='ko'),sec:(Date.now()-R.tEp)/1000};
   resultats[ep.id]=r;
  }
- R.anticipe=false;
+ R.anticipe=false;R.arret=false;
  R.i++;
  versBilan===true?bilan():intro();
 }
@@ -642,12 +644,12 @@ function bilan(){
    lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
    texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.motsErr.length?` Erreurs : ${r.motsErr.join(', ')}.`:''));
   }else{
-   const juste=r.ok+r.hes.length,p=Math.round(juste/r.faits*100),[nv,cl]=niveau(p);
+   const juste=r.ok+r.hes.length,sur=r.arret?r.prevus:r.faits,p=Math.round(juste/sur*100),[nv,cl]=niveau(p);
    const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
    const hesTxt=r.hes.map(x=>x.item).join(', ');
-   const det=[r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
-   lignes.push(`<tr><td>${r.titre}</td><td>${juste} / ${r.faits} (${p} %)</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${juste}/${r.faits} (${p} %) — ${nv}.`+(r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:''));
+   const det=[r.arret?`⛔ Arrêtée après 3 erreurs de suite (item ${r.faits} sur ${r.prevus}) : les items suivants, plus difficiles, sont comptés non réussis.`:r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
+   lignes.push(`<tr><td>${r.titre}</td><td>${juste} / ${sur} (${p} %)</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
+   texteL.push(`- ${r.titre} : ${juste}/${sur} (${p} %) — ${nv}.`+(r.arret?` Arrêtée après 3 erreurs de suite (items suivants comptés non réussis).`:r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:''));
   }
  });
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
@@ -693,7 +695,7 @@ async function envoyer(ids){
  const per=reglages.periode,r={};
  ids.forEach(id=>{const x=resultats[id];
   if(x.type==='texte')r[id]={pct:x.lus?Math.round((x.lus-x.nbErr)/x.lus*100):0,mclm:x.mclm};
-  else if(x.faits===x.prevus||x.anticipe)r[id]={pct:Math.round((x.ok+x.hes.length)/x.faits*100)}});
+  else if(x.faits===x.prevus||x.anticipe||x.arret)r[id]={pct:Math.round((x.ok+x.hes.length)/(x.arret?x.prevus:x.faits)*100)}});
  try{
   if(!envoye&&!auto()&&Object.keys(r).length){envoye=true;await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({p:passation,classe:reglages.classe,periode:per,r})})}
   const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&periode=${per}`)).json();
