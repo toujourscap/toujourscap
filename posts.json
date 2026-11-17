@@ -15790,6 +15790,7 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
+     "imprimable",
      "projetable"
     ]
    },
@@ -15978,6 +15979,8 @@
        }
       ]
      },
+     {"type": "HEADING", "headingData": {"level": 2}, "nodes": [{"type": "TEXT", "textData": {"text": "La version papier", "decorations": []}}]},
+     {"type": "PARAGRAPH", "nodes": [{"type": "TEXT", "textData": {"text": "Sous les niveaux, le cadre « Version papier » imprime les 24 images sur 6 fiches (4 images par page) : pour chaque image, l'élève coche la seule phrase qui va avec. On choisit le niveau ; un corrigé d'une page peut être ajouté. L'ordre des images et des phrases change à chaque impression.", "decorations": []}}]},
      {
       "type": "HTML",
       "htmlData": {

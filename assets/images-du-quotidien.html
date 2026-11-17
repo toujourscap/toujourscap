@@ -96,6 +96,45 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #next.auto{position:relative;overflow:hidden}
 #next.auto::after{content:"";position:absolute;left:0;bottom:0;height:5px;width:0;background:rgba(255,255,255,.85);animation:remplit var(--d,3s) linear forwards}
 @keyframes remplit{to{width:100%}}
+/* ---------- Version papier ---------- */
+.papier{background:var(--paper);border:2px dashed var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.papier h2{font-family:var(--f-display);font-size:22px;margin:0}
+.papier p{margin:0;color:var(--soft);font-size:16px;line-height:1.4}
+.papier .choix{display:flex;flex-wrap:wrap;gap:8px}
+.papier .choix button{appearance:none;font:inherit;font-size:16px;color:var(--ink);background:transparent;border:2px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer}
+.papier .choix button[aria-pressed="true"]{border-color:var(--c);background:var(--c);color:#fff}
+.papier label{font-size:16px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.papier .btn{align-self:flex-start}
+#impression{display:none}
+@media print{
+  @page{size:A4 portrait;margin:11mm}
+  html,body{background:#fff!important;color:#000!important;padding:0!important}
+  body>*:not(#impression){display:none!important}
+  #impression{display:block}
+  .fiche{height:272mm;page-break-after:always;break-after:page;position:relative;font-family:"Andika","Comic Sans MS",Verdana,sans-serif;color:#000;overflow:hidden;display:flex;flex-direction:column}
+  .fiche:last-child{page-break-after:auto;break-after:auto}
+}
+.f-tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #1d3b6e;padding-bottom:2mm;margin-bottom:2mm}
+.f-tete .t{flex:1}
+.f-tete .t b{display:block;font-family:"Baloo 2","Trebuchet MS",sans-serif;font-size:17pt;line-height:1.1;color:#1d3b6e}
+.f-tete .t span{font-size:10.5pt}
+.f-tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+.f-badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+.f-items{flex:1;display:flex;flex-direction:column;justify-content:space-around}
+.f-item{display:flex;gap:5mm;align-items:center;border:.35mm solid #b8c6dc;border-radius:3mm;padding:2.5mm 3mm;break-inside:avoid}
+.f-num{font-family:"Baloo 2","Trebuchet MS",sans-serif;font-weight:800;font-size:15pt;color:#1d3b6e;width:7mm;text-align:center;flex:none}
+.f-img{width:50mm;height:50mm;flex:none;border:.35mm solid #b8c6dc;border-radius:2.5mm;overflow:hidden;display:grid;place-items:center;background:#fff}
+.f-img img{width:100%;height:100%;object-fit:cover;display:block}
+.f-img svg{width:85%;height:85%}
+.f-ph{flex:1;display:flex;flex-direction:column;gap:2.2mm;font-size:14pt;line-height:1.3}
+.f-ph.n3{font-size:12.5pt}
+.f-ph div{display:flex;gap:3mm;align-items:flex-start}
+.f-box{width:5mm;height:5mm;border:.45mm solid #000;border-radius:1mm;flex:none;margin-top:.9mm;display:grid;place-items:center;font-size:11pt;font-weight:700;line-height:1;color:#c0392b}
+.f-pied{font-size:8.5pt;color:#555;text-align:center;margin-top:2mm}
+.f-corr{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.8mm 5mm;align-content:start}
+.f-corr div{display:flex;gap:3mm;align-items:center;border-bottom:.3mm dotted #999;padding-bottom:1.5mm;font-size:11pt;line-height:1.25}
+.f-corr .f-img{width:15mm;height:15mm;border-radius:1.5mm}
+.f-corr b{color:#c0392b}
 </style>
 <style>*{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
 <script src="tour-de-controle.js"></script></head>
@@ -118,6 +157,18 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <button type="button" class="lvl" data-l="0" style="--c:var(--l1)"><b><span class="dots"><i></i><i class="off"></i><i class="off"></i></span>Niveau 1</b><span>Phrases courtes. Les pièges sont très différents.</span><q>« Je fais du vélo. »</q></button>
     <button type="button" class="lvl" data-l="1" style="--c:var(--l2)"><b><span class="dots"><i></i><i></i><i class="off"></i></span>Niveau 2</b><span>Phrases moyennes. Les pièges se ressemblent un peu.</span><q>« Mon vélo rouge a deux roues. »</q></button>
     <button type="button" class="lvl" data-l="2" style="--c:var(--l3)"><b><span class="dots"><i></i><i></i><i></i></span>Niveau 3</b><span>Phrases longues. Un seul mot change : lis bien jusqu'au bout.</span><q>« Mon vélo rouge a deux roues et une selle noire. »</q></button>
+  </section>
+
+  <section id="papier" class="papier">
+    <h2>🖨️ Version papier : des fiches à imprimer</h2>
+    <p>Les 24 images sur 6 fiches (4 images par page). Pour chaque image, l'élève coche la seule phrase qui va avec. L'ordre des images et des phrases change à chaque impression.</p>
+    <div class="choix" id="pNiv">
+      <button type="button" data-l="0" aria-pressed="true" style="--c:var(--l1)">Niveau 1</button>
+      <button type="button" data-l="1" aria-pressed="false" style="--c:var(--l2)">Niveau 2</button>
+      <button type="button" data-l="2" aria-pressed="false" style="--c:var(--l3)">Niveau 3</button>
+    </div>
+    <label><input type="checkbox" id="pCorr" checked> Ajouter le corrigé (une page)</label>
+    <button type="button" class="btn" id="imprimer">🖨️ Imprimer les fiches</button>
   </section>
 
   <section id="game" hidden>
@@ -148,6 +199,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <button type="button" class="btn ghost" id="quit" hidden>Changer de niveau</button>
   </div>
 </div>
+<div id="impression"></div>
 
 <script>
 const ITEMS=[
@@ -184,7 +236,7 @@ function say(t){try{const u=new SpeechSynthesisUtterance(t);u.lang="fr-FR";u.rat
 let level=0,order=[],pos=0,stars=0,tries=0,solved=false,heard=false,auto=null;
 const DELAI=3000; /* passage automatique à l'image suivante (ms) */
 function stopAuto(){clearTimeout(auto);auto=null;$("next").classList.remove("auto")}
-function show(view){stopAuto();["menu","game","end"].forEach(v=>$(v).hidden=v!==view);$("stats").hidden=view==="menu";$("quit").hidden=view!=="game";
+function show(view){stopAuto();["menu","game","end"].forEach(v=>$(v).hidden=v!==view);$("papier").hidden=view!=="menu";$("stats").hidden=view==="menu";$("quit").hidden=view!=="game";
   $("consigne").textContent=view==="menu"?"Choisis un niveau.":view==="game"?"Regarde l'image et choisis la bonne phrase.":"Partie terminée.";}
 function start(l){level=l;order=shuffle(ITEMS.map((_,i)=>i));pos=0;stars=0;show("game");$("niv").textContent=`Niveau ${l+1}`;draw();}
 function draw(){
@@ -232,6 +284,33 @@ document.querySelectorAll(".lvl").forEach(b=>b.addEventListener("click",()=>star
 $("again").addEventListener("click",()=>start(level));
 $("toMenu").addEventListener("click",()=>show("menu"));
 $("quit").addEventListener("click",()=>show("menu"));
+
+/* ---------- Version papier ---------- */
+let pNiv=0;
+document.querySelectorAll("#pNiv button").forEach(b=>b.addEventListener("click",()=>{pNiv=+b.dataset.l;document.querySelectorAll("#pNiv button").forEach(x=>x.setAttribute("aria-pressed",x===b))}));
+const LETTRES="ABCD";
+function vignette(it){return `<div class="f-img">${it.img?`<img src="${it.img}" alt="">`:`<svg viewBox="0 0 100 100">${it.svg}</svg>`}</div>`}
+function tete(l,page,nb,corr){
+  return `<div class="f-tete"><div class="t"><b>Images du quotidien — Niveau ${l+1}${corr?'<span class="f-badge">CORRIGÉ</span>':` — fiche ${page}/${nb}`}</b>
+  <span>${corr?"La bonne phrase de chaque image.":"Regarde l'image. Lis les quatre phrases jusqu'au bout. Coche la seule phrase qui va avec l'image."}</span></div>
+  ${corr?"":`<div class="nom">Prénom : ……………………<br>Date : ……………………</div>`}</div>`}
+const PIED=`<div class="f-pied">toujourscap.com — Images du quotidien — CC BY-NC-SA 4.0</div>`;
+function imprimer(){
+  const l=pNiv, ord=shuffle(ITEMS.map((_,i)=>i)), PAR=4, nb=Math.ceil(ord.length/PAR), pages=[], rep=[];
+  for(let f=0;f<nb;f++){
+    const items=ord.slice(f*PAR,f*PAR+PAR).map((i,j)=>{
+      const n=f*PAR+j+1, it=ITEMS[i], m=shuffle(it.lv[l].map((p,k)=>({p,k})));
+      const bon=m.findIndex(o=>o.k===0); rep.push({n,it,p:m[bon].p,lettre:LETTRES[bon]});
+      return `<div class="f-item"><div class="f-num">${n}</div>${vignette(it)}<div class="f-ph n${l+1}">${m.map(o=>`<div><span class="f-box"></span><span>${o.p}</span></div>`).join("")}</div></div>`}).join("");
+    pages.push(`<div class="fiche">${tete(l,f+1,nb,false)}<div class="f-items">${items}</div>${PIED}</div>`);
+  }
+  if($("pCorr").checked) pages.push(`<div class="fiche">${tete(l,0,nb,true)}<div class="f-corr">${rep.map(r=>`<div><span class="f-num">${r.n}</span>${vignette(r.it)}<span><b>${r.p}</b> <small>(${["1ʳᵉ","2ᵉ","3ᵉ","4ᵉ"][LETTRES.indexOf(r.lettre)]} phrase)</small></span></div>`).join("")}</div>${PIED}</div>`);
+  const z=$("impression");z.innerHTML=pages.join("");
+  const imgs=[...z.querySelectorAll("img")];let reste=imgs.length;const go=()=>setTimeout(()=>window.print(),150);
+  if(!reste)return go();
+  imgs.forEach(im=>{if(im.complete){if(--reste===0)go()}else im.onload=im.onerror=()=>{if(--reste===0)go()}});
+}
+$("imprimer").addEventListener("click",imprimer);
 show("menu");
 </script>
 
