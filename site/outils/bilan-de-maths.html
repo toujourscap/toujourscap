@@ -124,6 +124,7 @@ label.indispo{opacity:.45}
 .dpage th{background:#eef3f9}.dpage td.c{width:8mm;text-align:center;color:#bbb}
 .dtot{font-size:10.5pt;margin:1mm 0 3mm}.dtot b{display:inline-block;min-width:22mm;border-bottom:1px solid #555}
 .dcalc{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;font-size:10.5pt;margin:2mm 0 4mm}.dcalc div{border:1px solid #aaa;border-radius:2mm;padding:2mm;min-height:12mm}
+.dpied{font-size:8.5pt;color:#a35a00;border-top:1px solid #ddd;margin-top:6mm;padding-top:1.5mm}
 .dlignes div{border-bottom:1px solid #bbb;height:8mm}
 .dcartes{display:grid;grid-template-columns:repeat(3,1fr)}.dcartes div{border:1px dashed #999;height:30mm;display:flex;align-items:center;justify-content:center;font-size:40pt}
 @media print{@page{size:A4;margin:12mm}#docPages{max-width:none}.dpage{box-shadow:none;margin:0;padding:0;page-break-after:always;break-after:page}.dpage:last-child{page-break-after:auto;break-after:auto}}
@@ -637,6 +638,7 @@ VERSIONS.ce2={lab:'fin de CE2',court:'fin CE2',titre:'attendus de fin de CE2',at
 // d1 (tableaux et diagrammes) est commun avec la fin de CE1
 VERSIONS.ce2.ep=EP_CE2.concat(EP_FIN.filter(e=>e.id==='d1'));
 let EPREUVES=EP_DEBUT;
+const AVERT="Ce bilan s'appuie sur les programmes officiels de l'école en France (Éducation nationale, programmes 2025), mais il n'a aucune valeur officielle ni mesurable : c'est un simple outil d'observation proposé par le site Toujours cap ! (toujourscap.com).";
 const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
 // Moment proposé d'après la date : sept.–déc. début, janv.–mars milieu, avril–août fin.
 const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<=3?'milieu':'fin'};
@@ -767,6 +769,7 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
+  <p class="note" style="margin-top:0;color:#a35a00"><b>⚠️ ${AVERT}</b></p>
   <p class="note" style="margin-top:0">Une évaluation par niveau, d'après les attendus de fin d'année (Éduscol) : <b>fin de GS</b>, <b>fin de CP</b>, <b>fin de CE1</b> ou <b>fin de CE2</b>. En début d'année, l'élève passe celle du niveau précédent ; en milieu et en fin d'année, celle de son niveau. Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. L'adulte peut aussi arrêter une épreuve à tout moment (⏭).</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
@@ -776,6 +779,7 @@ function accueil(){
  </div>
  <div class="carte">
   <h2>2. Épreuves — ${reglages.version?VERSIONS[reglages.version].lab+' ('+VERSIONS[reglages.version].titre+')':'choisissez d\'abord le niveau'}</h2>
+  <p class="note" style="margin-top:0;color:#a35a00"><b>⚠️ ${AVERT}</b></p>
   <p class="note" style="margin-top:0">Tout le bilan prend environ 45 minutes : il peut se faire en deux ou trois fois (cochez seulement quelques domaines). Prévoyez une feuille, un crayon, une règle et une équerre.</p>
   <div class="grille" ${reglages.version?'':'style="display:none"'}>${groupes.map(g=>`<div class="groupe"><h3><label title="Tout cocher ou tout décocher dans ce groupe"><input type="checkbox" class="tg"> ${g}</label></h3>${EPREUVES.filter(e=>e.groupe===g).map(e=>{const non=auto()&&!dispoAuto(e);return `<label class="${non?'indispo':''}"><input type="checkbox" class="ep" value="${e.id}" ${reglages.choisies.includes(e.id)&&!non?'checked':''} ${non?'disabled':''}> ${e.titre}${non?' <span class="note">(adulte)</span>':''}</label>`}).join('')}</div>`).join('')}</div>
   <div class="actions"><button class="b petit" id="tout">Tout cocher</button><button class="b petit" id="rien">Tout décocher</button></div>
@@ -988,6 +992,7 @@ function bilan(){
  ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment<br>(sans valeur statistique)</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Calculs (tables, doubles, calcul mental) : pas de compte à rebours ; la durée mesurée est donnée à titre indicatif, à comparer aux repères de ${V0.att} du programme 2025, selon le moment de l'année.</p>
+ <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b></p>
  <p class="note">⚠️ Moyenne du site : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
  ${SY.html}
  <h3>Prénom de l'élève (pour le document)</h3>
@@ -996,7 +1001,7 @@ function bilan(){
  <textarea id="obs" rows="4" style="width:100%" placeholder="Procédures utilisées (doigts, comptage, décomposition…), schémas, attitude, fatigue…"></textarea>
  <div class="actions"><button class="b prim" id="telech">📄 Télécharger le bilan (Word)</button><button class="b" id="copier">📋 Copier le bilan</button><button class="b" id="impr">🖨 Imprimer</button><button class="b" id="nouveau">↺ Nouvelle passation</button></div>
  <p class="note" id="msg"></p></div>`;
- const texteFinal=(t=titre)=>texteL.join('\n').replace('TITRE',t)+($('#obs').value.trim()?'\n\nObservations : '+$('#obs').value.trim():'');
+ const texteFinal=(t=titre)=>texteL.join('\n').replace('TITRE',t)+($('#obs').value.trim()?'\n\nObservations : '+$('#obs').value.trim():'')+'\n\n'+AVERT;
  const enregistrer=()=>{if(!ids.length)return;const h=lireHisto();if(bilanEnregistre)h.shift();h.unshift({titre:titreAnon,texte:texteFinal(titreAnon)});ecrireHisto(h);bilanEnregistre=true};
  enregistrer();envoyer(ids);
  $('#obs').addEventListener('change',enregistrer);
@@ -1017,7 +1022,7 @@ function bilan(){
 ${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
 ${$('#synth')?$('#synth').outerHTML.replace(/<p class="note">.*?<\/p>/,''):''}
 <h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
-<p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %. Repères officiels de ${V0.att} (programme 2025).</p></body></html>`;
+<p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %. Repères officiels de ${V0.att} (programme 2025).</p><p style="font-size:9pt;color:#a35a00"><b>${AVERT}</b></p></body></html>`;
   const nom=('Bilan de maths '+(pr||reglages.classe)+' '+(reglages.date||'')).replace(/[\\/:*?"<>|]/g,'').trim()+'.doc';
   try{const u=URL.createObjectURL(new Blob(['\ufeff'+html],{type:'application/msword'}));const a=document.createElement('a');a.href=u;a.download=nom;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);$('#msg').textContent='Document téléchargé : '+nom}
   catch(e){$('#msg').textContent='Téléchargement impossible ici : utilisez « Copier le bilan ».'}};
@@ -1058,9 +1063,11 @@ function documentImprimable(){
   cartes:cartes?`<div class="dpage"><h1>Cartes à découper <span class="dtag">Adulte</span></h1><p class="dcons">Collez-les sur du carton. Montrez chaque carte environ ½ seconde, puis cachez-la.</p>${cartes}</div>`:'',
   bilan:`<div class="dpage"><h1>Fiche bilan — ${titreDoc}</h1>${docEnt()}<table><tr><th>Épreuve</th><th>Score</th><th>Acquis</th><th>En cours</th><th>Non acquis</th><th>Remarques</th></tr>${D.map(({ep,items})=>`<tr><td>${esc(ep.titre)}</td><td style="width:22mm">… / ${ep.type==='texte'?'MCLM':items.length}</td><td class="c">□</td><td class="c">□</td><td class="c">□</td><td style="width:45mm"></td></tr>`).join('')}</table>
    <h2>Points d'appui</h2><div class="dlignes"><div></div><div></div><div></div></div><h2>Difficultés observées</h2><div class="dlignes"><div></div><div></div><div></div></div><h2>Pistes de travail</h2><div class="dlignes"><div></div><div></div><div></div></div></div>`};
+ for(const k in pages)if(pages[k])pages[k]=pages[k].replace(/<\/div>$/,`<p class="dpied">${AVERT}</p></div>`);
  const parts=Object.keys(pages).filter(k=>pages[k]);
  const noms={eleve:'Planches élève',adulte:'Feuille de passation',cartes:'Cartes à découper',bilan:'Fiche bilan'};
  app.innerHTML=`<div class="carte noprint"><h2>🖨 Document à imprimer — ${esc(DOC_NIVEAU())}</h2>
+  <p class="note" style="margin-top:0;color:#a35a00"><b>⚠️ ${AVERT}</b></p>
   <p class="note" style="margin-top:0">Les épreuves cochées, dans le même ordre que sur l'écran. Le prénom n'est écrit que sur le papier.</p>
   <div class="grille">${parts.map(k=>`<label><input type="checkbox" data-part="${k}" checked> ${noms[k]}</label>`).join('')}</div>
   <div class="actions"><button class="b prim" id="docGo">🖨 Imprimer</button><button class="b" id="docRetour">↶ Retour</button></div><p class="note" id="docMsg"></p></div>
@@ -1104,7 +1111,7 @@ function synthese(ids,pctDe,att,liens,lab){
   <table><tr><th>Domaine</th><th>Attendu officiel (Éduscol)</th><th>Résultat</th></tr>${rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${esc(r.a)}</td><td><span class="${r.st[1]}">${r.st[0]}</span> (${r.m} %)</td></tr>`).join('')}</table>
   <p><b>Points d'appui :</b> ${ok.length?ok.map(r=>esc(r.g)).join(', '):'aucun domaine atteint pour l\'instant.'}</p>
   <p><b>Priorités :</b> ${prio.length?prio.map(r=>`${esc(r.g)}${r.l?` (<a href="${r.l}" target="_blank" rel="noopener">jeux du site</a>)`:''}`).join(' ; '):'tous les domaines évalués sont atteints : on peut proposer le bilan du niveau suivant.'}</p>
-  <p class="note">Synthèse automatique, sur peu d'items : elle aide à repérer les priorités, elle ne remplace pas le regard de l'enseignant. Seules les épreuves passées sont prises en compte.</p></div>`;
+  <p class="note">Synthèse automatique, sur peu d'items : elle aide à repérer les priorités, elle ne remplace pas le regard de l'enseignant. Seules les épreuves passées sont prises en compte. ${AVERT}</p></div>`;
  const lignes=['PAR RAPPORT AUX ATTENDUS DE '+lab.toUpperCase()].concat(rows.map(r=>`- ${r.g} : ${r.st[0].replace(/^\S+ /,'')} (${r.m} %) — attendu : ${r.a}`),
   ['Points d\'appui : '+(ok.length?ok.map(r=>r.g).join(', '):'aucun pour l\'instant')+'.','Priorités : '+(prio.length?prio.map(r=>r.g).join(', '):'aucune')+'.']);
  return {html,lignes};
