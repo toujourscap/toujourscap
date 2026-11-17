@@ -76,22 +76,22 @@ td.cc{width:9mm;text-align:center;color:#bbb}
 <div id="doc"></div>
 <script>
 "use strict";
-const VS=['a','e','i','o','u','y','é','è','ê'];
-const VC=['ou','oi','on','an','en','in','un','au','eau','ai','ei','eu','œu','oin','ain','ein'];
+const VS=['a','i','o','u','e','é','è','ê','y'];
+const VC=['ou','on','an','oi','au','in','eau','ai','en','eu','un','ain','oin','ei','œu','ein'];
 const MS=['ami','lune','moto','vélo','rame','pile','mule','sofa','robe','tomate','salade','domino','farine','cabane','malade','numéro'];
-const MC=['loup','roi','bonbon','lapin','maison','moulin','bateau','poule','raisin','lundi','peinture','coin','jardin','oiseau','chapeau','feuille'];
+const MC=['loup','roi','coin','poule','lapin','bonbon','moulin','lundi','bateau','maison','raisin','jardin','chapeau','oiseau','peinture','feuille'];
 const TS="Léa a une amie : Mila. Mila a une petite tortue, Titi. Titi file sur le tapis. Elle a vu une salade. Hop ! Titi a dévoré la salade. Mila rit. Léa rit avec Mila.";
 const TC="Le petit lapin de Manon s'appelle Pompon. Chaque matin, il sort de sa maison en bois et il court dans le jardin. Il mange des feuilles de chou et une carotte. Un jour, un gros oiseau noir se pose sur le toit de sa cabane. Pompon a très peur ! Il rentre bien vite chez lui, sous la paille.";
 const VIS=[['b','d b q p'],['d','p d b q'],['p','q b p d'],['q','d q p b'],['d','b p q d'],['b','q d b p'],['q','p q d b'],['p','d p b q'],
  ['bd','db bd pd bp'],['pq','qp pb pq bq'],['db','bd qb db dp'],['qp','qb pq qp dp'],['bp','db pb bq bp'],['dq','qd bq dq dp']];
-const AUD=[['bébé','b'],['dodo','d'],['papa','p'],['quatre','q'],['bulle','b'],['poule','p'],['dune','d'],['quille','q'],['bain','b'],['pain','p'],['dent','d'],['queue','q']];
+const AUD=[['bébé','b'],['papa','p'],['dodo','d'],['canard','c'],['bulle','b'],['poule','p'],['dune','d'],['cube','c'],['bain','b'],['pain','p'],['dent','d'],['coq','c']];
 const PAR=[['bain','pain'],['dent','dent'],['bon','don'],['pas','pas'],['bille','quille'],['dos','dos'],['pont','bon'],['qui','qui']];
 const EMP={1:[['r','r n m s'],['a','o a e c'],['t','f l t i'],['s','z s c e'],['u','n v u a']],
  2:[['ma','am na ma mo'],['lo','ol to lo la'],['ri','ir rj ni ri'],['fu','uf tu fu fv'],['se','es ze se sc']],
  3:[['mar','mra nar mar mor'],['lit','lti tit lif lit'],['sev','esv zev sev seu'],['nol','onl mol nol noi'],['fac','afc tac fac fae']]};
 const decoupe=t=>{const o=[];t.split(/\s+/).forEach(w=>{/[\p{L}]/u.test(w)?o.push(w):o[o.length-1]+=' '+w});return o};
 const pied=(t,n)=>`<div class="pied"><span>${t}</span><span>toujourscap.com · CC BY-NC-SA 4.0 · ${n}</span></div>`;
-const ent=`<div class="ent"><span>Niveau :</span><span>Né(e) en (mois / année) :</span><span>Âge :</span><span>Date :</span></div>`;
+const ent=`<div class="ent"><span>Niveau :</span><span>Moment : début / milieu / fin d'année</span><span>Date :</span></div>`;
 const cases=(l,cl)=>`<div class="cases ${cl}">${l.map((x,i)=>`<div class="num" data-n="${i+1}">${x}</div>`).join('')}</div>`;
 const grille=(l,titre,cons)=>`<h2>${titre}</h2><div class="consigne">${cons}</div><table><tr><th>Item</th><th>✔</th><th>≈</th><th>✘</th><th>Ce que l'élève a dit</th></tr>${l.map(x=>`<tr><td class="it">${x}</td><td class="cc">□</td><td class="cc">□</td><td class="cc">□</td><td></td></tr>`).join('')}</table><div class="tot">Score (✔ + ≈) : <b></b> / ${l.length} · Durée : <b></b></div>`;
 const texteNum=t=>decoupe(t).map((w,i)=>`${w}<sup>${i+1}</sup>`).join(' ');
@@ -114,7 +114,7 @@ eleve:[
   ${VIS.map(([m,c],i)=>`<div class="ligneChoix"><span class="n">${i+1}</span><span class="mod">${m}</span><span class="ch">${c.split(' ').map(x=>`<span>${x}</span>`).join('')}</span></div>`).join('')}
   ${pied('Planche élève 4 — discrimination visuelle','4')}</div>`,
  `<div class="page"><h1>Écoute bien <span class="tag e">Élève</span></h1>
-  <h2>7. Par quelle lettre commence le mot ?</h2><div class="grosses"><span>b</span><span>d</span><span>p</span><span>q</span></div>
+  <h2>7. Par quelle lettre commence le mot ?</h2><div class="grosses"><span>b</span><span>d</span><span>p</span><span>c</span></div>
   <h2>8. Pareil ou différent ?</h2><div class="pareil"><div>=</div><div>≠</div></div>
   <h2>9. Empan : montre ce que tu as vu</h2>
   <div class="empanE">${[1,2,3].map(n=>`<div><b>${n} lettre${n>1?'s':''}</b>${EMP[n].map(([m,c],i)=>`<div class="ligneChoix"><span class="n">${n}.${i+1}</span><span class="ch">${c.split(' ').map(x=>`<span>${x}</span>`).join('')}</span></div>`).join('')}</div>`).join('')}</div>
@@ -138,7 +138,7 @@ adulte:[
   <h2>9. Pareil / différent</h2><div class="consigne">Dites les deux mots, bouche cachée. L'élève montre = ou ≠.</div>
   <table><tr><th>Mots à dire</th><th>Attendu</th><th>✔/✘</th></tr>${PAR.map(([a,b])=>`<tr><td>${a} – ${b}</td><td>${a===b?'=':'≠'}</td><td></td></tr>`).join('')}</table><div class="tot">Score : <b></b> / ${PAR.length}</div>
   </div><div>
-  <h2>8. b, d, p, q auditif</h2><div class="consigne">Dites le mot. « Par quelle lettre commence-t-il ? » L'élève montre sur la planche 5.</div>
+  <h2>8. b, d, p, c auditif</h2><div class="consigne">Dites le mot. « Par quelle lettre commence-t-il ? » L'élève montre sur la planche 5.</div>
   <table><tr><th>Mot à dire</th><th>Attendu</th><th>Réponse</th><th>✔/✘</th></tr>${AUD.map(([m,l])=>`<tr><td>${m}</td><td>${l}</td><td></td><td></td></tr>`).join('')}</table><div class="tot">Score : <b></b> / ${AUD.length}</div>
   <h2>10. Empan visuel</h2><div class="consigne">Montrez la carte environ ½ seconde puis cachez-la. L'élève montre sa réponse sur la ligne correspondante (planche 5).</div>
   <table><tr><th>N°</th><th>Carte</th><th>Réponse</th><th>✔/✘</th></tr>${[1,2,3].map(n=>EMP[n].map(([m],i)=>`<tr><td>${n}.${i+1}</td><td class="it">${m}</td><td></td><td></td></tr>`).join('')).join('')}</table>
@@ -152,7 +152,7 @@ cartes:[
 bilan:[
  `<div class="page"><h1>Fiche bilan de lecture</h1>${ent}
   <table><tr><th>Épreuve</th><th>Score</th><th>Acquis</th><th>En cours</th><th>Non acquis</th><th>Erreurs / remarques</th></tr>
-  ${['Voyelles simples /9','Voyelles complexes /16','Mots simples /16','Mots complexes /16','Texte simple (MCLM)','Texte complexe (MCLM)','b d p q visuel /14','b d p q auditif /12','Pareil / différent /8','Empan 1 lettre /5','Empan 2 lettres /5','Empan 3 lettres /5'].map(x=>`<tr><td>${x}</td><td style="width:18mm"></td><td class="cc">□</td><td class="cc">□</td><td class="cc">□</td><td style="height:8mm"></td></tr>`).join('')}</table>
+  ${['Voyelles simples /9','Voyelles complexes /16','Mots simples /16','Mots complexes /16','Texte simple (MCLM)','Texte complexe (MCLM)','b d p q visuel /14','b d p c auditif /12','Pareil / différent /8','Empan 1 lettre /5','Empan 2 lettres /5','Empan 3 lettres /5'].map(x=>`<tr><td>${x}</td><td style="width:18mm"></td><td class="cc">□</td><td class="cc">□</td><td class="cc">□</td><td style="height:8mm"></td></tr>`).join('')}</table>
   <h2>Points d'appui</h2><div class="lignes"><div></div><div></div><div></div></div>
   <h2>Difficultés observées</h2><div class="lignes"><div></div><div></div><div></div></div>
   <h2>Pistes de travail</h2><div class="lignes"><div></div><div></div><div></div></div>
