@@ -125,6 +125,18 @@ const LISTES = [
     { titre:"Mots des jeux", mots:true, items:phrases(["plus","briques","est plus grand que","est plus petit que","est égal à"]) },
     { titre:"Phrases des jeux", mots:true, items:phrases(["Bravo ! La maison est construite.","Le loup a soufflé. On réessaie ?","Bravo ! La tour est construite !"]) },
   ]},
+  { id:"bilan-lecture", titre:"Évaluations – Bilan de lecture (mots dits à l'élève)", charger: async () => {
+    const PAIRES = await donnees("bilan-de-lecture", "PAIRES", "];");
+    const AUD = await donnees("bilan-de-lecture", "AUD", "];");
+    const DSYL = await donnees("bilan-de-lecture", "DSYL", "];");
+    const DMOT = await donnees("bilan-de-lecture", "DMOT", "];");
+    return [
+      { titre:"Pareil ou différent ? (dis les deux mots dans un seul enregistrement, avec un petit silence entre les deux)", mots:true, items:phrases(PAIRES.map(([a,b]) => a + " … " + b)) },
+      { titre:"b, d, p, c (auditif) : par quelle lettre commence ce mot ?", mots:true, items:phrases(AUD.map((x) => x[0])) },
+      { titre:"Syllabes dictées", mots:true, items:phrases(DSYL) },
+      { titre:"Mots dictés", mots:true, items:phrases(DMOT) },
+    ];
+  }},
   { id:"devinettes", titre:"Compréhension – Les devinettes de la forêt", charger: async () => {
     const DEV = await donnees("les-devinettes-de-la-foret", "DEV", "\\n];");
     return [{ titre:"Fin de chaque devinette", mots:true, items:phrases(["Qui suis-je ?"]) }]
