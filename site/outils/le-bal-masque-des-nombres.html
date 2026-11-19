@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le bal masqué des nombres</title><link rel="canonical" href="https://toujourscap.com/post/le-bal-masque-des-nombres/"><meta name="description" content="Écrire et reconnaître les nombres sous toutes leurs formes : chiffres, lettres, oral, décompositions (300 + 40 + 7, 3 centaines 4 dizaines 7 unités, × 10, ×…">
+<style>
+:root{--bleu:#2f5d8a;--bleu2:#e6eef7;--vert:#2e8b57;--rouge:#c0392b;--jaune:#f4c542;--fond:#fbf6ee;--txt:#263238;--violet:#7b4fa0}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:var(--fond);color:var(--txt);min-height:100vh}
+header{background:linear-gradient(135deg,#7b4fa0,#2f5d8a);color:#fff;padding:14px 16px;text-align:center}
+header h1{margin:0;font-size:1.6rem}
+header p{margin:4px 0 0;opacity:.9}
+main{max-width:900px;margin:0 auto;padding:14px}
+.carte{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:14px;margin-bottom:14px}
+h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
+.choix{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:2px solid var(--bleu);background:#fff;color:var(--bleu);border-radius:12px;padding:10px 14px;font-size:1rem;cursor:pointer;font-family:inherit}
+.btn.on{background:var(--bleu);color:#fff}
+.btn.gros{font-size:1.2rem;padding:14px 22px;background:var(--vert);border-color:var(--vert);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.puce{font-size:.95rem;padding:8px 12px}
+.intervalle{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.intervalle input{width:90px;font-size:1rem;padding:8px;border:2px solid #ccc;border-radius:10px}
+.note{font-size:.85rem;color:#666;margin-top:6px}
+#jeu{display:none}
+.barre-haut{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.progress{flex:1;height:12px;background:#eee;border-radius:8px;overflow:hidden;min-width:120px}
+.progress div{height:100%;background:var(--jaune);transition:width .3s}
+.consigne{font-size:1.15rem;text-align:center;margin:4px 0 12px}
+.cible{background:var(--bleu2);border:3px dashed var(--bleu);border-radius:18px;padding:18px;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.cible .forme-nom{font-size:.85rem;color:var(--bleu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.f-chiffres{font-size:2.6rem;font-weight:bold;letter-spacing:.04em}
+.f-lettres{font-size:1.5rem}
+.f-calc{font-size:1.4rem}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+@media(max-width:520px){.options{grid-template-columns:1fr}}
+.opt{background:#fff;border:3px solid #d0d7de;border-radius:16px;padding:14px;cursor:pointer;min-height:70px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:inherit;color:var(--txt)}
+.opt .f-chiffres{font-size:1.9rem}
+.opt .f-lettres{font-size:1.2rem}
+.opt .f-calc{font-size:1.15rem}
+.opt.ok{border-color:var(--vert);background:#e8f6ee}
+.opt.ko{border-color:var(--rouge);background:#fbeaea;opacity:.6}
+.aide{margin-top:12px;padding:12px;border-radius:12px;display:none;font-size:1.05rem}
+.aide.err{display:block;background:#fff4e0;border-left:6px solid #e69a28}
+.aide.sol{display:block;background:#eaf2fb;border-left:6px solid var(--bleu)}
+.aide.bravo{display:block;background:#e8f6ee;border-left:6px solid var(--vert)}
+.ecoute{font-size:1.3rem;border:none;background:var(--violet);color:#fff;border-radius:50px;padding:14px 26px;cursor:pointer;font-family:inherit}
+/* tableau de numération */
+table.num{border-collapse:collapse;margin:0 auto}
+table.num th,table.num td{border:2px solid var(--bleu);width:46px;text-align:center;padding:4px}
+table.num th{background:var(--bleu);color:#fff;font-size:.9rem}
+table.num td{font-size:1.5rem;font-weight:bold;height:44px}
+table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background:#c0392b;border-color:#c0392b}table.num th.d{background:#2980b9;border-color:#2980b9}table.num th.u{background:#27ae60;border-color:#27ae60}
+/* matériel */
+.mat{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap}
+.grp{display:flex;gap:3px;align-items:flex-end;flex-wrap:wrap;max-width:240px;justify-content:center}
+.millier{width:34px;height:34px;background:#b07cc6;border:2px solid #6c3483;border-radius:3px;box-shadow:3px -3px 0 #8e44ad;margin-top:3px}
+.plaque{width:30px;height:30px;background:#e57368;border:1px solid #922b21;background-image:linear-gradient(#922b2155 1px,transparent 1px),linear-gradient(90deg,#922b2155 1px,transparent 1px);background-size:3px 3px}
+.barre{width:7px;height:30px;background:#5dade2;border:1px solid #1f618d;background-image:linear-gradient(#1f618d88 1px,transparent 1px);background-size:7px 3px}
+.cube{width:7px;height:7px;background:#58d68d;border:1px solid #1e8449}
+/* lettres */
+.reponse{min-height:58px;border:3px solid var(--bleu);border-radius:14px;padding:10px;font-size:1.4rem;text-align:center;background:#fff;margin:12px 0;word-break:break-word}
+.reponse .vide{color:#aaa;font-size:1rem}
+.tuiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tuile{background:#fff6d6;border:2px solid #d4a017;border-radius:10px;padding:10px 12px;font-size:1.1rem;cursor:pointer;font-family:inherit;color:var(--txt)}
+.pave{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:420px;margin:0 auto}
+.pave button{font-size:1.5rem;padding:12px 0;border-radius:12px;border:2px solid var(--bleu);background:#fff;cursor:pointer;font-family:inherit;color:var(--txt)}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+/* carte d'identité */
+.identite{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px}
+.identite>div{background:#fff;border:1px solid #d0d7de;border-radius:10px;padding:8px;text-align:center}
+.identite small{display:block;color:var(--violet);font-size:.75rem;text-transform:uppercase;margin-bottom:4px}
+.identite .f-chiffres{font-size:1.6rem}.identite .f-lettres{font-size:1.05rem}.identite .f-calc{font-size:1rem}
+#fin{display:none;text-align:center}
+.etoiles{font-size:2.4rem;margin:10px 0}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+</head>
+<body>
+<header>
+  <h1>🎭 Le bal masqué des nombres</h1>
+  <p>Un nombre, plusieurs costumes : retrouve-le sous tous ses déguisements !</p>
+</header>
+<main>
+<section id="reglages">
+  <div class="carte">
+    <h2>1. Niveau</h2>
+    <div class="choix" id="choixNiveau">
+      <button class="btn" data-n="CP">CP</button>
+      <button class="btn" data-n="CE1">CE1</button>
+      <button class="btn" data-n="CE2">CE2</button>
+    </div>
+    <div class="intervalle" id="presets"></div>
+    <div class="intervalle">De <input type="number" id="nMin" min="0"> à <input type="number" id="nMax" min="0"></div>
+    <div class="note" id="noteNiveau"></div>
+  </div>
+  <div class="carte">
+    <h2>2. Jeu</h2>
+    <div class="choix" id="choixMode">
+      <button class="btn" data-m="qcm">Trouve le même nombre</button>
+      <button class="btn" data-m="chiffres">Écris en chiffres</button>
+      <button class="btn" data-m="lettres">Écris en lettres</button>
+      <button class="btn" data-m="mix">Mélange</button>
+    </div>
+  </div>
+  <div class="carte">
+    <h2>3. Les costumes du nombre</h2>
+    <div class="choix" id="choixFormes"></div>
+    <div class="choix" style="margin-top:10px">
+      <button class="btn puce" id="optNC">Décompositions non canoniques (ex. 2 dizaines 15 unités)</button>
+      <button class="btn puce on" id="optVoix">🔊 Voix</button>
+    </div>
+  </div>
+  <div class="carte">
+    <h2>4. Nombre de questions</h2>
+    <div class="choix" id="choixNb">
+      <button class="btn" data-q="10">10</button><button class="btn" data-q="15">15</button><button class="btn" data-q="20">20</button>
+    </div>
+  </div>
+  <div style="text-align:center"><button class="btn gros" id="go">Entrer dans le bal ▶</button></div>
+</section>
+
+<section id="jeu">
+  <div class="carte">
+    <div class="barre-haut">
+      <button class="btn puce" id="quitter">⟵ Réglages</button>
+      <div class="progress"><div id="barreProg" style="width:0"></div></div>
+      <strong id="compteur"></strong>
+    </div>
+    <div class="consigne" id="consigne"></div>
+    <div class="cible" id="cible"></div>
+    <div id="zone"></div>
+    <div class="aide" id="aide"></div>
+    <div class="actions"><button class="btn gros" id="suivant" style="display:none">Suivant ▶</button></div>
+  </div>
+</section>
+
+<section id="fin" class="carte">
+  <h2 style="font-size:1.5rem">Fin du bal !</h2>
+  <div class="etoiles" id="etoiles"></div>
+  <p id="bilan"></p>
+  <div class="actions"><button class="btn gros" id="rejouer">Rejouer</button><button class="btn" id="retour">Changer les réglages</button></div>
+</section>
+</main>
+
+<script>
+/* ---------- Nombres en lettres (orthographe rectifiée 1990 : traits d'union partout) ---------- */
+const U=["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize"];
+const T={2:"vingt",3:"trente",4:"quarante",5:"cinquante",6:"soixante"};
+function m100(n){
+  if(n<17)return[U[n]];
+  if(n<20)return["dix",U[n-10]];
+  if(n<70){const t=Math.floor(n/10),u=n%10;const w=[T[t]];if(u===1)w.push("et","un");else if(u)w.push(...m100(u));return w;}
+  if(n<80)return n===71?["soixante","et","onze"]:["soixante",...m100(n-60)];
+  if(n===80)return["quatre","vingts"];
+  return["quatre","vingt",...m100(n-80)];
+}
+function m1000(n){const c=Math.floor(n/100),r=n%100;let w=[];if(c===1)w=["cent"];else if(c>1)w=[U[c],r?"cent":"cents"];if(r)w.push(...m100(r));return w;}
+function mots(n){if(n===0)return["zéro"];const m=Math.floor(n/1000),r=n%1000;let w=[];if(m===1)w=["mille"];else if(m>1)w=[...m1000(m),"mille"];if(r)w.push(...m1000(r));return w;}
+const lettres=n=>mots(n).join("-");
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+
+/* ---------- Réglages ---------- */
+const NIV={
+  CP:{presets:[[0,20],[0,69],[0,100]],def:[0,100],formes:["chiffres","lettres","oral","additive","unites","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","materiel"],nc:false,
+      note:"Repères CP : nombres jusqu'à 100 — écriture en chiffres, en lettres, nom à l'oral, décomposition en dizaines et unités (35 = 30 + 5 = 3 dizaines 5 unités)."},
+  CE1:{presets:[[0,100],[100,1000],[0,1000]],def:[0,1000],formes:["chiffres","lettres","oral","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","tableau","materiel"],nc:true,
+      note:"Repères CE1 : nombres jusqu'à 1 000 — chiffres, lettres, oral, unités de numération (centaines, dizaines, unités), 300 + 40 + 5, (3 × 100) + (4 × 10) + 5."},
+  CE2:{presets:[[0,1000],[1000,9999],[0,9999]],def:[0,9999],formes:["chiffres","lettres","oral","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","produits","tableau"],nc:true,
+      note:"Repères CE2 : nombres jusqu'à 10 000 — (4 × 1 000) + (6 × 100) + (3 × 10) + (5 × 1), 4 000 + 600 + 30 + 5, quatre-mille-six-cent-trente-cinq."}
+};
+const NOMF={chiffres:"En chiffres",lettres:"En lettres",oral:"À l'oral",additive:"Décomposition (+)",unites:"Unités de numération",produits:"Avec × 10, × 100…",tableau:"Tableau de numération",materiel:"Matériel"};
+let R={niv:"CP",min:0,max:100,mode:"qcm",formes:[],nc:false,voix:true,nb:10};
+try{const s=JSON.parse(localStorage.getItem("balNombres")||"null");if(s)Object.assign(R,s);}catch(e){}
+
+const $=id=>document.getElementById(id);
+function majReglages(reset){
+  const N=NIV[R.niv];
+  if(reset){[R.min,R.max]=N.def;R.formes=[...N.defF];R.nc=N.nc;}
+  R.formes=R.formes.filter(f=>N.formes.includes(f));
+  document.querySelectorAll("#choixNiveau .btn").forEach(b=>b.classList.toggle("on",b.dataset.n===R.niv));
+  document.querySelectorAll("#choixMode .btn").forEach(b=>b.classList.toggle("on",b.dataset.m===R.mode));
+  document.querySelectorAll("#choixNb .btn").forEach(b=>b.classList.toggle("on",+b.dataset.q===R.nb));
+  $("presets").innerHTML=N.presets.map(p=>`<button class="btn puce ${p[0]===R.min&&p[1]===R.max?"on":""}" data-p="${p}">${fmt(p[0])} – ${fmt(p[1])}</button>`).join("");
+  $("nMin").value=R.min;$("nMax").value=R.max;
+  $("noteNiveau").textContent=N.note;
+  $("choixFormes").innerHTML=N.formes.map(f=>`<button class="btn puce ${R.formes.includes(f)?"on":""}" data-f="${f}">${NOMF[f]}</button>`).join("");
+  $("optNC").classList.toggle("on",R.nc);$("optVoix").classList.toggle("on",R.voix);
+}
+$("choixNiveau").onclick=e=>{const b=e.target.closest("[data-n]");if(b){R.niv=b.dataset.n;majReglages(true);}};
+$("choixMode").onclick=e=>{const b=e.target.closest("[data-m]");if(b){R.mode=b.dataset.m;majReglages();}};
+$("choixNb").onclick=e=>{const b=e.target.closest("[data-q]");if(b){R.nb=+b.dataset.q;majReglages();}};
+$("presets").onclick=e=>{const b=e.target.closest("[data-p]");if(b){[R.min,R.max]=b.dataset.p.split(",").map(Number);majReglages();}};
+$("choixFormes").onclick=e=>{const b=e.target.closest("[data-f]");if(!b)return;const f=b.dataset.f;R.formes=R.formes.includes(f)?R.formes.filter(x=>x!==f):[...R.formes,f];majReglages();};
+$("optNC").onclick=()=>{R.nc=!R.nc;majReglages();};
+$("optVoix").onclick=()=>{R.voix=!R.voix;majReglages();};
+
+/* ---------- Représentations ---------- */
+function chiffresDe(n){return{m:Math.floor(n/1000),c:Math.floor(n/100)%10,d:Math.floor(n/10)%10,u:n%10};}
+const pl=(k,s)=>k+" "+s+(k>1?"s":"");
+function unitesTxt(n,nc){
+  let {m,c,d,u}=chiffresDe(n);
+  let parts=[[m,"millier"],[c,"centaine"],[d,"dizaine"],[u,"unité"]];
+  if(nc){
+    const pos=parts.map((p,i)=>i).filter(i=>i<3&&parts[i][0]>0&&parts.slice(i+1).some(()=>true));
+    if(pos.length){
+      const i=pos[Math.floor(Math.random()*pos.length)];
+      if(Math.random()<.5){parts[i][0]-=1;parts[i+1][0]+=10;}   // ex. 2 dizaines 15 unités
+      else{parts[i+1][0]+=parts[i][0]*10;parts[i][0]=0;}         // ex. 34 dizaines 7 unités
+    }
+  }
+  const t=parts.filter(p=>p[0]>0).map(p=>pl(p[0],p[1]));
+  return t.length?t.join(" "):"0 unité";
+}
+function additive(n){const {m,c,d,u}=chiffresDe(n);const t=[m*1000,c*100,d*10,u].filter(x=>x>0).map(fmt);return t.length?t.join(" + "):"0";}
+function produits(n){const {m,c,d,u}=chiffresDe(n);const t=[];if(m)t.push(`(${m} × 1 000)`);if(c)t.push(`(${c} × 100)`);if(d)t.push(`(${d} × 10)`);if(u)t.push(`(${u} × 1)`);return t.join(" + ")||"0";}
+function colonnes(n){if(R.niv==="CE2"||n>=1000)return"mcdu";if(R.niv==="CE1"||n>=100)return"cdu";return"du";}
+function tableau(n){const k=colonnes(n),v=chiffresDe(n),nom={m:"M",c:"C",d:"D",u:"U"};
+  let cols=k.split("");let started=false;
+  return `<table class="num"><tr>${cols.map(x=>`<th class="${x}">${nom[x]}</th>`).join("")}</tr><tr>${cols.map(x=>{if(v[x]>0||x==="u")started=true;return`<td>${started?v[x]:""}</td>`}).join("")}</tr></table>`;}
+function materiel(n){const {m,c,d,u}=chiffresDe(n);const g=(k,cl)=>k?`<div class="grp">${`<div class="${cl}"></div>`.repeat(k)}</div>`:"";
+  return `<div class="mat">${g(m,"millier")}${g(c,"plaque")}${g(d,"barre")}${g(u,"cube")}</div>`;}
+function rendu(n,f,nc){
+  switch(f){
+    case"chiffres":return`<div class="f-chiffres">${fmt(n)}</div>`;
+    case"lettres":return`<div class="f-lettres">${lettres(n)}</div>`;
+    case"additive":return`<div class="f-calc">${additive(n)}</div>`;
+    case"unites":return`<div class="f-calc">${unitesTxt(n,nc)}</div>`;
+    case"produits":return`<div class="f-calc">${produits(n)}</div>`;
+    case"tableau":return tableau(n);
+    case"materiel":return materiel(n);
+    case"oral":return`<button class="ecoute" onclick="dire(${n})">🔊 Écoute le nombre</button>`;
+  }
+}
+function identite(n){
+  const fs=["chiffres","lettres","additive","unites"];if(R.niv!=="CP")fs.push("produits");fs.push("tableau");if(n<=1000||R.niv==="CE2")fs.push("materiel");
+  return `<div class="identite">${fs.map(f=>`<div><small>${NOMF[f]}</small>${rendu(n,f,false)}</div>`).join("")}</div>`;
+}
+
+/* ---------- Voix et sons ---------- */
+function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lettres(n).replace(/-/g," "));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
+let AC;function son(ok){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type="triangle";const t=AC.currentTime;
+  if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(880,t+.12);}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(180,t+.15);}
+  g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36);}catch(e){}}
+
+/* ---------- Choix des nombres ---------- */
+const alea=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const melange=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function piege(n){const {c,d}=chiffresDe(n);return(n%100>=70)||(n>=100&&d===0)||(n>=1000&&c===0)||(n%100>=11&&n%100<=16);}
+let deja=new Set();
+function tireNombre(){
+  for(let k=0;k<200;k++){const n=alea(R.min,R.max);if(deja.has(n)&&deja.size<R.max-R.min)continue;
+    if(Math.random()<.4&&!piege(n)&&k<60)continue; deja.add(n);return n;}
+  return alea(R.min,R.max);
+}
+/* Erreurs typiques : renvoie [valeur, type] */
+function erreurs(n){
+  const s=String(n),L=[],add=(v,t)=>{if(v>=0&&v!==n&&!L.some(x=>x[0]===v))L.push([v,t]);};
+  if(s.length>=2&&s[s.length-1]!==s[s.length-2])add(+(s.slice(0,-2)+s[s.length-1]+s[s.length-2]),"ordre");
+  if(s.length>=3&&s[0]!==s[1])add(+(s[1]+s[0]+s.slice(2)),"ordre");
+  const r=n%100;
+  if(r>=70&&r<80)add(+(String(n-r+60)+String(r-60)),"juxta");
+  if(r>=80)add(+(String(n-r+80)+String(r-80||"")),"juxta");
+  if(n>=100&&n<1000&&r>0&&r<10)add(+(String(n-r)+String(r)),"juxta");
+  if(n>=1000&&n%1000>0&&n%1000<100)add(+(String(n-n%1000)+String(n%1000)),"juxta");
+  if(s.includes("0")&&s.length>2)add(+s.replace("0",""),"zero");
+  if(n>=10&&n<1000&&s.length>=2)add(+(s.slice(0,1)+"0"+s.slice(1)),"zero");
+  add(n+10,"diz");add(n-10,"diz");
+  if(R.max>=100){add(n+100,"cent");add(n-100,"cent");}
+  if(R.max>=1000){add(n+1000,"mil");add(n-1000,"mil");}
+  add(n+1,"unit");add(n-1,"unit");
+  return L;
+}
+const MSG={
+  ordre:"Attention à l'ordre des chiffres : on écrit d'abord le chiffre de gauche (le plus grand rang).",
+  juxta:"Attention : on n'écrit pas les morceaux les uns après les autres. Par exemple « soixante-douze », c'est 60 + 12 = 72, pas 6012.",
+  zero:"Pense au zéro : regarde le tableau de numération, chaque rang vide s'écrit 0.",
+  diz:"Compte bien les dizaines.",cent:"Compte bien les centaines.",mil:"Compte bien les milliers.",unit:"Vérifie le chiffre des unités.",
+  autre:"Ce n'est pas le même nombre. Regarde bien chaque rang : unités, dizaines, centaines…"
+};
+function typeErreur(n,v){const e=erreurs(n).find(x=>x[0]===v);return e?e[1]:"autre";}
+
+/* ---------- Partie ---------- */
+let Q=0,score=0,essais=0,cur=null,reponse=[];
+function questionMode(){if(R.mode!=="mix")return R.mode;return["qcm","chiffres","lettres"][alea(0,2)];}
+function nouvelle(){
+  if(Q>=R.nb)return fin();
+  essais=0;reponse=[];$("aide").className="aide";$("aide").innerHTML="";$("suivant").style.display="none";
+  $("barreProg").style.width=(Q/R.nb*100)+"%";$("compteur").textContent=(Q+1)+" / "+R.nb;
+  const n=tireNombre(),mode=questionMode();
+  const sources=R.formes.filter(f=>f!=="chiffres"||mode==="qcm"||mode==="lettres");
+  let A,B;
+  if(mode==="qcm"){
+    const cibles=R.formes.filter(f=>R.formes.some(g=>g!==f&&g!=="oral"));
+    A=cibles[alea(0,cibles.length-1)];const rep=R.formes.filter(g=>g!==A&&g!=="oral");B=rep[alea(0,rep.length-1)];
+  }else if(mode==="chiffres"){const s=R.formes.filter(f=>f!=="chiffres");A=s.length?s[alea(0,s.length-1)]:"oral";}
+  else{const s=R.formes.filter(f=>f!=="lettres"&&f!=="oral");A=s.length?s[alea(0,s.length-1)]:"chiffres";if(Math.random()<.3&&R.formes.includes("oral"))A="oral";}
+  const nc=R.nc&&A==="unites"&&Math.random()<.5;
+  cur={n,mode,A,B,nc};
+  $("cible").innerHTML=`<div class="forme-nom">${NOMF[A]}</div>${rendu(n,A,nc)}`;
+  if(A==="oral")setTimeout(()=>dire(n),300);
+  if(mode==="qcm"){
+    $("consigne").textContent="Quel costume porte le même nombre ? ("+NOMF[B].toLowerCase()+")";
+    const er=erreurs(n),typ=er.filter(x=>!["diz","unit","cent","mil"].includes(x[1])),aut=er.filter(x=>["diz","unit","cent","mil"].includes(x[1]));
+    let choix=[...melange(typ).slice(0,2),...melange(aut)].filter(x=>x[0]<=R.max||x[1]==="juxta").map(x=>x[0]);
+    const vus=new Set([rendu(n,B,false)]),opts=[n];
+    for(const v of choix){if(opts.length>=4)break;const r=rendu(v,B,false);if(vus.has(r))continue;vus.add(r);opts.push(v);}
+    $("zone").innerHTML=`<div class="options">${melange(opts).map(v=>`<button class="opt" data-v="${v}">${rendu(v,B,false)}</button>`).join("")}</div>`;
+    $("zone").querySelectorAll(".opt").forEach(b=>b.onclick=()=>repQcm(b));
+  }else if(mode==="chiffres"){
+    $("consigne").textContent="Écris ce nombre en chiffres.";
+    $("zone").innerHTML=`<div class="reponse" id="rep"><span class="vide">touche les chiffres</span></div><div class="pave">${[1,2,3,4,5,6,7,8,9,0].map(k=>`<button data-k="${k}">${k}</button>`).join("")}</div>
+      <div class="actions"><button class="btn" id="eff">⌫ Effacer</button><button class="btn gros" id="valider">Valider ✔</button></div>`;
+    $("zone").querySelectorAll(".pave button").forEach(b=>b.onclick=()=>{if(reponse.length<5){reponse.push(b.dataset.k);majRep();}});
+    $("eff").onclick=()=>{reponse.pop();majRep();};$("valider").onclick=valChiffres;
+  }else{
+    $("consigne").textContent="Écris ce nombre en lettres : touche les mots dans l'ordre.";
+    const bons=[...new Set(mots(n))];let pool=["un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","seize","vingt","trente","quarante","cinquante","soixante","et"];
+    if(R.max>=100)pool.push("cent","cents","vingts");if(R.max>=1000)pool.push("mille","milles");
+    const pairs={cent:"cents",cents:"cent",vingt:"vingts",vingts:"vingt",mille:"milles"};
+    let t=[...bons];bons.forEach(w=>{if(pairs[w]&&pool.includes(pairs[w])&&!t.includes(pairs[w]))t.push(pairs[w]);});
+    melange(pool.filter(w=>!t.includes(w))).slice(0,4).forEach(w=>t.push(w));
+    $("zone").innerHTML=`<div class="reponse" id="rep"><span class="vide">touche les mots</span></div><div class="tuiles">${melange(t).map(w=>`<button class="tuile" data-w="${w}">${w}</button>`).join("")}</div>
+      <div class="actions"><button class="btn" id="eff">⌫ Effacer</button><button class="btn gros" id="valider">Valider ✔</button></div>`;
+    $("zone").querySelectorAll(".tuile").forEach(b=>b.onclick=()=>{if(reponse.length<8){reponse.push(b.dataset.w);majRep();}});
+    $("eff").onclick=()=>{reponse.pop();majRep();};$("valider").onclick=valLettres;
+  }
+}
+function majRep(){const sep=cur.mode==="lettres"?"-":"";$("rep").innerHTML=reponse.length?(cur.mode==="chiffres"?fmt(reponse.join("")):reponse.join(sep)):`<span class="vide">${cur.mode==="lettres"?"touche les mots":"touche les chiffres"}</span>`;}
+function reussi(){son(true);if(essais===0)score+=2;else score+=1;
+  $("aide").className="aide bravo";$("aide").innerHTML=`<strong>Bravo !</strong> Voici tous les costumes de ce nombre :${identite(cur.n)}`;dire(cur.n);finQuestion();}
+function echec(msg){son(false);essais++;
+  if(essais===1){$("aide").className="aide err";$("aide").innerHTML="💡 "+msg+" Essaie encore !";}
+  else{$("aide").className="aide sol";$("aide").innerHTML=`La réponse était <strong>${cur.mode==="lettres"?lettres(cur.n):fmt(cur.n)}</strong>. Voici tous ses costumes :${identite(cur.n)}`;dire(cur.n);finQuestion();}
+}
+function finQuestion(){$("zone").querySelectorAll("button").forEach(b=>b.disabled=true);
+  if(cur.mode==="qcm")$("zone").querySelectorAll(".opt").forEach(b=>{if(+b.dataset.v===cur.n){b.classList.add("ok");b.disabled=false;b.onclick=null;}});
+  $("suivant").style.display="";Q++;}
+function repQcm(b){const v=+b.dataset.v;if(v===cur.n){b.classList.add("ok");reussi();}else{b.classList.add("ko");b.disabled=true;echec(MSG[typeErreur(cur.n,v)]);}}
+function valChiffres(){if(!reponse.length)return;const v=+reponse.join("");if(v===cur.n)return reussi();
+  reponse=[];majRep();echec(MSG[typeErreur(cur.n,v)]);}
+function valLettres(){if(!reponse.length)return;const bon=mots(cur.n),r=reponse;
+  if(r.join("-")===bon.join("-"))return reussi();
+  let msg;
+  const sansS=a=>a.map(w=>w.replace(/^(cent|vingt|mille)s$/,"$1"));
+  if(sansS(r).join("-")===sansS(bon).join("-"))msg="Presque ! Regarde les « s » : « cent » et « vingt » prennent un s seulement quand ils sont multipliés et à la fin du nombre (deux-cents, quatre-vingts). « Mille » ne prend jamais de s.";
+  else if(r.filter(w=>w!=="et").join("-")===bon.filter(w=>w!=="et").join("-"))msg="Presque ! Il manque ou il y a en trop le petit mot « et » (vingt-et-un, soixante-et-onze, mais quatre-vingt-un).";
+  else{const i=r.findIndex((w,k)=>w!==bon[k]);msg=i<0?"Il manque des mots à la fin.":`Le début est juste jusqu'à « ${r.slice(0,i).join("-")||"…"} », vérifie la suite.`;if(cur.A!=="oral"&&cur.A!=="chiffres")msg+=" Aide-toi en l'écrivant d'abord en chiffres : "+"?";}
+  if(msg.endsWith("?"))msg=msg.replace(/ Aide-toi.*$/," Aide-toi en pensant d'abord au nombre en chiffres.");
+  reponse=[];majRep();echec(msg);}
+function fin(){
+  $("jeu").style.display="none";$("fin").style.display="block";
+  const max=R.nb*2,p=score/max,e=p>=.9?3:p>=.6?2:p>=.3?1:0;
+  $("etoiles").textContent="⭐".repeat(e)+"☆".repeat(3-e);
+  $("bilan").textContent=`${score} points sur ${max} (2 points du premier coup, 1 point au deuxième essai). Niveau ${R.niv}, nombres de ${fmt(R.min)} à ${fmt(R.max)}.`;
+  try{TDC.note({s:score,n:max,g:p>=.8,niv:R.niv,d:`${score} / ${max} points (${R.niv}, nombres de ${R.min} à ${R.max})`});}catch(e){}
+}
+function demarrer(){
+  R.min=Math.max(0,+$("nMin").value||0);R.max=Math.max(R.min+5,+$("nMax").value||R.max);R.max=Math.min(R.max,9999);
+  if(R.formes.length<2){alertBox("Choisis au moins deux costumes.");return;}
+  if(R.mode==="lettres"&&!R.formes.some(f=>f!=="lettres"&&f!=="oral")&&!R.formes.includes("oral")){alertBox("Ajoute un costume autre que « en lettres ».");return;}
+  try{localStorage.setItem("balNombres",JSON.stringify(R));}catch(e){}
+  Q=0;score=0;deja=new Set();$("reglages").style.display="none";$("fin").style.display="none";$("jeu").style.display="block";nouvelle();
+}
+function alertBox(t){$("noteNiveau").innerHTML=`<strong style="color:#c0392b">${t}</strong>`;}
+$("go").onclick=demarrer;$("rejouer").onclick=demarrer;$("suivant").onclick=nouvelle;
+const versReglages=()=>{$("jeu").style.display="none";$("fin").style.display="none";$("reglages").style.display="block";majReglages();};
+$("quitter").onclick=versReglages;$("retour").onclick=versReglages;
+majReglages(!R.formes.length);
+</script>
+</body>
+</html>
