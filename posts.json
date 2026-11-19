@@ -1,6 +1,54 @@
 {
- "count": 59,
+ "count": 60,
  "posts": [
+  {
+   "title": "La dictée à trous",
+   "slug": "la-dictee-a-trous",
+   "cat": "etude-langue",
+   "excerpt": "Un outil pour l'enseignant : collez votre dictée, les mots difficiles sont repérés automatiquement (ou choisis par vous d'un clic) et remplacés par des trous. Fiche élève et corrigé à imprimer ou à télécharger en Word, du CP au CM.",
+   "date": "2026-11-19T15:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "Enseignant",
+    "supports": [
+     "ecran",
+     "imprimable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "RAW_HTML",
+      "file": "la-dictee-a-trous.html"
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/la-dictee-a-trous.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        },
+        "large": true
+       }
+      }
+     },
+     {
+      "type": "RAW_HTML",
+      "file": "la-dictee-a-trous-suite.html"
+     }
+    ]
+   }
+  },
   {
    "title": "Les nombres farceurs",
    "slug": "les-nombres-farceurs",
