@@ -32,7 +32,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Un même nombre peut se déguiser de mille façons : 347, trois-cent-quarante-sept, 300 + 40 + 7, 3 centaines 4 dizaines 7 unités, (3 × 100) + (4 × 10) + (7 × 1), dans le tableau de numération ou avec le matériel. Au bal masqué, l'élève doit le reconnaître sous tous ses costumes, comme le demandent les programmes du cycle 2.",
+         "text": "Un même nombre peut se déguiser de mille façons : 47, quarante-sept, 10 + 10 + 10 + 10 + 7, 40 + 7… ou 347, trois-cent-quarante-sept, 300 + 40 + 7, 3 centaines 4 dizaines 7 unités, (3 × 100) + (4 × 10) + (7 × 1), dans le tableau de numération ou avec le matériel. Au bal masqué, l'élève doit le reconnaître sous tous ses costumes, comme le demandent les programmes du cycle 2.",
          "decorations": []
         }
        }
@@ -65,7 +65,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "CP : nombres jusqu'à 100. Écriture en chiffres, en lettres, nom à l'oral, décomposition en dizaines et unités (35 = 30 + 5 = 3 dizaines 5 unités).",
+             "text": "CP : nombres jusqu'à 100. Écriture en chiffres, en lettres, nom à l'oral, décompositions en dizaines et unités (35 = 10 + 10 + 10 + 5 = 30 + 5 = 3 dizaines 5 unités).",
              "decorations": []
             }
            }
@@ -303,6 +303,23 @@
      {
       "type": "BULLETED_LIST",
       "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Costume « 10 + 10 + 10… » : le nombre écrit comme une somme de dizaines (et de centaines, de milliers). Proposé par défaut au CP et au CE1, pour les nombres qui s'écrivent avec 12 termes au plus.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
        {
         "type": "LIST_ITEM",
         "nodes": [
