@@ -5898,7 +5898,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Seul le prénom est demandé. Tout reste dans le navigateur de l'appareil utilisé : rien n'est envoyé sur Internet, rien n'est visible depuis un autre ordinateur. Effacer les données du navigateur efface aussi les carnets de vol.",
+         "text": "Seul le prénom est demandé. Tout reste dans le navigateur de l'appareil utilisé : rien n'est envoyé sur Internet, rien n'est visible depuis un autre ordinateur. Effacer les données du navigateur efface aussi les carnets de vol. Exception : avec un code de classe donné par l'enseignant, l'élève choisit un animal (Lion, Panda…) ; ses résultats sont alors envoyés sous ce pseudo, jamais avec son prénom, pour que l'enseignant les retrouve sur sa page privée.",
          "decorations": []
         }
        }
