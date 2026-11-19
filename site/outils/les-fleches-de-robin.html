@@ -186,6 +186,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
     <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Deux lettres : <i>bu</i> → <i>du ub bn</i></small></span></label>
     <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Trois lettres : <i>dom</i> → <i>bom don dmo</i></small></span></label>
     <label class="niv"><input type="radio" name="niveau" value="4"><span><b>Niveau 4</b><small>Quatre lettres, pour les plus forts : <i>pafu</i> → <i>qafu paft</i></small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="5"><span><b>Niveau 5</b><small>Petits mots courants : <i>dans</i> → <i>bans dnas</i></small></span></label>
   </div>
 
   <div class="grille">
@@ -198,7 +199,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
         <label class="chip famille"><input type="checkbox" name="famille" value="ftlij"><span>f t l i j</span></label>
         <label class="chip famille"><input type="checkbox" name="famille" value="aoec"><span>a o e c</span></label>
       </div>
-      <div class="etiq">Suites de lettres (niveaux 2 à 4)</div>
+      <div class="etiq">Suites de lettres (niveaux 2 à 4 ; le niveau 5 prend de vrais petits mots)</div>
       <div class="choix">
         <label class="chip"><input type="radio" name="suite" value="syll" checked><span>Syllabes à lire</span></label>
         <label class="chip"><input type="radio" name="suite" value="hasard"><span>Lettres au hasard</span></label>
@@ -301,6 +302,10 @@ const SIM = {
 };
 const VOYELLES = "aeiou";
 
+/* Niveau 5 : petits mots fréquents (mots-outils du CP), riches en lettres qui se ressemblent. */
+const MOTS = ["le","la","les","un","une","il","elle","et","est","de","des","du","dans","sur","avec","pour","par","pas",
+  "mais","on","ou","au","qui","que","mon","ma","ton","son","bon","bien","deux","papa","maman","lune","dodo","pomme","moto","lapin","poule","petit"];
+
 const rnd = n => Math.floor(Math.random()*n);
 const pick = a => a[rnd(a.length)];
 const melange = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; };
@@ -312,6 +317,7 @@ const lettresJeu = () => [...new Set(familles().join(""))];
 
 /* Fabrique un modèle de n lettres. */
 function fabriqueModele(n, suite){
+  if(n === 5) return pick(MOTS);
   const L = lettresJeu();
   if(n === 1) return pick(L);
   if(suite === "syll"){
@@ -353,10 +359,10 @@ function leurres(m, k){
 }
 
 function majApercu(){
-  const L = lettresJeu();
-  $("jouer").disabled = !L.length;
-  $("msg-reglages").textContent = L.length ? "" : "Coche au moins une famille de lettres.";
-  if(!L.length){ $("apercu").innerHTML = ""; return; }
+  const L = lettresJeu(), mots = val("niveau") === "5";
+  $("jouer").disabled = !L.length && !mots;
+  $("msg-reglages").textContent = L.length || mots ? "" : "Coche au moins une famille de lettres.";
+  if(!L.length && !mots){ $("apercu").innerHTML = ""; return; }
   const m = fabriqueModele(+val("niveau"), val("suite"));
   const autres = leurres(m, +val("cibles")-1);
   $("apercu").innerHTML = `Exemple : <b class="bon">${m}</b> parmi ${autres.map(s=>`<b>${s}</b>`).join(" ")}`;
@@ -393,7 +399,7 @@ function stopMinuteries(){ minuterie.forEach(clearTimeout); minuterie = []; }
 
 function demarrer(){
   const niv = +val("niveau"), nb = +val("nb"), suite = val("suite");
-  if(!lettresJeu().length) return;
+  if(!lettresJeu().length && niv !== 5) return;
   partie = [];
   const deja = new Set();
   for(let k=0; partie.length<nb && k<nb*20; k++){
@@ -403,7 +409,7 @@ function demarrer(){
   }
   idx = 0;
   stats = { premier:0, rates:[], tirs:0 };
-  $("titre-jeu").textContent = `Niveau ${niv} · ${niv} lettre${niv>1?"s":""}`;
+  $("titre-jeu").textContent = niv === 5 ? "Niveau 5 · petits mots" : `Niveau ${niv} · ${niv} lettre${niv>1?"s":""}`;
   $("progres").innerHTML = partie.map(()=>"<i></i>").join("");
   $("ecran-reglages").hidden = true; $("ecran-fin").hidden = true; $("ecran-jeu").hidden = false;
   $("robin").src = DOSSIER + perso().img; $("robin").alt = perso().nom;

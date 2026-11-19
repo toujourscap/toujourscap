@@ -5888,7 +5888,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "Les 4 niveaux",
+         "text": "Les 5 niveaux",
          "decorations": []
         }
        }
@@ -5958,6 +5958,23 @@
             "type": "TEXT",
             "textData": {
              "text": "Niveau 4 : quatre lettres, pour les plus forts.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Niveau 5 : de petits mots courants à lire (le, un, dans, pour, mais…), parmi des mots qui leur ressemblent (dnas, bans).",
              "decorations": []
             }
            }
