@@ -823,6 +823,7 @@ function bilan(){
  if(nonP.length)texteL.push('',`Épreuves non proposées après la lecture du texte (${R.orientMsg}) : ${nonP.join(', ')}.`);
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
  const SY=synthese(ids,pctLecture,attL(),LIENS_L,reglages.version?VERSIONS_L[reglages.version].lab.replace(/^attendus de /,''):reglages.classe);texteL.push('',...SY.lignes);
+ const JX=propositionJeux(ids);texteL.push('',...JX.lignes);
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
  ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment<br>(sans valeur statistique)</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${nonP.length?`<p class="avert">📖 <b>Texte d'abord</b> — ${esc(R.orientMsg)}. Épreuves non proposées : ${esc(nonP.join(', '))}.</p>`:''}
@@ -831,6 +832,7 @@ function bilan(){
  <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b></p>
  <p class="note">⚠️ Moyenne du site : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
  ${SY.html}
+ ${JX.html}
  <h3>Prénom de l'élève (pour le document)</h3>
  <input type="text" id="prenomFin" value="${esc(reglages.prenom)}" placeholder="facultatif, jamais enregistré sur le site" style="width:100%;max-width:320px">
  <h3>Observations de l'adulte</h3>
@@ -857,6 +859,7 @@ function bilan(){
 ${auto()?'<p>Passation en autonomie (correction automatique, à vérifier).</p>':''}
 ${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
 ${$('#synth')?$('#synth').outerHTML.replace(/<p class="note">.*?<\/p>/,''):''}
+${$('#jeux')?$('#jeux').outerHTML.replace(/ href="\//g,' href="https://toujourscap.com/'):''}
 <h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
 <p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %.</p><p style="font-size:9pt;color:#a35a00"><b>${AVERT}</b></p></body></html>`;
   const nom=('Bilan de lecture '+(pr||reglages.classe)+' '+(reglages.date||'')).replace(/[\\/:*?"<>|]/g,'').trim()+'.doc';
@@ -941,6 +944,59 @@ function docPassation(d){
  return tete+pre+`<table><tr><th>N°</th><th>${ep.type==='oral'||so==='auditif'||so==='pareil'||so==='emoji'?'À dire':'Item'}</th><th>Attendu</th><th>✔</th><th>≈</th><th>✘</th><th>Ce que l'élève a dit</th></tr>${items.map((it,i)=>`<tr><td>${i+1}</td><td>${lib(it)}</td><td>${att(it)}</td>${ligneCases()}</tr>`).join('')}</table><div class="dtot">Score : <b></b> / ${items.length}</div>`;
 }
 const docCartes=D=>{const e=D.filter(d=>d.ep.sorte==='empan');return e.length?`<div class="dcartes">${e.map(d=>d.items.map(it=>`<div>${esc(it.bonne)}</div>`).join('')).join('')}</div>`:''};
+
+/* ---------- Jeux du site proposés d'après le bilan ---------- */
+const JEUX={
+ 'le-cercle-conteur':['Le cercle conteur',null],
+ 'la-bibliotheque-des-contes':['La Bibliothèque des contes',['CP','CE1','CE2']],
+ 'les-fusees-des-syllabes':['Les fusées des syllabes',['GS','CP','CE1']],
+ 'le-kiosque-des-mots':['Le kiosque des mots',['GS','CP','CE1']],
+ 'la-roue-du-magicien':['La roue du magicien (b, d, p, q)',['GS','CP','CE1']],
+ 'les-fleches-de-robin':['Les flèches de Robin',['GS','CP','CE1']],
+ 'la-minute-des-syllabes':['La minute des syllabes',['CP','CE1']],
+ 'puissance-4-syllabiques':['Puissance 4 syllabique',['CP','CE1']],
+ 'le-chemin-des-sons':['Le chemin des sons',['CP']],
+ 'les-cristaux-de-la-planete-sonora':['Les cristaux de la planète Sonora (sons complexes)',['CP','CE1']],
+ 'les-formules-du-sorcier':['Les Formules du Sorcier (mots inventés)',['CP','CE1']],
+ 'la-fiole-de-la-grenouille':['La fiole de la grenouille',['CP','CE1']],
+ 'lecture-rapide-de-mots-tachistoscope':['Lecture rapide de mots',['CP','CE1']],
+ 'teleprompteur-a-l-ecoute':['Texte de fluence à vitesse automatique',['CP','CE1','CE2']],
+ 'teleprompteur-de-lecture':['Fluence sur 5 niveaux de texte',['CP','CE1','CE2']],
+ 'images-du-quotidien':['Images du quotidien',['CP','CE1']],
+ 'les-devinettes-de-la-foret':['Les devinettes de la forêt',['CP','CE1','CE2']],
+ 'le-chateau-des-detectives':['Le Château des Détectives',['CP','CE1']],
+ 'la-dictee-de-la-feuille-pliee':['Prépare ta dictée !',['CP','CE1','CE2']],
+ 'redis-la-regle':['Apprends les règles d\'orthographe',['CP','CE1','CE2']]};
+// Pour chaque épreuve : les jeux qui la travaillent (du plus simple au plus avancé).
+const JEUX_EP={cmo:['le-cercle-conteur'],cto:['le-cercle-conteur','la-bibliotheque-des-contes'],
+ sy1:['les-fusees-des-syllabes'],sy2:['les-fusees-des-syllabes'],ph1:['le-kiosque-des-mots'],ph2:['le-kiosque-des-mots'],
+ aud:['le-kiosque-des-mots'],par:['le-kiosque-des-mots'],vis:['la-roue-du-magicien','les-fleches-de-robin'],ecr:['les-fleches-de-robin'],let:['la-roue-du-magicien'],
+ e1:['les-fleches-de-robin'],e2:['les-fleches-de-robin'],e3:['les-fleches-de-robin','lecture-rapide-de-mots-tachistoscope'],
+ vs:['la-minute-des-syllabes','puissance-4-syllabiques'],vc:['les-cristaux-de-la-planete-sonora','le-chemin-des-sons'],
+ ms:['le-chemin-des-sons','les-formules-du-sorcier','la-fiole-de-la-grenouille'],mc:['les-cristaux-de-la-planete-sonora','le-chemin-des-sons','lecture-rapide-de-mots-tachistoscope'],
+ mi:['lecture-rapide-de-mots-tachistoscope','la-fiole-de-la-grenouille'],
+ cph:['images-du-quotidien'],ctx:['les-devinettes-de-la-foret','le-chateau-des-detectives'],cl:['le-chateau-des-detectives','la-bibliotheque-des-contes'],
+ dsy:['les-fusees-des-syllabes','le-kiosque-des-mots'],dmo:['le-kiosque-des-mots','la-dictee-de-la-feuille-pliee'],dph:['la-dictee-de-la-feuille-pliee','redis-la-regle']};
+// Types d'erreurs notés dans un texte → jeux ciblés.
+const JEUX_TYPE={sons:['la-roue-du-magicien'],complexe:['les-cristaux-de-la-planete-sonora'],lettres:['les-formules-du-sorcier'],devine:['les-formules-du-sorcier','lecture-rapide-de-mots-tachistoscope'],saute:['teleprompteur-de-lecture'],muettes:['redis-la-regle'],irr:['lecture-rapide-de-mots-tachistoscope']};
+function propositionJeux(ids){
+ const cl=reglages.classe,pour=s=>{const n=JEUX[s][1];return !n||!['GS','CP','CE1','CE2'].includes(cl)||n.includes(cl)};
+ const choix=new Map();// slug → raisons
+ const ajouter=(slugs,raison,prio)=>slugs.filter(pour).forEach(s=>{const x=choix.get(s)||{r:[],p:999};if(!x.r.includes(raison))x.r.push(raison);x.p=Math.min(x.p,prio);choix.set(s,x)});
+ ids.forEach(id=>{const r=resultats[id];if(!r)return;
+  if(r.type==='texte'){
+   const prec=r.lus?(r.lus-r.nbErr)/r.lus*100:0,rep=REPERES[cl]||50;
+   if(prec<90)ajouter(['le-chemin-des-sons','les-cristaux-de-la-planete-sonora','les-formules-du-sorcier'],'déchiffrage ('+r.titre.toLowerCase()+')',prec);
+   if(r.mclm<rep)ajouter(['teleprompteur-a-l-ecoute','lecture-rapide-de-mots-tachistoscope','la-fiole-de-la-grenouille'],'fluence',Math.round(r.mclm/rep*100));
+   (r.types||[]).forEach(([l])=>{const t=TYPES_ERR.find(x=>x[1]===l);if(t&&JEUX_TYPE[t[0]])ajouter(JEUX_TYPE[t[0]],'erreurs : '+l.replace(/ \(.*\)$/,'').toLowerCase(),60)});
+  }else{const p=pctLecture(r);if(p!=null&&p<80&&JEUX_EP[id])ajouter(JEUX_EP[id],r.titre.toLowerCase(),p)}});
+ let liste=[...choix.entries()].sort((a,b)=>a[1].p-b[1].p).slice(0,6),plus=false;
+ if(!liste.length&&ids.length){plus=true;liste=['les-devinettes-de-la-foret','la-bibliotheque-des-contes','teleprompteur-de-lecture','le-chateau-des-detectives'].filter(pour).slice(0,3).map(s=>[s,{r:['pour aller plus loin']}])}
+ if(!liste.length)return {html:'',lignes:[]};
+ const html=`<div class="synth" id="jeux"><h3>🎮 Jeux du site à proposer${plus?' pour aller plus loin':''}</h3><ul>${liste.map(([s,x])=>`<li><a href="/post/${s}/" target="_blank" rel="noopener"><b>${esc(JEUX[s][0])}</b></a> — ${esc(x.r.join(' ; '))}</li>`).join('')}</ul>
+ <p class="note">Proposition automatique d'après les épreuves les moins réussies (et le niveau de l'élève) : à ajuster selon vos observations.</p></div>`;
+ return {html,lignes:['JEUX DU SITE À PROPOSER'+(plus?' POUR ALLER PLUS LOIN':'')].concat(liste.map(([s,x])=>`- ${JEUX[s][0]} (${x.r.join(' ; ')}) : https://toujourscap.com/post/${s}/`))};
+}
 
 /* ---------- Synthèse par rapport aux attendus du niveau ---------- */
 function synthese(ids,pctDe,att,liens,lab){
