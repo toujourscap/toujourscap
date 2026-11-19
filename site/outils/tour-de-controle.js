@@ -1,7 +1,9 @@
 /* Carnet de vol de « La tour de contrôle » — commun à tous les jeux du site.
    L'élève donne son prénom dans la tour de contrôle (/outils/la-tour-de-controle.html) ;
    ensuite chaque jeu note ses résultats ici, dans le navigateur (localStorage).
-   Rien n'est envoyé sur Internet : les résultats restent sur cet appareil.
+   Pilote ordinaire (prénom) : rien n'est envoyé sur Internet, les résultats restent sur cet appareil.
+   Pilote « de ma classe » (pseudo d'animal choisi avec le code de classe) : le résultat est aussi envoyé
+   à /api/suivi, sans aucun prénom, pour la page privée « Mes élèves » de l'enseignant.
 
    Dans un jeu :  TDC.note({ s: 8, n: 10, d: "8 mots lus du premier coup", g: true, cle: "..." })
      s = score, n = sur combien, d = phrase de bilan, g = gagné (true/false), niv = niveau (sinon lu dans #niveau),
@@ -29,11 +31,84 @@
     p.vols = (p.vols || []).filter(function (x) { return !(x.ses === ses && (x.type === "seance" || (v.cle && x.cle === v.cle))); });
     p.vols.push(v);
     if (p.vols.length > MAX) p.vols = p.vols.slice(-MAX);
-    return ecrire(c);
+    var ok = ecrire(c);
+    if (p.classe && p.pseudo) envoyer({ code: p.classe, pseudo: p.pseudo, v: v });
+    return ok;
   }
 
+  /* Pilote « de ma classe » (pseudo d'animal, jamais de prénom) : le résultat part aussi vers /api/suivi,
+     pour que l'enseignant le voie sur sa page privée « Mes élèves ». Sans réseau : mis en attente, renvoyé plus tard. */
+  var ATTENTE = "tdc-attente";
+  function fileAttente(l) {
+    try { if (l) { localStorage.setItem(ATTENTE, JSON.stringify(l.slice(-200))); return l; } return JSON.parse(localStorage.getItem(ATTENTE) || "[]") || []; }
+    catch (e) { return []; }
+  }
+  function poster(m) {
+    return fetch("/api/suivi", { method: "POST", keepalive: true, headers: { "content-type": "application/json" }, body: JSON.stringify(m) })
+      .then(function (r) { return r.ok || r.status === 400 || r.status === 404; }, function () { return false; }); // 400/404 : inutile de réessayer
+  }
+  function envoyer(m) {
+    if (!/^https?:$/.test(location.protocol)) return;
+    poster(m).then(function (ok) { if (!ok) fileAttente(fileAttente().concat([m])); else vider(); });
+  }
+  var enCours = false;
+  function vider() {
+    var l = fileAttente();
+    if (!l.length || enCours) return;
+    enCours = true;
+    fileAttente([]);
+    var reste = [], i = 0;
+    (function suite() {
+      if (i >= l.length) { enCours = false; if (reste.length) fileAttente(fileAttente().concat(reste)); return; }
+      var m = l[i++];
+      poster(m).then(function (ok) { if (!ok) reste.push(m); suite(); });
+    })();
+  }
+  setTimeout(vider, 1500);
+  addEventListener("online", vider);
+
+  /* Les jeux du site : fichier → titre, article (slug), image. Utilisé par la tour de contrôle et la page « Mes élèves ». */
+  var JEUX = [
+  ["Français : lire", [
+    ["les-fleches-de-robin","Les flèches de Robin","les-fleches-de-robin"],
+    ["la-roue-du-magicien","La roue du magicien","la-roue-du-magicien"],
+    ["les-fusees-des-syllabes","Les fusées des syllabes","les-fusees-des-syllabes"],
+    ["la-minute-des-syllabes","La minute des syllabes","la-minute-des-syllabes"],
+    ["puissance-4-syllabique","Puissance 4 syllabique","puissance-4-syllabiques"],
+    ["le-chemin-des-sons","Le chemin des sons","le-chemin-des-sons"],
+    ["lecture-rapide-de-mots-avec-le-tachitoscope","Lecture rapide de mots","lecture-rapide-de-mots-tachistoscope"],
+    ["images-du-quotidien","Images du quotidien","images-du-quotidien"],
+    ["teleprompteur-a-l-ecoute","Téléprompteur à l'écoute","teleprompteur-a-l-ecoute"],
+    ["teleprompteur-de-lecture","Téléprompteur de lecture","teleprompteur-de-lecture"],
+    ["le-chateau-des-detectives","Le Château des Détectives","le-chateau-des-detectives"],
+    ["la-bibliotheque-des-contes","La Bibliothèque des contes","la-bibliotheque-des-contes"],
+    ["les-devinettes-de-la-foret","Les devinettes de la forêt","les-devinettes-de-la-foret"]
+  ]],
+  ["Français : contes, orthographe", [
+    ["les-formules-du-sorcier","Les Formules du Sorcier","les-formules-du-sorcier"],
+    ["le-jackpot-des-contes","Le Jackpot des contes","le-jackpot-des-contes","/images/contes/le-jackpot-des-contes.jpg"],
+    ["la-dictee-de-la-feuille-pliee","Prépare ta dictée !","la-dictee-de-la-feuille-pliee"],
+    ["redis-la-regle","Apprends les règles d'orthographe","redis-la-regle"],
+    ["la-machine-a-conjuguer","La machine à conjuguer","la-machine-a-conjuguer"]
+  ]],
+  ["Maths", [
+    ["tour-des-nombres","La tour des nombres","la-tour-des-nombres"],
+    ["le-chateau-des-nombres","Le château des nombres","le-chateau-des-nombres"],
+    ["le-puzzle-du-chateau","Le puzzle du château","le-puzzle-du-chateau-des-nombres"],
+    ["la-maison-de-briques","La maison de briques","la-maison-de-briques"],
+    ["la-course-des-additions","La Course des Additions","la-course-des-additions"],
+    ["la-course-des-multiplications","La Course des Multiplications","la-course-des-multiplications"],
+    ["le-tape-taupe-des-additions","Le Tape-taupe des additions","le-tape-taupe-des-additions"],
+    ["le-secret-de-la-pyramide","Le secret de la pyramide","le-secret-de-la-pyramide"]
+  ]],
+  ["Mieux apprendre", [
+    ["le-mistigri-des-attitudes","Le Mistigri des attitudes","le-mistigri-des-attitudes"],
+    ["les-explorateurs-du-cerveau","Les explorateurs du cerveau","les-explorateurs-du-cerveau"]
+  ]]
+];
+
   var TDC = window.TDC = {
-    jeu: jeu,
+    jeu: jeu, JEUX: JEUX, vider: vider,
     pilote: function () { return lire().actif || ""; },
     lire: lire, ecrire: ecrire, propre: propre,
     note: function (r) {
@@ -56,7 +131,7 @@
 
   /* Séance sans bilan (outil sans score, partie arrêtée en route) : notée si l'élève a joué au moins 45 s. */
   function seance() {
-    if (noteFaite || seanceFaite || jeu === "la-tour-de-controle" || !TDC.pilote()) return;
+    if (noteFaite || seanceFaite || jeu === "la-tour-de-controle" || window.TDC_SANS_UI || !TDC.pilote()) return;
     var s = Math.round((Date.now() - debut) / 1000);
     if (s < 45) return;
     seanceFaite = true;
@@ -69,7 +144,7 @@
   var b = null;
   function badge(flash) {
     var p = TDC.pilote();
-    if (!p || jeu === "la-tour-de-controle" || !document.body) return;
+    if (!p || jeu === "la-tour-de-controle" || window.TDC_SANS_UI || !document.body) return;
     if (!b) {
       b = document.createElement("div");
       b.setAttribute("aria-hidden", "true");

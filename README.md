@@ -40,3 +40,10 @@ Fixer une limite de dépense mensuelle dans la console Anthropic (console.anthro
 gardée dans la même base D1 `DB` (tables `salles` et `salle_joueurs`, créées automatiquement, effacées au bout de 24 h).
 Les écrans interrogent le serveur toutes les 0,8 à 1,5 s ; le départ est fixé à l'heure du serveur pour que le compte à rebours soit le même partout.
 Jeux branchés : La course des additions et La course des multiplications (mode « 📱 Plusieurs écrans »), Le tape-taupe (une question à la fois pour toute la salle : colonnes `etape`, `etape_t` et `donnees`, ajoutées automatiquement). Aucun réglage Cloudflare supplémentaire.
+
+## Mes élèves (suivi de la classe)
+
+`functions/admin/eleves.js` + `functions/api/suivi.js` + `lib/suivi.js` : page privée https://toujourscap.com/admin/eleves (mêmes identifiants que la modération).
+Chaque élève a un pseudo d'animal ; les vrais prénoms sont écrits sur la page et gardés seulement dans le navigateur de l'enseignant (localStorage `suivi-prenoms`), jamais envoyés.
+Les élèves saisissent le code de classe (5 lettres) dans La tour de contrôle, puis choisissent leur animal : `tour-de-controle.js` envoie alors chaque résultat à `/api/suivi` (file d'attente `tdc-attente` sans réseau).
+Tables D1 `suivi_reglages`, `suivi_eleves`, `suivi_vols` (créées automatiquement ; résultats effacés après 400 jours). Aucun réglage Cloudflare supplémentaire.

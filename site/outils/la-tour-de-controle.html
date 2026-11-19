@@ -44,6 +44,15 @@ button,input{font:inherit}
 .badge-pilote{border:1px solid var(--ligne);background:rgba(124,200,255,.14);color:var(--blanc);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:700}
 .badge-pilote:hover,.badge-pilote:focus{background:rgba(124,200,255,.3);outline:none}
 .note{font-size:13px;color:var(--gris);margin:14px 0 0}
+/* Ma classe : pseudos d'animaux */
+.classe{margin-top:18px;padding-top:14px;border-top:1px dashed var(--ligne)}
+.classe .question{font-size:18px}
+.animaux{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:8px}
+.animal{border:1px solid var(--ligne);background:rgba(124,200,255,.14);color:var(--blanc);border-radius:14px;padding:8px 4px;cursor:pointer;font-weight:700;font-size:14px}
+.animal span{display:block;font-size:34px;line-height:1.15}
+.animal:hover,.animal:focus{background:rgba(124,200,255,.32);outline:none}
+.saisie input.code{font-size:22px;letter-spacing:6px;text-transform:uppercase;max-width:200px}
+.msg-classe{min-height:1.2em;color:var(--jaune);font-size:14px;margin:8px 0 0}
 .lien-ens{position:fixed;right:12px;bottom:10px;z-index:3}
 
 /* ---------- Carnet de vol ---------- */
@@ -130,6 +139,21 @@ button,input{font:inherit}
       <div class="badges" id="badges"></div>
     </div>
     <p class="note">Seulement le prénom. Les résultats restent sur cet appareil, rien n'est envoyé sur Internet.</p>
+    <div class="classe" id="classe">
+      <div id="classe-sans">
+        <button class="btn sec" type="button" id="vers-code">🏫 Mon enseignant m'a donné un code</button>
+        <form id="form-code" autocomplete="off" hidden>
+          <label class="question" for="code">Écris le code de ta classe&nbsp;:</label>
+          <div class="saisie"><input id="code" class="code" maxlength="5" placeholder="ABCDE" spellcheck="false" autocapitalize="characters"><button class="btn" type="submit">OK</button></div>
+        </form>
+      </div>
+      <div id="classe-avec" hidden>
+        <p class="question">🏫 Dans ma classe, je suis…</p>
+        <div class="animaux" id="animaux"></div>
+        <p class="note">Avec ton animal, ton enseignant voit tes résultats. Ton prénom n'est jamais envoyé. <button class="btn sec petit" type="button" id="oublier-code">Changer de code</button></p>
+      </div>
+      <p class="msg-classe" id="msg-classe"></p>
+    </div>
   </div>
   <button class="btn sec petit lien-ens" type="button" id="vers-ens">👩‍🏫 Enseignant</button>
 </section>
@@ -182,44 +206,7 @@ button,input{font:inherit}
 
 <script>
 /* ---------- Les jeux du site : fichier → titre, article, rubrique ---------- */
-var JEUX = [
-  ["Français : lire", [
-    ["les-fleches-de-robin","Les flèches de Robin","les-fleches-de-robin"],
-    ["la-roue-du-magicien","La roue du magicien","la-roue-du-magicien"],
-    ["les-fusees-des-syllabes","Les fusées des syllabes","les-fusees-des-syllabes"],
-    ["la-minute-des-syllabes","La minute des syllabes","la-minute-des-syllabes"],
-    ["puissance-4-syllabique","Puissance 4 syllabique","puissance-4-syllabiques"],
-    ["le-chemin-des-sons","Le chemin des sons","le-chemin-des-sons"],
-    ["lecture-rapide-de-mots-avec-le-tachitoscope","Lecture rapide de mots","lecture-rapide-de-mots-tachistoscope"],
-    ["images-du-quotidien","Images du quotidien","images-du-quotidien"],
-    ["teleprompteur-a-l-ecoute","Téléprompteur à l'écoute","teleprompteur-a-l-ecoute"],
-    ["teleprompteur-de-lecture","Téléprompteur de lecture","teleprompteur-de-lecture"],
-    ["le-chateau-des-detectives","Le Château des Détectives","le-chateau-des-detectives"],
-    ["la-bibliotheque-des-contes","La Bibliothèque des contes","la-bibliotheque-des-contes"],
-    ["les-devinettes-de-la-foret","Les devinettes de la forêt","les-devinettes-de-la-foret"]
-  ]],
-  ["Français : contes, orthographe", [
-    ["les-formules-du-sorcier","Les Formules du Sorcier","les-formules-du-sorcier"],
-    ["le-jackpot-des-contes","Le Jackpot des contes","le-jackpot-des-contes","/images/contes/le-jackpot-des-contes.jpg"],
-    ["la-dictee-de-la-feuille-pliee","Prépare ta dictée !","la-dictee-de-la-feuille-pliee"],
-    ["redis-la-regle","Apprends les règles d'orthographe","redis-la-regle"],
-    ["la-machine-a-conjuguer","La machine à conjuguer","la-machine-a-conjuguer"]
-  ]],
-  ["Maths", [
-    ["tour-des-nombres","La tour des nombres","la-tour-des-nombres"],
-    ["le-chateau-des-nombres","Le château des nombres","le-chateau-des-nombres"],
-    ["le-puzzle-du-chateau","Le puzzle du château","le-puzzle-du-chateau-des-nombres"],
-    ["la-maison-de-briques","La maison de briques","la-maison-de-briques"],
-    ["la-course-des-additions","La Course des Additions","la-course-des-additions"],
-    ["la-course-des-multiplications","La Course des Multiplications","la-course-des-multiplications"],
-    ["le-tape-taupe-des-additions","Le Tape-taupe des additions","le-tape-taupe-des-additions"],
-    ["le-secret-de-la-pyramide","Le secret de la pyramide","le-secret-de-la-pyramide"]
-  ]],
-  ["Mieux apprendre", [
-    ["le-mistigri-des-attitudes","Le Mistigri des attitudes","le-mistigri-des-attitudes"],
-    ["les-explorateurs-du-cerveau","Les explorateurs du cerveau","les-explorateurs-du-cerveau"]
-  ]]
-];
+var JEUX = TDC.JEUX;
 var INFO = {}, NB_JEUX = 0;
 JEUX.forEach(function(z){ z[1].forEach(function(j){ INFO[j[0]] = {titre:j[1], slug:j[2], img:j[3] || "/images/jeux/"+j[2]+".jpg"}; NB_JEUX++; }); });
 
@@ -255,6 +242,7 @@ function accueil(){
   $("connus").hidden = !noms.length;
   $("badges").innerHTML = noms.map(function(n){ return '<button class="badge-pilote" type="button" data-n="'+esc(n)+'">✈️ '+esc(n)+'</button>'; }).join("");
   $("prenom").value = "";
+  classe();
   montre("accueil");
   setTimeout(function(){ try{ $("prenom").focus({preventScroll:true}); }catch(e){} }, 50);
 }
@@ -278,6 +266,54 @@ function entrer(n){
   if(!matchMedia("(prefers-reduced-motion: reduce)").matches) a.classList.add("vole");
   carnet();
 }
+
+/* ---------- Ma classe : pseudo d'animal + code de classe (résultats envoyés sans prénom) ---------- */
+var CLE_CLASSE = "tdc-classe";
+function codeLocal(c){ try{ if(c===null) localStorage.removeItem(CLE_CLASSE); else if(c) localStorage.setItem(CLE_CLASSE,c); return localStorage.getItem(CLE_CLASSE)||""; }catch(e){ return ""; } }
+function nomAnimal(a){ return a.emoji+" "+a.nom; }
+function classe(){
+  var code = codeLocal();
+  $("msg-classe").textContent = "";
+  $("classe-sans").hidden = !!code; $("classe-avec").hidden = !code;
+  $("form-code").hidden = true; $("vers-code").hidden = false;
+  if(!code) return;
+  $("animaux").innerHTML = '<p class="note">Chargement…</p>';
+  fetch("/api/suivi?code="+encodeURIComponent(code)).then(function(r){ return r.json(); }).then(function(d){
+    if(!d.ok){ if(d.err==="code"){ codeLocal(null); classe(); $("msg-classe").textContent = "Ce code n'existe plus. Demande le nouveau code à ton enseignant."; } else $("animaux").innerHTML = ""; return; }
+    $("animaux").innerHTML = d.animaux.length ? d.animaux.map(function(a){ return '<button class="animal" type="button" data-id="'+esc(a.id)+'" data-e="'+esc(a.emoji)+'" data-n="'+esc(a.nom)+'"><span>'+esc(a.emoji)+'</span>'+esc(a.nom)+'</button>'; }).join("")
+      : '<p class="note">Ton enseignant n\'a pas encore préparé les animaux de la classe.</p>';
+  }, function(){ $("animaux").innerHTML = ""; $("msg-classe").textContent = "Pas de connexion à Internet pour l'instant."; });
+}
+$("vers-code").addEventListener("click", function(){ $("vers-code").hidden = true; $("form-code").hidden = false; setTimeout(function(){ try{ $("code").focus(); }catch(e){} },50); });
+$("form-code").addEventListener("submit", function(e){ e.preventDefault();
+  var code = $("code").value.toUpperCase().replace(/[^A-Z]/g,"");
+  if(code.length!==5){ $("msg-classe").textContent = "Le code a 5 lettres."; return; }
+  fetch("/api/suivi?code="+code).then(function(r){ return r.json(); }).then(function(d){
+    if(!d.ok){ $("msg-classe").textContent = "Ce code ne marche pas. Vérifie les lettres avec ton enseignant."; return; }
+    codeLocal(code); $("code").value = ""; classe();
+  }, function(){ $("msg-classe").textContent = "Pas de connexion à Internet pour l'instant."; });
+});
+$("oublier-code").addEventListener("click", function(){ if(confirm("Oublier le code de la classe sur cet appareil ?")){ codeLocal(null); classe(); } });
+$("animaux").addEventListener("click", function(e){
+  var b = e.target.closest(".animal"); if(!b) return;
+  var code = codeLocal(), id = b.dataset.id, n = nomAnimal({emoji:b.dataset.e, nom:b.dataset.n});
+  var c = TDC.lire();
+  if(!c.pilotes[n]) c.pilotes[n] = {depuis: Date.now(), vols: []};
+  c.pilotes[n].classe = code; c.pilotes[n].pseudo = id;
+  TDC.ecrire(c);
+  entrer(n);
+  // Retrouver les vols faits sur les autres appareils de la classe
+  fetch("/api/suivi?code="+code+"&pseudo="+encodeURIComponent(id)).then(function(r){ return r.json(); }).then(function(d){
+    if(!d.ok || !d.vols) return;
+    var c2 = TDC.lire(), p = c2.pilotes[n]; if(!p) return;
+    var vu = {}, cle = function(v){ return (v.ses||"")+"|"+(v.type||"")+"|"+(v.cle||v.t); };
+    (p.vols||[]).forEach(function(v){ vu[cle(v)] = 1; });
+    d.vols.forEach(function(v){ if(!vu[cle(v)]){ p.vols.push(v); vu[cle(v)] = 1; } });
+    p.vols.sort(function(a,b){ return a.t-b.t; }); p.vols = p.vols.slice(-400);
+    TDC.ecrire(c2);
+    if(c2.actif===n && !$("carnet").hidden) carnet();
+  }, function(){});
+});
 
 /* ---------- Carnet de vol ---------- */
 function carnet(){
