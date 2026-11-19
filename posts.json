@@ -1,6 +1,303 @@
 {
- "count": 58,
+ "count": 59,
  "posts": [
+  {
+   "title": "Les nombres farceurs",
+   "slug": "les-nombres-farceurs",
+   "cat": "numeration",
+   "excerpt": "Démasquer les nombres irréguliers (onze à seize, soixante-dix à quatre-vingt-dix-neuf) : chacun dit son faux nom logique (dix-un, septante, huitante, nonante) et l'élève retrouve le vrai. Jeu à l'écran, rituel à projeter et cartes à imprimer, CE1.",
+   "date": "2026-11-19T14:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CE1"
+    ],
+    "joueurs": "1 joueur, la classe ou petits groupes",
+    "supports": [
+     "ecran",
+     "projetable",
+     "imprimable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Onze, douze, soixante-dix, quatre-vingt-douze… Ces nombres ne disent pas ce qu'ils sont : ce sont des farceurs ! Chacun porte un « faux nez », son nom logique (dix-un, septante, huitante, nonante), que l'élève doit démasquer pour retrouver le vrai nom. Un jeu pour mémoriser les nombres irréguliers, une difficulté majeure au CE1.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les niveaux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "De 11 à 16.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "De 70 à 79.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "De 80 à 99.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Tous les farceurs, avec les pièges (71, 80, 81 sont toujours proposés).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les jeux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Démasque : le nombre dit son faux nom, l'élève reconstruit le vrai nom avec les étiquettes-mots. Conseils ciblés en cas d'erreur.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écoute et trouve : on entend le nombre, on le retrouve parmi des écritures en chiffres qui reprennent les erreurs fréquentes (6012 pour soixante-douze, 62…).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La recette cachée : retrouver la recette du nombre (60 + 12, 4 × 20 + 12).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Mélange : les trois jeux à la suite. 10, 15 ou 20 questions, 2 points du premier coup.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En classe",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Rituel collectif à projeter : le faux nom s'affiche, la classe cherche, puis on démasque.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Cartes à imprimer : règles (démasque, mémory, jeu des familles), familles de 4 cartes (nombre, faux nez, vrai nom, recette), pièges signalés par une étoile, planche d'étiquettes-mots. Format A4, 18 cartes par page.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écriture des nombres en lettres selon l'orthographe recommandée (traits d'union), comme dans Le bal masqué des nombres.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/les-nombres-farceurs.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "Le bal masqué des nombres",
    "slug": "le-bal-masque-des-nombres",
