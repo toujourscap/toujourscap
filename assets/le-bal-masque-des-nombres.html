@@ -163,14 +163,14 @@ const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ");
 
 /* ---------- Réglages ---------- */
 const NIV={
-  CP:{presets:[[0,20],[0,69],[0,100]],def:[0,100],formes:["chiffres","lettres","oral","additive","unites","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","materiel"],nc:false,
-      note:"Repères CP : nombres jusqu'à 100 — écriture en chiffres, en lettres, nom à l'oral, décomposition en dizaines et unités (35 = 30 + 5 = 3 dizaines 5 unités)."},
-  CE1:{presets:[[0,100],[100,1000],[0,1000]],def:[0,1000],formes:["chiffres","lettres","oral","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","tableau","materiel"],nc:true,
+  CP:{presets:[[0,20],[0,69],[0,100]],def:[0,100],formes:["chiffres","lettres","oral","repetee","additive","unites","tableau","materiel"],defF:["chiffres","lettres","oral","repetee","additive","unites","materiel"],nc:false,
+      note:"Repères CP : nombres jusqu'à 100 — écriture en chiffres, en lettres, nom à l'oral, décompositions (35 = 10 + 10 + 10 + 5 = 30 + 5 = 3 dizaines 5 unités)."},
+  CE1:{presets:[[0,100],[100,1000],[0,1000]],def:[0,1000],formes:["chiffres","lettres","oral","repetee","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","repetee","additive","unites","tableau","materiel"],nc:true,
       note:"Repères CE1 : nombres jusqu'à 1 000 — chiffres, lettres, oral, unités de numération (centaines, dizaines, unités), 300 + 40 + 5, (3 × 100) + (4 × 10) + 5."},
-  CE2:{presets:[[0,1000],[1000,9999],[0,9999]],def:[0,9999],formes:["chiffres","lettres","oral","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","produits","tableau"],nc:true,
+  CE2:{presets:[[0,1000],[1000,9999],[0,9999]],def:[0,9999],formes:["chiffres","lettres","oral","repetee","additive","unites","produits","tableau","materiel"],defF:["chiffres","lettres","oral","additive","unites","produits","tableau"],nc:true,
       note:"Repères CE2 : nombres jusqu'à 10 000 — (4 × 1 000) + (6 × 100) + (3 × 10) + (5 × 1), 4 000 + 600 + 30 + 5, quatre-mille-six-cent-trente-cinq."}
 };
-const NOMF={chiffres:"En chiffres",lettres:"En lettres",oral:"À l'oral",additive:"Décomposition (+)",unites:"Unités de numération",produits:"Avec × 10, × 100…",tableau:"Tableau de numération",materiel:"Matériel"};
+const NOMF={repetee:"10 + 10 + 10…",chiffres:"En chiffres",lettres:"En lettres",oral:"À l'oral",additive:"Décomposition (+)",unites:"Unités de numération",produits:"Avec × 10, × 100…",tableau:"Tableau de numération",materiel:"Matériel"};
 let R={niv:"CP",min:0,max:100,mode:"qcm",formes:[],nc:false,voix:true,nb:10};
 try{const s=JSON.parse(localStorage.getItem("balNombres")||"null");if(s)Object.assign(R,s);}catch(e){}
 
@@ -214,6 +214,9 @@ function unitesTxt(n,nc){
   return t.length?t.join(" "):"0 unité";
 }
 function additive(n){const {m,c,d,u}=chiffresDe(n);const t=[m*1000,c*100,d*10,u].filter(x=>x>0).map(fmt);return t.length?t.join(" + "):"0";}
+function repetee(n){const {m,c,d,u}=chiffresDe(n);const t=[];for(let i=0;i<m;i++)t.push("1\u202f000");for(let i=0;i<c;i++)t.push("100");for(let i=0;i<d;i++)t.push("10");if(u)t.push(u);return t.join(" + ")||"0";}
+function nbTermes(n){const {m,c,d,u}=chiffresDe(n);return m+c+d+(u?1:0);}
+function formeOk(n,f){return f!=="repetee"||nbTermes(n)<=12;}
 function produits(n){const {m,c,d,u}=chiffresDe(n);const t=[];if(m)t.push(`(${m} × 1 000)`);if(c)t.push(`(${c} × 100)`);if(d)t.push(`(${d} × 10)`);if(u)t.push(`(${u} × 1)`);return t.join(" + ")||"0";}
 function colonnes(n){if(R.niv==="CE2"||n>=1000)return"mcdu";if(R.niv==="CE1"||n>=100)return"cdu";return"du";}
 function tableau(n){const k=colonnes(n),v=chiffresDe(n),nom={m:"M",c:"C",d:"D",u:"U"};
@@ -226,6 +229,7 @@ function rendu(n,f,nc){
     case"chiffres":return`<div class="f-chiffres">${fmt(n)}</div>`;
     case"lettres":return`<div class="f-lettres">${lettres(n)}</div>`;
     case"additive":return`<div class="f-calc">${additive(n)}</div>`;
+    case"repetee":return`<div class="f-calc">${repetee(n)}</div>`;
     case"unites":return`<div class="f-calc">${unitesTxt(n,nc)}</div>`;
     case"produits":return`<div class="f-calc">${produits(n)}</div>`;
     case"tableau":return tableau(n);
@@ -234,7 +238,7 @@ function rendu(n,f,nc){
   }
 }
 function identite(n){
-  const fs=["chiffres","lettres","additive","unites"];if(R.niv!=="CP")fs.push("produits");fs.push("tableau");if(n<=1000||R.niv==="CE2")fs.push("materiel");
+  const fs=["chiffres","lettres"];if(formeOk(n,"repetee")&&R.niv!=="CE2")fs.push("repetee");fs.push("additive","unites");if(R.niv!=="CP")fs.push("produits");fs.push("tableau");if(n<=1000||R.niv==="CE2")fs.push("materiel");
   return `<div class="identite">${fs.map(f=>`<div><small>${NOMF[f]}</small>${rendu(n,f,false)}</div>`).join("")}</div>`;
 }
 
@@ -289,13 +293,14 @@ function nouvelle(){
   essais=0;reponse=[];$("aide").className="aide";$("aide").innerHTML="";$("suivant").style.display="none";
   $("barreProg").style.width=(Q/R.nb*100)+"%";$("compteur").textContent=(Q+1)+" / "+R.nb;
   const n=tireNombre(),mode=questionMode();
-  const sources=R.formes.filter(f=>f!=="chiffres"||mode==="qcm"||mode==="lettres");
+  let FS=R.formes.filter(f=>formeOk(n,f));if(FS.filter(f=>f!=="oral").length<2)FS=R.formes;
+  const sources=FS.filter(f=>f!=="chiffres"||mode==="qcm"||mode==="lettres");
   let A,B;
   if(mode==="qcm"){
-    const cibles=R.formes.filter(f=>R.formes.some(g=>g!==f&&g!=="oral"));
-    A=cibles[alea(0,cibles.length-1)];const rep=R.formes.filter(g=>g!==A&&g!=="oral");B=rep[alea(0,rep.length-1)];
-  }else if(mode==="chiffres"){const s=R.formes.filter(f=>f!=="chiffres");A=s.length?s[alea(0,s.length-1)]:"oral";}
-  else{const s=R.formes.filter(f=>f!=="lettres"&&f!=="oral");A=s.length?s[alea(0,s.length-1)]:"chiffres";if(Math.random()<.3&&R.formes.includes("oral"))A="oral";}
+    const cibles=FS.filter(f=>FS.some(g=>g!==f&&g!=="oral"));
+    A=cibles[alea(0,cibles.length-1)];const rep=FS.filter(g=>g!==A&&g!=="oral");B=rep[alea(0,rep.length-1)];
+  }else if(mode==="chiffres"){const s=FS.filter(f=>f!=="chiffres");A=s.length?s[alea(0,s.length-1)]:"oral";}
+  else{const s=FS.filter(f=>f!=="lettres"&&f!=="oral");A=s.length?s[alea(0,s.length-1)]:"chiffres";if(Math.random()<.3&&FS.includes("oral"))A="oral";}
   const nc=R.nc&&A==="unites"&&Math.random()<.5;
   cur={n,mode,A,B,nc};
   $("cible").innerHTML=`<div class="forme-nom">${NOMF[A]}</div>${rendu(n,A,nc)}`;
