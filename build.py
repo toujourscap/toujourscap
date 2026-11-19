@@ -106,6 +106,27 @@ def fr_date(iso):
     return f"{d.day} {MONTHS[d.month - 1]} {d.year}"
 
 
+_GIT = {}
+
+
+def date_git(rel):
+    """Date du dernier commit qui a modifié un fichier du dépôt (None si clone superficiel ou sans git)."""
+    import subprocess
+    if "shallow" not in _GIT:
+        try:
+            _GIT["shallow"] = subprocess.run(["git", "-C", ROOT, "rev-parse", "--is-shallow-repository"], capture_output=True, text=True).stdout.strip() != "false"
+        except Exception:
+            _GIT["shallow"] = True
+    if _GIT["shallow"]:
+        return None
+    if rel not in _GIT:
+        try:
+            _GIT[rel] = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%cI", "--", rel], capture_output=True, text=True).stdout.strip() or None
+        except Exception:
+            _GIT[rel] = None
+    return _GIT[rel]
+
+
 def meta_desc(s, n=158):
     """Coupe une description trop longue au dernier mot entier."""
     s = " ".join((s or "").split())
@@ -237,7 +258,7 @@ def render(n, ctx):
         ctx.setdefault("tools", []).append(src)
         TOOL_CANON.setdefault(src, (f"/post/{ctx['slug']}/", ctx.get("excerpt", "")))
         # "large": true dans containerData -> le jeu déborde de la colonne de texte et prend la largeur de l'écran
-        return embed(src, height, "Outil interactif", lazy=True, large=h.get("containerData", {}).get("large", False))
+        return embed(src, height, ctx.get("title") or "Outil interactif", lazy=True, large=h.get("containerData", {}).get("large", False))
     return children(n, ctx)
 
 
@@ -256,8 +277,8 @@ FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "
 def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
     fond = FONDS.get(active, "canopee")
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
-    full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Outils pédagogiques cycle 2 : GS, CP, CE1"
-    desc = meta_desc(desc) or "Outils pédagogiques cycle 2 gratuits pour la GS, le CP et le CE1 : outils de lecture, contes du cercle conteur et petits jeux pour apprendre en jouant."
+    full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Jeux et outils pédagogiques, cycles 2 et 3"
+    desc = meta_desc(desc) or "Jeux et outils pédagogiques gratuits, sans publicité, pour les cycles 2 et 3 (GS, CP, CE1, CE2…) : lecture, contes, numération, calcul, à projeter ou imprimer."
     og_image = og_image or DEFAULT_IMAGE
     if og_image.startswith("/"):
         og_image = SITE + og_image
@@ -501,68 +522,89 @@ def grid(posts):
 
 # Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
 SEO_TITRES = {
-    "/post/synthese-comparative-internationale-aide-specialisee/": "Aide spécialisée : synthèse internationale des facteurs de réussite",
-    "/post/intelligence-ordinaire-culture-peu-scolaire-maitre-e/": "Intelligence ordinaire, culture peu scolaire : pistes pour le maître E",
-    "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99 en jouant, CP-CE1",
-    "/post/le-puzzle-du-chateau-des-nombres/": "Puzzle du tableau des nombres 0-99 en ligne et à imprimer, CP-CE1",
-    "/post/le-cercle-conteur/": "Le cercle conteur (Suzy Platiel) : déroulé et règles en GS-CP",
+    "/post/synthese-comparative-internationale-aide-specialisee/": "Aide spécialisée : synthèse internationale de la réussite",
+    "/post/intelligence-ordinaire-culture-peu-scolaire-maitre-e/": "Intelligence ordinaire et culture peu scolaire : maître E",
+    "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99, CP-CE1",
+    "/post/le-puzzle-du-chateau-des-nombres/": "Puzzle du tableau des nombres 0-99 à imprimer, CP-CE1",
+    "/post/le-cercle-conteur/": "Le cercle conteur (Suzy Platiel) : déroulé et règles GS-CP",
     "/post/le-nourrissage-culturel/": "Le nourrissage culturel (Serge Boimare) en GS et CP",
-    "/post/les-formules-du-sorcier/": "Les Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
-    "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour le cercle conteur GS-CP",
-    "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires pour la GS et le CP",
-    "/post/pourquoi-le-moustique-bourdonne-a-nos-oreilles/": "Pourquoi le moustique bourdonne à nos oreilles : conte africain GS-CP",
-    "/post/qui-de-l-oeuf-qui-du-poussin/": "Qui de l'œuf, qui du poussin ? Mythe bambara pour le cercle conteur",
-    "/post/comment-anansi-devint-le-maitre-des-histoires/": "Anansi, le maître des histoires : conte ashanti pour la GS et le CP",
-    "/post/les-calebasses-de-kouss/": "Les calebasses de Kouss : conte sénégalais de Leuk et Bouki, GS-CP",
+    "/post/les-formules-du-sorcier/": "Formules du Sorcier : jeu de lecture de pseudo-mots CP-CE1",
+    "/post/le-radis-geant/": "Le radis géant : conte de randonnée pour la GS et le CP",
+    "/post/le-jackpot-des-contes/": "Le Jackpot des contes : générateur d'histoires GS-CP",
+    "/post/pourquoi-le-moustique-bourdonne-a-nos-oreilles/": "Pourquoi le moustique bourdonne : conte africain GS-CP",
+    "/post/qui-de-l-oeuf-qui-du-poussin/": "Qui de l'œuf, qui du poussin ? Mythe bambara, GS-CP",
+    "/post/comment-anansi-devint-le-maitre-des-histoires/": "Anansi, le maître des histoires : conte ashanti GS-CP",
+    "/post/les-calebasses-de-kouss/": "Les calebasses de Kouss : conte de Leuk et Bouki, GS-CP",
     "/post/rafara/": "Rafara : conte malgache pour le cercle conteur en GS et CP",
-    "/post/la-petite-poule-et-le-grain-de-mil/": "La petite poule et le grain de mil : conte en randonnée GS-CP",
+    "/post/la-petite-poule-et-le-grain-de-mil/": "La petite poule et le grain de mil : conte GS-CP",
     "/post/lecture-rapide-de-nombres/": "Lecture rapide de nombres : flash nombres en ligne, cycle 2",
-    "/post/lecture-rapide-de-mots-tachistoscope/": "Tachistoscope en ligne gratuit : lecture rapide de mots CP-CE1",
+    "/post/lecture-rapide-de-mots-tachistoscope/": "Tachistoscope en ligne gratuit : lecture de mots CP-CE1",
     "/post/teleprompteur-de-lecture/": "Téléprompteur de lecture en ligne : fluence CP-CE1",
-    "/post/teleprompteur-a-l-ecoute/": "Fluence CP-CE1 avec reconnaissance vocale : lecture à voix haute",
-    "/post/la-maison-de-briques/": "La maison de briques : jeu sur les dizaines et les unités au CP",
+    "/post/teleprompteur-a-l-ecoute/": "Fluence CP-CE1 : lecture à voix haute avec micro",
+    "/post/la-maison-de-briques/": "La maison de briques : dizaines et unités au CP",
     "/post/puissance-4-syllabiques/": "Puissance 4 syllabique : jeu de lecture de syllabes CP-CE1",
     "/post/la-minute-des-syllabes/": "La minute des syllabes : jeu de fluence en 1 minute, CP-CE1",
-    "/post/les-fusees-des-syllabes/": "Les fusées des syllabes : jeu de combinatoire syllabique GS-CP-CE1",
-    "/post/la-roue-du-magicien/": "La roue du magicien : jeu de discrimination visuelle b, d, p, q GS-CP-CE1",
-    "/post/la-tour-de-controle/": "La tour de contrôle : carnet de vol des résultats de chaque élève dans tous les jeux",
-    "/post/les-fleches-de-robin/": "Les flèches de Robin : jeu de discrimination visuelle et d'empan visuel GS-CP-CE1",
+    "/post/les-fusees-des-syllabes/": "Les fusées des syllabes : combinatoire GS, CP, CE1",
+    "/post/la-roue-du-magicien/": "La roue du magicien : discrimination b, d, p, q GS-CE1",
+    "/post/la-tour-de-controle/": "La tour de contrôle : suivre les résultats de chaque élève",
+    "/post/les-fleches-de-robin/": "Les flèches de Robin : discrimination et empan visuel",
     "/post/bilan-de-lecture/": "Bilan de lecture cycle 2 : test de lecture GS-CP-CE1-CE2",
     "/post/bilan-de-maths/": "Bilan de maths du cycle 2 : une évaluation par niveau",
     "/post/le-chemin-des-sons/": "Le chemin des sons : lire des mots avec ou, an, in, eu au CP",
     "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
-    "/francais/cercle-conteur/": "Langage oral : contes à raconter en cercle conteur en GS et en CP",
-    "/francais/lecture/": "Jeux et outils de lecture en ligne gratuits pour le CP et le CE1",
-    "/post/le-chateau-des-detectives/": "Le Château des Détectives : jeu de compréhension de texte CP-CE1",
-    "/post/la-bibliotheque-des-contes/": "La Bibliothèque des contes : compréhension de texte CP, CE1, CE2",
+    "/francais/cercle-conteur/": "Langage oral : contes pour le cercle conteur en GS et CP",
+    "/francais/lecture/": "Jeux de lecture en ligne gratuits pour le CP et le CE1",
+    "/post/le-chateau-des-detectives/": "Château des Détectives : compréhension de texte CP-CE1",
+    "/post/la-bibliotheque-des-contes/": "Bibliothèque des contes : compréhension CP, CE1, CE2",
     "/post/la-machine-a-conjuguer/": "La machine à conjuguer : jeu de conjugaison du CE1 au CM2",
     "/post/la-fiole-de-la-grenouille/": "La fiole de la grenouille : lecture de mots en coopération",
-    "/post/la-grande-roue-des-complements/": "La grande roue des compléments à 10 (CP, CE1)",
+    "/post/la-grande-roue-des-complements/": "La grande roue des compléments à 10, CP-CE1",
     "/post/les-jumeaux-des-doubles/": "Les jumeaux des doubles : jeu sur les doubles au CP",
     "/post/le-crocodile-glouton/": "Le crocodile glouton : comparer les nombres (< >)",
     "/post/l-atelier-des-barres/": "L'atelier des barres : additions et soustractions 10 et 100",
     "/post/le-bal-masque-des-nombres/": "Le bal masqué des nombres : écrire les nombres CP, CE1, CE2",
-    "/post/les-nombres-farceurs/": "Les nombres farceurs : onze à seize, soixante-dix à quatre-vingt-dix-neuf",
+    "/post/les-nombres-farceurs/": "Les nombres farceurs : de onze à seize, de 70 à 99",
     "/post/la-pizzeria-des-fractions/": "La pizzeria des fractions : jeu sur les fractions simples",
     "/post/les-cristaux-de-la-planete-sonora/": "Les cristaux de Sonora : mémoriser les sons complexes (CP)",
     "/post/le-kiosque-des-mots/": "Le kiosque des mots : encoder des mots (CP, CE1)",
     "/post/le-jour-du-marche/": "Le jour du marché : jeu sur la monnaie, CP, CE1, CE2",
-    "/post/les-devinettes-de-la-foret/": "Les devinettes de la forêt : jeu de compréhension « Qui suis-je ? » CP, CE1, CE2",
-    "/maths/": "Maths cycle 2 : jeux de numération et de calcul mental gratuits",
+    "/post/les-devinettes-de-la-foret/": "Devinettes de la forêt : « Qui suis-je ? » CP, CE1, CE2",
+    "/maths/": "Maths cycle 2 : jeux de numération et de calcul gratuits",
     "/maths/numeration/": "Numération cycle 2 : jeux pour lire et dire les nombres",
-    "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits pour le CP et le CE1",
-    "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : jeu de métacognition à projeter, CP-CE2",
+    "/maths/calcul/": "Calcul mental cycle 2 : jeux en ligne gratuits CP-CE1",
+    "/post/le-mistigri-des-attitudes/": "Le Mistigri des attitudes : métacognition à projeter",
     "/post/apprendre-a-apprendre-diaporama-memoire/": "Apprendre ! Diaporama sur la mémoire et l'erreur, CE1-CE2",
     "/divers/metacognition/": "Métacognition au cycle 2 : jeux pour apprendre à apprendre",
-    "/post/les-explorateurs-du-cerveau/": "Les explorateurs du cerveau : jeu pour apprendre à apprendre, CE1-CE2",
+    "/post/les-explorateurs-du-cerveau/": "Explorateurs du cerveau : apprendre à apprendre CE1-CE2",
     "/divers/memorisation/": "Mémorisation : aider les élèves à apprendre leurs leçons",
     "/maths/problemes/": "Résolution de problèmes CP-CE1 : jeux en ligne gratuits",
-    "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : jeu de résolution de problèmes CP-CE1",
-    "/post/la-course-des-additions/": "La Course des Additions : jeu de tables d'addition en ligne CP-CE1",
-    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : additions et soustractions en calcul mental, CP-CE2",
-    "/post/la-course-des-multiplications/": "Course des Multiplications : jeu de tables de multiplication CE1",
+    "/post/le-secret-de-la-pyramide/": "Le secret de la pyramide : résolution de problèmes CP-CE1",
+    "/post/la-course-des-additions/": "La Course des Additions : tables d'addition en ligne CP-CE1",
+    "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : calcul mental additions, soustractions",
+    "/post/la-course-des-multiplications/": "La Course des Multiplications : tables de multiplication",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
+    "/divers/": "Divers : maître E, évaluations, métacognition, mémorisation",
+    "/divers/evaluations/": "Évaluations cycle 2 : bilans de lecture et de maths",
+    "/francais/evaluations/": "Bilan de lecture cycle 2 : évaluations GS, CP, CE1, CE2",
+    "/maths/evaluations/": "Bilan de maths cycle 2 : évaluations CP, CE1, CE2",
+    "/divers/maitre-e/": "Maître E : enseignant spécialisé à dominante pédagogique",
+    "/divers/methode/": "Méthodes pour apprendre : modes d'emploi pour les élèves",
+    "/francais/discrimination-visuelle/": "Discrimination visuelle : jeux b, d, p, q, GS-CP-CE1",
+    "/francais/etude-langue/": "Étude de la langue : dictée, orthographe, conjugaison",
+    "/post/la-dictee-a-trous/": "Dictée à trous en ligne et à imprimer, du CP au CM",
+    "/post/la-dictee-de-la-feuille-pliee/": "Prépare ta dictée ! Jeu de la feuille pliée, CP-CE2",
+    "/post/redis-la-regle/": "Redis la règle : mémoriser les règles d'orthographe CP-CM2",
+    "/post/images-du-quotidien/": "Images du quotidien : compréhension de phrases CP-CE1",
+    "/post/la-tour-des-nombres/": "La tour des nombres : lecture rapide de nombres GS-CE1",
+    "/post/le-puzzle-magique-des-additions/": "Puzzle magique des additions : jeu coopératif CP-CE1",
+    "/post/le-puzzle-magique-des-multiplications/": "Puzzle magique des multiplications : jeu coopératif CE1-CE2",
+    "/post/ce-que-le-site-propose-aux-enseignants/": "Jeux en classe : ce que le site propose aux enseignants",
+}
+
+# Descriptions pour Google quand l'extrait de l'article ressemble trop à celui d'un autre
+SEO_DESCS = {
+    "/post/le-puzzle-magique-des-multiplications/": "Jeu coopératif sur les tables de multiplication (CE1, CE2) : chaque bonne réponse sur un écran d'élève pose une pièce du puzzle projeté au tableau.",
 }
 
 
@@ -602,9 +644,24 @@ def write(path, content, canonical=None, lastmod=None, sitemap=True):
         TITRES[path] = html.unescape(m.group(1)).replace(" | Toujours cap !", "")
     base = SEO_TITRES.get(path) or (TITRES.get(path) if m and " | Toujours cap !" in m.group(1) else None)
     if base:
-        t = esc(base + " | Toujours cap !" if len(base) <= 47 else base)
+        t = esc(base + " | Toujours cap !" if len(base) <= 43 else base)
         content = re.sub(r"<title>.*?</title>", f"<title>{t}</title>", content, count=1)
         content = re.sub(r'(<meta property="og:title" content=")[^"]*', lambda m: m.group(1) + t, content, count=1)
+    if path in SEO_DESCS:
+        d = esc(meta_desc(SEO_DESCS[path]))
+        content = re.sub(r'(<meta name="description" content=")[^"]*', lambda m: m.group(1) + d, content, count=1)
+        content = re.sub(r'(<meta property="og:description" content=")[^"]*', lambda m: m.group(1) + d, content, count=1)
+    # Rubriques (/francais/x/, /maths/x/, /divers/x/) : fil d'Ariane lisible par Google
+    rub = re.fullmatch(r"/(francais|maths|divers)/([^/]+)/", path)
+    h1 = re.search(r"<h1>(.*?)</h1>", content)
+    if rub and h1 and "BreadcrumbList" not in content:
+        nom = html.unescape(re.sub(r"<[^>]+>", "", h1.group(1)))
+        ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": DOM_NOMS[rub.group(1)], "item": f"{SITE}/{rub.group(1)}/"},
+            {"@type": "ListItem", "position": 2, "name": nom, "item": SITE + path}]}
+        content = content.replace("<link rel=\"icon\"", f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<link rel="icon"', 1)
+    # Jeux en iframe : adresse finale sans .html (Cloudflare redirige sinon → « Page avec redirection » dans la Search Console)
+    content = re.sub(r'((?:src|href)="/outils/[^"?#]+)\.html(?=[?#"])', r"\1", content)
     content = dimensions(content)
     full = os.path.join(OUT, path.strip("/"), "index.html") if not path.endswith(".html") else os.path.join(OUT, path.strip("/"))
     os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -655,8 +712,14 @@ def main():
 
     # Articles
     for i, p in enumerate(posts):
-        ctx = {"slug": p["slug"], "excerpt": p["excerpt"]}
+        ctx = {"slug": p["slug"], "excerpt": p["excerpt"], "title": p["title"]}
         content = "".join(render(n, ctx) for n in p["nodes"])
+        # Date de mise à jour : dernier changement du jeu ou du texte de l'article (historique git)
+        fics = [f"assets/{COPIES.get(os.path.basename(t), os.path.basename(t))}" for t in ctx.get("tools", []) if t.startswith("/outils/")]
+        fics += [f"assets/articles/{n['file']}" for n in p["nodes"] if n.get("type") == "RAW_HTML"]
+        maj = max([d for d in (date_git(f) for f in fics) if d] + [p.get("updated") or p["date"]])
+        if maj[:10] > p["date"][:10]:
+            p["updated"] = maj
         recent = [q for q in posts if q["slug"] != p["slug"] and q["cat"] == p["cat"]][:3] or [q for q in posts if q["slug"] != p["slug"]][:3]
         cat = CATS[p["cat"]]
         dom = cat["domain"]  # onglet du menu (Français, Maths, Divers) auquel appartient l'article
@@ -686,7 +749,7 @@ def main():
               {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
                   {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
         write(f"/post/{p['slug']}/", page(p["title"], body, f"/{dom}/", p["excerpt"], p["cover"], "article", ld),
-              lastmod=p["date"][:10])
+              lastmod=(p.get("updated") or p["date"])[:10])
 
     # Blog + catégories
     chips = '<div class="chips"><a class="chip active" href="/blog/">Toutes</a>' + "".join(
@@ -865,7 +928,7 @@ def main():
   <p><a class="btn" href="/blog/">Toutes les ressources</a></p>
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
-         "description": "Outils pédagogiques gratuits pour le cycle 2 (GS, CP, CE1) : lecture, contes du cercle conteur, numération."},
+         "description": "Jeux et outils pédagogiques gratuits pour les cycles 2 et 3 : lecture, contes du cercle conteur, numération, calcul, évaluations."},
         {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}]),
         lastmod=max(p["date"] for p in posts)[:10])
 
