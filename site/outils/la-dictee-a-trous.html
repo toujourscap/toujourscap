@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dictée à trous</title><link rel="canonical" href="https://toujourscap.com/post/la-dictee-a-trous/"><meta name="description" content="Un outil pour l&#x27;enseignant : collez votre dictée, les mots difficiles sont repérés automatiquement (ou choisis par vous d&#x27;un clic) et remplacés par des…">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+  :root{
+    --bg:#fbf7f0; --card:#fff; --ink:#23302c; --muted:#6b6f76; --line:#e3e0d8;
+    --accent:#1f6f5c; --accent-soft:#e3efe9; --gap:#c9732d; --gap-soft:#fbeadb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+  header{padding:22px 28px 6px}
+  h1{margin:0;font-size:22px;font-weight:600}
+  header p{margin:4px 0 0;color:var(--muted)}
+  main{display:grid;grid-template-columns:minmax(320px,1fr) minmax(360px,1.25fr);gap:20px;padding:16px 28px 40px}
+  @media (max-width:900px){main{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{margin:0 0 12px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .step{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px}
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+  input[type=text],textarea,select{width:100%;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+  textarea{min-height:190px;resize:vertical;font-family:Andika,sans-serif;font-size:17px;line-height:1.55}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .opts{display:grid;gap:8px;margin-top:14px}
+  .opts label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px;margin:0}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .range-head{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+  button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;color:var(--ink)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button:hover{filter:brightness(.96)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+  #words{font-family:Andika,sans-serif;font-size:19px;line-height:2.1;min-height:120px}
+  #words p{margin:0 0 6px}
+  .w{cursor:pointer;border-radius:5px;padding:1px 2px;border-bottom:2px solid transparent}
+  .w:hover{background:#f1efe9}
+  .w.on{background:var(--gap-soft);border-bottom-color:var(--gap);color:#7a3f12}
+  .stats{display:flex;gap:14px;font-size:13px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
+  .stats b{color:var(--ink)}
+  .mode{display:flex;gap:6px}
+  .mode button{flex:1}
+  .mode button.active,.tabs button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  #autoOpts.off{display:none}
+  .tabs{display:flex;gap:6px;margin-bottom:10px}
+  .tabs button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .sheet{border:1px dashed var(--line);border-radius:8px;padding:22px;background:#fff}
+  #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  #toast.show{opacity:1}
+
+  /* ---- Fiche (écran + impression) ---- */
+  .fiche{font-family:var(--fiche-font,Andika),sans-serif;color:#000}
+  .fiche .ent{display:flex;justify-content:space-between;gap:20px;font-size:15px;margin-bottom:18px}
+  .fiche .ent span{flex:1;border-bottom:1px solid #000;padding-bottom:2px}
+  .fiche h3{text-align:center;font-size:22px;margin:0 0 18px}
+  .fiche .txt{font-size:var(--fiche-size,20px);line-height:var(--fiche-lh,2.4)}
+  .fiche .txt p{margin:0 0 .4em}
+  .fiche .trou{display:inline-block;border-bottom:1.5px solid #000;height:1.1em;vertical-align:baseline;margin:0 1px}
+  .fiche .trou .ini{display:inline-block;padding-left:2px}
+  .fiche .rep{font-weight:700;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:4px}
+  .fiche .banque{margin-top:22px;border:1.5px solid #000;border-radius:8px;padding:10px 14px;font-size:calc(var(--fiche-size,20px) * .9);line-height:1.9}
+  .fiche .banque b{display:block;font-size:14px;margin-bottom:2px}
+  .fiche .banque span{display:inline-block;margin-right:22px}
+  .fiche .tag{font-size:12px;color:#555;text-align:right;margin-bottom:4px}
+  #printArea{display:none}
+  @media print{
+    @page{size:A4;margin:16mm 15mm}
+    body{background:#fff}
+    header,main,#toast{display:none!important}
+    #printArea{display:block}
+    #printArea .page{page-break-after:always}
+    #printArea .page:last-child{page-break-after:auto}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dictée à trous</h1>
+  <p>Colle ta dictée : les mots difficiles sont repérés automatiquement. Clique sur un mot pour l'ajouter ou le retirer des trous.</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2><span class="step">1</span> La dictée</h2>
+    <label for="titre">Titre</label>
+    <input type="text" id="titre" placeholder="Ex. : Dictée n°5 – le son [o]">
+    <div style="margin-top:12px">
+      <label for="texte">Texte de la dictée</label>
+      <textarea id="texte" placeholder="Colle ou tape ici le texte de la dictée…"></textarea>
+    </div>
+
+    <h2 style="margin-top:18px"><span class="step">2</span> Réglages</h2>
+    <label>Choix des trous</label>
+    <div class="mode">
+      <button type="button" data-m="auto" class="active">Automatique</button>
+      <button type="button" data-m="manuel">Je choisis moi-même</button>
+    </div>
+    <p class="hint" id="modeHint" style="margin:6px 0 12px">L'outil propose les mots difficiles ; tu peux ajuster en cliquant.</p>
+    <div id="autoOpts">
+    <div class="range-head"><span>Quantité de trous</span><span id="seuilLbl"></span></div>
+    <input type="range" id="seuil" min="1" max="5" step="1" value="3">
+    <div class="opts" style="margin-top:8px"><label><input type="checkbox" id="homo" checked> Homophones grammaticaux en trous (a/à, et/est, son/sont…)</label></div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="niveau">Niveau</label>
+        <select id="niveau">
+          <option value="cp">CP</option>
+          <option value="ce1" selected>CE1</option>
+          <option value="ce2">CE2</option>
+          <option value="cm">CM1 – CM2</option>
+        </select>
+      </div>
+      <div>
+        <label for="police">Police de la fiche</label>
+        <select id="police">
+          <option value="Andika">Andika (lecture facilitée)</option>
+          <option value="Arial">Arial</option>
+          <option value="Comic Sans MS">Comic Sans</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="taille">Taille du texte</label>
+        <select id="taille">
+          <option value="16">Petite (16)</option>
+          <option value="20" selected>Moyenne (20)</option>
+          <option value="24">Grande (24)</option>
+          <option value="28">Très grande (28)</option>
+        </select>
+      </div>
+      <div>
+        <label for="interligne">Interligne</label>
+        <select id="interligne">
+          <option value="1.9">Normal</option>
+          <option value="2.4" selected>Aéré</option>
+          <option value="3">Très aéré</option>
+        </select>
+      </div>
+    </div>
+    <div class="opts">
+      <label><input type="checkbox" id="ini"> Donner la 1re lettre du mot</label>
+      <label><input type="checkbox" id="egal" checked> Trous de même longueur (ne donne pas d'indice)</label>
+      <label><input type="checkbox" id="banque"> Ajouter une banque de mots</label>
+      <label><input type="checkbox" id="corrige" checked> Imprimer aussi le corrigé</label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span> Choix des mots</h2>
+    <div class="stats"><span><b id="nbTrous">0</b> trous</span><span><b id="nbMots">0</b> mots</span></div>
+    <div id="words"><p class="hint">Le texte apparaîtra ici.</p></div>
+    <div class="btns">
+      <button id="auto">Proposer automatiquement</button>
+      <button id="vider">Aucun trou</button>
+    </div>
+
+    <h2 style="margin-top:22px"><span class="step">4</span> Aperçu et impression</h2>
+    <div class="tabs">
+      <button data-v="eleve" class="active">Fiche élève</button>
+      <button data-v="prof">Corrigé</button>
+    </div>
+    <div class="sheet"><div id="apercu"></div></div>
+    <div class="btns">
+      <button class="primary" id="imprimer">Imprimer</button>
+      <button id="word">Télécharger en Word (.docx)</button>
+    </div>
+    <p class="hint" id="printHint">Imprimer : fiche élève puis corrigé (si coché). Le fichier Word se modifie avant impression.</p>
+  </section>
+</main>
+
+<div id="printArea"></div>
+<div id="toast"></div>
+
+<script>
+/* ============ Analyse de difficulté ============ */
+const OUTILS = new Set(("le la les un une des de du d l j m n s t c qu je tu il elle on nous vous ils elles me te se y en au aux " +
+  "ne pas plus très bien avec pour dans sur sous par sans chez mon ma ma ton ta sa notre votre leur leurs nos vos qui que quoi " +
+  "lui eux moi toi si oui non il y the").split(" "));
+const MOTS_SIMPLES = new Set("papa maman ami amie lune lit vélo moto pomme rue sol mur fil pile petit petite il elle va vu".split(" "));
+const HOMOPHONES = new Set("a à et est son sont on ont ces ses c'est s'est ou où ce se mais mes leur leurs peu peut peux".split(" "));
+const DETERMINANTS_PLURIEL = new Set("les des ces mes tes ses nos vos leurs plusieurs quelques beaucoup deux trois quatre cinq six sept huit neuf dix tous toutes".split(" "));
+
+const GRAPHEMES = [/eau/,/au/,/ai/,/ei/,/ain|ein|aim|eim/,/oin/,/ien/,/ph/,/th/,/gn/,/ill/,/euil|ouil|aill|eill/,/qu/,/gu[eiy]/,/g[eiy]/,/c[eiy]/,/ç/,/x/,/y/,/œ|oe/,/[ae]m[bp]/,/om[bp]|im[bp]/,/en|em/,/oi/,/ou/,/eu/,/an|am/,/on|om/,/in|im|un|um/,/s[aeiouyéèê]/];
+const COMPLEXES = [/eau/,/ain|ein|aim|eim/,/ph/,/th/,/gn/,/ill/,/euil|ouil|aill|eill/,/œ|oe/,/[aeoi]m[bp]/,/gu[eiy]/,/ç/,/x(?!$)/,/y/,/ae|ao/,/ch[rl]/,/mn/];
+
+function scoreMot(raw, prev, niveau){
+  const w = raw.toLowerCase();
+  if (w.length <= 1) return 0;
+  if (OUTILS.has(w) || MOTS_SIMPLES.has(w)) return 0;
+  let s = 0;
+  // accents
+  if (/[éèêëàâùûîïôç]/.test(w)) s += 1;
+  if (/[êëâûîïô]/.test(w)) s += 0.5;
+  // graphèmes complexes
+  let c = 0; COMPLEXES.forEach(r => { if (r.test(w)) c++; });
+  s += Math.min(c, 3) * 1.2;
+  // graphèmes « ordinaires » : comptent surtout en CP
+  if (niveau === "cp"){ let g = 0; GRAPHEMES.forEach(r => { if (r.test(w)) g++; }); s += Math.min(g,3) * 0.6; }
+  // double consonne
+  if (/([bcdfglmnprst])\1/.test(w)) s += 1.2;
+  // an / en, s entre voyelles
+  if (/e[nm](?![nm])/.test(w) && !/en$/.test(w)) s += 0.7;
+  if (/[aeiouyéè]s[aeiouyéè]/.test(w)) s += 0.5;
+  // h muet initial / h intérieur
+  if (/^h/.test(w) || /[^cps]h/.test(w)) s += 1;
+  // lettre muette finale
+  if (/ent$/.test(w) && w.length > 4) s += 1.5;
+  else if (/[tdpgcx]$/.test(w) && !/ct$/.test(w)) s += 1;
+  else if (/(s|x)$/.test(w)) s += 0.6;
+  // accord pluriel après déterminant
+  if (prev && DETERMINANTS_PLURIEL.has(prev) && /[sx]$/.test(w)) s += 1.5;
+  // longueur
+  if (w.length >= 7) s += 0.7;
+  if (w.length >= 10) s += 0.7;
+  // trait d'union
+  if (w.includes("-")) s += 1;
+  // ajustement par niveau : en CM, on exige plus pour qu'un mot soit « difficile »
+  const k = {cp:1.25, ce1:1, ce2:0.85, cm:0.7}[niveau] || 1;
+  return s * k;
+}
+
+/* seuil 1 (peu de trous) → 5 (beaucoup) */
+const SEUILS = {1:4.2, 2:3.3, 3:2.5, 4:1.7, 5:1.0};
+const SEUIL_LBL = {1:"très peu", 2:"peu", 3:"moyen", 4:"beaucoup", 5:"maximum"};
+
+/* ============ Découpage du texte ============ */
+const WORD_RE = /(aujourd['’]hui|presqu['’]île|[A-Za-zÀ-ÖØ-öø-ÿœŒæÆ]+(?:-[A-Za-zÀ-ÖØ-öø-ÿœŒæÆ]+)*)/g;
+
+let tokens = [];   // {t:'texte', word:bool, id, score, on}
+function decouper(texte){
+  const out = []; let id = 0;
+  texte.replace(/\r/g,"").split(/\n/).forEach((ligne, li, arr) => {
+    let last = 0; let m; WORD_RE.lastIndex = 0;
+    while ((m = WORD_RE.exec(ligne))){
+      if (m.index > last) out.push({t: ligne.slice(last, m.index), word:false});
+      out.push({t:m[0], word:true, id:id++});
+      last = m.index + m[0].length;
+    }
+    if (last < ligne.length) out.push({t: ligne.slice(last), word:false});
+    if (li < arr.length - 1) out.push({br:true});
+  });
+  return out;
+}
+
+let mode = "auto";
+function proposer(force){
+  if (mode === "manuel" && !force){ tokens.forEach(t => { if (t.word){ t.score = scoreMot(t.t, null, $("niveau").value); t.on = !!t.on; } }); return; }
+  const niveau = $("niveau").value, seuil = SEUILS[$("seuil").value], homo = $("homo").checked;
+  let prev = null;
+  tokens.forEach(tk => {
+    if (!tk.word) { if (tk.br) prev = null; return; }
+    const lw = tk.t.toLowerCase();
+    // élision : « c'est », « s'est »
+    let prevTxt = prev;
+    tk.score = scoreMot(tk.t, prevTxt, niveau);
+    tk.on = tk.score >= seuil;
+    if (homo && HOMOPHONES.has(lw)) tk.on = true;
+    if (!homo && HOMOPHONES.has(lw) && tk.score < seuil) tk.on = false;
+    prev = lw;
+  });
+}
+
+/* ============ Rendu ============ */
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function paragraphes(fnWord){
+  let html = "<p>";
+  tokens.forEach(tk => {
+    if (tk.br) { html += "</p><p>"; return; }
+    html += tk.word ? fnWord(tk) : esc(tk.t);
+  });
+  return html.replace(/<p><\/p>/g,"<p>&nbsp;</p>") + "</p>";
+}
+
+function renderMots(){
+  const words = tokens.filter(t => t.word);
+  $("nbMots").textContent = words.length;
+  $("nbTrous").textContent = words.filter(t => t.on).length;
+  if (!words.length){ $("words").innerHTML = '<p class="hint">Le texte apparaîtra ici.</p>'; return; }
+  $("words").innerHTML = paragraphes(tk => `<span class="w${tk.on?" on":""}" data-id="${tk.id}" title="difficulté ${tk.score.toFixed(1)}">${esc(tk.t)}</span>`);
+}
+
+function trouHTML(tk){
+  const ini = $("ini").checked, egal = $("egal").checked;
+  const len = egal ? Math.max(6, longueurMax()) : Math.max(3, tk.t.length);
+  const em = (len * 0.62 + 1).toFixed(1);
+  const premiere = ini ? `<span class="ini">${esc(tk.t[0])}</span>` : "";
+  return `<span class="trou" style="width:${em}em">${premiere}</span>`;
+}
+function longueurMax(){ return Math.min(12, Math.max(0, ...tokens.filter(t=>t.on).map(t=>t.t.length))); }
+
+function ficheHTML(mode){
+  const titre = $("titre").value.trim() || "Dictée";
+  const style = `--fiche-font:'${$("police").value}';--fiche-size:${$("taille").value}px;--fiche-lh:${$("interligne").value}`;
+  let h = `<div class="fiche" style="${style}">`;
+  if (mode === "prof") h += `<div class="tag">Corrigé enseignant</div>`;
+  h += `<div class="ent"><span>Prénom :</span><span>Date :</span></div>`;
+  h += `<h3>${esc(titre)}</h3><div class="txt">`;
+  h += paragraphes(tk => tk.on ? (mode === "prof" ? `<span class="rep">${esc(tk.t)}</span>` : trouHTML(tk)) : esc(tk.t));
+  h += `</div>`;
+  if (mode === "eleve" && $("banque").checked){
+    const mots = banqueMots();
+    if (mots.length) h += `<div class="banque"><b>Banque de mots</b>${mots.map(m=>`<span>${esc(m)}</span>`).join("")}</div>`;
+  }
+  return h + `</div>`;
+}
+function banqueMots(){
+  return [...new Set(tokens.filter(t=>t.on).map(t=>t.t))].sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+}
+
+let vue = "eleve";
+function renderApercu(){ $("apercu").innerHTML = tokens.some(t=>t.word) ? ficheHTML(vue) : '<p class="hint">L\'aperçu apparaîtra ici.</p>'; }
+function toutRendre(){ renderMots(); renderApercu(); sauver(); }
+
+/* ============ Événements ============ */
+function analyser(){
+  const ancien = new Map(tokens.filter(t=>t.word).map(t => [t.id+"|"+t.t.toLowerCase(), t.on]));
+  tokens = decouper($("texte").value);
+  if (mode === "manuel") tokens.forEach(t => { if (t.word) t.on = !!ancien.get(t.id+"|"+t.t.toLowerCase()); });
+  proposer(); toutRendre();
+}
+function setMode(m, init){
+  mode = m;
+  document.querySelectorAll(".mode button").forEach(b => b.classList.toggle("active", b.dataset.m === m));
+  $("autoOpts").classList.toggle("off", m === "manuel");
+  $("modeHint").textContent = m === "manuel"
+    ? "Clique sur les mots du texte (étape 3) pour créer les trous."
+    : "L'outil propose les mots difficiles ; tu peux ajuster en cliquant.";
+  if (!init){ if (m === "manuel") tokens.forEach(t => { if (t.word) t.on = false; }); else proposer(); toutRendre(); }
+}
+document.querySelectorAll(".mode button").forEach(b => b.onclick = () => setMode(b.dataset.m));
+let tmr; $("texte").addEventListener("input", () => { clearTimeout(tmr); tmr = setTimeout(analyser, 350); });
+["seuil","niveau","homo"].forEach(id => $(id).addEventListener("input", () => { majSeuil(); proposer(); toutRendre(); }));
+["titre","police","taille","interligne","ini","egal","banque","corrige"].forEach(id => $(id).addEventListener("input", () => { renderApercu(); sauver(); }));
+$("words").addEventListener("click", e => {
+  const el = e.target.closest(".w"); if (!el) return;
+  const tk = tokens.find(t => t.id === +el.dataset.id); tk.on = !tk.on; toutRendre();
+});
+$("auto").onclick = () => { proposer(true); toutRendre(); };
+$("vider").onclick = () => { tokens.forEach(t => { if (t.word) t.on = false; }); toutRendre(); };
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active"); vue = b.dataset.v; renderApercu();
+});
+function majSeuil(){ $("seuilLbl").textContent = SEUIL_LBL[$("seuil").value]; }
+
+$("imprimer").onclick = () => {
+  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  let h = `<div class="page">${ficheHTML("eleve")}</div>`;
+  if ($("corrige").checked) h += `<div class="page">${ficheHTML("prof")}</div>`;
+  $("printArea").innerHTML = h;
+  try { window.print(); } catch(e) { toast("Impression bloquée ici : utilise le bouton Word."); }
+};
+
+/* ============ Export Word ============ */
+
+async function construireDocx(){
+  const D = window.docx; if (!D) throw new Error("lib");
+  const font = $("police").value === "Andika" ? "Arial" : $("police").value; // Andika rarement installée sous Word
+  const size = (+$("taille").value) * 1.5;           // demi-points (px→pt ≈ ×0.75, ×2)
+  const lh = Math.round(240 * (+$("interligne").value) * 0.85);
+  const ini = $("ini").checked, egal = $("egal").checked, lmax = longueurMax();
+  const titre = $("titre").value.trim() || "Dictée";
+
+  function corps(mode){
+    const paras = []; let runs = [];
+    const flush = () => { paras.push(new D.Paragraph({children: runs.length ? runs : [new D.TextRun("")], spacing:{line:lh, after:120}})); runs = []; };
+    tokens.forEach(tk => {
+      if (tk.br) return flush();
+      if (tk.word && tk.on){
+        if (mode === "prof") runs.push(new D.TextRun({text:tk.t, bold:true, underline:{}, font, size}));
+        else {
+          const n = egal ? Math.max(8, lmax + 2) : Math.max(4, tk.t.length + 2);
+          if (ini) runs.push(new D.TextRun({text:tk.t[0], font, size}));
+          runs.push(new D.TextRun({text:"_".repeat(n), font, size}));
+        }
+      } else runs.push(new D.TextRun({text:tk.t, font, size}));
+    });
+    flush();
+    return paras;
+  }
+  function entete(mode){
+    const out = [];
+    if (mode === "prof") out.push(new D.Paragraph({alignment:D.AlignmentType.RIGHT, children:[new D.TextRun({text:"Corrigé enseignant", italics:true, size:20, font})]}));
+    out.push(new D.Paragraph({children:[new D.TextRun({text:"Prénom : ______________________     Date : ______________", font, size:26})], spacing:{after:300}}));
+    out.push(new D.Paragraph({alignment:D.AlignmentType.CENTER, children:[new D.TextRun({text:titre, bold:true, font, size:36})], spacing:{after:300}}));
+    return out;
+  }
+  const sections = [{properties:{page:{margin:{top:900,bottom:900,left:900,right:900}}}, children:[...entete("eleve"), ...corps("eleve"), ...banqueDocx()]}];
+  function banqueDocx(){
+    if (!$("banque").checked) return [];
+    const mots = banqueMots(); if (!mots.length) return [];
+    return [
+      new D.Paragraph({spacing:{before:300}, children:[new D.TextRun({text:"Banque de mots", bold:true, font, size:24})]}),
+      new D.Paragraph({children:[new D.TextRun({text:mots.join("     "), font, size:Math.round(size*0.9)})], spacing:{line:360}})
+    ];
+  }
+  if ($("corrige").checked) sections.push({properties:{page:{margin:{top:900,bottom:900,left:900,right:900}}}, children:[...entete("prof"), ...corps("prof")]});
+  return D.Packer.toBlob(new D.Document({sections}));
+}
+
+$("word").onclick = async () => {
+  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  let blob;
+  try { blob = await construireDocx(); } catch(e){ return toast("Impossible de créer le fichier Word."); }
+  const nom = (($("titre").value.trim() || "dictee-a-trous").replace(/[\\/:*?"<>|]/g,"").slice(0,60)) + ".docx";
+  fallbackDl(blob, nom);
+};
+function fallbackDl(blob, nom){
+  try { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); }
+  catch(e){ toast("Téléchargement indisponible ici."); }
+}
+
+function toast(m){ const t = $("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2600); }
+
+/* ============ Mémoire locale (brouillon) ============ */
+const KEY = "dictee-a-trous-v1";
+function sauver(){
+  try {
+    localStorage.setItem(KEY, JSON.stringify({
+      mode, titre:$("titre").value, texte:$("texte").value, off:tokens.filter(t=>t.word&&!t.on).map(t=>t.id), on:tokens.filter(t=>t.word&&t.on).map(t=>t.id),
+      opts:Object.fromEntries(["seuil","niveau","police","taille","interligne"].map(i=>[i,$(i).value]).concat(["homo","ini","egal","banque","corrige"].map(i=>[i,$(i).checked])))
+    }));
+  } catch(e){}
+}
+function charger(){
+  try {
+    const d = JSON.parse(localStorage.getItem(KEY) || "null"); if (!d) return false;
+    $("titre").value = d.titre || ""; $("texte").value = d.texte || "";
+    Object.entries(d.opts || {}).forEach(([k,v]) => { if (typeof v === "boolean") $(k).checked = v; else $(k).value = v; });
+    setMode(d.mode || "auto", true);
+    tokens = decouper($("texte").value); proposer();
+    const on = new Set(d.on || []); tokens.forEach(t => { if (t.word) t.on = on.has(t.id); });
+    return true;
+  } catch(e){ return false; }
+}
+
+majSeuil();
+if (!charger()){
+  $("titre").value = "Dictée – l'automne";
+  $("texte").value = "C'est l'automne. Les feuilles jaunes tombent des arbres et le vent souffle fort.\nDans le jardin, les enfants ramassent des châtaignes. Ils sont heureux et rentrent à la maison pour les faire griller.";
+  tokens = decouper($("texte").value); proposer();
+}
+toutRendre();
+</script>
+</body>
+</html>
