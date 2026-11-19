@@ -48,6 +48,11 @@
   #display.phrases .fin{font-size:.75em}
   .note{font-size:.85rem;color:#6c757d;margin:6px 0 0}
   .cache{display:none!important}
+  .persoBarre{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:8px}
+  .petitBtn{background:#0d6efd;font-size:.9rem;padding:6px 12px}
+  .petitBtn.rouge{background:#dc3545}
+  #persoChoix{max-width:260px}
+  #persoNom{width:95%;margin-top:8px;padding:8px 10px;font-size:1rem;border:1px solid #ced4da;border-radius:6px;font-family:inherit}
 </style>
 <script src="tour-de-controle.js"></script></head>
 <body>
@@ -62,12 +67,19 @@
         <button data-l="3">🌳 Niveau 3<small>fin de CP</small></button>
         <button data-l="5">🍀 Niveau 4<small>début de CE1</small></button>
         <button data-l="4">🏔️ Niveau 5<small>fin de CE1</small></button>
-        <button data-l="perso">✏️ Ma liste<small>mes mots</small></button>
+        <button data-l="perso">✏️ Mes listes<small>mes mots</small></button>
         <button data-l="texte">📄 Un texte<small>mots ou phrases</small></button>
       </div>
       <div id="perso">
+        <div class="persoBarre">
+          <select id="persoChoix" aria-label="Choisir une de mes listes"></select>
+          <button type="button" id="persoNouv" class="petitBtn">➕ Nouvelle liste</button>
+          <button type="button" id="persoPart" class="petitBtn">🔗 Partager</button>
+          <button type="button" id="persoSuppr" class="petitBtn rouge">🗑️ Supprimer</button>
+        </div>
+        <input id="persoNom" type="text" maxlength="40" placeholder="Nom de la liste (ex. : mots du son [on], groupe de Léo…)">
         <textarea id="mots" placeholder="Écris ou colle tes mots, séparés par des espaces, des virgules ou des retours à la ligne."></textarea>
-        <p class="note">La liste reste enregistrée sur cet ordinateur.</p>
+        <p class="note" id="notePerso">Les listes restent enregistrées sur cet ordinateur.</p>
       </div>
       <div id="texteBloc">
         <textarea id="texte" placeholder="Colle ici un texte (une histoire lue en classe, une poésie, un texte du manuel…)."></textarea>
@@ -180,7 +192,55 @@
   const U = (n)=> (ph_()?"phrase":"mot")+(n>1?"s":"");
   const LU = (n)=> "lu"+(ph_()?"e":"")+(n>1?"s":"");
   if (mode==="micro" && !SR) mode="adulte";
-  $("mots").value = store.get("tachi-mots","maison poisson château garçon lapin bouton oiseau peinture cloche dragon");
+  // ---------- Mes listes : plusieurs listes nommées, enregistrées sur l'ordinateur ----------
+  let perso = [];
+  try{ perso = JSON.parse(store.get("tachi-perso","[]")); }catch(e){ perso = []; }
+  if (!Array.isArray(perso)) perso = [];
+  perso = perso.filter(l=>l && typeof l.mots==="string").map(l=>({nom:String(l.nom||"").slice(0,40), mots:l.mots}));
+  if (!perso.length) perso = [{nom:"Ma liste", mots:store.get("tachi-mots","maison poisson château garçon lapin bouton oiseau peinture cloche dragon")}];
+  let pi = parseInt(store.get("tachi-perso-i","0"),10)||0;
+  // Liste reçue par un lien de partage (?nom=…&mots=…)
+  try{
+    const q = new URLSearchParams(location.search), qm = q.get("mots");
+    if (qm && qm.trim()){
+      const qn = (q.get("nom")||"Liste partagée").slice(0,40);
+      let k = perso.findIndex(l=>l.nom===qn && l.mots.trim()===qm.trim());
+      if (k<0){ perso.push({nom:qn, mots:qm}); k = perso.length-1; }
+      pi = k; liste = "perso"; store.set("tachi-liste","perso");
+    }
+  }catch(e){}
+  if (pi<0 || pi>=perso.length) pi = 0;
+  const nomPerso = l => l.nom.trim() || "Liste sans nom";
+  function sauverPerso(){ store.set("tachi-perso", JSON.stringify(perso)); store.set("tachi-perso-i", String(pi)); }
+  function remplirPerso(){
+    const c = $("persoChoix"); c.innerHTML = "";
+    perso.forEach((l,k)=>{ const o=document.createElement("option"); o.value=k;
+      const n = l.mots.replace(/[,;]/g," ").split(/\s+/).filter(Boolean).length;
+      o.textContent = nomPerso(l)+" ("+n+" mot"+(n>1?"s":"")+")"; c.appendChild(o); });
+    c.value = pi;
+    $("persoNom").value = perso[pi].nom;
+    $("mots").value = perso[pi].mots;
+    $("persoSuppr").disabled = perso.length<2 && !perso[0].mots.trim();
+  }
+  $("persoChoix").onchange = ()=>{ pi = parseInt($("persoChoix").value,10)||0; sauverPerso(); remplirPerso(); };
+  $("persoNouv").onclick = ()=>{
+    perso.push({nom:"Liste "+(perso.length+1), mots:""}); pi = perso.length-1;
+    sauverPerso(); remplirPerso(); $("persoNom").select(); $("persoNom").focus();
+  };
+  $("persoSuppr").onclick = ()=>{
+    if (!confirm("Supprimer la liste « "+nomPerso(perso[pi])+" » ?")) return;
+    perso.splice(pi,1); if (!perso.length) perso=[{nom:"Ma liste", mots:""}];
+    pi = Math.min(pi, perso.length-1); sauverPerso(); remplirPerso();
+  };
+  $("persoNom").oninput = ()=>{ perso[pi].nom = $("persoNom").value; sauverPerso();
+    const o = $("persoChoix").options[pi]; if (o) o.textContent = o.textContent.replace(/^.*(?= \(\d+ mots?\)$)/, nomPerso(perso[pi])); };
+  $("persoPart").onclick = ()=>{
+    if (!perso[pi].mots.trim()){ $("notePerso").textContent = "⚠️ La liste est vide : écris d'abord des mots."; return; }
+    const url = "https://toujourscap.com/outils/lecture-rapide-de-mots-avec-le-tachitoscope.html?nom="+encodeURIComponent(nomPerso(perso[pi]))+"&mots="+encodeURIComponent(perso[pi].mots.replace(/\s+/g," ").trim());
+    const ok = ()=>{ $("notePerso").textContent = "🔗 Lien copié : collez-le dans un message. En l'ouvrant, la liste s'ajoute à « Mes listes » sur l'autre ordinateur."; };
+    try{ navigator.clipboard.writeText(url).then(ok, ()=>prompt("Copiez ce lien :", url)); }catch(e){ prompt("Copiez ce lien :", url); }
+  };
+  remplirPerso();
   $("texte").value = store.get("tachi-texte","Le petit chat joue dans le jardin. Il voit un oiseau sur la branche du pommier. Le chat saute, mais l'oiseau s'envole ! Alors le chat retourne dormir au soleil.");
   $("temps").value = store.get("tachi-temps","5");
   $("melange").checked = store.get("tachi-melange","1")==="1";
@@ -212,7 +272,10 @@
   document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{
     if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
     mode=b.dataset.m;store.set("tachi-mode",mode);marquer();});
-  $("mots").oninput=()=>store.set("tachi-mots",$("mots").value);
+  $("mots").oninput=()=>{ perso[pi].mots=$("mots").value; sauverPerso();
+    const n = $("mots").value.replace(/[,;]/g," ").split(/\s+/).filter(Boolean).length;
+    const o = $("persoChoix").options[pi]; if (o) o.textContent = nomPerso(perso[pi])+" ("+n+" mot"+(n>1?"s":"")+")";
+    $("persoSuppr").disabled = perso.length<2 && !perso[0].mots.trim(); };
   $("texte").oninput=()=>{ store.set("tachi-texte",$("texte").value); marquer(); };
   document.querySelectorAll("#unites button").forEach(b=>b.onclick=()=>{unite=b.dataset.u;store.set("tachi-unite",unite);marquer();});
   $("temps").onchange=()=>store.set("tachi-temps",$("temps").value);
@@ -286,7 +349,7 @@
 
   $("go").onclick = ()=>{
     charger();
-    if (!mots.length){ $("noteMode").textContent = liste==="texte" ? "⚠️ Colle d'abord un texte dans « Un texte »." : "⚠️ La liste est vide : écris des mots dans « Ma liste »."; return; }
+    if (!mots.length){ $("noteMode").textContent = liste==="texte" ? "⚠️ Colle d'abord un texte dans « Un texte »." : "⚠️ La liste est vide : écris des mots dans « Mes listes »."; return; }
     $("display").classList.toggle("phrases", ph_());
     $("reglages").classList.add("cache"); $("partie").classList.remove("cache");
     $("boutons").classList.toggle("petits", mode==="micro");
@@ -364,7 +427,7 @@
     const rate = (!tout && !minute) ? mots[i] : null;
     arreter();
     const n = bons, sec = Math.min(Math.round((Date.now()-debut)/1000), minute?DUREE:1e9);
-    const cle = "tachi-record-"+(minute?"minute-":"")+liste+(liste==="texte"?"-"+unite:"")+(liste==="perso"||liste==="texte"?"-"+mots.length:"");
+    const cle = "tachi-record-"+(minute?"minute-":"")+liste+(liste==="texte"?"-"+unite:"")+(liste==="perso"?"-"+nomPerso(perso[pi]):"")+(liste==="perso"||liste==="texte"?"-"+mots.length:"");
     const ancien = parseInt(store.get(cle,"0"),10)||0;
     const nouveau = n>ancien && n>0;
     if (nouveau) store.set(cle,String(n));
@@ -398,9 +461,9 @@
       $("stop").before(b);
     }
     if (!tout && rate) setTimeout(()=>dire(rate),500);
-    try{TDC.note({s:n,n:mots.length,g:!!tout,niv:NOMS[liste],d: minute
-      ? n+" "+U(n)+" juste"+(n>1?"s":"")+" en 1 minute, "+erreurs.length+" erreur"+(erreurs.length>1?"s":"")+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")
-      : n+" "+U(n)+" "+LU(n)+" sans erreur sur "+mots.length+" · "+NOMS[liste]+(mode==="micro"?" · micro":"")})}catch(e){}
+    try{TDC.note({s:n,n:mots.length,g:!!tout,niv:(liste==="perso"?nomPerso(perso[pi]):NOMS[liste]),d: minute
+      ? n+" "+U(n)+" juste"+(n>1?"s":"")+" en 1 minute, "+erreurs.length+" erreur"+(erreurs.length>1?"s":"")+" · "+(liste==="perso"?nomPerso(perso[pi]):NOMS[liste])+(mode==="micro"?" · micro":"")
+      : n+" "+U(n)+" "+LU(n)+" sans erreur sur "+mots.length+" · "+(liste==="perso"?nomPerso(perso[pi]):NOMS[liste])+(mode==="micro"?" · micro":"")})}catch(e){}
   }
   // le bouton Rejouer réaffiche les boutons de jeu
   const goOrig = $("go").onclick;
