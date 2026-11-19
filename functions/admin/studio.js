@@ -94,6 +94,7 @@ function enLettres(n){
   if(n<20) return "dix-" + UNITES[n-10];
   if(n===100) return "cent";
   if(n===1000) return "mille";
+  if(n>1000) return UNITES[n/1000] + " mille";
   if(n>100) return UNITES[n/100] + " cents";
   if(n<70){ const d=Math.floor(n/10)*10, u=n%10; return DIZ[d] + (u===0 ? "" : u===1 ? " et un" : "-" + UNITES[u]); }
   if(n<80) return n===71 ? "soixante et onze" : "soixante-" + enLettres(n-60);
@@ -122,6 +123,7 @@ const LISTES = [
   { id:"nombres", titre:"Maths – jeux sur les nombres", groupes:[
     { titre:"Nombres de 0 à 100", items:nombres(0,100) },
     { titre:"Centaines et mille (pour fabriquer tous les nombres jusqu'à 1 000)", items:nombres(200,900,100).concat(nombres(1000,1000)) },
+    { titre:"Milliers (pour fabriquer tous les nombres jusqu'à 9 999)", items:nombres(2000,9000,1000) },
     { titre:"Mots des jeux", mots:true, items:phrases(["plus","briques","est plus grand que","est plus petit que","est égal à"]) },
     { titre:"Phrases des jeux", mots:true, items:phrases(["Bravo ! La maison est construite.","Le loup a soufflé. On réessaie ?","Bravo ! La tour est construite !"]) },
   ]},

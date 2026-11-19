@@ -87,7 +87,7 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
   #cartes .carte{box-shadow:none;padding:0;margin:0}
 }
 </style>
-<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
 </head>
 <body>
 <header>
@@ -108,8 +108,8 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
         <path d="M36 80 Q50 90 64 80" stroke="#7a3b2e" stroke-width="3" fill="none" stroke-linecap="round"/>
       </svg>
       <div>Certains nombres sont des <b>farceurs</b> : ils portent un <b>faux nez</b>.<br>
-      Normalement, 11 devrait s'appeler <i>dix-un</i> et 72 <i>septante-deux</i> (c'est d'ailleurs ce qu'on dit en Belgique et en Suisse !).<br>
-      Mais en France, ils ont un autre nom. À toi de les <b>démasquer</b> !</div>
+      Ils s'écrivent en mettant les morceaux de leur nom les uns après les autres : soixante-douze devient <i>6012</i> au lieu de <i>72</i>, quatre-vingts devient <i>420</i> au lieu de <i>80</i> !<br>
+      À toi de les <b>démasquer</b> !</div>
     </div>
   </div>
 
@@ -151,6 +151,7 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
     <button class="btn gros" id="b-jouer">▶ Jouer</button>
     <button class="btn violet" id="b-rituel">📽 Rituel collectif (à projeter)</button>
     <button class="btn" id="b-cartes">🖨 Cartes à imprimer</button>
+    <button class="btn" id="b-fiche">📄 Fiche d'exercices</button>
   </div>
 </section>
 
@@ -171,7 +172,7 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
       <button class="btn" id="r-quitter">✖ Quitter</button>
       <div id="r-compte"></div>
     </div>
-    <p class="consigne">Le farceur dit son faux nom… Quel est son <b>vrai nom</b> ?</p>
+    <p class="consigne">Le farceur a mal écrit le nombre dicté… Quelle est son erreur ? Comment écrire le <b>vrai nombre</b> ?</p>
     <div class="rit-faux" id="r-faux"></div>
     <div class="rit-vrai" id="r-vrai"></div>
     <div class="actions">
@@ -218,13 +219,21 @@ function lettres(n){
   if(n<100)return "quatre-vingt-"+lettres(n-80);
   return "cent";
 }
-/* Le faux nez : le nom « logique » */
-function fauxNez(n){
-  const u=n%10;
-  if(n<17)return "dix-"+U[u];
-  const base=n<80?"septante":n<90?"huitante":"nonante";
-  return u===0?base:u===1?base+"-et-un":base+"-"+U[u];
+/* Le faux nez = une erreur d'écriture fréquente, d'après les fiches d'intervention des évaluations nationales (Eduscol) :
+   morceaux du nom écrits à la suite (79 → 6019, 60109 ; 80 → 420), erreur de dizaine (91 → 81, 79 → 69),
+   nom long écrit en partie (98 → 90 ou 88), chiffres inversés (12 → 21), confusion entre onze et seize. */
+const POURQUOI={juxta:"il a écrit les morceaux de son nom les uns après les autres",dizaine:"il s'est trompé de dizaine",partiel:"il n'a écrit qu'une partie de son nom, qui est très long",inverse:"il a inversé ses chiffres",confusion:"il a confondu son nom avec un nom qui lui ressemble"};
+function fauxNezs(n){
+  const u=n%10,L=[],a=(e,t)=>{e=String(e);if(e!==String(n)&&!L.some(x=>x.e===e))L.push({e,t});};
+  if(n<17){if(u!==1)a(String(u)+"1","inverse");a(n===16?15:n+1,"confusion");a(n===11?12:n-1,"confusion");}
+  else if(n<80){const r=n-60;a("60"+r,"juxta");if(r>16)a("6010"+(r-10),"juxta");a(n-10,"dizaine");}
+  else if(n===80){a("420","juxta");}
+  else if(n<90){a("420"+(n-80),"juxta");a(n-10,"dizaine");}
+  else{a(n-10,"dizaine");a("420"+(n-80),"juxta");if(u>=7)a(90,"partiel");}
+  return L;
 }
+function fauxNez(n){return fauxNezs(n)[0].e;}
+function fauxAuHasard(n){const L=fauxNezs(n);return L[Math.floor(Math.random()*L.length)];}
 /* La recette : ce que dit vraiment le nom */
 function recette(n){
   const u=n%10;
@@ -256,7 +265,7 @@ function plage(niv){
   if(niv==3||niv==4)for(let i=80;i<=99;i++)a.push(i);
   return a;
 }
-const MOTS_DISTRACTEURS=["dix","un","deux","septante","huitante","nonante","vingt","vingts","et","soixante","quatre","onze","douze"];
+const MOTS_DISTRACTEURS=["dix","un","deux","cent","mille","vingt","vingts","et","soixante","quatre","onze","douze"];
 
 /* ---------- utilitaires ---------- */
 const $=s=>document.querySelector(s);
@@ -264,10 +273,10 @@ const melanger=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(
 const R={niv:1,mode:"melange",nb:15,voix:true};
 function choix(id,cle,conv){document.querySelectorAll(id+" .btn").forEach(b=>b.onclick=()=>{document.querySelectorAll(id+" .btn").forEach(x=>x.classList.remove("on"));b.classList.add("on");R[cle]=conv(b.dataset.v);majNote();});}
 choix("#c-niv","niv",Number);choix("#c-mode","mode",String);choix("#c-nb","nb",Number);choix("#c-voix","voix",v=>v==="1");
-const NOTES={melange:"Les trois jeux se mélangent.",demasque:"On voit le nombre et son faux nez : l'élève construit le vrai nom avec des étiquettes.",ecoute:"On entend le vrai nom : l'élève choisit le bon nombre parmi des erreurs fréquentes (6012, 62…).",recette:"L'élève trouve le calcul caché dans le nom : soixante-douze = 60 + 12."};
+const NOTES={melange:"Les trois jeux se mélangent.",demasque:"On voit le faux nez du farceur (6012, 420…) : l'élève construit le vrai nom avec des étiquettes.",ecoute:"On entend le vrai nom : l'élève choisit le bon nombre parmi des erreurs fréquentes (6012, 62…).",recette:"L'élève trouve le calcul caché dans le nom : soixante-douze = 60 + 12."};
 function majNote(){$("#note-mode").textContent=NOTES[R.mode];}
 majNote();
-function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lettres(n).replace(/-/g," "));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
+function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(n));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
 function montrer(id){["#reglages","#jeu","#fin","#rituel","#cartes"].forEach(s=>$(s).style.display=s===id?"block":"none");window.scrollTo(0,0);}
 
 /* ---------- partie ---------- */
@@ -277,7 +286,7 @@ $("#b-jouer").onclick=()=>{
   while(qs.length<R.nb){qs=qs.concat(melanger(liste));}
   if(R.niv==4){qs=qs.slice(0,R.nb-3).concat([71,80,81]);qs=melanger(qs);} else qs=qs.slice(0,R.nb);
   const types=["demasque","ecoute","recette"];
-  P={qs,i:0,score:0,max:R.nb*2,types:qs.map((_,k)=>R.mode==="melange"?types[k%3]:R.mode)};
+  P={log:[],qs,i:0,score:0,max:R.nb*2,types:qs.map((_,k)=>R.mode==="melange"?types[k%3]:R.mode)};
   if(R.mode==="melange")P.types=melanger(P.types);
   if(!R.voix)P.types=P.types.map(t=>t==="ecoute"?"recette":t);
   montrer("#jeu");question();
@@ -285,32 +294,32 @@ $("#b-jouer").onclick=()=>{
 $("#b-quitter").onclick=()=>{try{speechSynthesis.cancel();}catch(e){} montrer("#reglages");};
 
 function majBarre(){$("#prog").style.width=(P.i/P.qs.length*100)+"%";$("#score").textContent=P.score+(P.score>1?" points":" point");}
-function scene(n,avecNombre){
+function scene(n,avecNombre,f){f=f||fauxNezs(n)[0];
   return `<div class="scene">${avecNombre?`<div class="nombre">${n}</div>`:""}
-  <div class="bulle"><small>Le farceur dit :</small>Je m'appelle <b>${fauxNez(n)}</b> !</div></div>`;
+  <div class="bulle"><small>Pour ce nombre, le farceur a écrit :</small><b style="font-size:1.6em;text-decoration:line-through;color:var(--rouge,#c0392b)">${f.e}</b></div></div>`;
 }
 function identite(n){
   const p=PIEGES[n]?`<span class="piege">⭐ ${PIEGES[n]}</span>`:"";
   return `<div class="identite">
     <div class="id-n"><small>Le nombre</small><span>${n}</span></div>
-    <div class="id-f"><small>Son faux nez</small><span>${fauxNez(n)}</span></div>
+    <div class="id-f"><small>Son faux nez</small><span>${(P&&P.f&&P.fn===n?P.f:fauxNezs(n)[0]).e}</span></div>
     <div class="id-v"><small>Son vrai nom</small><span>${lettres(n)}</span></div>
     <div class="id-r"><small>Sa recette</small><span>${recette(n)}</span></div></div>${p?`<p style="text-align:center">${p}</p>`:""}`;
 }
 function question(){
   majBarre();
   if(P.i>=P.qs.length)return fin();
-  const n=P.qs[P.i],t=P.types[P.i];P.essai=0;
+  const n=P.qs[P.i],t=P.types[P.i];P.essai=0;P.log[P.i]={n,t,err:[]};
   ({demasque:qDemasque,ecoute:qEcoute,recette:qRecette})[t](n);
 }
 function suite(gain,n,txt){
-  P.score+=gain;majBarre();
+  P.log[P.i].res=gain;P.score+=gain;majBarre();
   const a=$("#aide");a.className="aide "+(gain>0?"bravo":"sol");
   a.innerHTML=txt+identite(n)+`<div class="actions"><button class="btn gros" id="b-suite">Suivant ▶</button></div>`;
   dire(n);
   $("#b-suite").onclick=()=>{P.i++;question();};
 }
-function erreur(txt){const a=$("#aide");a.className="aide err";a.innerHTML=txt;}
+function erreur(txt){if(P&&P.log[P.i])P.log[P.i].err.push(txt.replace(/<[^>]+>/g,""));const a=$("#aide");a.className="aide err";a.innerHTML=txt;}
 
 /* Jeu 1 : démasque avec étiquettes */
 function qDemasque(n){
@@ -319,7 +328,8 @@ function qDemasque(n){
   if(n<17)dis=melanger([...new Set(["dix",U[n%10],U[n+1>16?n-1:n+1],"un"])].filter(m=>!bons.includes(m)));
   const tuiles=melanger(bons.concat(dis));
   P.rep=[];
-  $("#zone").innerHTML=scene(n,true)+
+  P.f=fauxAuHasard(n);P.fn=n;
+  $("#zone").innerHTML=scene(n,true,P.f)+`<p class="consigne" style="font-size:.95rem">Le farceur s'est trompé : ${POURQUOI[P.f.t]}.</p>`+
     `<p class="consigne">🎭 Démasque-le ! Construis son <b>vrai nom</b> avec les étiquettes.</p>
     <div class="reponse" id="rep"><span class="vide">touche les étiquettes…</span></div>
     <div class="tuiles">${tuiles.map((m,k)=>`<button class="tuile" data-k="${k}">${m}</button>`).join("")}</div>
@@ -337,7 +347,7 @@ function qDemasque(n){
   };
 }
 function conseil(n,rep){
-  if(/septante|huitante|nonante/.test(rep))return "Attention, ça c'est son <b>faux nez</b> ! En France, on ne dit pas comme ça. Essaie encore.";
+  if(/cent|mille/.test(rep))return "Attention : le farceur a écrit ses morceaux à la suite. Ce n'est pas un grand nombre ! Cherche sa recette : "+recette(n)+".";
   if(n<17&&rep.startsWith("dix"))return `Le farceur ne s'appelle pas « dix-quelque chose ». Il a un nom à lui, en un seul mot. Essaie encore.`;
   if(n===80&&rep==="quatre-vingt")return "Presque ! Quand il est tout seul, quatre-vingts prend un <b>s</b>.";
   if(n>80&&rep.includes("vingts"))return "Presque ! Le <b>s</b> de vingts s'en va quand un autre mot vient derrière.";
@@ -386,7 +396,9 @@ function fin(){
   $("#fin").innerHTML=`<h2>Fin de la partie !</h2><div class="etoiles">${et}</div>
     <p style="font-size:1.3rem">${P.score} / ${P.max} points</p>
     <p>${p>=.9?"Plus aucun farceur ne t'échappe !":p>=.7?"Tu démasques presque tous les farceurs !":"Les farceurs sont malins… rejoue pour les démasquer !"}</p>
+    <div class="actions"><button class="btn gros" id="b-bilan">📄 Bilan de la partie</button><button class="btn" id="b-fiche2">📄 Fiche d'exercices</button></div>
     <div class="actions"><button class="btn gros" id="b-rejouer">↻ Rejouer</button><button class="btn" id="b-menu">Changer les réglages</button></div>`;
+  $("#b-bilan").onclick=ouvrirBilan;$("#b-fiche2").onclick=ouvrirFiche;
   $("#b-rejouer").onclick=()=>$("#b-jouer").onclick();
   $("#b-menu").onclick=()=>montrer("#reglages");
   try{TDC.note({s:P.score,n:P.max,g:p>=.8,niv:"Farceurs "+niv,d:`${P.score} / ${P.max} points (nombres farceurs : ${niv})`});}catch(e){}
@@ -399,10 +411,10 @@ function ritAff(){
   if(RIT.i>=RIT.l.length){RIT.l=melanger(RIT.l);RIT.i=0;}
   const n=RIT.l[RIT.i];
   $("#r-compte").textContent=(RIT.i+1)+" / "+RIT.l.length;
-  $("#r-faux").textContent="« "+fauxNez(n)+" ! »";
+  RIT.f=fauxAuHasard(n);$("#r-faux").innerHTML="<div style='font-size:1.1rem;color:#555'>On a dicté « "+lettres(n)+" ». Le farceur a écrit :</div><s>"+RIT.f.e+"</s>";
   $("#r-vrai").innerHTML="";$("#r-montrer").disabled=false;
 }
-$("#r-montrer").onclick=()=>{const n=RIT.l[RIT.i];$("#r-vrai").innerHTML=`<div class="nombre">${n}</div><br>${lettres(n)}<div style="font-size:1.2rem;color:var(--orange);margin-top:6px">${recette(n)}</div>`;$("#r-montrer").disabled=true;dire(n);};
+$("#r-montrer").onclick=()=>{const n=RIT.l[RIT.i];$("#r-vrai").innerHTML=`<div style="font-size:1rem;color:#555">Le farceur : ${POURQUOI[RIT.f.t]}.</div><div class="nombre">${n}</div><br>${lettres(n)}<div style="font-size:1.2rem;color:var(--orange);margin-top:6px">${recette(n)}</div>`;$("#r-montrer").disabled=true;dire(n);};
 $("#r-suivant").onclick=()=>{RIT.i++;ritAff();};
 $("#r-quitter").onclick=()=>montrer("#reglages");
 
@@ -425,9 +437,9 @@ function planches(){
   });
   let h=`<div class="regle-imp">
   <h2 style="color:var(--violet)">Les nombres farceurs — règles du jeu (CE1)</h2>
-  <p>Certains nombres portent un <b>faux nez</b> : 72 devrait s'appeler <i>septante-deux</i> (c'est ce qu'on dit en Belgique et en Suisse), mais en France il s'appelle <i>soixante-douze</i>. Chaque nombre a une famille de 4 cartes : <b style="color:var(--bleu)">le nombre</b>, <b style="color:var(--violet)">le faux nez</b>, <b style="color:var(--vert)">le vrai nom</b>, <b style="color:var(--orange)">la recette</b>.</p>
+  <p>Certains nombres portent un <b>faux nez</b> : ils s'écrivent en mettant les morceaux de leur nom les uns après les autres. Soixante-douze, c'est 60 et 12 : le farceur s'écrit <i>6012</i>, mais le vrai nombre est <i>72</i>. Chaque nombre a une famille de 4 cartes : <b style="color:var(--bleu)">le nombre</b>, <b style="color:var(--violet)">le faux nez</b>, <b style="color:var(--vert)">le vrai nom</b>, <b style="color:var(--orange)">la recette</b>.</p>
   <h3>1. Démasque le farceur (2 à 4 joueurs ou en atelier)</h3>
-  <p>On pioche une carte <b>nombre</b>. On dit d'abord son faux nez, puis son vrai nom, puis sa recette (72 → « septante-deux… non ! soixante-douze, c'est 60 + 12 »). Si c'est juste, on garde la carte. Une carte ⭐ rapporte 2 cartes.</p>
+  <p>On pioche une carte <b>nombre</b>. On montre son faux nez, puis on dit son vrai nom et sa recette (6012 → « non ! soixante-douze, c'est 60 + 12, ça s'écrit 72 »). Si c'est juste, on garde la carte. Une carte ⭐ rapporte 2 cartes.</p>
   <h3>2. Le mémory des farceurs</h3>
   <p>On utilise seulement 2 ou 3 sortes de cartes (par exemple nombre + vrai nom), faces cachées. On retourne les cartes et on cherche les paires (ou les trios) de la même famille. On lit à voix haute chaque carte retournée.</p>
   <h3>3. Le jeu des familles</h3>
@@ -442,6 +454,37 @@ function planches(){
   }
   $("#planches").innerHTML=h;
 }
+
+/* ---------- Document écrit : fiche d'exercices et bilan de partie ---------- */
+const NIVNOM=["","11 à 16","70 à 79","80 à 99","tous les farceurs"];
+const L8="……………………………………";
+function ouvrirFiche(){
+  const ns=melanger(plage(R.niv));const pick=k=>{const a=ns.splice(0,k);while(a.length<k)a.push(melanger(plage(R.niv))[0]);return a;};
+  const e1=pick(5),e2=pick(5),e3=pick(4);
+  const trou=n=>{const r=recette(n);return r.replace(/(\d+)$/,"……");};
+  DocEcrit.ouvrir({titre:"Fiche d'exercices",jeu:"Les nombres farceurs",nom:"Fiche nombres farceurs",html:()=>`
+  <p>Nombres : ${NIVNOM[R.niv]}</p>
+  <h2>1. Démasque le farceur : corrige son erreur.</h2>${e1.map((n,i)=>`<p>${String.fromCharCode(97+i)}) On a dicté « ${lettres(n)} ». Le farceur a écrit ${fauxAuHasard(n).e}. Le bon nombre : ……………</p>`).join("")}
+  <h2>2. Écris ces nombres en chiffres.</h2>${e2.map((n,i)=>`<p>${String.fromCharCode(97+i)}) ${lettres(n)} = ……………</p>`).join("")}
+  <h2>3. Complète la recette cachée dans le nom.</h2>${e3.map((n,i)=>`<p>${String.fromCharCode(97+i)}) ${lettres(n)} : ${n} = ${trou(n)}</p>`).join("")}
+  <div class="saut"><h2>Corrigé</h2>
+  <p><b>1.</b> ${e1.map((n,i)=>`${String.fromCharCode(97+i)}) ${n}`).join(" ; ")}</p>
+  <p><b>2.</b> ${e2.map((n,i)=>`${String.fromCharCode(97+i)}) ${n}`).join(" ; ")}</p>
+  <p><b>3.</b> ${e3.map((n,i)=>`${String.fromCharCode(97+i)}) ${n} = ${recette(n)}`).join(" ; ")}</p></div>`});
+}
+function ouvrirBilan(){
+  const J=P.log.filter(q=>q&&q.res!==undefined),T={demasque:"Démasque",ecoute:"Écoute et trouve",recette:"La recette cachée"};
+  const r2=J.filter(q=>q.res===2).length,r1=J.filter(q=>q.res===1).length,r0=J.filter(q=>q.res===0).length;
+  const rev=[...new Set(J.filter(q=>q.res<2).map(q=>q.n))];
+  DocEcrit.ouvrir({titre:"Bilan de la partie",jeu:"Les nombres farceurs",nom:"Bilan nombres farceurs",html:()=>`
+  <p>Nombres : ${NIVNOM[R.niv]} — ${J.length} questions</p>
+  <h2>Résultats</h2><p><b>${P.score} points sur ${J.length*2}</b> — réussi du premier coup : ${r2} ; au deuxième essai : ${r1} ; non réussi : ${r0}.</p>
+  <h2>Farceurs à retravailler</h2><p>${rev.length?rev.map(n=>`${n} (${lettres(n)})`).join(" ; "):"Aucun : bravo !"}</p>
+  <h2>Détail des questions</h2><table><tr><th>Nombre</th><th>Jeu</th><th>Résultat</th><th>Aide reçue</th></tr>
+  ${J.map(q=>`<tr><td>${q.n}</td><td>${T[q.t]}</td><td>${q.res===2?"✔ du premier coup":q.res===1?"✔ au 2e essai":"✘ (réponse : "+lettres(q.n)+")"}</td><td>${q.err.join(" ")||"—"}</td></tr>`).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+}
+$("#b-fiche").onclick=ouvrirFiche;
 </script>
 </body>
 </html>
