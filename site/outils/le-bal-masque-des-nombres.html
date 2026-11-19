@@ -32,13 +32,13 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
 .cible .forme-nom{font-size:.85rem;color:var(--bleu);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
 .f-chiffres{font-size:2.6rem;font-weight:bold;letter-spacing:.04em}
 .f-lettres{font-size:1.5rem}
-.f-calc{font-size:1.4rem}
+.f-calc{font-size:1.8rem;line-height:1.5}
 .options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
 @media(max-width:520px){.options{grid-template-columns:1fr}}
 .opt{background:#fff;border:3px solid #d0d7de;border-radius:16px;padding:14px;cursor:pointer;min-height:70px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:inherit;color:var(--txt)}
 .opt .f-chiffres{font-size:1.9rem}
 .opt .f-lettres{font-size:1.2rem}
-.opt .f-calc{font-size:1.15rem}
+.opt .f-calc{font-size:1.4rem;line-height:1.5}
 .opt.ok{border-color:var(--vert);background:#e8f6ee}
 .opt.ko{border-color:var(--rouge);background:#fbeaea;opacity:.6}
 .aide{margin-top:12px;padding:12px;border-radius:12px;display:none;font-size:1.05rem}
@@ -53,12 +53,14 @@ table.num th{background:var(--bleu);color:#fff;font-size:.9rem}
 table.num td{font-size:1.5rem;font-weight:bold;height:44px}
 table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background:#c0392b;border-color:#c0392b}table.num th.d{background:#2980b9;border-color:#2980b9}table.num th.u{background:#27ae60;border-color:#27ae60}
 /* matériel */
-.mat{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap}
-.grp{display:flex;gap:3px;align-items:flex-end;flex-wrap:wrap;max-width:240px;justify-content:center}
-.millier{width:34px;height:34px;background:#b07cc6;border:2px solid #6c3483;border-radius:3px;box-shadow:3px -3px 0 #8e44ad;margin-top:3px}
-.plaque{width:30px;height:30px;background:#e57368;border:1px solid #922b21;background-image:linear-gradient(#922b2155 1px,transparent 1px),linear-gradient(90deg,#922b2155 1px,transparent 1px);background-size:3px 3px}
-.barre{width:7px;height:30px;background:#5dade2;border:1px solid #1f618d;background-image:linear-gradient(#1f618d88 1px,transparent 1px);background-size:7px 3px}
-.cube{width:7px;height:7px;background:#58d68d;border:1px solid #1e8449}
+.mat{display:flex;gap:18px;align-items:flex-end;justify-content:center;flex-wrap:wrap}
+.grp{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;justify-content:center}
+.cinq{display:flex;gap:5px;align-items:flex-end;flex-wrap:wrap;justify-content:center}
+.millier{width:62px;height:62px;background:#b07cc6;border:2px solid #6c3483;border-radius:4px;box-shadow:6px -6px 0 #8e44ad;margin-top:6px}
+.plaque{width:70px;height:70px;background:#e57368;border:2px solid #922b21;background-image:linear-gradient(#922b2199 1px,transparent 1px),linear-gradient(90deg,#922b2199 1px,transparent 1px);background-size:7px 7px}
+.barre{width:16px;height:110px;background:#5dade2;border:2px solid #1f618d;border-radius:2px;background-image:linear-gradient(#1f618d 1px,transparent 1px);background-size:16px 11px}
+.cube{width:18px;height:18px;background:#58d68d;border:2px solid #1e8449;border-radius:2px}
+.opt .mat{transform:none}
 /* lettres */
 .reponse{min-height:58px;border:3px solid var(--bleu);border-radius:14px;padding:10px;font-size:1.4rem;text-align:center;background:#fff;margin:12px 0;word-break:break-word}
 .reponse .vide{color:#aaa;font-size:1rem}
@@ -71,7 +73,7 @@ table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background
 .identite{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px}
 .identite>div{background:#fff;border:1px solid #d0d7de;border-radius:10px;padding:8px;text-align:center}
 .identite small{display:block;color:var(--violet);font-size:.75rem;text-transform:uppercase;margin-bottom:4px}
-.identite .f-chiffres{font-size:1.6rem}.identite .f-lettres{font-size:1.05rem}.identite .f-calc{font-size:1rem}
+.identite .f-chiffres{font-size:1.6rem}.identite .f-lettres{font-size:1.15rem}.identite .f-calc{font-size:1.2rem}
 #fin{display:none;text-align:center}
 .etoiles{font-size:2.4rem;margin:10px 0}
 </style>
@@ -222,7 +224,8 @@ function colonnes(n){if(R.niv==="CE2"||n>=1000)return"mcdu";if(R.niv==="CE1"||n>
 function tableau(n){const k=colonnes(n),v=chiffresDe(n),nom={m:"M",c:"C",d:"D",u:"U"};
   let cols=k.split("");let started=false;
   return `<table class="num"><tr>${cols.map(x=>`<th class="${x}">${nom[x]}</th>`).join("")}</tr><tr>${cols.map(x=>{if(v[x]>0||x==="u")started=true;return`<td>${started?v[x]:""}</td>`}).join("")}</tr></table>`;}
-function materiel(n){const {m,c,d,u}=chiffresDe(n);const g=(k,cl)=>k?`<div class="grp">${`<div class="${cl}"></div>`.repeat(k)}</div>`:"";
+function materiel(n){const {m,c,d,u}=chiffresDe(n);
+  const g=(k,cl)=>{if(!k)return"";const b=`<div class="${cl}"></div>`;let h="";for(let i=0;i<k;i+=5)h+=`<div class="cinq">${b.repeat(Math.min(5,k-i))}</div>`;return`<div class="grp">${h}</div>`;};
   return `<div class="mat">${g(m,"millier")}${g(c,"plaque")}${g(d,"barre")}${g(u,"cube")}</div>`;}
 function rendu(n,f,nc){
   switch(f){
