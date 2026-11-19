@@ -77,7 +77,7 @@ table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background
 #fin{display:none;text-align:center}
 .etoiles{font-size:2.4rem;margin:10px 0}
 </style>
-<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
 </head>
 <body>
 <header>
@@ -120,7 +120,7 @@ table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background
       <button class="btn" data-q="10">10</button><button class="btn" data-q="15">15</button><button class="btn" data-q="20">20</button>
     </div>
   </div>
-  <div style="text-align:center"><button class="btn gros" id="go">Entrer dans le bal ▶</button></div>
+  <div class="actions"><button class="btn gros" id="go">Entrer dans le bal ▶</button><button class="btn" id="ficheR">📄 Fiche d'exercices à imprimer</button></div>
 </section>
 
 <section id="jeu">
@@ -142,6 +142,7 @@ table.num th.m{background:#8e44ad;border-color:#8e44ad}table.num th.c{background
   <h2 style="font-size:1.5rem">Fin du bal !</h2>
   <div class="etoiles" id="etoiles"></div>
   <p id="bilan"></p>
+  <div class="actions"><button class="btn gros" id="bilanF">📄 Bilan de la partie</button><button class="btn" id="ficheF">📄 Fiche d'exercices</button></div>
   <div class="actions"><button class="btn gros" id="rejouer">Rejouer</button><button class="btn" id="retour">Changer les réglages</button></div>
 </section>
 </main>
@@ -246,7 +247,7 @@ function identite(n){
 }
 
 /* ---------- Voix et sons ---------- */
-function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lettres(n).replace(/-/g," "));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
+function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(n));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
 let AC;function son(ok){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type="triangle";const t=AC.currentTime;
   if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(880,t+.12);}else{o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(180,t+.15);}
   g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36);}catch(e){}}
@@ -305,7 +306,7 @@ function nouvelle(){
   }else if(mode==="chiffres"){const s=FS.filter(f=>f!=="chiffres");A=s.length?s[alea(0,s.length-1)]:"oral";}
   else{const s=FS.filter(f=>f!=="lettres"&&f!=="oral");A=s.length?s[alea(0,s.length-1)]:"chiffres";if(Math.random()<.3&&FS.includes("oral"))A="oral";}
   const nc=R.nc&&A==="unites"&&Math.random()<.5;
-  cur={n,mode,A,B,nc};
+  cur={n,mode,A,B,nc,err:[]};JOURNAL.push(cur);
   $("cible").innerHTML=`<div class="forme-nom">${NOMF[A]}</div>${rendu(n,A,nc)}`;
   if(A==="oral")setTimeout(()=>dire(n),300);
   if(mode==="qcm"){
@@ -336,27 +337,27 @@ function nouvelle(){
   }
 }
 function majRep(){const sep=cur.mode==="lettres"?"-":"";$("rep").innerHTML=reponse.length?(cur.mode==="chiffres"?fmt(reponse.join("")):reponse.join(sep)):`<span class="vide">${cur.mode==="lettres"?"touche les mots":"touche les chiffres"}</span>`;}
-function reussi(){son(true);if(essais===0)score+=2;else score+=1;
+function reussi(){son(true);cur.res=essais===0?2:1;if(essais===0)score+=2;else score+=1;
   $("aide").className="aide bravo";$("aide").innerHTML=`<strong>Bravo !</strong> Voici tous les costumes de ce nombre :${identite(cur.n)}`;dire(cur.n);finQuestion();}
-function echec(msg){son(false);essais++;
+function echec(msg,typ){son(false);essais++;cur.err.push(typ||"autre");if(essais>=2)cur.res=0;
   if(essais===1){$("aide").className="aide err";$("aide").innerHTML="💡 "+msg+" Essaie encore !";}
   else{$("aide").className="aide sol";$("aide").innerHTML=`La réponse était <strong>${cur.mode==="lettres"?lettres(cur.n):fmt(cur.n)}</strong>. Voici tous ses costumes :${identite(cur.n)}`;dire(cur.n);finQuestion();}
 }
 function finQuestion(){$("zone").querySelectorAll("button").forEach(b=>b.disabled=true);
   if(cur.mode==="qcm")$("zone").querySelectorAll(".opt").forEach(b=>{if(+b.dataset.v===cur.n){b.classList.add("ok");b.disabled=false;b.onclick=null;}});
   $("suivant").style.display="";Q++;}
-function repQcm(b){const v=+b.dataset.v;if(v===cur.n){b.classList.add("ok");reussi();}else{b.classList.add("ko");b.disabled=true;echec(MSG[typeErreur(cur.n,v)]);}}
+function repQcm(b){const v=+b.dataset.v;if(v===cur.n){b.classList.add("ok");reussi();}else{b.classList.add("ko");b.disabled=true;{const t=typeErreur(cur.n,v);echec(MSG[t],t);}}}
 function valChiffres(){if(!reponse.length)return;const v=+reponse.join("");if(v===cur.n)return reussi();
-  reponse=[];majRep();echec(MSG[typeErreur(cur.n,v)]);}
+  reponse=[];majRep();const t=typeErreur(cur.n,v);echec(MSG[t],t);}
 function valLettres(){if(!reponse.length)return;const bon=mots(cur.n),r=reponse;
   if(r.join("-")===bon.join("-"))return reussi();
-  let msg;
+  let msg,typL="autre";
   const sansS=a=>a.map(w=>w.replace(/^(cent|vingt|mille)s$/,"$1"));
-  if(sansS(r).join("-")===sansS(bon).join("-"))msg="Presque ! Regarde les « s » : « cent » et « vingt » prennent un s seulement quand ils sont multipliés et à la fin du nombre (deux-cents, quatre-vingts). « Mille » ne prend jamais de s.";
-  else if(r.filter(w=>w!=="et").join("-")===bon.filter(w=>w!=="et").join("-"))msg="Presque ! Il manque ou il y a en trop le petit mot « et » (vingt-et-un, soixante-et-onze, mais quatre-vingt-un).";
+  if(sansS(r).join("-")===sansS(bon).join("-"))msg="Presque ! Regarde les « s » : « cent » et « vingt » prennent un s seulement quand ils sont multipliés et à la fin du nombre (deux-cents, quatre-vingts). « Mille » ne prend jamais de s.",typL="accord";
+  else if(r.filter(w=>w!=="et").join("-")===bon.filter(w=>w!=="et").join("-"))msg="Presque ! Il manque ou il y a en trop le petit mot « et » (vingt-et-un, soixante-et-onze, mais quatre-vingt-un).",typL="et";
   else{const i=r.findIndex((w,k)=>w!==bon[k]);msg=i<0?"Il manque des mots à la fin.":`Le début est juste jusqu'à « ${r.slice(0,i).join("-")||"…"} », vérifie la suite.`;if(cur.A!=="oral"&&cur.A!=="chiffres")msg+=" Aide-toi en l'écrivant d'abord en chiffres : "+"?";}
   if(msg.endsWith("?"))msg=msg.replace(/ Aide-toi.*$/," Aide-toi en pensant d'abord au nombre en chiffres.");
-  reponse=[];majRep();echec(msg);}
+  reponse=[];majRep();echec(msg,typL);}
 function fin(){
   $("jeu").style.display="none";$("fin").style.display="block";
   const max=R.nb*2,p=score/max,e=p>=.9?3:p>=.6?2:p>=.3?1:0;
@@ -369,13 +370,60 @@ function demarrer(){
   if(R.formes.length<2){alertBox("Choisis au moins deux costumes.");return;}
   if(R.mode==="lettres"&&!R.formes.some(f=>f!=="lettres"&&f!=="oral")&&!R.formes.includes("oral")){alertBox("Ajoute un costume autre que « en lettres ».");return;}
   try{localStorage.setItem("balNombres",JSON.stringify(R));}catch(e){}
-  Q=0;score=0;deja=new Set();$("reglages").style.display="none";$("fin").style.display="none";$("jeu").style.display="block";nouvelle();
+  Q=0;score=0;deja=new Set();JOURNAL=[];$("reglages").style.display="none";$("fin").style.display="none";$("jeu").style.display="block";nouvelle();
 }
 function alertBox(t){$("noteNiveau").innerHTML=`<strong style="color:#c0392b">${t}</strong>`;}
 $("go").onclick=demarrer;$("rejouer").onclick=demarrer;$("suivant").onclick=nouvelle;
 const versReglages=()=>{$("jeu").style.display="none";$("fin").style.display="none";$("reglages").style.display="block";majReglages();};
 $("quitter").onclick=versReglages;$("retour").onclick=versReglages;
 majReglages(!R.formes.length);
+
+/* ---------- Document écrit : fiche d'exercices et bilan de partie ---------- */
+let JOURNAL=[];
+const NOMERR={ordre:"ordre des chiffres",juxta:"morceaux écrits les uns après les autres (6012 pour 72)",zero:"zéro oublié ou en trop",diz:"dizaines",cent:"centaines",mil:"milliers",unit:"unités",accord:"accord de cent / vingt / mille",et:"le petit mot « et »",autre:"autre erreur"};
+function lireReglages(){R.min=Math.max(0,+$("nMin").value||0);R.max=Math.min(9999,Math.max(R.min+5,+$("nMax").value||R.max));}
+function nombresFiche(k){const v=new Set();let g=0;while(v.size<k&&g++<500){const n=alea(R.min,R.max);if(n>0&&(Math.random()<.5||piege(n)))v.add(n);}return[...v];}
+function texteForme(n,f){return{lettres:lettres(n),additive:additive(n),repetee:repetee(n),unites:unitesTxt(n,R.nc&&Math.random()<.4),produits:produits(n),chiffres:fmt(n)}[f];}
+const LIGNE="……………………………………";
+function ficheHtml(){
+  const fs=["lettres","additive","unites"];if(R.formes.includes("repetee"))fs.push("repetee");if(R.niv!=="CP")fs.push("produits");
+  const fsOk=n=>fs.filter(f=>formeOk(n,f));
+  const ex1=nombresFiche(6).map(n=>{const l=fsOk(n);return{n,t:texteForme(n,l[alea(0,l.length-1)])};});
+  const ex2=nombresFiche(4);
+  const ex3=nombresFiche(3),ex4=nombresFiche(3);
+  const col=colonnes(R.max).split(""),NOM={m:"M",c:"C",d:"D",u:"U"};
+  const dec=n=>{const {m,c,d,u}=chiffresDe(n);const t=[];if(m)t.push("…… milliers");if(m||c)t.push("…… centaines");t.push("…… dizaines","…… unités");return t.join(" ");};
+  const add=n=>{const k=String(n).length;return Array(k).fill("……").join(" + ");};
+  const tab=ns=>`<table><tr><th></th>${col.map(x=>`<th>${NOM[x]}</th>`).join("")}</tr>${ns.map(n=>`<tr><td>${ns===ex4?fmt(n):""}</td>${col.map(()=>"<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>").join("")}</tr>`).join("")}</table>`;
+  const exos=`<p>Niveau ${R.niv} — nombres de ${fmt(R.min)} à ${fmt(R.max)}</p>
+  <h2>1. Écris ces nombres en chiffres.</h2>${ex1.map((e,i)=>`<p>${String.fromCharCode(97+i)}) ${e.t} = ${LIGNE}</p>`).join("")}
+  <h2>2. Écris ces nombres en lettres.</h2>${ex2.map((n,i)=>`<p>${String.fromCharCode(97+i)}) ${fmt(n)} : ${LIGNE}${LIGNE}</p>`).join("")}
+  <h2>3. Complète les décompositions.</h2>${ex3.map(n=>`<p>${fmt(n)} = ${add(n)}</p><p>${fmt(n)} = ${dec(n)}</p>`).join("")}
+  <h2>4. Écris ces nombres dans le tableau de numération.</h2>${tab(ex4)}`;
+  const corr=`<div class="saut"><h2>Corrigé</h2>
+  <p><b>1.</b> ${ex1.map((e,i)=>`${String.fromCharCode(97+i)}) ${fmt(e.n)}`).join(" ; ")}</p>
+  <p><b>2.</b> ${ex2.map((n,i)=>`${String.fromCharCode(97+i)}) ${lettres(n)}`).join(" ; ")}</p>
+  <p><b>3.</b> ${ex3.map(n=>`${fmt(n)} = ${additive(n)} = ${unitesTxt(n,false)}`).join(" ; ")}</p>
+  <p><b>4.</b> ${ex4.map(n=>{const v=chiffresDe(n);return fmt(n)+" : "+col.map(x=>NOM[x]+" "+v[x]).join(", ");}).join(" ; ")}</p></div>`;
+  return exos+corr;
+}
+function ouvrirFiche(){lireReglages();DocEcrit.ouvrir({titre:"Fiche d'exercices",jeu:"Le bal masqué des nombres",nom:"Fiche bal masqué des nombres",html:ficheHtml});}
+function bilanHtml(){
+  const J=JOURNAL.filter(q=>q.res!==undefined),r2=J.filter(q=>q.res===2).length,r1=J.filter(q=>q.res===1).length,r0=J.filter(q=>q.res===0).length;
+  const cpt={};J.forEach(q=>q.err.forEach(e=>cpt[e]=(cpt[e]||0)+1));
+  const jeu={qcm:"Trouve le même nombre",chiffres:"Écris en chiffres",lettres:"Écris en lettres"};
+  const err=Object.keys(cpt).sort((a,b)=>cpt[b]-cpt[a]).map(e=>`<li>${NOMERR[e]||e} : ${cpt[e]} fois</li>`).join("");
+  const rev=J.filter(q=>q.res<2).map(q=>fmt(q.n));
+  return `<p>Niveau ${R.niv} — nombres de ${fmt(R.min)} à ${fmt(R.max)} — ${J.length} questions</p>
+  <h2>Résultats</h2><p><b>${score} points sur ${J.length*2}</b> — réussi du premier coup : ${r2} ; au deuxième essai : ${r1} ; non réussi : ${r0}.</p>
+  <h2>Erreurs repérées</h2>${err?`<ul>${err}</ul>`:"<p>Aucune erreur.</p>"}
+  <h2>Nombres à retravailler</h2><p>${rev.length?rev.join(" ; "):"Aucun : bravo !"}</p>
+  <h2>Détail des questions</h2><table><tr><th>Nombre</th><th>Jeu</th><th>Costume donné → demandé</th><th>Résultat</th></tr>
+  ${J.map(q=>`<tr><td>${fmt(q.n)}</td><td>${jeu[q.mode]}</td><td>${NOMF[q.A]} → ${q.mode==="qcm"?NOMF[q.B]:q.mode==="chiffres"?"En chiffres":"En lettres"}</td><td>${q.res===2?"✔ du premier coup":q.res===1?"✔ au 2e essai":"✘ (réponse : "+(q.mode==="lettres"?lettres(q.n):fmt(q.n))+")"}</td></tr>`).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`;
+}
+$("ficheR").onclick=ouvrirFiche;$("ficheF").onclick=ouvrirFiche;
+$("bilanF").onclick=()=>DocEcrit.ouvrir({titre:"Bilan de la partie",jeu:"Le bal masqué des nombres",nom:"Bilan bal masqué des nombres",html:bilanHtml});
 </script>
 </body>
 </html>

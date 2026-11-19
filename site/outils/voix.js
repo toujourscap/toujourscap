@@ -26,7 +26,11 @@
     n = parseInt(n, 10);
     if (n <= 100) return ["n" + n];
     if (n === 1000) return ["n1000"];
-    if (n > 1000) return null;
+    if (n > 9999) return null;
+    if (n > 1000) {
+      var m = Math.floor(n / 1000) * 1000, rm = n % 1000, suite = rm ? nombre(rm) : [];
+      return suite ? ["n" + m].concat(suite) : null;
+    }
     var c = Math.floor(n / 100) * 100, r = n % 100;
     return r ? ["n" + c, "n" + r] : ["n" + c];
   }
