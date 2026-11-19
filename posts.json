@@ -1,6 +1,375 @@
 {
- "count": 57,
+ "count": 58,
  "posts": [
+  {
+   "title": "Le bal masqué des nombres",
+   "slug": "le-bal-masque-des-nombres",
+   "cat": "numeration",
+   "excerpt": "Écrire et reconnaître les nombres sous toutes leurs formes : chiffres, lettres, oral, décompositions (300 + 40 + 7, 3 centaines 4 dizaines 7 unités, × 10, × 100), tableau de numération, matériel. Du CP (jusqu'à 100) au CE2 (jusqu'à 10 000), d'après les repères annuels.",
+   "date": "2026-11-19T08:00:00.000Z",
+   "categoryIds": [],
+   "media": {
+    "displayed": true,
+    "custom": false
+   },
+   "jeu": {
+    "niveaux": [
+     "CP",
+     "CE1",
+     "CE2"
+    ],
+    "joueurs": "1 joueur ou la classe",
+    "supports": [
+     "ecran",
+     "projetable"
+    ]
+   },
+   "richContent": {
+    "nodes": [
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Un même nombre peut se déguiser de mille façons : 347, trois-cent-quarante-sept, 300 + 40 + 7, 3 centaines 4 dizaines 7 unités, (3 × 100) + (4 × 10) + (7 × 1), dans le tableau de numération ou avec le matériel. Au bal masqué, l'élève doit le reconnaître sous tous ses costumes, comme le demandent les programmes du cycle 2.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Ce que disent les repères annuels",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CP : nombres jusqu'à 100. Écriture en chiffres, en lettres, nom à l'oral, décomposition en dizaines et unités (35 = 30 + 5 = 3 dizaines 5 unités).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CE1 : nombres jusqu'à 1 000. Lire un nombre écrit en chiffres, écrire en chiffres et en lettres des nombres dictés, centaines, dizaines et unités, 300 + 40 + 5, (3 × 100) + (4 × 10) + 5.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "CE2 : nombres jusqu'à 10 000. (4 × 1 000) + (6 × 100) + (3 × 10) + (5 × 1), 4 000 + 600 + 30 + 5, quatre-mille-six-cent-trente-cinq.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les 4 jeux",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Trouve le même nombre : un nombre dans un costume, quatre propositions dans un autre. Les mauvaises réponses reprennent les erreurs les plus fréquentes : chiffres inversés (47 / 74), morceaux juxtaposés (6012 pour soixante-douze, 4007 pour quatre-cent-sept), zéro oublié.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écris en chiffres : le nombre est dit à l'oral ou montré dans un autre costume, l'élève l'écrit avec le pavé de chiffres.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écris en lettres : l'élève touche les étiquettes-mots dans l'ordre, les traits d'union se placent seuls. Pièges : cent ou cents, vingt ou vingts, mille (jamais de s), le petit mot « et ».",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Mélange : les trois jeux à la suite.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Comment jouer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "ORDERED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le niveau (CP, CE1, CE2) et l'intervalle des nombres (par exemple de 0 à 69 au CP, de 100 à 1 000 au CE1).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Choisir le jeu, les costumes du nombre à utiliser et le nombre de questions (10, 15 ou 20).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Première erreur : une aide ciblée sur l'erreur commise. Deuxième erreur : la solution.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Après chaque question, la carte d'identité du nombre s'affiche : le même nombre dans tous ses costumes.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Options",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Décompositions non canoniques : 2 dizaines 15 unités, 34 dizaines 7 unités, 1 centaine 12 dizaines…",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Voix : le nombre est lu à voix haute (costume « à l'oral »).",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Écriture des nombres en lettres selon l'orthographe recommandée : traits d'union entre tous les mots.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "HTML",
+      "htmlData": {
+       "url": "/outils/le-bal-masque-des-nombres.html",
+       "containerData": {
+        "height": {
+         "custom": "ecran"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
   {
    "title": "Les cristaux de la planète Sonora",
    "slug": "les-cristaux-de-la-planete-sonora",
