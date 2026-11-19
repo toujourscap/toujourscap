@@ -66,6 +66,34 @@
   .fiche .banque b{display:block;font-size:14px;margin-bottom:2px}
   .fiche .banque span{display:inline-block;margin-right:22px}
   .fiche .tag{font-size:12px;color:#555;text-align:right;margin-bottom:4px}
+  /* ---- Mode élève à l'écran ---- */
+  #eleve{display:none;max-width:980px;margin:0 auto;padding:18px 20px 40px}
+  body.mode-eleve header, body.mode-eleve main{display:none}
+  body.mode-eleve #eleve{display:block}
+  .el-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .el-top h2{margin:0;font-family:Andika,sans-serif;font-size:28px;flex:1}
+  .el-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  .el-ecoute{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .el-ecoute .phr{font-size:13px;color:var(--muted)}
+  .el-txt{font-family:Andika,sans-serif;font-size:24px;line-height:2.5}
+  .el-txt p{margin:0 0 .3em}
+  .el-txt .ini{font-weight:700}
+  .el-txt input{font:inherit;font-size:22px;border:0;border-bottom:2.5px solid #23302c;background:#f4f8f6;border-radius:6px 6px 0 0;padding:0 6px;margin:0 2px;text-align:center;color:#1d4fa3;height:1.5em;vertical-align:baseline}
+  .el-txt input:focus{outline:3px solid #4fa3ff;outline-offset:1px;background:#fff}
+  .el-txt input.ok{border-bottom-color:#1f8a4c;background:#e4f4ea;color:#1f8a4c}
+  .el-txt input.ko{border-bottom-color:#d23c3c;background:#fde8e8;color:#b02a2a}
+  .el-txt input.maj{border-bottom-color:#e8835a;background:#fdeee6}
+  .el-txt .sol{font-size:17px;color:#1f8a4c;font-weight:700;margin-right:4px}
+  .accents{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+  .accents button{font-family:Andika,sans-serif;font-size:20px;min-width:42px;padding:4px 8px}
+  .el-banque{margin-top:14px;border:1.5px dashed var(--line);border-radius:10px;padding:8px 14px;font-family:Andika,sans-serif;font-size:20px;line-height:1.9}
+  .el-banque b{display:block;font-family:Inter,sans-serif;font-size:13px;color:var(--muted)}
+  .el-banque span{display:inline-block;margin-right:20px}
+  .el-banque span.pris{color:#b9b4a8;text-decoration:line-through}
+  .el-res{margin-top:14px;font-size:18px;font-weight:600;min-height:1.4em}
+  .lien-box{display:none;margin-top:10px;gap:8px}
+  .lien-box.on{display:flex}
+  .lien-box input{flex:1;font-size:13px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:16mm 15mm}
@@ -170,9 +198,43 @@
       <button class="primary" id="imprimer">Imprimer</button>
       <button id="word">Télécharger en Word (.docx)</button>
     </div>
+    <h2 style="margin-top:22px"><span class="step">5</span> Sur l'ordinateur</h2>
+    <div class="btns" style="margin-top:0">
+      <button class="primary" id="faireEcran">▶ Faire la dictée à l'écran</button>
+      <button id="creerLien">🔗 Créer le lien pour les élèves</button>
+    </div>
+    <div class="lien-box" id="lienBox"><input type="text" id="lienTxt" readonly><button id="copierLien">Copier</button></div>
+    <p class="hint">L'élève écoute la dictée, écrit les mots dans les trous puis vérifie. Le lien contient la dictée : rien n'est enregistré sur un serveur.</p>
     <p class="hint" id="printHint">Imprimer : fiche élève puis corrigé (si coché). Le fichier Word se modifie avant impression.</p>
   </section>
 </main>
+
+<section id="eleve">
+  <div class="el-top">
+    <h2 id="elTitre">Dictée</h2>
+    <button id="elRetour">← Retour aux réglages</button>
+  </div>
+  <div class="el-card">
+    <div class="el-ecoute" id="elEcoute">
+      <button class="primary" id="elTout">🔊 Écouter toute la dictée</button>
+      <button id="elPrec" title="Phrase précédente">◀</button>
+      <button id="elPhrase">🔊 Phrase <span id="elNum">1</span></button>
+      <button id="elSuiv" title="Phrase suivante">▶</button>
+      <button id="elStop">⏹</button>
+      <label class="phr" style="display:flex;gap:6px;align-items:center;margin:0">Vitesse
+        <select id="elVit" style="width:auto;padding:4px"><option value="0.6">lente</option><option value="0.8" selected>normale</option><option value="1">rapide</option></select></label>
+    </div>
+    <div class="el-txt" id="elTxt"></div>
+    <div class="accents" id="elAcc"></div>
+    <div id="elBanque"></div>
+    <div class="btns">
+      <button class="primary" id="elVerif">✔ Vérifier</button>
+      <button id="elSol">Voir la correction</button>
+      <button id="elRecom">Recommencer</button>
+    </div>
+    <div class="el-res" id="elRes"></div>
+  </div>
+</section>
 
 <div id="printArea"></div>
 <div id="toast"></div>
@@ -284,7 +346,7 @@ function renderMots(){
   $("nbMots").textContent = words.length;
   $("nbTrous").textContent = words.filter(t => t.on).length;
   if (!words.length){ $("words").innerHTML = '<p class="hint">Le texte apparaîtra ici.</p>'; return; }
-  $("words").innerHTML = paragraphes(tk => `<span class="w${tk.on?" on":""}" data-id="${tk.id}" title="difficulté ${tk.score.toFixed(1)}">${esc(tk.t)}</span>`);
+  $("words").innerHTML = paragraphes(tk => `<span class="w${tk.on?" on":""}" data-id="${tk.id}" title="difficulté ${(tk.score||0).toFixed(1)}">${esc(tk.t)}</span>`);
 }
 
 function trouHTML(tk){
@@ -418,6 +480,145 @@ function fallbackDl(blob, nom){
   catch(e){ toast("Téléchargement indisponible ici."); }
 }
 
+
+/* ============ Mode élève à l'écran ============ */
+let elDepuisLien = false, elEssais = 0, elInputs = [];
+function phrasesDe(texte){
+  return texte.replace(/\s+/g," ").trim().match(/[^.!?…]+[.!?…]*["»]?\s*/g) || [];
+}
+let elPhrases = [], elIdx = 0;
+const synth = window.speechSynthesis;
+function voixFr(){ try { return synth.getVoices().filter(v => /^fr/i.test(v.lang)).sort((a,b)=> (/fr-FR/i.test(b.lang)) - (/fr-FR/i.test(a.lang)))[0]; } catch(e){ return null; } }
+function dire(txt){
+  if (!synth) return;
+  try {
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(txt.replace(/\n/g," "));
+    u.lang = "fr-FR"; u.rate = +$("elVit").value; const v = voixFr(); if (v) u.voice = v;
+    synth.speak(u);
+  } catch(e){}
+}
+function ouvrirEleve(d){
+  // d : {t, x, h:[ids], i, b, e}
+  $("elTitre").textContent = d.t || "Dictée";
+  tokens = decouper(d.x || "");
+  const on = new Set(d.h || []); tokens.forEach(t => { if (t.word) t.on = on.has(t.id); });
+  elPhrases = phrasesDe(d.x || ""); elIdx = 0; $("elNum").textContent = 1;
+  if (!synth) $("elEcoute").style.display = "none";
+  const egal = d.e !== false, ini = !!d.i;
+  const lmax = Math.min(12, Math.max(0, ...tokens.filter(t=>t.on).map(t=>t.t.length)));
+  let html = "<p>"; elInputs = [];
+  tokens.forEach(tk => {
+    if (tk.br) { html += "</p><p>"; return; }
+    if (tk.word && tk.on){
+      const n = egal ? Math.max(6, lmax) : Math.max(3, tk.t.length);
+      const reste = ini ? tk.t.slice(1) : tk.t;
+      html += `<span class="sol" data-s="${tk.id}" hidden></span>${ini ? `<span class="ini">${esc(tk.t[0])}</span>` : ""}<input data-id="${tk.id}" data-rep="${esc(reste)}" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:${(n*0.62+1.2).toFixed(1)}em" aria-label="mot à écrire">`;
+    } else html += tk.word ? esc(tk.t) : esc(tk.t || "");
+  });
+  $("elTxt").innerHTML = html + "</p>";
+  elInputs = [...$("elTxt").querySelectorAll("input")];
+  $("elBanque").innerHTML = d.b ? `<div class="el-banque"><b>Banque de mots</b>${[...new Set(tokens.filter(t=>t.on).map(t=>t.t))].sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"})).map(m=>`<span>${esc(m)}</span>`).join("")}</div>` : "";
+  $("elRes").textContent = ""; elEssais = 0;
+  $("elRetour").style.display = elDepuisLien ? "none" : "";
+  document.body.classList.add("mode-eleve");
+  window.scrollTo(0,0);
+  if (elInputs[0]) setTimeout(() => elInputs[0].focus(), 50);
+}
+const norm = s => s.trim().replace(/[’`]/g,"'").replace(/\s+/g," ");
+function verifier(){
+  let ok = 0; elEssais++;
+  elInputs.forEach(inp => {
+    const v = norm(inp.value), r = norm(inp.dataset.rep);
+    inp.classList.remove("ok","ko","maj");
+    if (v === r){ inp.classList.add("ok"); ok++; }
+    else if (v && v.toLowerCase() === r.toLowerCase()) inp.classList.add("maj");
+    else inp.classList.add("ko");
+  });
+  const n = elInputs.length;
+  const maj = elInputs.filter(i => i.classList.contains("maj")).length;
+  $("elRes").textContent = ok === n ? `Bravo ! ${n} mot${n>1?"s":""} sur ${n}, tout est juste. 🎉`
+    : `${ok} mot${ok>1?"s":""} juste${ok>1?"s":""} sur ${n}.` + (maj ? " En orange : attention à la majuscule." : "") + " Corrige les mots en rouge et vérifie encore.";
+  majBanque();
+  const premier = elInputs.find(i => !i.classList.contains("ok")); if (premier) premier.focus();
+}
+function majBanque(){
+  const justes = elInputs.filter(i => i.classList.contains("ok")).map(i => +i.dataset.id);
+  const mots = justes.map(id => tokens.find(t => t.id === id).t);
+  document.querySelectorAll(".el-banque span").forEach(sp => sp.classList.toggle("pris", mots.includes(sp.textContent)));
+}
+$("elVerif").onclick = verifier;
+$("elSol").onclick = () => {
+  elInputs.forEach(inp => {
+    if (inp.classList.contains("ok")) return;
+    const s = $("elTxt").querySelector(`.sol[data-s="${inp.dataset.id}"]`);
+    s.textContent = tokens.find(t => t.id === +inp.dataset.id).t; s.hidden = false;
+  });
+};
+$("elRecom").onclick = () => {
+  elInputs.forEach(i => { i.value = ""; i.classList.remove("ok","ko","maj"); });
+  $("elTxt").querySelectorAll(".sol").forEach(s => s.hidden = true);
+  $("elRes").textContent = ""; majBanque(); if (elInputs[0]) elInputs[0].focus();
+};
+$("elTxt").addEventListener("input", e => { if (e.target.tagName === "INPUT") e.target.classList.remove("ok","ko","maj"); });
+$("elTxt").addEventListener("keydown", e => {
+  if (e.target.tagName !== "INPUT") return;
+  if (e.key === "Enter" || e.key === "Tab" && !e.shiftKey){
+    const i = elInputs.indexOf(e.target);
+    if (e.key === "Enter"){ e.preventDefault(); if (i === elInputs.length - 1) verifier(); else elInputs[i+1].focus(); }
+  }
+});
+// Clavier des accents
+let dernierChamp = null;
+$("elTxt").addEventListener("focusin", e => { if (e.target.tagName === "INPUT") dernierChamp = e.target; });
+"é è ê ë à â ç ù û î ï ô œ".split(" ").forEach(c => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = c;
+  b.onmousedown = e => e.preventDefault();
+  b.onclick = () => {
+    const inp = dernierChamp || elInputs[0]; if (!inp) return;
+    const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a;
+    inp.value = inp.value.slice(0,a) + c + inp.value.slice(z); inp.focus(); inp.setSelectionRange(a+1, a+1);
+    inp.classList.remove("ok","ko","maj");
+  };
+  $("elAcc").appendChild(b);
+});
+// Écoute
+$("elTout").onclick = () => dire(elPhrases.join(" "));
+$("elPhrase").onclick = () => dire(elPhrases[elIdx] || "");
+$("elPrec").onclick = () => { elIdx = Math.max(0, elIdx-1); $("elNum").textContent = elIdx+1; dire(elPhrases[elIdx] || ""); };
+$("elSuiv").onclick = () => { elIdx = Math.min(elPhrases.length-1, elIdx+1); $("elNum").textContent = elIdx+1; dire(elPhrases[elIdx] || ""); };
+$("elStop").onclick = () => { try { synth.cancel(); } catch(e){} };
+
+// Données de la dictée (texte + trous) <-> lien
+function donnees(){
+  return {t:$("titre").value.trim(), x:$("texte").value, h:tokens.filter(t=>t.word&&t.on).map(t=>t.id), i:$("ini").checked, b:$("banque").checked, e:$("egal").checked};
+}
+function encoder(d){ const b = new TextEncoder().encode(JSON.stringify(d)); let s = ""; b.forEach(c => s += String.fromCharCode(c)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function decoder(s){ s = s.replace(/-/g,"+").replace(/_/g,"/"); const bin = atob(s); return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)))); }
+
+let etatEnseignant = null;
+$("faireEcran").onclick = () => {
+  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  etatEnseignant = donnees(); ouvrirEleve(etatEnseignant);
+};
+$("elRetour").onclick = () => {
+  try { synth.cancel(); } catch(e){}
+  document.body.classList.remove("mode-eleve");
+  tokens = decouper($("texte").value);
+  const on = new Set(etatEnseignant ? etatEnseignant.h : []); tokens.forEach(t => { if (t.word) t.on = on.has(t.id); });
+  toutRendre();
+};
+$("creerLien").onclick = () => {
+  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  const base = location.origin + location.pathname.replace(/\.html$/,"");
+  $("lienTxt").value = base + "#d=" + encoder(donnees());
+  $("lienBox").classList.add("on"); $("lienTxt").select();
+};
+$("copierLien").onclick = async () => {
+  try { await navigator.clipboard.writeText($("lienTxt").value); toast("Lien copié."); }
+  catch(e){ $("lienTxt").select(); try { document.execCommand("copy"); toast("Lien copié."); } catch(_){ toast("Sélectionne le lien et copie-le (Ctrl+C)."); } }
+};
+
 function toast(m){ const t = $("toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2600); }
 
 /* ============ Mémoire locale (brouillon) ============ */
@@ -443,12 +644,16 @@ function charger(){
 }
 
 majSeuil();
-if (!charger()){
+const mLien = location.hash.match(/^#d=([\w-]+)/);
+let lienOk = false;
+if (mLien){ try { const d = decoder(mLien[1]); elDepuisLien = true; ouvrirEleve(d); lienOk = true; } catch(e){ toast("Lien de dictée illisible."); } }
+if (lienOk){ /* écran élève seul */ }
+else if (!charger()){
   $("titre").value = "Dictée – l'automne";
   $("texte").value = "C'est l'automne. Les feuilles jaunes tombent des arbres et le vent souffle fort.\nDans le jardin, les enfants ramassent des châtaignes. Ils sont heureux et rentrent à la maison pour les faire griller.";
   tokens = decouper($("texte").value); proposer();
 }
-toutRendre();
+if (!lienOk) toutRendre();
 </script>
 </body>
 </html>
