@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les nombres farceurs</title>
+<style>
+:root{--bleu:#2f5d8a;--bleu2:#e6eef7;--vert:#2e8b57;--rouge:#c0392b;--jaune:#f4c542;--fond:#fbf6ee;--txt:#263238;--violet:#7b4fa0;--orange:#e67e22}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:var(--fond);color:var(--txt);min-height:100vh}
+header{background:linear-gradient(135deg,#c0392b,#7b4fa0);color:#fff;padding:14px 16px;text-align:center}
+header h1{margin:0;font-size:1.6rem}
+header p{margin:4px 0 0;opacity:.92}
+main{max-width:900px;margin:0 auto;padding:14px}
+.carte{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:14px;margin-bottom:14px}
+h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
+.choix{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:2px solid var(--bleu);background:#fff;color:var(--bleu);border-radius:12px;padding:10px 14px;font-size:1rem;cursor:pointer;font-family:inherit}
+.btn.on{background:var(--bleu);color:#fff}
+.btn.gros{font-size:1.2rem;padding:14px 22px;background:var(--vert);border-color:var(--vert);color:#fff}
+.btn.violet{background:var(--violet);border-color:var(--violet);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.note{font-size:.85rem;color:#666;margin-top:6px}
+.intro{display:flex;gap:14px;align-items:center}
+.intro svg{flex:0 0 90px}
+@media(max-width:520px){.intro{flex-direction:column;text-align:center}}
+#jeu,#fin,#rituel,#cartes{display:none}
+.barre-haut{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.progress{flex:1;height:12px;background:#eee;border-radius:8px;overflow:hidden;min-width:120px}
+.progress div{height:100%;background:var(--jaune);transition:width .3s}
+.scene{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0 12px}
+.nombre{font-size:4rem;font-weight:bold;color:var(--bleu);background:var(--bleu2);border:3px dashed var(--bleu);border-radius:18px;padding:6px 26px;min-width:150px;text-align:center}
+.bulle{position:relative;background:#f5ecfa;border:3px solid var(--violet);border-radius:18px;padding:10px 16px;font-size:1.3rem;max-width:330px}
+.bulle small{display:block;font-size:.8rem;color:var(--violet);text-transform:uppercase;letter-spacing:.04em}
+.bulle b{color:var(--violet)}
+.consigne{font-size:1.15rem;text-align:center;margin:4px 0 10px}
+.reponse{min-height:58px;border:3px solid var(--vert);border-radius:14px;padding:10px;font-size:1.5rem;text-align:center;background:#fff;margin:10px 0;word-break:break-word}
+.reponse .vide{color:#aaa;font-size:1rem}
+.tuiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tuile{background:#fff6d6;border:2px solid #d4a017;border-radius:10px;padding:10px 14px;font-size:1.2rem;cursor:pointer;font-family:inherit;color:var(--txt)}
+.tuile:disabled{opacity:.3}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+@media(max-width:520px){.options{grid-template-columns:1fr}}
+.opt{background:#fff;border:3px solid #d0d7de;border-radius:16px;padding:14px;cursor:pointer;min-height:70px;font-size:1.7rem;font-family:inherit;color:var(--txt)}
+.opt.ok{border-color:var(--vert);background:#e8f6ee}
+.opt.ko{border-color:var(--rouge);background:#fbeaea;opacity:.6}
+.ecoute{font-size:1.3rem;border:none;background:var(--violet);color:#fff;border-radius:50px;padding:14px 26px;cursor:pointer;font-family:inherit}
+.aide{margin-top:12px;padding:12px;border-radius:12px;display:none;font-size:1.05rem}
+.aide.err{display:block;background:#fff4e0;border-left:6px solid #e69a28}
+.aide.sol{display:block;background:#eaf2fb;border-left:6px solid var(--bleu)}
+.aide.bravo{display:block;background:#e8f6ee;border-left:6px solid var(--vert)}
+.identite{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.identite>div{background:#fff;border:2px solid #d0d7de;border-radius:10px;padding:8px;text-align:center;font-size:1.15rem}
+.identite small{display:block;font-size:.72rem;text-transform:uppercase;margin-bottom:4px}
+.id-n{border-color:var(--bleu)!important}.id-n small{color:var(--bleu)}.id-n span{font-size:1.6rem;font-weight:bold}
+.id-f{border-color:var(--violet)!important}.id-f small{color:var(--violet)}.id-f span{text-decoration:line-through;color:#888}
+.id-v{border-color:var(--vert)!important}.id-v small{color:var(--vert)}.id-v span{font-weight:bold}
+.id-r{border-color:var(--orange)!important}.id-r small{color:var(--orange)}
+.piege{display:inline-block;background:var(--jaune);border-radius:8px;padding:2px 8px;font-size:.85rem;font-weight:bold;margin-left:6px}
+.etoiles{font-size:2.4rem;margin:10px 0}
+#fin{text-align:center}
+/* rituel */
+.rit-faux{font-size:2.6rem;color:var(--violet);text-align:center;margin:20px 0 8px}
+.rit-vrai{font-size:2.2rem;text-align:center;color:var(--vert);min-height:110px}
+.rit-vrai .nombre{display:inline-block;font-size:3.4rem;margin-bottom:8px}
+/* cartes à imprimer */
+.planche{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.pc{border:1px dashed #999;height:44mm;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4mm;position:relative;break-inside:avoid}
+.pc small{position:absolute;top:2mm;left:3mm;font-size:8pt;text-transform:uppercase;letter-spacing:.05em}
+.pc .st{position:absolute;top:1.5mm;right:3mm;font-size:12pt}
+.pc.n{color:var(--bleu)}.pc.n b{font-size:40pt}
+.pc.f{color:var(--violet)}.pc.f b{font-size:17pt}
+.pc.v{color:var(--vert)}.pc.v b{font-size:17pt}
+.pc.r{color:var(--orange)}.pc.r b{font-size:20pt}
+.pc.m b{font-size:22pt;color:#7a5b00}
+.pc .fam{position:absolute;bottom:2mm;right:3mm;font-size:8pt;color:#999}
+.saut{break-before:page}
+.regle-imp{font-size:11pt;line-height:1.45}
+.regle-imp h3{margin:.6em 0 .2em}
+@media print{
+  @page{size:A4;margin:10mm}
+  body{background:#fff}
+  header,#reglages,#jeu,#fin,#rituel,.pas-imp{display:none!important}
+  main{max-width:none;padding:0}
+  #cartes{display:block!important}
+  #cartes .carte{box-shadow:none;padding:0;margin:0}
+}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+</head>
+<body>
+<header>
+  <h1>Les nombres farceurs</h1>
+  <p>Démasque les nombres qui ne s'appellent pas comme ils s'écrivent · CE1</p>
+</header>
+<main>
+
+<section id="reglages">
+  <div class="carte">
+    <div class="intro">
+      <svg viewBox="0 0 100 100" width="90" height="90" aria-hidden="true">
+        <path d="M18 40 L50 6 L82 40 Z" fill="#7b4fa0"/><circle cx="50" cy="6" r="6" fill="#f4c542"/>
+        <circle cx="50" cy="62" r="32" fill="#ffe0bd" stroke="#c9a27a" stroke-width="2"/>
+        <rect x="24" y="46" width="52" height="14" rx="7" fill="#2f5d8a"/>
+        <circle cx="38" cy="53" r="4" fill="#fff"/><circle cx="62" cy="53" r="4" fill="#fff"/>
+        <circle cx="50" cy="68" r="8" fill="#c0392b"/>
+        <path d="M36 80 Q50 90 64 80" stroke="#7a3b2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>Certains nombres sont des <b>farceurs</b> : ils portent un <b>faux nez</b>.<br>
+      Normalement, 11 devrait s'appeler <i>dix-un</i> et 72 <i>septante-deux</i> (c'est d'ailleurs ce qu'on dit en Belgique et en Suisse !).<br>
+      Mais en France, ils ont un autre nom. À toi de les <b>démasquer</b> !</div>
+    </div>
+  </div>
+
+  <div class="carte">
+    <h2>1. Les farceurs</h2>
+    <div class="choix" id="c-niv">
+      <button class="btn on" data-v="1">11 à 16</button>
+      <button class="btn" data-v="2">70 à 79</button>
+      <button class="btn" data-v="3">80 à 99</button>
+      <button class="btn" data-v="4">Tous + pièges ⭐</button>
+    </div>
+  </div>
+
+  <div class="carte">
+    <h2>2. Le jeu</h2>
+    <div class="choix" id="c-mode">
+      <button class="btn on" data-v="melange">Mélange</button>
+      <button class="btn" data-v="demasque">Démasque (étiquettes)</button>
+      <button class="btn" data-v="ecoute">Écoute et trouve</button>
+      <button class="btn" data-v="recette">La recette cachée</button>
+    </div>
+    <p class="note" id="note-mode"></p>
+  </div>
+
+  <div class="carte">
+    <h2>3. Réglages</h2>
+    <div class="choix" id="c-nb">
+      <button class="btn" data-v="10">10 questions</button>
+      <button class="btn on" data-v="15">15 questions</button>
+      <button class="btn" data-v="20">20 questions</button>
+    </div>
+    <div class="choix" id="c-voix" style="margin-top:8px">
+      <button class="btn on" data-v="1">🔊 Voix activée</button>
+      <button class="btn" data-v="0">🔇 Sans voix</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn gros" id="b-jouer">▶ Jouer</button>
+    <button class="btn violet" id="b-rituel">📽 Rituel collectif (à projeter)</button>
+    <button class="btn" id="b-cartes">🖨 Cartes à imprimer</button>
+  </div>
+</section>
+
+<section id="jeu">
+  <div class="carte">
+    <div class="barre-haut">
+      <button class="btn" id="b-quitter">✖ Quitter</button>
+      <div class="progress"><div id="prog" style="width:0"></div></div>
+      <div id="score">0 point</div>
+    </div>
+    <div id="zone"></div>
+  </div>
+</section>
+
+<section id="rituel">
+  <div class="carte">
+    <div class="barre-haut">
+      <button class="btn" id="r-quitter">✖ Quitter</button>
+      <div id="r-compte"></div>
+    </div>
+    <p class="consigne">Le farceur dit son faux nom… Quel est son <b>vrai nom</b> ?</p>
+    <div class="rit-faux" id="r-faux"></div>
+    <div class="rit-vrai" id="r-vrai"></div>
+    <div class="actions">
+      <button class="btn violet" id="r-montrer">🎭 Démasquer</button>
+      <button class="btn gros" id="r-suivant">Suivant ▶</button>
+    </div>
+  </div>
+</section>
+
+<section id="fin" class="carte"></section>
+
+<section id="cartes">
+  <div class="carte pas-imp">
+    <h2>Cartes à imprimer : le jeu des familles farceuses</h2>
+    <p>Chaque nombre a une famille de <b>4 cartes</b> : <span style="color:var(--bleu)">le nombre</span>, <span style="color:var(--violet)">le faux nez</span>, <span style="color:var(--vert)">le vrai nom</span>, <span style="color:var(--orange)">la recette</span>. Les cartes ⭐ sont les pièges.</p>
+    <div class="choix" id="c-imp">
+      <button class="btn on" data-v="1">11 à 16</button>
+      <button class="btn on" data-v="2">70 à 79</button>
+      <button class="btn" data-v="3">80 à 99</button>
+    </div>
+    <div class="choix" style="margin-top:8px" id="c-etiq">
+      <button class="btn on" data-v="1">+ planche d'étiquettes-mots</button>
+    </div>
+    <div class="actions">
+      <button class="btn gros" id="b-imprimer">🖨 Imprimer</button>
+      <button class="btn" id="b-retour">← Retour</button>
+    </div>
+    <p class="note" id="imp-note">Conseil : imprimer sur papier épais, en couleur si possible. Format A4, 18 cartes par page.</p>
+  </div>
+  <div class="carte" id="planches"></div>
+</section>
+
+</main>
+<script>
+/* ---------- Nombres en lettres (orthographe rectifiée 1990 : traits d'union partout) ---------- */
+const U=["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize"];
+const D={2:"vingt",3:"trente",4:"quarante",5:"cinquante",6:"soixante"};
+function lettres(n){
+  if(n<17)return U[n];
+  if(n<20)return "dix-"+U[n-10];
+  if(n<70){const d=Math.floor(n/10),u=n%10;return u===0?D[d]:u===1?D[d]+"-et-un":D[d]+"-"+U[u];}
+  if(n<80)return n===71?"soixante-et-onze":"soixante-"+lettres(n-60);
+  if(n===80)return "quatre-vingts";
+  if(n<100)return "quatre-vingt-"+lettres(n-80);
+  return "cent";
+}
+/* Le faux nez : le nom « logique » */
+function fauxNez(n){
+  const u=n%10;
+  if(n<17)return "dix-"+U[u];
+  const base=n<80?"septante":n<90?"huitante":"nonante";
+  return u===0?base:u===1?base+"-et-un":base+"-"+U[u];
+}
+/* La recette : ce que dit vraiment le nom */
+function recette(n){
+  const u=n%10;
+  if(n<17)return "10 + "+u;
+  if(n<80)return "60 + "+(n-60);
+  if(n===80)return "4 × 20";
+  return "4 × 20 + "+(n-80);
+}
+function recettesFausses(n){
+  const u=n%10,r=n-60,r9=n-80;
+  if(n<17)return ["1 + "+u,"10 + "+n,u===1?"11 + 1":u+" + "+u];
+  if(n<80)return u===0?["6 × 10","6 + 10","70 + 10"]:["60 + "+u,"6 + "+r,"70 + "+r];
+  if(n<90)return u===0?["4 + 20","4 × 10","40 + 20"]:["4 + 20 + "+u,"4 × 10 + "+u,"80 + 20 + "+u];
+  return [u===0?"4 × 20":"4 × 20 + "+u,"4 + 20 + "+r9,"90 + "+r9];
+}
+function nombresFaux(n){
+  const u=n%10;let c;
+  if(n<17)c=[u,u*10,100+u,u*10+1,1];
+  else if(n<80)c=[n-10,Number("60"+(n-60)),n+10,6+(n-60)];
+  else if(n<90)c=[Number("420"+(u||"")),20+u,n-10,24+u];
+  else c=[Number("80"+(n-80)),n-10,24+(n-80),n-20];
+  return [...new Set(c)].filter(x=>x>0&&x!==n);
+}
+const PIEGES={71:"« et » comme dans vingt-et-un",80:"quatre-vingts prend un « s »",81:"pas de « et », pas de « s »",91:"pas de « et » : quatre-vingt-onze"};
+function plage(niv){
+  const a=[];
+  if(niv==1||niv==4)for(let i=11;i<=16;i++)a.push(i);
+  if(niv==2||niv==4)for(let i=70;i<=79;i++)a.push(i);
+  if(niv==3||niv==4)for(let i=80;i<=99;i++)a.push(i);
+  return a;
+}
+const MOTS_DISTRACTEURS=["dix","un","deux","septante","huitante","nonante","vingt","vingts","et","soixante","quatre","onze","douze"];
+
+/* ---------- utilitaires ---------- */
+const $=s=>document.querySelector(s);
+const melanger=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const R={niv:1,mode:"melange",nb:15,voix:true};
+function choix(id,cle,conv){document.querySelectorAll(id+" .btn").forEach(b=>b.onclick=()=>{document.querySelectorAll(id+" .btn").forEach(x=>x.classList.remove("on"));b.classList.add("on");R[cle]=conv(b.dataset.v);majNote();});}
+choix("#c-niv","niv",Number);choix("#c-mode","mode",String);choix("#c-nb","nb",Number);choix("#c-voix","voix",v=>v==="1");
+const NOTES={melange:"Les trois jeux se mélangent.",demasque:"On voit le nombre et son faux nez : l'élève construit le vrai nom avec des étiquettes.",ecoute:"On entend le vrai nom : l'élève choisit le bon nombre parmi des erreurs fréquentes (6012, 62…).",recette:"L'élève trouve le calcul caché dans le nom : soixante-douze = 60 + 12."};
+function majNote(){$("#note-mode").textContent=NOTES[R.mode];}
+majNote();
+function dire(n){if(!R.voix||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lettres(n).replace(/-/g," "));u.lang="fr-FR";u.rate=.85;speechSynthesis.speak(u);}catch(e){}}
+function montrer(id){["#reglages","#jeu","#fin","#rituel","#cartes"].forEach(s=>$(s).style.display=s===id?"block":"none");window.scrollTo(0,0);}
+
+/* ---------- partie ---------- */
+let P;
+$("#b-jouer").onclick=()=>{
+  let liste=plage(R.niv),qs=[];
+  while(qs.length<R.nb){qs=qs.concat(melanger(liste));}
+  if(R.niv==4){qs=qs.slice(0,R.nb-3).concat([71,80,81]);qs=melanger(qs);} else qs=qs.slice(0,R.nb);
+  const types=["demasque","ecoute","recette"];
+  P={qs,i:0,score:0,max:R.nb*2,types:qs.map((_,k)=>R.mode==="melange"?types[k%3]:R.mode)};
+  if(R.mode==="melange")P.types=melanger(P.types);
+  if(!R.voix)P.types=P.types.map(t=>t==="ecoute"?"recette":t);
+  montrer("#jeu");question();
+};
+$("#b-quitter").onclick=()=>{try{speechSynthesis.cancel();}catch(e){} montrer("#reglages");};
+
+function majBarre(){$("#prog").style.width=(P.i/P.qs.length*100)+"%";$("#score").textContent=P.score+(P.score>1?" points":" point");}
+function scene(n,avecNombre){
+  return `<div class="scene">${avecNombre?`<div class="nombre">${n}</div>`:""}
+  <div class="bulle"><small>Le farceur dit :</small>Je m'appelle <b>${fauxNez(n)}</b> !</div></div>`;
+}
+function identite(n){
+  const p=PIEGES[n]?`<span class="piege">⭐ ${PIEGES[n]}</span>`:"";
+  return `<div class="identite">
+    <div class="id-n"><small>Le nombre</small><span>${n}</span></div>
+    <div class="id-f"><small>Son faux nez</small><span>${fauxNez(n)}</span></div>
+    <div class="id-v"><small>Son vrai nom</small><span>${lettres(n)}</span></div>
+    <div class="id-r"><small>Sa recette</small><span>${recette(n)}</span></div></div>${p?`<p style="text-align:center">${p}</p>`:""}`;
+}
+function question(){
+  majBarre();
+  if(P.i>=P.qs.length)return fin();
+  const n=P.qs[P.i],t=P.types[P.i];P.essai=0;
+  ({demasque:qDemasque,ecoute:qEcoute,recette:qRecette})[t](n);
+}
+function suite(gain,n,txt){
+  P.score+=gain;majBarre();
+  const a=$("#aide");a.className="aide "+(gain>0?"bravo":"sol");
+  a.innerHTML=txt+identite(n)+`<div class="actions"><button class="btn gros" id="b-suite">Suivant ▶</button></div>`;
+  dire(n);
+  $("#b-suite").onclick=()=>{P.i++;question();};
+}
+function erreur(txt){const a=$("#aide");a.className="aide err";a.innerHTML=txt;}
+
+/* Jeu 1 : démasque avec étiquettes */
+function qDemasque(n){
+  const bons=lettres(n).split("-");
+  let dis=melanger(MOTS_DISTRACTEURS.filter(m=>!bons.includes(m))).slice(0,Math.max(3,7-bons.length));
+  if(n<17)dis=melanger([...new Set(["dix",U[n%10],U[n+1>16?n-1:n+1],"un"])].filter(m=>!bons.includes(m)));
+  const tuiles=melanger(bons.concat(dis));
+  P.rep=[];
+  $("#zone").innerHTML=scene(n,true)+
+    `<p class="consigne">🎭 Démasque-le ! Construis son <b>vrai nom</b> avec les étiquettes.</p>
+    <div class="reponse" id="rep"><span class="vide">touche les étiquettes…</span></div>
+    <div class="tuiles">${tuiles.map((m,k)=>`<button class="tuile" data-k="${k}">${m}</button>`).join("")}</div>
+    <div class="actions"><button class="btn" id="b-eff">↩ Effacer</button><button class="btn gros" id="b-val">✔ Valider</button></div>
+    <div class="aide" id="aide"></div>`;
+  document.querySelectorAll(".tuile").forEach(b=>b.onclick=()=>{P.rep.push(b.textContent);b.disabled=true;$("#rep").textContent=P.rep.join("-");});
+  $("#b-eff").onclick=()=>{P.rep=[];document.querySelectorAll(".tuile").forEach(b=>b.disabled=false);$("#rep").innerHTML='<span class="vide">touche les étiquettes…</span>';};
+  $("#b-val").onclick=()=>{
+    if(!P.rep.length)return;
+    if(P.rep.join("-")===lettres(n)){$("#b-val").disabled=true;$("#b-eff").disabled=true;document.querySelectorAll(".tuile").forEach(b=>b.disabled=true);
+      suite(P.essai===0?2:1,n,"🎉 <b>Démasqué !</b>");}
+    else{P.essai++;
+      if(P.essai>=2){$("#b-val").disabled=true;$("#b-eff").disabled=true;document.querySelectorAll(".tuile").forEach(b=>b.disabled=true);suite(0,n,"Voici son vrai nom :");}
+      else{erreur(conseil(n,P.rep.join("-")));$("#b-eff").onclick();}}
+  };
+}
+function conseil(n,rep){
+  if(/septante|huitante|nonante/.test(rep))return "Attention, ça c'est son <b>faux nez</b> ! En France, on ne dit pas comme ça. Essaie encore.";
+  if(n<17&&rep.startsWith("dix"))return `Le farceur ne s'appelle pas « dix-quelque chose ». Il a un nom à lui, en un seul mot. Essaie encore.`;
+  if(n===80&&rep==="quatre-vingt")return "Presque ! Quand il est tout seul, quatre-vingts prend un <b>s</b>.";
+  if(n>80&&rep.includes("vingts"))return "Presque ! Le <b>s</b> de vingts s'en va quand un autre mot vient derrière.";
+  if(n===71&&!rep.includes("et"))return "Presque ! Il manque un petit mot, comme dans vingt-<b>et</b>-un.";
+  if((n===81||n===91)&&rep.includes("et"))return "Piège ! Avec quatre-vingts, on ne met <b>pas</b> de « et ».";
+  return `Indice : sa recette est <b>${recette(n)}</b>. Essaie encore.`;
+}
+
+/* Jeu 2 : écoute et trouve */
+function qEcoute(n){
+  const opts=melanger([n].concat(melanger(nombresFaux(n)).slice(0,3)));
+  $("#zone").innerHTML=`<p class="consigne">👂 Écoute le vrai nom du farceur et trouve son nombre.</p>
+    <div class="actions"><button class="ecoute" id="b-ec">🔊 Écouter</button></div>
+    <div class="options">${opts.map(o=>`<button class="opt" data-v="${o}">${o}</button>`).join("")}</div>
+    <div class="aide" id="aide"></div>`;
+  $("#b-ec").onclick=()=>dire(n);setTimeout(()=>dire(n),300);
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const v=Number(b.dataset.v);
+    if(v===n){b.classList.add("ok");document.querySelectorAll(".opt").forEach(x=>x.disabled=true);suite(P.essai===0?2:1,n,"🎉 <b>Bravo, tu l'as reconnu !</b>");}
+    else{b.classList.add("ko");b.disabled=true;P.essai++;
+      if(P.essai>=2){document.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(Number(x.dataset.v)===n)x.classList.add("ok");});suite(0,n,"C'était lui :");}
+      else erreur(`${v}, ça se dit « ${lettres(v)} ». Écoute encore.`);}
+  });
+}
+
+/* Jeu 3 : la recette cachée */
+function qRecette(n){
+  const opts=melanger([recette(n)].concat(recettesFausses(n)));
+  $("#zone").innerHTML=`<div class="scene"><div class="nombre">${n}</div><div class="bulle"><small>Son vrai nom :</small><b style="color:var(--vert)">${lettres(n)}</b></div></div>
+    <p class="consigne">🧪 Quelle <b>recette</b> est cachée dans son vrai nom ?</p>
+    <div class="options">${opts.map(o=>`<button class="opt" data-v="${o}">${o}</button>`).join("")}</div>
+    <div class="aide" id="aide"></div>`;
+  dire(n);
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    if(b.dataset.v===recette(n)){b.classList.add("ok");document.querySelectorAll(".opt").forEach(x=>x.disabled=true);suite(P.essai===0?2:1,n,"🎉 <b>Bien vu !</b>");}
+    else{b.classList.add("ko");b.disabled=true;P.essai++;
+      if(P.essai>=2){document.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.dataset.v===recette(n))x.classList.add("ok");});suite(0,n,"La recette était :");}
+      else erreur("Écoute bien chaque morceau du nom : "+lettres(n).split("-").map(m=>"<b>"+m+"</b>").join(" · "));}
+  });
+}
+
+function fin(){
+  const p=P.score/P.max,et=p>=.9?"⭐⭐⭐":p>=.7?"⭐⭐":p>=.4?"⭐":"💪";
+  const niv=["","11 à 16","70 à 79","80 à 99","tous"][R.niv];
+  montrer("#fin");
+  $("#fin").innerHTML=`<h2>Fin de la partie !</h2><div class="etoiles">${et}</div>
+    <p style="font-size:1.3rem">${P.score} / ${P.max} points</p>
+    <p>${p>=.9?"Plus aucun farceur ne t'échappe !":p>=.7?"Tu démasques presque tous les farceurs !":"Les farceurs sont malins… rejoue pour les démasquer !"}</p>
+    <div class="actions"><button class="btn gros" id="b-rejouer">↻ Rejouer</button><button class="btn" id="b-menu">Changer les réglages</button></div>`;
+  $("#b-rejouer").onclick=()=>$("#b-jouer").onclick();
+  $("#b-menu").onclick=()=>montrer("#reglages");
+  try{TDC.note({s:P.score,n:P.max,g:p>=.8,niv:"Farceurs "+niv,d:`${P.score} / ${P.max} points (nombres farceurs : ${niv})`});}catch(e){}
+}
+
+/* ---------- rituel collectif ---------- */
+let RIT;
+$("#b-rituel").onclick=()=>{RIT={l:melanger(plage(R.niv)),i:0};montrer("#rituel");ritAff();};
+function ritAff(){
+  if(RIT.i>=RIT.l.length){RIT.l=melanger(RIT.l);RIT.i=0;}
+  const n=RIT.l[RIT.i];
+  $("#r-compte").textContent=(RIT.i+1)+" / "+RIT.l.length;
+  $("#r-faux").textContent="« "+fauxNez(n)+" ! »";
+  $("#r-vrai").innerHTML="";$("#r-montrer").disabled=false;
+}
+$("#r-montrer").onclick=()=>{const n=RIT.l[RIT.i];$("#r-vrai").innerHTML=`<div class="nombre">${n}</div><br>${lettres(n)}<div style="font-size:1.2rem;color:var(--orange);margin-top:6px">${recette(n)}</div>`;$("#r-montrer").disabled=true;dire(n);};
+$("#r-suivant").onclick=()=>{RIT.i++;ritAff();};
+$("#r-quitter").onclick=()=>montrer("#reglages");
+
+/* ---------- cartes à imprimer ---------- */
+const IMP={1:true,2:true,3:false},ETQ={on:true};
+document.querySelectorAll("#c-imp .btn").forEach(b=>b.onclick=()=>{IMP[b.dataset.v]=!IMP[b.dataset.v];b.classList.toggle("on");planches();});
+$("#c-etiq .btn").onclick=function(){ETQ.on=!ETQ.on;this.classList.toggle("on");planches();};
+$("#b-cartes").onclick=()=>{montrer("#cartes");planches();};
+$("#b-retour").onclick=()=>montrer("#reglages");
+$("#b-imprimer").onclick=()=>{try{window.print();}catch(e){$("#imp-note").textContent="L'impression n'est pas possible dans cet aperçu : elle fonctionnera sur le site.";}};
+function planches(){
+  let ns=[];[1,2,3].forEach(k=>{if(IMP[k])ns=ns.concat(plage(k));});
+  const cartes=[];
+  ns.forEach(n=>{
+    const st=PIEGES[n]?'<span class="st">⭐</span>':"";
+    cartes.push(`<div class="pc n"><small>Le nombre</small>${st}<b>${n}</b><span class="fam">famille ${n}</span></div>`);
+    cartes.push(`<div class="pc f"><small>🎭 Le faux nez</small>${st}<b>${fauxNez(n)}</b><span class="fam">famille ${n}</span></div>`);
+    cartes.push(`<div class="pc v"><small>✔ Le vrai nom</small>${st}<b>${lettres(n)}</b><span class="fam">famille ${n}</span></div>`);
+    cartes.push(`<div class="pc r"><small>🧪 La recette</small>${st}<b>${recette(n)}</b><span class="fam">famille ${n}</span></div>`);
+  });
+  let h=`<div class="regle-imp">
+  <h2 style="color:var(--violet)">Les nombres farceurs — règles du jeu (CE1)</h2>
+  <p>Certains nombres portent un <b>faux nez</b> : 72 devrait s'appeler <i>septante-deux</i> (c'est ce qu'on dit en Belgique et en Suisse), mais en France il s'appelle <i>soixante-douze</i>. Chaque nombre a une famille de 4 cartes : <b style="color:var(--bleu)">le nombre</b>, <b style="color:var(--violet)">le faux nez</b>, <b style="color:var(--vert)">le vrai nom</b>, <b style="color:var(--orange)">la recette</b>.</p>
+  <h3>1. Démasque le farceur (2 à 4 joueurs ou en atelier)</h3>
+  <p>On pioche une carte <b>nombre</b>. On dit d'abord son faux nez, puis son vrai nom, puis sa recette (72 → « septante-deux… non ! soixante-douze, c'est 60 + 12 »). Si c'est juste, on garde la carte. Une carte ⭐ rapporte 2 cartes.</p>
+  <h3>2. Le mémory des farceurs</h3>
+  <p>On utilise seulement 2 ou 3 sortes de cartes (par exemple nombre + vrai nom), faces cachées. On retourne les cartes et on cherche les paires (ou les trios) de la même famille. On lit à voix haute chaque carte retournée.</p>
+  <h3>3. Le jeu des familles</h3>
+  <p>On distribue les cartes de 6 à 8 familles. Chacun à son tour demande une carte : « Dans la famille 72, je voudrais le vrai nom ». La famille complète (4 cartes) est posée. Celui qui a le plus de familles gagne.</p>
+  <h3>Les pièges ⭐</h3>
+  <p><b>71</b> soixante-et-onze (avec « et ») · <b>80</b> quatre-vingts (avec un « s ») · <b>81</b> quatre-vingt-un (sans « et », sans « s ») · <b>91</b> quatre-vingt-onze (sans « et »).</p>
+  <p style="font-size:9pt;color:#666">Orthographe rectifiée (1990) : traits d'union entre tous les mots. toujourscap.com · CC BY-NC-SA 4.0</p></div>`;
+  for(let i=0;i<cartes.length;i+=18)h+=`<div class="planche saut">${cartes.slice(i,i+18).join("")}</div>`;
+  if(ETQ.on){
+    const mots=["onze","douze","treize","quatorze","quinze","seize","dix","un","deux","trois","quatre","cinq","six","sept","huit","neuf","soixante","vingt","vingts","et","soixante","quatre","vingt","dix","onze","douze","et","un","quatre","vingt"];
+    h+=`<div class="planche saut">${mots.map(m=>`<div class="pc m"><small>étiquette</small><b>${m}</b></div>`).join("")}</div>`;
+  }
+  $("#planches").innerHTML=h;
+}
+</script>
+</body>
+</html>
