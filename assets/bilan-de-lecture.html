@@ -934,7 +934,7 @@ function docPlanche(d){
 function docPassation(d){
  const {ep,items}=d,so=ep.sorte;
  const tete=`<h2>${esc(ep.groupe)} — ${esc(ep.titre)}</h2><div class="dcons">${esc(texteBrut(ep.consigne||''))}</div>`;
- if(ep.type==='texte')return tete+`<div class="dtexteA">${numTexte(ep.texte)}</div><div class="dcalc"><div>Mots lus :</div><div>Erreurs :</div><div>Temps (s) :</div><div>MCLM = (lus − erreurs) × 60 ÷ temps</div></div>`;
+ if(ep.type==='texte')return tete+`<div class="dtexteA">${numTexte(ep.texte)}</div><div class="dcalc"><div>Mots lus :</div><div>Erreurs :</div><div>Temps (s) :</div><div>MCLM = (lus − erreurs) × 60 ÷ temps</div></div><table><tr><th>Type d'erreur</th><th style="width:40mm">Nombre (bâtons)</th></tr>${TYPES_ERR.map(([k,l])=>`<tr><td>${esc(l)}</td><td></td></tr>`).join('')}</table>`;
  const pre=ep.histoire?`<p class="dcons"><b>Histoire à lire :</b> ${esc(ep.histoire)}</p>`:'';
  const lib=it=>ep.type==='lire'?esc(it):ep.type==='oral'?esc((it.q?it.q+' ':'')+it.w):esc(it.label||it.q||'');
  const att=it=>ep.type==='lire'?'':ep.type==='oral'?esc(it.att||it.w):esc(it.bonne);
