@@ -264,14 +264,14 @@ def render(n, ctx):
 
 # ---------- Gabarit ----------
 NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/francais/", "Français"),
-       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/qui-suis-je/", "Qui suis-je ?")]
+       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/evaluations/", "Évaluations"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
 DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
 
 
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
-    "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues"}
+    "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues", "/evaluations/": "cascade"}
 
 
 def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
@@ -556,12 +556,12 @@ SEO_TITRES = {
     "/francais/cercle-conteur/": "Langage oral : contes pour le cercle conteur en GS et CP",
     "/francais/lecture/": "Jeux de lecture en ligne gratuits pour le CP et le CE1",
     "/post/le-chateau-des-detectives/": "Château des Détectives : compréhension de texte CP-CE1",
-    "/post/la-bibliotheque-des-contes/": "Bibliothèque des contes : compréhension CP, CE1, CE2",
+    "/post/la-bibliotheque-des-contes/": "Bibliothèque des contes : lecture-compréhension CP-CE2",
     "/post/la-machine-a-conjuguer/": "La machine à conjuguer : jeu de conjugaison du CE1 au CM2",
     "/post/la-fiole-de-la-grenouille/": "La fiole de la grenouille : lecture de mots en coopération",
     "/post/la-grande-roue-des-complements/": "La grande roue des compléments à 10, CP-CE1",
     "/post/les-jumeaux-des-doubles/": "Les jumeaux des doubles : jeu sur les doubles au CP",
-    "/post/le-crocodile-glouton/": "Le crocodile glouton : comparer les nombres (< >)",
+    "/post/le-crocodile-glouton/": "Le crocodile glouton : la bouche du crocodile < > en maths",
     "/post/l-atelier-des-barres/": "L'atelier des barres : additions et soustractions 10 et 100",
     "/post/le-bal-masque-des-nombres/": "Le bal masqué des nombres : écrire les nombres CP, CE1, CE2",
     "/post/les-nombres-farceurs/": "Les nombres farceurs : de onze à seize, de 70 à 99",
@@ -584,7 +584,9 @@ SEO_TITRES = {
     "/post/le-tape-taupe-des-additions/": "Le Tape-taupe : calcul mental additions, soustractions",
     "/post/la-course-des-multiplications/": "La Course des Multiplications : tables de multiplication",
     "/outils-pedagogiques/": "Outils pédagogiques gratuits pour le cycle 2 et l'ASH",
+    "/qui-suis-je/": "Qui suis-je ? Enseignant spécialisé, ESADP",
     "/divers/": "Divers : maître E, évaluations, métacognition, mémorisation",
+    "/evaluations/": "Évaluations cycle 2 : bilans de lecture et de maths GS-CE2",
     "/divers/evaluations/": "Évaluations cycle 2 : bilans de lecture et de maths",
     "/francais/evaluations/": "Bilan de lecture cycle 2 : évaluations GS, CP, CE1, CE2",
     "/maths/evaluations/": "Bilan de maths cycle 2 : évaluations CP, CE1, CE2",
@@ -748,7 +750,7 @@ def main():
                "publisher": {"@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}},
               {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
                   {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + h} for i, (n, h) in enumerate(crumbs)]}]
-        write(f"/post/{p['slug']}/", page(p["title"], body, f"/{dom}/", p["excerpt"], p["cover"], "article", ld),
+        write(f"/post/{p['slug']}/", page(p["title"], body, "/evaluations/" if "evaluations" in p["aussi"] else f"/{dom}/", p["excerpt"], p["cover"], "article", ld),
               lastmod=(p.get("updated") or p["date"])[:10])
 
     # Blog + catégories
@@ -870,6 +872,23 @@ def main():
   <p class="lead">{d}</p>
   {grid(lst)}
 </section>""", "/divers/", d))
+
+    evals = epingles_d_abord([p for p in posts if p["cat"] == "evaluations" or "evaluations" in p["aussi"]])
+    write("/evaluations/", page("Évaluations", f"""<section class="wrap">
+  <h1>Évaluations</h1>
+  <p class="lead">Des bilans de lecture et de maths, de la GS au CE2, à faire passer à un élève avec l'enseignant ou en autonomie. Une évaluation différente par niveau, appuyée sur les attendus officiels, avec un bilan écrit et un document à imprimer à la fin.</p>
+  {grid(evals) if evals else '<div class="empty">Les premières évaluations arrivent bientôt.</div>'}
+  <div class="prose">
+    <h2>Comment ça marche&nbsp;?</h2>
+    <ul>
+      <li><strong>Deux réglages seulement</strong>&nbsp;: le niveau de l'élève et le moment de l'année (début, milieu ou fin).</li>
+      <li><strong>Deux modes</strong>&nbsp;: tout validé par l'enseignant, ou élève en autonomie.</li>
+      <li><strong>Aucun prénom enregistré</strong>&nbsp;: le prénom sert seulement au document téléchargé à la fin.</li>
+      <li><strong>Un document à imprimer</strong> pour garder une trace écrite.</li>
+    </ul>
+    <p class="muted">Ces bilans sont de simples outils d'observation&nbsp;: ils n'ont aucune valeur officielle et ne remplacent ni les évaluations nationales ni le regard de l'enseignant.</p>
+  </div>
+</section>""", "/evaluations/", "Bilans de lecture et de maths gratuits pour le cycle 2 (GS, CP, CE1, CE2) : une évaluation par niveau, avec l'enseignant ou en autonomie, et un document à imprimer."))
 
     write("/qui-suis-je/", page("Qui suis-je ?", """<section class="wrap narrow prose">
   <h1>Qui suis-je&nbsp;?</h1>
