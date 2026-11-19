@@ -105,6 +105,7 @@ label.indispo{opacity:.45}
 .support{display:flex;gap:8px;justify-content:center;margin:0 0 10px}
 .support button{font-family:inherit;font-size:16px;padding:6px 14px;border-radius:12px;border:2px solid #cfd8e3;background:#fff;color:var(--encre);cursor:pointer}
 .support button.on{background:#dfe9f6;border-color:var(--bleu,#2f6fb2);font-weight:700}
+.fin-err{background:#fff;border-radius:10px;padding:8px 10px;margin:4px 0}.types{margin-top:8px;line-height:2.1}.ty{display:inline-flex;gap:2px;margin:0 8px 4px 0}.ty .b{padding:4px 9px}
 .acquis-msg{background:#e3f4ea;color:#1d6b40;border-radius:10px;padding:8px 12px;margin:0 0 12px;font-weight:600}
 
 .synth{border:2px solid #24527a;border-radius:12px;padding:10px 14px;margin:14px 0}
@@ -160,6 +161,8 @@ const LETTRES='aeioucfjlmnrstvz'.split('');
 const PROCHES={a:'oe',e:'cao',o:'aec',c:'eo',u:'nv',n:'mu',m:'n',i:'jl',l:'it',t:'lf',f:'t',j:'i',r:'n',s:'z',z:'s',v:'u'};
 
 const REPERES={CP:50,CE1:70,CE2:90};
+// Types d'erreurs de lecture que l'enseignant peut noter à la fin d'un texte.
+const TYPES_ERR=[['sons','Confusion de sons ou de lettres (b/d, p/q, f/v…)'],['complexe','Son complexe mal lu (ou, on, an, oi, ch…)'],['lettres','Lettre ou syllabe oubliée, ajoutée ou inversée'],['devine','Mot deviné ou remplacé'],['saute','Mot ou ligne sauté'],['muettes','Lettres muettes, fin de mot'],['irr','Mot irrégulier ou outil'],['autre','Autre']];
 const HISTOIRE_FILOU="Le petit chat Filou a très faim. Il court à la cuisine pour manger, mais son bol est vide. Alors Filou va voir la fermière. Elle lui donne un grand bol de lait. Filou boit tout le lait, puis il s'endort au soleil.";
 const TEXTE_ZOE="Ce matin, Zoé part à la plage avec son papi. Elle prend son seau rouge et sa pelle. Sur le sable, elle construit un grand château. Soudain, une vague arrive et casse le château. Zoé rit : « Demain, j'en ferai un plus grand ! »";
 const SYL=[['Combien de syllabes dans','lit','1'],['Combien de syllabes dans','ballon','2'],['Combien de syllabes dans','banane','3'],['Combien de syllabes dans','chocolat','3'],['Combien de syllabes dans','éléphant','3'],['Combien de syllabes dans','locomotive','4'],
@@ -687,7 +690,7 @@ function decouper(t){const out=[];t.split(/\s+/).forEach(w=>{if(/[\p{L}\d]/u.tes
 const nettoyer=w=>w.replace(/[^\p{L}'’-]/gu,'');
 function ecranTexte(){
  const ep=R.ep,mots=decouper(ep.texte);
- const T={phase:'pret',t0:0,sec:0,err:new Set(),dernier:mots.length-1};
+ const T={phase:'pret',t0:0,sec:0,err:new Set(),dernier:mots.length-1,types:{},nbManuel:null};
  app.innerHTML=`<div class="barre"><span>${ep.groupe} · <b>${ep.titre}</b> — ${mots.length} mots</span><span><button class="b petit" id="stopEp">⏭ Passer</button> <button class="b petit" id="finBilan">🏁 Bilan</button></span></div>
  <div class="scene"><div class="texte" id="texte">${mots.map((w,i)=>`<span data-i="${i}">${esc(w)}</span>`).join(' ')}</div></div>
  <div class="adulte" id="ctrl"></div>`;
@@ -697,7 +700,7 @@ function ecranTexte(){
  const peindre=()=>{$$('#texte span').forEach(s=>{const i=+s.dataset.i;s.classList.toggle('err',T.err.has(i)&&i<=T.dernier);s.classList.toggle('apres',T.phase==='fin'&&i>T.dernier);s.classList.toggle('dernier',T.phase==='fin'&&i===T.dernier&&T.dernier<mots.length-1)});tx.classList.toggle('choisir',T.phase==='dernier')};
  tx.onclick=e=>{const s=e.target.closest('span');if(!s)return;const i=+s.dataset.i;
   if(T.phase==='dernier'){T.dernier=i;T.phase='fin';ctrl()}
-  else if(T.phase==='lecture'||T.phase==='fin'){T.err.has(i)?T.err.delete(i):T.err.add(i);if(T.phase==='fin')ctrl()}
+  else if(T.phase==='lecture'||T.phase==='fin'){T.err.has(i)?T.err.delete(i):T.err.add(i);if(T.phase==='fin'){T.nbManuel=null;ctrl()}}
   peindre()};
  const arreter=(fin)=>{stopTimers();T.sec=Math.min((Date.now()-T.t0)/1000,reglages.uneMinute?60:1e9);T.phase=fin?'fin':'dernier';if(fin)T.dernier=mots.length-1;ctrl();peindre()};
  function ctrl(){
@@ -708,11 +711,26 @@ function ecranTexte(){
    $('#fin').onclick=()=>arreter(true);$('#ici').onclick=()=>arreter(false);onKey=e=>{if(e.key===' '){e.preventDefault();arreter(true)}}}
   else if(T.phase==='dernier'){c.innerHTML=`<span class="lab">${T.sec>=60&&reglages.uneMinute?'⏰ 1 minute !':'Arrêt.'}</span><span>Touchez le <b>dernier mot lu</b> par l'élève dans le texte.</span><button class="b petit" id="tout">Il a tout lu</button>`;
    $('#tout').onclick=()=>{T.dernier=mots.length-1;T.phase='fin';ctrl();peindre()};onKey=null}
-  else{const lus=T.dernier+1,e=[...T.err].filter(i=>i<=T.dernier).length,mclm=T.sec?Math.round((lus-e)*60/T.sec):0;
-   c.innerHTML=`<span><b>${lus}</b> mots lus · <b>${e}</b> erreur${e>1?'s':''} · ${duree(T.sec)} → <b>${mclm}</b> mots correctement lus / min</span>
-   <span class="note">Vous pouvez encore toucher des mots pour corriger.</span>
+  else{
+   // Fin de lecture : l'enseignant indique le nombre d'erreurs (prérempli avec les mots touchés) et, s'il le peut, leur type.
+   const lus=T.dernier+1,touches=[...T.err].filter(i=>i<=T.dernier).length;
+   const nbE=()=>{const st=Object.values(T.types).reduce((a,b)=>a+b,0);return Math.min(lus,T.nbManuel!=null?T.nbManuel:Math.max(touches,st))};
+   const resume=()=>{const e=nbE(),m=T.sec?Math.round((lus-e)*60/T.sec):0;return `<b>${lus}</b> mots lus · <b>${e}</b> erreur${e>1?'s':''} · ${duree(T.sec)} → <b>${m}</b> mots correctement lus / min`};
+   c.innerHTML=`<div style="flex-basis:100%"><span id="resume">${resume()}</span></div>
+   <div class="fin-err" style="flex-basis:100%">
+    <label><b>Nombre d'erreurs</b> <input type="number" id="nbErr" min="0" max="${lus}" value="${nbE()}" style="width:5em;font:inherit;padding:4px 8px;border-radius:8px;border:1px solid #cfc6b4"></label>
+    <span class="note">Prérempli avec les mots touchés dans le texte (touchez encore des mots pour corriger, ou changez le nombre).</span>
+    <div class="types"><b>Types d'erreurs</b> <span class="note">(facultatif : + à chaque erreur de ce type)</span><br>${TYPES_ERR.map(([k,l])=>`<span class="ty"><button class="b petit" data-t="${k}">${esc(l)} <b>${T.types[k]||0}</b></button><button class="b petit" data-m="${k}" title="Enlever une erreur de ce type">−</button></span>`).join('')}</div>
+   </div>
    <button class="b ok" id="val">Valider et continuer <kbd>Entrée</kbd></button><button class="b petit" id="rec">↺ Recommencer</button>`;
-   const valider=()=>{resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,type:'texte',total:mots.length,lus,nbErr:e,sec:T.sec,mclm,
+   const nbIn=$('#nbErr');
+   nbIn.oninput=()=>{const v=parseInt(nbIn.value,10);T.nbManuel=isNaN(v)?null:Math.max(0,v);$('#resume').innerHTML=resume()};
+   nbIn.addEventListener('keydown',ev=>{ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();valider()}});
+   $$('.types [data-t]').forEach(b=>b.onclick=()=>{T.types[b.dataset.t]=(T.types[b.dataset.t]||0)+1;ctrl()});
+   $$('.types [data-m]').forEach(b=>b.onclick=()=>{const k=b.dataset.m;if(T.types[k])T.types[k]--;if(!T.types[k])delete T.types[k];ctrl()});
+   const valider=()=>{const e=nbE(),mclm=T.sec?Math.round((lus-e)*60/T.sec):0;
+    resultats[ep.id]={titre:ep.titre,groupe:ep.groupe,type:'texte',total:mots.length,lus,nbErr:e,sec:T.sec,mclm,
+     types:TYPES_ERR.filter(([k])=>T.types[k]).map(([k,l])=>[l,T.types[k]]),
      motsErr:[...T.err].filter(i=>i<=T.dernier).sort((a,b)=>a-b).map(i=>nettoyer(mots[i]))};R.i++;intro()};
    $('#val').onclick=valider;$('#rec').onclick=ecranTexte;onKey=ev=>{if(ev.key==='Enter'){ev.preventDefault();valider()}}}
  }
@@ -789,9 +807,9 @@ function bilan(){
   if(r.type==='texte'){
    const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0;
    const [nv,cl]=rep?(r.mclm>=rep?['Atteint','p-a']:r.mclm>=rep*.7?['Proche','p-e']:['En dessous','p-n']):niveau(prec);
-   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.motsErr.length?`<br><span class="note">Erreurs : ${esc(r.motsErr.join(', '))}</span>`:'');
+   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.types&&r.types.length?`<br>Types d'erreurs : ${esc(r.types.map(([l,n])=>l+' × '+n).join(' ; '))}`:'')+(r.motsErr.length?`<br><span class="note">Mots mal lus : ${esc(r.motsErr.join(', '))}</span>`:'');
    lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.motsErr.length?` Erreurs : ${r.motsErr.join(', ')}.`:''));
+   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.types&&r.types.length?` Types d'erreurs : ${r.types.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')+(r.motsErr.length?` Mots mal lus : ${r.motsErr.join(', ')}.`:''));
   }else{
    const juste=r.ok+r.hes.length,sur=r.arret?r.prevus:r.faits,p=Math.round(juste/sur*100),[nv,cl]=niveau(p);
    const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
