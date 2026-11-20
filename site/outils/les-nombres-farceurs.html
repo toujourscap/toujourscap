@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+<!-- Décor : cirque avec clowns (images/nombres-farceurs/decor.jpg, image fournie). Réponse juste = le nombre est tiré par un canon. -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,10 +8,21 @@
 <style>
 :root{--bleu:#2f5d8a;--bleu2:#e6eef7;--vert:#2e8b57;--rouge:#c0392b;--jaune:#f4c542;--fond:#fbf6ee;--txt:#263238;--violet:#7b4fa0;--orange:#e67e22}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:var(--fond);color:var(--txt);min-height:100vh}
-header{background:linear-gradient(135deg,#c0392b,#7b4fa0);color:#fff;padding:14px 16px;text-align:center}
+body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:linear-gradient(rgba(60,10,20,.2),rgba(60,10,20,.4)),#8e1f1f url(/images/nombres-farceurs/decor.jpg) center/cover no-repeat fixed;color:var(--txt);min-height:100vh}
+header{background:linear-gradient(rgba(60,10,20,.6),rgba(60,10,20,0));color:#fff;padding:18px 16px 26px;text-align:center;text-shadow:0 2px 6px rgba(0,0,0,.85)}
 header h1{margin:0;font-size:1.6rem}
-header p{margin:4px 0 0;opacity:.92}
+header p{margin:4px 0 0;font-weight:bold}
+/* canon */
+#canon{position:fixed;left:-10px;bottom:-6px;width:190px;z-index:50;pointer-events:none;opacity:0;transform:translateX(-60px);transition:opacity .25s,transform .25s}
+#canon.vu{opacity:1;transform:none}
+#canon .tube{transform-origin:62px 118px;transform:rotate(-38deg)}
+#canon.recul .tube{animation:recul .35s ease-out}
+@keyframes recul{0%{transform:rotate(-38deg) translateX(0)}30%{transform:rotate(-38deg) translateX(-16px)}100%{transform:rotate(-38deg) translateX(0)}}
+.boulet{position:fixed;left:0;top:0;z-index:51;pointer-events:none;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7c2,#f4c542 55%,#d49a12);border:4px solid #c0392b;box-shadow:0 4px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:2.3rem;color:#2f5d8a}
+.boulet b{position:relative;z-index:1}
+.boum{position:fixed;z-index:52;pointer-events:none;font-weight:bold;font-size:2rem;color:#c0392b;background:#fff;border:3px solid #c0392b;border-radius:40% 60% 50% 45%;padding:4px 12px;transform:rotate(-12deg);text-shadow:none}
+.confetti{position:fixed;z-index:49;pointer-events:none;width:10px;height:14px;border-radius:2px}
+@media print{#canon,.boulet,.boum,.confetti{display:none!important}}
 main{max-width:900px;margin:0 auto;padding:14px}
 .carte{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:14px;margin-bottom:14px}
 h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
@@ -206,6 +218,17 @@ h2{font-size:1.1rem;margin:0 0 10px;color:var(--violet)}
 </section>
 
 </main>
+<svg id="canon" viewBox="0 0 200 160" aria-hidden="true">
+  <g class="tube">
+    <rect x="50" y="98" width="130" height="40" rx="12" fill="#2f5d8a"/>
+    <rect x="58" y="98" width="14" height="40" fill="#f4c542"/><rect x="100" y="98" width="14" height="40" fill="#f4c542"/><rect x="142" y="98" width="14" height="40" fill="#f4c542"/>
+    <rect x="172" y="92" width="18" height="52" rx="6" fill="#c0392b"/>
+  </g>
+  <rect x="20" y="118" width="100" height="26" rx="8" fill="#c0392b"/>
+  <circle cx="40" cy="146" r="13" fill="#7a3b2e" stroke="#f4c542" stroke-width="4"/><circle cx="100" cy="146" r="13" fill="#7a3b2e" stroke="#f4c542" stroke-width="4"/>
+  <circle cx="62" cy="118" r="10" fill="#f4c542"/>
+</svg>
+
 <script>
 /* ---------- Nombres en lettres (orthographe rectifiée 1990 : traits d'union partout) ---------- */
 const U=["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize"];
@@ -313,11 +336,38 @@ function question(){
   ({demasque:qDemasque,ecoute:qEcoute,recette:qRecette})[t](n);
 }
 function suite(gain,n,txt){
+  if(gain>0)tirCanon(n);
   P.log[P.i].res=gain;P.score+=gain;majBarre();
   const a=$("#aide");a.className="aide "+(gain>0?"bravo":"sol");
   a.innerHTML=txt+identite(n)+`<div class="actions"><button class="btn gros" id="b-suite">Suivant ▶</button></div>`;
   dire(n);
   $("#b-suite").onclick=()=>{P.i++;question();};
+}
+/* ---------- le canon : réponse juste = le nombre est tiré ---------- */
+function boumSon(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ac=boumSon.ac||(boumSon.ac=new C());
+  const d=.5,b=ac.createBuffer(1,ac.sampleRate*d,ac.sampleRate),x=b.getChannelData(0);for(let k=0;k<x.length;k++)x[k]=(Math.random()*2-1)*Math.pow(1-k/x.length,3);
+  const src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();src.buffer=b;f.type="lowpass";f.frequency.value=650;g.gain.value=.7;src.connect(f);f.connect(g);g.connect(ac.destination);src.start();}catch(e){}}
+function tirCanon(n){
+  const cn=document.getElementById("canon");if(!cn||!document.body.animate)return;
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const W=innerWidth,H=innerHeight,r=cn.getBoundingClientRect();
+  cn.classList.add("vu");
+  setTimeout(()=>{
+    const ang=-38*Math.PI/180,w=r.width/200,
+      x0=r.left+(62+125*Math.cos(ang))*w-48,y0=r.top+(118+125*Math.sin(ang))*w-48;
+    cn.classList.remove("recul");void cn.offsetWidth;cn.classList.add("recul");boumSon();
+    const bm=document.createElement("div");bm.className="boum";bm.textContent="BOUM !";bm.style.left=(x0+30)+"px";bm.style.top=(y0-30)+"px";document.body.appendChild(bm);
+    bm.animate([{opacity:1,transform:"rotate(-12deg) scale(.4)"},{opacity:1,transform:"rotate(-12deg) scale(1.15)",offset:.3},{opacity:0,transform:"rotate(-12deg) scale(1)"}],{duration:900,easing:"ease-out"}).onfinish=()=>bm.remove();
+    const bl=document.createElement("div");bl.className="boulet";bl.innerHTML="<b>"+n+"</b>";document.body.appendChild(bl);
+    const x1=W+120,hMax=Math.max(140,y0-Math.min(H*.12,80)),k=[],N=24;
+    for(let j=0;j<=N;j++){const t=j/N,x=x0+(x1-x0)*t,y=y0-4*hMax*t*(1-t)+t*t*(H*.15);k.push({transform:`translate(${x}px,${y}px) rotate(${Math.sin(t*12)*14}deg)`});}
+    bl.animate(k,{duration:1700,easing:"linear"}).onfinish=()=>bl.remove();
+    const coul=["#c0392b","#f4c542","#2f5d8a","#2e8b57","#7b4fa0","#e67e22"];
+    for(let c=0;c<22;c++){const p=document.createElement("div");p.className="confetti";p.style.background=coul[c%coul.length];p.style.left=(x0+48)+"px";p.style.top=(y0+48)+"px";document.body.appendChild(p);
+      const a=ang+(Math.random()-.5)*1.2,v=120+Math.random()*220;
+      p.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:`translate(${Math.cos(a)*v}px,${Math.sin(a)*v+260}px) rotate(${Math.random()*900}deg)`,opacity:0}],{duration:1300+Math.random()*500,easing:"cubic-bezier(.2,.6,.4,1)"}).onfinish=()=>p.remove();}
+    setTimeout(()=>cn.classList.remove("vu","recul"),1500);
+  },280);
 }
 function erreur(txt){if(P&&P.log[P.i])P.log[P.i].err.push(txt.replace(/<[^>]+>/g,""));const a=$("#aide");a.className="aide err";a.innerHTML=txt;}
 
