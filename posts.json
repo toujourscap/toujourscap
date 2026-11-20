@@ -1,6 +1,7 @@
 {
- "count": 60,
+ "count": 61,
  "posts": [
+ {"title": "Le saut des virelangues", "slug": "le-saut-des-virelangues", "cat": "cercle-conteur", "excerpt": "Un jeu de langage oral : l'élève répète un virelangue (« Les chaussettes de l'archiduchesse »…) sans se tromper et le skieur reste en l'air. Une erreur, et il tombe ! Reconnaissance vocale (Chrome) ou arbitre. GS, CP, CE1, CE2.", "date": "2026-11-20T18:00:00.000Z", "categoryIds": [], "media": {"displayed": true, "custom": false}, "jeu": {"niveaux": ["GS", "CP", "CE1", "CE2"], "joueurs": "1 joueur ou la classe", "supports": ["ecran", "projetable", "imprimable"]}, "richContent": {"nodes": [{"type": "RAW_HTML", "file": "le-saut-des-virelangues.html"}, {"type": "HTML", "htmlData": {"url": "/outils/le-saut-des-virelangues.html", "containerData": {"height": {"custom": "ecran"}, "large": true}}}, {"type": "RAW_HTML", "file": "le-saut-des-virelangues-suite.html"}]}},
   {
    "title": "La dictée à trous",
    "slug": "la-dictee-a-trous",

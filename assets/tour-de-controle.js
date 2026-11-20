@@ -87,6 +87,7 @@
   ["Français : contes, orthographe", [
     ["les-formules-du-sorcier","Les Formules du Sorcier","les-formules-du-sorcier"],
     ["le-jackpot-des-contes","Le Jackpot des contes","le-jackpot-des-contes","/images/contes/le-jackpot-des-contes.jpg"],
+    ["le-saut-des-virelangues","Le saut des virelangues","le-saut-des-virelangues"],
     ["la-dictee-de-la-feuille-pliee","Prépare ta dictée !","la-dictee-de-la-feuille-pliee"],
     ["redis-la-regle","Apprends les règles d'orthographe","redis-la-regle"],
     ["la-machine-a-conjuguer","La machine à conjuguer","la-machine-a-conjuguer"]
