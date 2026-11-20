@@ -443,7 +443,7 @@ def arbre(posts):
         for k, v in CATS.items():
             if domaine and v["domain"] != domaine:
                 continue
-            q = sorted([p for p in lst if p["cat"] == k], key=lambda p: p["title"].lower())
+            q = sorted([p for p in lst if p["cat"] == k or k in p.get("aussi", [])], key=lambda p: p["title"].lower())
             if q:
                 h += branche(esc(v["name"]), len(q), "".join(feuille(p, badges) for p in q))
         return h
@@ -461,7 +461,7 @@ def arbre(posts):
             i += 1
     par_cat, i = "", 0
     for d, dn in DOMAINES:
-        lst = [p for p in posts if CATS.get(p["cat"], {}).get("domain") == d]
+        lst = [p for p in posts if any(CATS.get(c, {}).get("domain") == d for c in [p["cat"]] + p.get("aussi", []))]
         if lst:
             par_cat += branche(dn, len(lst), cats_de(lst, True, d), f' style="--b:{COULEURS[i % len(COULEURS)]}"')
             i += 1
