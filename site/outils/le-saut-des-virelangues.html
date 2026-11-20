@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Le saut des virelangues</title><link rel="canonical" href="https://toujourscap.com/post/le-saut-des-virelangues/"><meta name="description" content="Un jeu de langage oral : l&#x27;élève répète un virelangue (« Les chaussettes de l&#x27;archiduchesse »…) sans se tromper et le skieur reste en l&#x27;air. Une erreur, et…">
+<title>Le saut des virelangues</title><link rel="canonical" href="https://toujourscap.com/post/le-saut-des-virelangues/"><meta name="description" content="Langue qui fourche = skieur qui plonge ! L&#x27;élève répète sa phrase piège (« Les chaussettes de l&#x27;archiduchesse »…) sans s&#x27;emmêler la langue, et le skieur…">
 <style>
   :root{--bleu:#1d6fd1;--rouge:#e5533d;--fond:#eaf4fb;}
   *{box-sizing:border-box}
@@ -33,6 +33,7 @@
   button.rouge{background:var(--rouge);box-shadow:0 3px 0 #a3311f}
   button.gris{background:#6b7c8f;box-shadow:0 3px 0 #48576a}
   button:disabled{opacity:.45;cursor:default}
+  .sous-titre{text-align:center;margin:-6px 0 10px;font-weight:700;color:#e5533d}
   .aide{text-align:center;font-size:.85rem;color:#4b5d70;margin-top:8px}
   .alerte{background:#fff3cd;border:1px solid #e0c36b;border-radius:10px;padding:8px 12px;margin:8px auto;max-width:800px;text-align:center;display:none}
 </style>
@@ -40,6 +41,7 @@
 <body>
 <div class="wrap">
   <h1>⛷️ Le saut des virelangues</h1>
+  <p class="sous-titre">Langue qui fourche = skieur qui plonge dans la neige ! 🤪</p>
   <div class="alerte" id="alerte"></div>
 
   <div class="scene" id="scene">
@@ -67,7 +69,7 @@
       </g>
     </svg>
 
-    <div class="score" id="score">Réussis : 0</div>
+    <div class="score" id="score">🎿 × 0</div>
     <div class="phrase" id="phrase"></div>
     <div class="entendu" id="entendu"></div>
     <div class="bulle" id="bulle"></div>
@@ -77,38 +79,38 @@
       <p id="carteNb"></p>
       <p class="petit" id="carteRecord"></p>
       <p class="petit" id="carteEntendu"></p>
-      <p style="margin-top:.7em"><button class="vert" id="btnRejouer">Rejouer</button> <button class="gris" id="btnBilan">📄 Bilan de la partie</button></p>
+      <p style="margin-top:.7em"><button class="vert" id="btnRejouer">🔁 On remonte au tremplin !</button> <button class="gris" id="btnBilan">📄 Bilan de la partie</button></p>
     </div>
   </div>
 
   <div class="barre">
-    <label for="choix">Virelangue :</label>
+    <label for="choix">Ta phrase piège :</label>
     <select id="choix"></select>
-    <input type="text" id="perso" placeholder="… ou écris ta propre phrase ici" style="display:none">
+    <input type="text" id="perso" placeholder="Invente une phrase qui fait fourcher la langue…" style="display:none">
     <button class="gris" id="btnEcouter">🔊 Écouter</button>
     <button class="gris" id="btnFiche">📄 Fiche des virelangues</button>
   </div>
   <div class="barre">
-    <label for="chute">Le skieur tombe :</label>
+    <label for="chute">Le skieur tombe…</label>
     <select id="chute">
-      <option value="10">lentement</option>
-      <option value="7" selected>normalement</option>
-      <option value="4.5">vite</option>
+      <option value="10">comme une plume 🪶</option>
+      <option value="7" selected>comme un flocon ❄️</option>
+      <option value="4.5">comme un caillou 🪨</option>
     </select>
-    <label for="tolerance">Exigence :</label>
+    <label for="tolerance">L'oreille du juge :</label>
     <select id="tolerance">
-      <option value="0.6">souple</option>
-      <option value="0.72" selected>normale</option>
-      <option value="0.85">stricte</option>
+      <option value="0.6">gentille 😊</option>
+      <option value="0.72" selected>attentive 🧐</option>
+      <option value="0.85">impitoyable 😈</option>
     </select>
-    <button class="vert" id="btnPartir">🎿 Partir !</button>
+    <button class="vert" id="btnPartir">🎿 C'est parti !</button>
   </div>
   <div class="barre">
-    <span class="aide">Arbitre (si le micro se trompe) :</span>
-    <button class="vert" id="btnOk" disabled>✔ Réussi <small>(Espace)</small></button>
-    <button class="rouge" id="btnErreur" disabled>✘ Erreur <small>(X)</small></button>
+    <span class="aide">Le juge humain (si le micro est dur de la feuille 👂) :</span>
+    <button class="vert" id="btnOk" disabled>✔ Bien dit ! <small>(Espace)</small></button>
+    <button class="rouge" id="btnErreur" disabled>✘ Ça a fourché <small>(X)</small></button>
   </div>
-  <p class="aide">Répète la phrase sans te tromper : chaque phrase réussie fait remonter le skieur. À la moindre erreur… il tombe ! Le chronomètre mesure ton temps en l'air.<br>Fonctionne avec Google Chrome (micro autorisé).</p>
+  <p class="aide">Répète ta phrase piège encore et encore, sans t'emmêler la langue : à chaque phrase bien dite, hop, le skieur reprend de la hauteur ! Une syllabe de travers… et c'est le plongeon dans la poudreuse. Combien de temps tiendras-tu en l'air ?<br>Le micro marche avec Google Chrome (pense à l'autoriser).</p>
 </div>
 
 <script src="tour-de-controle.js"></script><script src="document-ecrit.js"></script>
@@ -132,10 +134,10 @@
   const $ = id => document.getElementById(id);
   const choix = $("choix"), perso = $("perso");
   VIRELANGUES.forEach((v,i) => choix.add(new Option(v.length > 48 ? v.slice(0,46)+"…" : v, i)));
-  choix.add(new Option("✏️ Ma propre phrase…", "perso"));
+  choix.add(new Option("✏️ J'invente ma phrase piège…", "perso"));
 
   function phraseActuelle(){
-    return choix.value === "perso" ? (perso.value.trim() || "Écris ta phrase !") : VIRELANGUES[+choix.value];
+    return choix.value === "perso" ? (perso.value.trim() || "Invente ta phrase piège ! ✏️") : VIRELANGUES[+choix.value];
   }
   function majPhrase(){ perso.style.display = choix.value === "perso" ? "" : "none"; $("phrase").textContent = phraseActuelle(); }
   choix.onchange = majPhrase; perso.oninput = majPhrase; majPhrase();
@@ -222,7 +224,7 @@
 
   function afficherEntendu(){
     const t = (finals + " " + interim).trim().split(/\s+/).slice(-14).join(" ");
-    const el = $("entendu"); el.style.display = t ? "block" : "none"; el.textContent = "J'entends : " + t;
+    const el = $("entendu"); el.style.display = t ? "block" : "none"; el.textContent = "👂 Le micro a entendu : " + t;
   }
 
   function evaluer(estFinal){
@@ -283,8 +285,9 @@
     chrono.textContent = fmt(t);
     aiguille.setAttribute("transform", `rotate(${(t%60)*6} 1097 246)`);
   }
-  function majScore(){ $("score").textContent = "Réussis : " + nbOk; }
+  function majScore(){ $("score").textContent = "🎿 × " + nbOk; }
 
+  const hasard = l => l[Math.floor(Math.random()*l.length)];
   function bulle(txt, ms){
     const b = $("bulle"); b.textContent = txt; b.style.display = "block";
     clearTimeout(bulle.t); if (ms) bulle.t = setTimeout(() => b.style.display = "none", ms);
@@ -310,7 +313,7 @@
       n--;
       if (etat !== "compte"){ clearInterval(it); return; }
       if (n > 0) bulle(n);
-      else { clearInterval(it); bulle("Parle !", 900); etat = "elan"; tEtat = 0; }
+      else { clearInterval(it); bulle("À toi !", 900); etat = "elan"; tEtat = 0; }
     }, 800);
   }
 
@@ -319,13 +322,13 @@
     if (etat !== "vol") return;
     nbOk++; majScore();
     h = Math.min(H_MAX, Math.max(h, 0) + GAIN);
-    bulle("Bravo !", 700);
+    bulle(hasard(["Bravo !","Super !","Ça plane !","Encore !","Waouh !","Plus haut !","Hop !","Trop fort !"]), 700);
   }
   function erreur(){
     if (etat === "compte"){ return; }
     if (etat === "elan"){ etat = "vol"; tVol = 0; h = 30; }
     if (etat !== "vol") return;
-    etat = "chute"; vh = 60; bulle("Oups !", 1000);
+    etat = "chute"; vh = 60; bulle(hasard(["Patatras !","Badaboum !","Oups !","Aïe aïe aïe !"]), 1000);
   }
 
   function poudreNeige(px, py){
@@ -364,12 +367,17 @@
       d: nbOk + " virelangue" + (nbOk > 1 ? "s" : "") + " réussi" + (nbOk > 1 ? "s" : "") + ", " + fmt(tVol) + " en l'air" + (tombe ? " (chute)" : "") }); } catch(_){}
     const nouveau = tVol > record;
     if (nouveau){ record = tVol; try { localStorage.setItem("saut-virelangues-record", String(record)); } catch(_){} }
-    $("carteTitre").textContent = tombe ? "Oups, une erreur !" : (nbOk >= 3 ? "Superbe saut ! 🏅" : "Atterrissage !");
-    $("carteTemps").innerHTML = "Temps en l'air : <b>" + fmt(tVol) + "</b>";
-    $("carteNb").innerHTML = "Phrases réussies : <b>" + nbOk + "</b>";
-    $("carteRecord").textContent = nouveau ? "🎉 Nouveau record !" : "Record : " + fmt(record);
+    $("carteTitre").textContent = tombe
+      ? hasard(["Patatras ! La langue a fourché 🤪", "Badaboum dans la poudreuse ! ☃️", "Plouf ! Le nez dans la neige 🤧"])
+      : nbOk === 0 ? "Euh… on a oublié de parler ? 🤐"
+      : nbOk <= 2 ? hasard(["Joli vol ! 🪂", "Pas mal du tout ! 😎"])
+      : nbOk <= 4 ? hasard(["Quel envol ! 🦅", "Tu voles comme un aigle ! 🦅"])
+      : "Champion des virelangues ! 🏆";
+    $("carteTemps").innerHTML = "⏱️ Tu es resté en l'air <b>" + fmt(tVol) + "</b>";
+    $("carteNb").innerHTML = nbOk === 0 ? "Aucune phrase dite jusqu'au bout… on retente ?" : "🎿 <b>" + nbOk + "</b> phrase" + (nbOk > 1 ? "s" : "") + " piège" + (nbOk > 1 ? "s" : "") + " sans t'emmêler la langue" + (tombe ? " (avant la gamelle)" : "") + " !";
+    $("carteRecord").textContent = nouveau ? "🎉 Nouveau record de la piste !" : "Le record à battre : " + fmt(record);
     const ent = (finals + " " + interim).trim().split(/\s+/).slice(-14).join(" ");
-    $("carteEntendu").textContent = ent ? "Dernière chose entendue : « " + ent + " »" : "";
+    $("carteEntendu").textContent = ent ? "👂 Le micro a entendu : « " + ent + " »" : "";
     $("carte").style.display = "block";
   }
 
@@ -415,9 +423,9 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   function ficheHtml(){
     const liste = VIRELANGUES.slice(); if (choix.value === "perso" && perso.value.trim()) liste.unshift(perso.value.trim());
-    let h = "<p>Lis chaque phrase, puis répète-la le plus de fois possible sans te tromper. Colorie une case à chaque phrase réussie.</p><table><tr><th>Virelangue</th><th>Mes réussites</th></tr>";
+    let h = "<p>Attention, phrases pièges ! Répète chacune le plus de fois possible sans t'emmêler la langue, et colorie une case à chaque fois que c'est réussi.</p><table><tr><th>Virelangue</th><th>Mes réussites</th></tr>";
     liste.forEach(v => { h += "<tr><td style='font-size:16px'>" + esc(v) + "</td><td style='white-space:nowrap;font-size:18px'>☐ ☐ ☐ ☐ ☐</td></tr>"; });
-    h += "</table><h2>À deux</h2><p>Un élève dit le virelangue, l'autre écoute et lève la main à la première erreur. Puis on échange les rôles.</p>";
+    h += "</table><h2>À deux : le juge et le skieur</h2><p>Le skieur dit la phrase, le juge écoute et crie « Patatras ! » à la première erreur. Puis on échange les rôles.</p>";
     h += "<div class='saut'><h2>Pour l'enseignant</h2><p>Les virelangues entraînent l'articulation et la discrimination de sons proches (ch/s, t/d, p/b, v/f…). Faire d'abord dire lentement, en détachant les syllabes, puis accélérer.</p></div>";
     return h;
   }
@@ -427,7 +435,7 @@
     sauts.forEach(s => { h += "<tr><td>" + esc(s.phrase) + "</td><td style='text-align:center'>" + s.nb + "</td><td style='text-align:center'>" + fmt(s.t) + "</td><td>" + (s.tombe ? "chute (erreur)" : "atterrissage") + "</td></tr>"; });
     const best = sauts.reduce((a,b) => b.t > a.t ? b : a);
     h += "</table><p>Meilleur saut : <b>" + fmt(best.t) + "</b> en l'air, avec " + best.nb + " phrase" + (best.nb > 1 ? "s" : "") + " réussie" + (best.nb > 1 ? "s" : "") + ".</p>";
-    h += "<h2>Je m'entraîne</h2><p>Le virelangue que je veux réussir la prochaine fois : ………………………………………………………</p>";
+    h += "<h2>Mon prochain défi</h2><p>La phrase piège que je vais dompter la prochaine fois : ………………………………………………………</p>";
     return h;
   }
   $("btnFiche").onclick = () => window.DocEcrit && DocEcrit.ouvrir({titre:"Fiche des virelangues", jeu:"Le saut des virelangues", nom:"Fiche virelangues", prenom:true, html:ficheHtml});
