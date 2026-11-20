@@ -173,6 +173,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--bot);outline-of
   display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:pop .6s ease-out}
 .result .medal{width:96px;height:96px;font-size:2.4rem;animation:swing 1.6s ease-in-out infinite;transform-origin:50% -30px}
 @keyframes swing{50%{transform:rotate(8deg)}}
+.result .vraie{width:120px;height:auto;max-height:210px;object-fit:contain;animation:swing 1.6s ease-in-out infinite;transform-origin:50% 0;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.rank .pos img{width:1.6em;height:auto;display:block;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+@media (prefers-reduced-motion:reduce){.result .vraie{animation:none}}
 .result .medal.none{background:var(--line);color:var(--muted);animation:none}
 .result p{margin:0;font-weight:700;color:var(--muted)}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -321,6 +324,12 @@ const LEVELS = [
   {id:"argent", name:"Argent", k:0.75, letter:"A"},
   {id:"or",     name:"Or",     k:0.55, letter:"O"}
 ];
+/* Vraies médailles (images Canva) pour la fin de course */
+const IMG_MED={or:"/images/medailles/or.webp",argent:"/images/medailles/argent.webp",bronze:"/images/medailles/bronze.webp"};
+const NOM_MED={or:"Médaille d'or",argent:"Médaille d'argent",bronze:"Médaille de bronze"};
+const imgMed=(id,cls)=>`<img class="${cls||""}" src="${IMG_MED[id]}" alt="${NOM_MED[id]}" draggable="false">`;
+const posMed=i=>i<3?imgMed(["or","argent","bronze"][i]):i+1;
+[IMG_MED.or,IMG_MED.argent,IMG_MED.bronze].forEach(u=>{const i=new Image();i.src=u;});
 const $ = id => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -671,7 +680,7 @@ function finish(win){
   const next = LEVELS[LEVELS.indexOf(l)+1];
   const ov=$("ov"); ov.hidden=false;
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
-    <span class="medal ${win?l.id:"none"}">${win?l.letter:"?"}</span>
+    ${win?imgMed(l.id,"vraie"):`<span class="medal none">?</span>`}
     <h2>${win?`Médaille ${({bronze:"de bronze",argent:"d'argent",or:"d'or"})[l.id]} !`:"L'ordinateur a gagné"}</h2>
     <p>${win?`Tu as fini en ${fmt(el)} s (l'ordinateur : ${fmt(R.botTime)} s).`:`Tu avais ${R.good} bonne${R.good>1?"s":""} réponse${R.good>1?"s":""} sur ${STEPS}. Recommence !`}</p>
     <div class="row">
@@ -715,7 +724,7 @@ function podium(){
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
     <h2>Bravo les <span style="color:${win.c}">${win.name}</span> !</h2>
     <p>Classement — ${nomTable(store.table)}</p>
-    <ol class="rank">${ranked.map((t,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
+    <ol class="rank">${ranked.map((t,i)=>`<li><span class="pos">${posMed(i)}</span>
       <span><span class="sw" style="background:${t.c}"></span>${t.name}<span class="err">${t.errors} erreur${t.errors>1?"s":""}</span></span>
       <span class="tm">${fmt(t.time)} s</span></li>`).join("")}</ol>
     <div class="row"><button class="cta" id="again">Revanche</button><button class="ghost" id="toMenu">Menu</button></div></div>`;
@@ -969,7 +978,7 @@ function podiumMulti(d){
   ov.innerHTML=`<div class="result" role="dialog" aria-live="polite">
     <h2>${gagnant ? `Bravo <span style="color:${coul(gagnant.id)}">${esc(gagnant.nom)}</span> !` : "Course terminée"}</h2>
     <p>Classement — ${nomTable(R.table)}</p>
-    <ol class="rank">${cl.map((j,i)=>`<li><span class="pos">${medal[i]||i+1}</span>
+    <ol class="rank">${cl.map((j,i)=>`<li><span class="pos">${posMed(i)}</span>
       <span><span class="sw" style="background:${coul(j.id)}"></span>${esc(j.nom)}${j.id===M.id?" (toi)":""}<span class="err">${j.erreurs} erreur${j.erreurs>1?"s":""}</span></span>
       <span class="tm">${j.temps!=null ? fmt(j.temps/1000)+" s" : j.bons+" / "+STEPS}</span></li>`).join("")}</ol>
     ${M.hote ? "" : "<p>L'adulte peut lancer une revanche : reste sur cet écran.</p>"}
