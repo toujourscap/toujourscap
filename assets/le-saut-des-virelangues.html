@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<!-- Décor et skieur : images ChatGPT/Gemini fournies par l'auteur (images/saut-des-virelangues/). Reconnaissance vocale : Google Chrome. -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le saut des virelangues</title>
+<style>
+  :root{--bleu:#1d6fd1;--rouge:#e5533d;--fond:#eaf4fb;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--fond);color:#1f2d3d}
+  .wrap{max-width:1180px;margin:0 auto;padding:12px}
+  h1{margin:4px 0 10px;font-size:1.5rem;text-align:center;color:#17406d}
+  .scene{position:relative;width:100%;aspect-ratio:1376/768;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.18);background:#bfe3ff;user-select:none}
+  .scene img.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .scene svg{position:absolute;inset:0;width:100%;height:100%}
+  .phrase{position:absolute;left:26%;top:3.5%;width:43%;background:rgba(255,255,255,.93);border-radius:14px;padding:.6em .9em;text-align:center;font-weight:700;font-size:clamp(14px,2.2vw,26px);line-height:1.25;color:#17406d;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+  .compte{position:absolute;left:26%;top:calc(3.5% + 0px);transform:translateY(-10%);display:none}
+  .score{position:absolute;left:3%;top:3.5%;background:#fff;border-radius:999px;padding:.35em .8em;font-weight:800;font-size:clamp(13px,1.8vw,22px);color:var(--rouge);box-shadow:0 3px 10px rgba(0,0,0,.12)}
+  .entendu{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width:80%;background:rgba(23,64,109,.78);color:#fff;border-radius:999px;padding:.35em 1em;font-size:clamp(11px,1.4vw,17px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none}
+  .bulle{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:clamp(40px,9vw,120px);font-weight:900;color:#fff;text-shadow:0 4px 0 #17406d,0 0 20px rgba(0,0,0,.25);pointer-events:none;display:none}
+  .carte{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:18px;padding:1.1em 1.6em;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);display:none;min-width:46%;font-size:clamp(13px,1.8vw,21px)}
+  .carte h2{margin:.1em 0 .4em;color:#17406d;font-size:1.5em}
+  .carte p{margin:.3em 0}
+  .carte .petit{font-size:.8em;color:#555}
+  .barre{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin-top:12px}
+  .barre label{font-weight:600;font-size:.95rem}
+  select,input[type=text]{font-size:1rem;padding:6px 8px;border-radius:8px;border:1px solid #9bb6cf;background:#fff}
+  input[type=text]{width:320px;max-width:90vw}
+  button{font-size:1rem;font-weight:700;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;color:#fff;background:var(--bleu);box-shadow:0 3px 0 #124a8d}
+  button:active{transform:translateY(2px);box-shadow:0 1px 0 #124a8d}
+  button.vert{background:#2e9e4f;box-shadow:0 3px 0 #1d6b34}
+  button.rouge{background:var(--rouge);box-shadow:0 3px 0 #a3311f}
+  button.gris{background:#6b7c8f;box-shadow:0 3px 0 #48576a}
+  button:disabled{opacity:.45;cursor:default}
+  .aide{text-align:center;font-size:.85rem;color:#4b5d70;margin-top:8px}
+  .alerte{background:#fff3cd;border:1px solid #e0c36b;border-radius:10px;padding:8px 12px;margin:8px auto;max-width:800px;text-align:center;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⛷️ Le saut des virelangues</h1>
+  <div class="alerte" id="alerte"></div>
+
+  <div class="scene" id="scene">
+    <img class="bg" src="/images/saut-des-virelangues/decor.jpg" alt="">
+    <svg viewBox="0 0 1376 768" preserveAspectRatio="none" aria-hidden="true">
+      <!-- Chronomètre : on masque l'affichage et l'aiguille dessinés, puis on dessine les vrais -->
+      <g id="chronoMasque" fill="#eef6fa" stroke="#eef6fa">
+        <rect x="1042" y="181" width="111" height="33" rx="5" stroke="none"/>
+        <line x1="1069" y1="260" x2="1148" y2="221" stroke-width="24" stroke-linecap="round"/>
+        <line x1="1140" y1="223" x2="1167" y2="209" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="1096" cy="247" r="17" stroke="none"/>
+      </g>
+      <g id="aiguille" transform="rotate(0 1097 246)">
+        <path d="M1093 246 L1097 176 L1101 246 Z" fill="#2f6fd6" stroke="#1d4f9e" stroke-width="1.5"/>
+        <path d="M1093.5 246 L1097 268 L1100.5 246 Z" fill="#f08a24"/>
+      </g>
+      <circle cx="1097" cy="246" r="10" fill="#f08a24" stroke="#c4561a" stroke-width="2"/>
+      <text id="chrono" x="1097" y="207" font-size="27" text-anchor="middle" textLength="100" lengthAdjust="spacingAndGlyphs"
+            font-family="'Courier New',Courier,monospace" font-weight="700" fill="#2b323c"
+            stroke="#eef6fa" stroke-width="4" paint-order="stroke">00:00.0</text>
+
+      <g id="poudre"></g>
+      <g id="skieur">
+        <image href="/images/saut-des-virelangues/skieur.png" width="120" height="93.4" x="-27" y="-84"/>
+      </g>
+    </svg>
+
+    <div class="score" id="score">Réussis : 0</div>
+    <div class="phrase" id="phrase"></div>
+    <div class="entendu" id="entendu"></div>
+    <div class="bulle" id="bulle"></div>
+    <div class="carte" id="carte">
+      <h2 id="carteTitre"></h2>
+      <p id="carteTemps"></p>
+      <p id="carteNb"></p>
+      <p class="petit" id="carteRecord"></p>
+      <p class="petit" id="carteEntendu"></p>
+      <p style="margin-top:.7em"><button class="vert" id="btnRejouer">Rejouer</button> <button class="gris" id="btnBilan">📄 Bilan de la partie</button></p>
+    </div>
+  </div>
+
+  <div class="barre">
+    <label for="choix">Virelangue :</label>
+    <select id="choix"></select>
+    <input type="text" id="perso" placeholder="… ou écris ta propre phrase ici" style="display:none">
+    <button class="gris" id="btnEcouter">🔊 Écouter</button>
+    <button class="gris" id="btnFiche">📄 Fiche des virelangues</button>
+  </div>
+  <div class="barre">
+    <label for="chute">Le skieur tombe :</label>
+    <select id="chute">
+      <option value="10">lentement</option>
+      <option value="7" selected>normalement</option>
+      <option value="4.5">vite</option>
+    </select>
+    <label for="tolerance">Exigence :</label>
+    <select id="tolerance">
+      <option value="0.6">souple</option>
+      <option value="0.72" selected>normale</option>
+      <option value="0.85">stricte</option>
+    </select>
+    <button class="vert" id="btnPartir">🎿 Partir !</button>
+  </div>
+  <div class="barre">
+    <span class="aide">Arbitre (si le micro se trompe) :</span>
+    <button class="vert" id="btnOk" disabled>✔ Réussi <small>(Espace)</small></button>
+    <button class="rouge" id="btnErreur" disabled>✘ Erreur <small>(X)</small></button>
+  </div>
+  <p class="aide">Répète la phrase sans te tromper : chaque phrase réussie fait remonter le skieur. À la moindre erreur… il tombe ! Le chronomètre mesure ton temps en l'air.<br>Fonctionne avec Google Chrome (micro autorisé).</p>
+</div>
+
+<script src="tour-de-controle.js"></script><script src="document-ecrit.js"></script>
+<script>
+(() => {
+  // ---------- Virelangues ----------
+  const VIRELANGUES = [
+    "Les chaussettes de l'archiduchesse sont-elles sèches, archi-sèches ?",
+    "Un chasseur sachant chasser doit savoir chasser sans son chien.",
+    "Trois tortues trottaient sur un trottoir très étroit.",
+    "Panier, piano, panier, piano.",
+    "Pruneau cuit, pruneau cru.",
+    "Seize chaises sèchent.",
+    "Cinq chiens chassent six chats.",
+    "Ton thé t'a-t-il ôté ta toux ?",
+    "Le ver vert va vers le verre vert.",
+    "Je veux et j'exige d'exquises excuses.",
+    "Si six scies scient six cyprès, six cents scies scient six cents cyprès.",
+    "Didon dîna, dit-on, du dos d'un dodu dindon."
+  ];
+  const $ = id => document.getElementById(id);
+  const choix = $("choix"), perso = $("perso");
+  VIRELANGUES.forEach((v,i) => choix.add(new Option(v.length > 48 ? v.slice(0,46)+"…" : v, i)));
+  choix.add(new Option("✏️ Ma propre phrase…", "perso"));
+
+  function phraseActuelle(){
+    return choix.value === "perso" ? (perso.value.trim() || "Écris ta phrase !") : VIRELANGUES[+choix.value];
+  }
+  function majPhrase(){ perso.style.display = choix.value === "perso" ? "" : "none"; $("phrase").textContent = phraseActuelle(); }
+  choix.onchange = majPhrase; perso.oninput = majPhrase; majPhrase();
+
+  $("btnEcouter").onclick = () => {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(phraseActuelle()); u.lang = "fr-FR"; u.rate = .85;
+    speechSynthesis.speak(u);
+  };
+
+  // ---------- Normalisation du texte ----------
+  const U = ["zero","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize"];
+  function nb(n){
+    if (n < 17) return U[n];
+    if (n < 20) return "dix" + U[n-10];
+    if (n < 100){
+      const d = Math.floor(n/10), r = n%10;
+      if (d === 7) return "soixante" + (r===1 ? "et" : "") + nb(10+r);
+      if (d === 9) return "quatrevingt" + nb(10+r);
+      const D = {2:"vingt",3:"trente",4:"quarante",5:"cinquante",6:"soixante",8:"quatrevingt"}[d];
+      return D + (r===0 ? "" : (r===1 && d!==8 ? "et" : "") + U[r]);
+    }
+    if (n < 1000){ const c = Math.floor(n/100), r = n%100; return (c>1?U[c]:"") + "cent" + (r?nb(r):""); }
+    if (n < 1e6){ const m = Math.floor(n/1000), r = n%1000; return (m>1?nb(m):"") + "mille" + (r?nb(r):""); }
+    return String(n);
+  }
+  function norm(s){
+    return s.toLowerCase()
+      .replace(/\d+/g, m => " " + nb(+m) + " ")
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/œ/g,"oe").replace(/[^a-z]/g, "")
+      .replace(/ph/g,"f").replace(/(.)\1+/g, "$1");
+  }
+
+  // distance d'édition entre la cible et tous les préfixes de "s" (une seule passe)
+  function distPrefixes(s, t, maxL){
+    const n = Math.min(s.length, maxL), m = t.length;
+    let prev = new Array(n+1), cur = new Array(n+1);
+    for (let j=0;j<=n;j++) prev[j] = j;
+    for (let i=1;i<=m;i++){
+      cur[0] = i;
+      const c = t.charCodeAt(i-1);
+      for (let j=1;j<=n;j++){
+        cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (s.charCodeAt(j-1)===c ? 0 : 1));
+      }
+      [prev, cur] = [cur, prev];
+    }
+    return prev; // prev[j] = distance(cible, s[0..j])
+  }
+
+  // ---------- Reconnaissance vocale ----------
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, ecoute = false, finals = "", interim = "", pos = 0, cible = "";
+  if (!SR){
+    const a = $("alerte"); a.style.display = "block";
+    a.textContent = "La reconnaissance vocale n'est pas disponible dans ce navigateur : ouvre le jeu dans Google Chrome. Tu peux quand même jouer avec les boutons d'arbitre.";
+  }
+
+  function demarrerEcoute(){
+    finals = ""; interim = ""; pos = 0; cible = norm(phraseActuelle());
+    if (!SR) return;
+    rec = new SR(); rec.lang = "fr-FR"; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+    rec.onresult = e => {
+      interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++){
+        const txt = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finals += " " + txt; else interim += " " + txt;
+      }
+      afficherEntendu();
+      evaluer(interim.trim() === "");
+    };
+    rec.onerror = e => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed"){
+        const a = $("alerte"); a.style.display = "block";
+        a.textContent = "Le micro est bloqué : autorise-le (icône à gauche de l'adresse), ou joue avec les boutons d'arbitre.";
+      }
+    };
+    rec.onend = () => { if (ecoute) { try { rec.start(); } catch(_){} } };
+    ecoute = true;
+    try { rec.start(); } catch(_){}
+  }
+  function arreterEcoute(){ ecoute = false; if (rec) { try { rec.abort(); } catch(_){} } rec = null; }
+
+  function afficherEntendu(){
+    const t = (finals + " " + interim).trim().split(/\s+/).slice(-14).join(" ");
+    const el = $("entendu"); el.style.display = t ? "block" : "none"; el.textContent = "J'entends : " + t;
+  }
+
+  function evaluer(estFinal){
+    if (!cible || (etat !== "elan" && etat !== "vol" && etat !== "compte")) return;
+    const seuil = +$("tolerance").value;
+    const plein = norm(finals + " " + interim);
+    const T = cible.length;
+    for (let garde = 0; garde < 20; garde++){
+      const reste = plein.slice(pos);
+      if (reste.length < 0.75*T) return;
+      const maxL = Math.ceil(1.3*T), minL = Math.floor(0.7*T), maxSaut = Math.floor(0.35*T);
+      let best = {sim:-1, s:0, L:0};
+      for (let s = 0; s <= Math.min(maxSaut, reste.length - minL); s++){
+        const d = distPrefixes(reste.slice(s), cible, maxL);
+        for (let L = minL; L < d.length; L++){
+          const sim = 1 - (d[L] + s*0.5) / T;
+          if (sim > best.sim) best = {sim, s, L};
+        }
+      }
+      if (best.sim >= seuil){ pos += best.s + best.L; reussite(); continue; }
+      if ((estFinal && reste.length >= T) || reste.length >= 1.7*T){ erreur(); }
+      return;
+    }
+  }
+
+  // ---------- Jeu ----------
+  const skieur = $("skieur"), aiguille = $("aiguille"), chrono = $("chrono"), poudre = $("poudre");
+  const ELAN = [[128,183],[195,240],[255,312],[320,360],[400,377],[470,389],[505,392]];
+  const SOL  = [[480,393],[530,410],[620,480],[700,560],[800,615],[950,640],[1376,660]];
+  const H_MAX = 175, H_DEPART = 140, GAIN = 85, X0 = 505;
+  let etat = "attente", tVol = 0, tEtat = 0, h = 0, hAff = 0, vh = 0, x = X0, nbOk = 0, rot = 0, dernier = 0, angleAff = 0;
+  let record = 0; try { record = +localStorage.getItem("saut-virelangues-record") || 0; } catch(_){}
+
+  function solY(px){
+    for (let i=1;i<SOL.length;i++){ const [x1,y1]=SOL[i-1],[x2,y2]=SOL[i]; if (px<=x2) return y1+(y2-y1)*(px-x1)/(x2-x1); }
+    return SOL[SOL.length-1][1];
+  }
+  const longueurs = []; let total = 0;
+  for (let i=1;i<ELAN.length;i++){ const l = Math.hypot(ELAN[i][0]-ELAN[i-1][0], ELAN[i][1]-ELAN[i-1][1]); longueurs.push(l); total += l; }
+  function surElan(f){
+    let d = f*total;
+    for (let i=0;i<longueurs.length;i++){
+      if (d <= longueurs[i] || i === longueurs.length-1){
+        const [x1,y1]=ELAN[i],[x2,y2]=ELAN[i+1], k=Math.min(1,d/longueurs[i]);
+        return {x:x1+(x2-x1)*k, y:y1+(y2-y1)*k, a:Math.atan2(y2-y1,x2-x1)*180/Math.PI};
+      }
+      d -= longueurs[i];
+    }
+  }
+  // l'image a les skis inclinés d'environ 16° (spatules vers le haut)
+  function placer(px, py, a){ skieur.setAttribute("transform", `translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${a.toFixed(1)})`); }
+
+  function fmt(t){
+    const m = Math.floor(t/60), s = Math.floor(t%60), d = Math.floor((t*10)%10);
+    return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0") + "." + d;
+  }
+  function majChrono(t){
+    chrono.textContent = fmt(t);
+    aiguille.setAttribute("transform", `rotate(${(t%60)*6} 1097 246)`);
+  }
+  function majScore(){ $("score").textContent = "Réussis : " + nbOk; }
+
+  function bulle(txt, ms){
+    const b = $("bulle"); b.textContent = txt; b.style.display = "block";
+    clearTimeout(bulle.t); if (ms) bulle.t = setTimeout(() => b.style.display = "none", ms);
+  }
+
+  function reset(){
+    etat = "attente"; tVol = 0; h = 0; hAff = 0; vh = 0; x = X0; nbOk = 0; rot = 0; angleAff = 0;
+    majChrono(0); majScore(); poudre.innerHTML = "";
+    const p = surElan(0); placer(p.x, p.y, p.a + 16);
+    $("carte").style.display = "none"; $("entendu").style.display = "none"; $("bulle").style.display = "none";
+    $("btnPartir").disabled = false; $("btnOk").disabled = true; $("btnErreur").disabled = true;
+  }
+
+  function partir(){
+    if (etat !== "attente") return;
+    if (choix.value === "perso" && !perso.value.trim()){ perso.focus(); return; }
+    majPhrase();
+    $("btnPartir").disabled = true; $("btnOk").disabled = false; $("btnErreur").disabled = false;
+    demarrerEcoute();
+    etat = "compte"; tEtat = 0;
+    let n = 3; bulle(n);
+    const it = setInterval(() => {
+      n--;
+      if (etat !== "compte"){ clearInterval(it); return; }
+      if (n > 0) bulle(n);
+      else { clearInterval(it); bulle("Parle !", 900); etat = "elan"; tEtat = 0; }
+    }, 800);
+  }
+
+  function reussite(){
+    if (etat === "compte" || etat === "elan"){ nbOk++; majScore(); return; }
+    if (etat !== "vol") return;
+    nbOk++; majScore();
+    h = Math.min(H_MAX, Math.max(h, 0) + GAIN);
+    bulle("Bravo !", 700);
+  }
+  function erreur(){
+    if (etat === "compte"){ return; }
+    if (etat === "elan"){ etat = "vol"; tVol = 0; h = 30; }
+    if (etat !== "vol") return;
+    etat = "chute"; vh = 60; bulle("Oups !", 1000);
+  }
+
+  function poudreNeige(px, py){
+    for (let i=0;i<14;i++){
+      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      const r = 4 + Math.random()*7;
+      c.setAttribute("r", r); c.setAttribute("fill", "#ffffff"); c.setAttribute("opacity", ".95");
+      c.dataset.vx = (Math.random()*2-0.6)*120; c.dataset.vy = -(40+Math.random()*120);
+      c.dataset.x = px + (Math.random()*30-15); c.dataset.y = py; c.dataset.v = 1;
+      poudre.appendChild(c);
+    }
+  }
+  function majPoudre(dt){
+    for (const c of [...poudre.children]){
+      let v = +c.dataset.v - dt*0.9; if (v <= 0){ c.remove(); continue; }
+      const vy = +c.dataset.vy + 260*dt; c.dataset.vy = vy;
+      const nx = +c.dataset.x + c.dataset.vx*dt, ny = +c.dataset.y + vy*dt;
+      c.dataset.x = nx; c.dataset.y = ny; c.dataset.v = v;
+      c.setAttribute("cx", nx); c.setAttribute("cy", ny); c.setAttribute("opacity", v.toFixed(2));
+    }
+  }
+
+  function atterrir(tombe){
+    etat = tombe ? "aterre_chute" : "glisse"; tEtat = 0;
+    arreterEcoute();
+    poudreNeige(x, solY(x));
+    $("btnOk").disabled = true; $("btnErreur").disabled = true;
+    setTimeout(() => finPartie(tombe), 1100);
+  }
+
+  const sauts = [];
+  function finPartie(tombe){
+    etat = "fin";
+    sauts.push({phrase: phraseActuelle(), t: tVol, nb: nbOk, tombe});
+    try { if (window.TDC) TDC.note({ s: nbOk, n: nbOk + (tombe ? 1 : 0), g: !tombe && nbOk > 0, niv: $("tolerance").options[$("tolerance").selectedIndex].text,
+      d: nbOk + " virelangue" + (nbOk > 1 ? "s" : "") + " réussi" + (nbOk > 1 ? "s" : "") + ", " + fmt(tVol) + " en l'air" + (tombe ? " (chute)" : "") }); } catch(_){}
+    const nouveau = tVol > record;
+    if (nouveau){ record = tVol; try { localStorage.setItem("saut-virelangues-record", String(record)); } catch(_){} }
+    $("carteTitre").textContent = tombe ? "Oups, une erreur !" : (nbOk >= 3 ? "Superbe saut ! 🏅" : "Atterrissage !");
+    $("carteTemps").innerHTML = "Temps en l'air : <b>" + fmt(tVol) + "</b>";
+    $("carteNb").innerHTML = "Phrases réussies : <b>" + nbOk + "</b>";
+    $("carteRecord").textContent = nouveau ? "🎉 Nouveau record !" : "Record : " + fmt(record);
+    const ent = (finals + " " + interim).trim().split(/\s+/).slice(-14).join(" ");
+    $("carteEntendu").textContent = ent ? "Dernière chose entendue : « " + ent + " »" : "";
+    $("carte").style.display = "block";
+  }
+
+  function boucle(ts){
+    const dt = Math.min(0.05, (ts - dernier)/1000 || 0); dernier = ts;
+    tEtat += dt;
+    const chute = H_MAX / +$("chute").value; // pixels par seconde
+
+    if (etat === "elan"){
+      const f = Math.min(1, (tEtat/2.2)**2);
+      const p = surElan(f); placer(p.x, p.y, p.a + 16);
+      if (f >= 1){ etat = "vol"; tVol = 0; h = Math.max(h, H_DEPART); hAff = 0; x = X0; }
+    }
+    else if (etat === "vol"){
+      tVol += dt; majChrono(tVol);
+      h -= chute*dt;
+      const avant = hAff;
+      hAff += (h - hAff) * Math.min(1, dt*3);
+      x = X0 + 640*(1 - Math.exp(-tVol/16));
+      const monte = (hAff - avant)/Math.max(dt,1e-3);
+      const cibleA = Math.max(-14, Math.min(14, -monte*0.25)) + 4;
+      angleAff += (cibleA - angleAff) * Math.min(1, dt*4);
+      placer(x, solY(x) - Math.max(0,hAff), angleAff);
+      if (h <= 0 && hAff <= 2) atterrir(false);
+    }
+    else if (etat === "chute"){
+      tVol += dt; majChrono(tVol);
+      vh += 520*dt; hAff -= vh*dt; x += 60*dt; rot += 420*dt;
+      placer(x, solY(x) - Math.max(0,hAff), rot);
+      if (hAff <= 0) atterrir(true);
+    }
+    else if (etat === "glisse"){
+      const k = Math.max(0, 1 - tEtat/0.8);
+      x += 90*k*dt; placer(x, solY(x), 8);
+    }
+    else if (etat === "aterre_chute"){
+      placer(x, solY(x) + 6, 160);
+    }
+    majPoudre(dt);
+    requestAnimationFrame(boucle);
+  }
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function ficheHtml(){
+    const liste = VIRELANGUES.slice(); if (choix.value === "perso" && perso.value.trim()) liste.unshift(perso.value.trim());
+    let h = "<p>Lis chaque phrase, puis répète-la le plus de fois possible sans te tromper. Colorie une case à chaque phrase réussie.</p><table><tr><th>Virelangue</th><th>Mes réussites</th></tr>";
+    liste.forEach(v => { h += "<tr><td style='font-size:16px'>" + esc(v) + "</td><td style='white-space:nowrap;font-size:18px'>☐ ☐ ☐ ☐ ☐</td></tr>"; });
+    h += "</table><h2>À deux</h2><p>Un élève dit le virelangue, l'autre écoute et lève la main à la première erreur. Puis on échange les rôles.</p>";
+    h += "<div class='saut'><h2>Pour l'enseignant</h2><p>Les virelangues entraînent l'articulation et la discrimination de sons proches (ch/s, t/d, p/b, v/f…). Faire d'abord dire lentement, en détachant les syllabes, puis accélérer.</p></div>";
+    return h;
+  }
+  function bilanHtml(){
+    if (!sauts.length) return "<p>Aucun saut pour l'instant.</p>";
+    let h = "<table><tr><th>Virelangue</th><th>Phrases réussies</th><th>Temps en l'air</th><th>Fin du saut</th></tr>";
+    sauts.forEach(s => { h += "<tr><td>" + esc(s.phrase) + "</td><td style='text-align:center'>" + s.nb + "</td><td style='text-align:center'>" + fmt(s.t) + "</td><td>" + (s.tombe ? "chute (erreur)" : "atterrissage") + "</td></tr>"; });
+    const best = sauts.reduce((a,b) => b.t > a.t ? b : a);
+    h += "</table><p>Meilleur saut : <b>" + fmt(best.t) + "</b> en l'air, avec " + best.nb + " phrase" + (best.nb > 1 ? "s" : "") + " réussie" + (best.nb > 1 ? "s" : "") + ".</p>";
+    h += "<h2>Je m'entraîne</h2><p>Le virelangue que je veux réussir la prochaine fois : ………………………………………………………</p>";
+    return h;
+  }
+  $("btnFiche").onclick = () => window.DocEcrit && DocEcrit.ouvrir({titre:"Fiche des virelangues", jeu:"Le saut des virelangues", nom:"Fiche virelangues", prenom:true, html:ficheHtml});
+  $("btnBilan").onclick = () => window.DocEcrit && DocEcrit.ouvrir({titre:"Bilan de la partie", jeu:"Le saut des virelangues", nom:"Bilan saut des virelangues", prenom:true, html:bilanHtml});
+
+  $("btnPartir").onclick = partir;
+  $("btnRejouer").onclick = () => { arreterEcoute(); reset(); };
+  $("btnOk").onclick = reussite;
+  $("btnErreur").onclick = erreur;
+  document.addEventListener("keydown", e => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+    if (e.code === "Space"){ e.preventDefault(); if (etat === "attente") partir(); else reussite(); }
+    else if (e.key === "x" || e.key === "X"){ erreur(); }
+  });
+
+  reset();
+  requestAnimationFrame(boucle);
+})();
+</script>
+</body>
+</html>
