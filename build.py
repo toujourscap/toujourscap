@@ -934,7 +934,7 @@ def main():
       <p class="eyebrow">Cycles 2 et 3</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
       <p class="lead">Un espace dédié aux enseignants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2, quelques exercices pour le cycle 3 et de l'enseignement spécialisé.</p>
-      <p class="note-accueil">Vous trouverez ici des <strong>contes à raconter</strong>, des <strong>jeux</strong> et des <strong>outils de lecture et de numération</strong>. Certains s'impriment pour jouer sur table, d'autres peuvent être <strong>projetés en classe</strong> ou <strong>partagés sur plusieurs écrans en simultané</strong> pour jouer avec tous les élèves. Vous ne trouverez <strong>aucune publicité</strong> sur ce site, ce qui facilite son affichage en classe.<br><strong>Apprendre, c'est s'élancer, sauter, oser, changer, bousculer notre point de vue&nbsp;!</strong></p>
+      <p class="note-accueil">Bienvenue&nbsp;! Vous trouverez ici des jeux et des outils pour la lecture, le langage oral et les maths, principalement pour le cycle 2. À imprimer pour jouer sur table, à faire seul, à projeter au tableau ou à partager sur plusieurs écrans pour que tous les élèves jouent ensemble. Aucune publicité.<br>Apprendre, c'est s'élancer, sauter, oser, changer, bousculer son point de vue&nbsp;!</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <figure class="hero-cadre">
