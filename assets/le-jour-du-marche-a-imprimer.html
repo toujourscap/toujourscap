@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le jour du marché — version à imprimer</title>
+<link rel="canonical" href="https://toujourscap.com/outils/le-jour-du-marche-a-imprimer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<!-- Version papier du jeu « Le jour du marché » (images Canva aquarelle de images/marche/).
+     ?niveau=CP|CE1|CE2. La série n° est la graine du hasard : mêmes prix dans tout le document. -->
+<style>
+@page{size:A4 portrait;margin:10mm}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Andika","Comic Sans MS",Verdana,sans-serif;color:#111;background:#e9e4da}
+.barre{position:sticky;top:0;z-index:5;background:#fff8ec;border-bottom:2px solid #e9c99a;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:15px}
+.barre h1{font-size:19px;margin:0;color:#1864ab}
+.barre label{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.barre select{font:inherit;padding:3px 6px}
+.barre button{font:inherit;font-weight:bold;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;color:#fff;background:#1971c2}
+.barre button#imprimer{background:#2f9e44}
+.barre .parts{display:flex;flex-wrap:wrap;gap:4px 12px}
+.barre small{color:#555}
+#pages{padding:16px 0}
+.page{width:210mm;height:297mm;padding:10mm;margin:0 auto 14px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18);display:flex;flex-direction:column;overflow:hidden;position:relative}
+@media print{
+  body{background:#fff}
+  .barre{display:none}
+  #pages{padding:0}
+  .page{width:auto;height:277mm;padding:0;margin:0;box-shadow:none;break-after:page;page-break-after:always}
+  .page:last-child{break-after:auto;page-break-after:auto}
+}
+.tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #1864ab;padding-bottom:2mm;margin-bottom:3mm}
+.tete .t{flex:1}
+.tete .t b{display:block;font-size:16pt;color:#1864ab;line-height:1.15}
+.tete .t span{font-size:10.5pt}
+.tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+.badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+.pied{margin-top:auto;font-size:8.5pt;color:#555;text-align:center;padding-top:2mm}
+.rouge{color:#c0392b;font-weight:bold}
+/* mode d'emploi + listes */
+.emploi{font-size:11pt;line-height:1.4}
+.emploi h3{font-size:12.5pt;margin:2mm 0 1mm;color:#1864ab}
+.emploi ol{margin:0;padding-left:6mm}
+.listes{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:3mm;flex:1}
+.liste{border:.4mm dashed #777;padding:3mm;font-size:11pt;display:flex;flex-direction:column;gap:1.2mm}
+.liste b{color:#1864ab}
+.liste .porte{margin-top:auto;border-top:.3mm dotted #999;padding-top:1.5mm;font-size:10pt}
+/* affiches */
+.affiche{flex:1;display:flex;align-items:center;gap:4mm;border:.5mm solid #ccc;border-radius:3mm;padding:3mm;margin-bottom:3mm}
+.affiche:last-of-type{margin-bottom:0}
+.affiche img{height:74mm;width:auto;flex:none}
+.ardoise{flex:1;background:#2f3a33;color:#fff;border:2.5mm solid #a0784f;border-radius:3mm;padding:3mm 4mm;align-self:stretch;display:flex;flex-direction:column}
+.ardoise h2{margin:0 0 2mm;font-size:16pt;text-align:center;border-bottom:.3mm dashed #ccc;padding-bottom:1mm}
+.ardoise .prods{display:grid;grid-template-columns:repeat(2,1fr);gap:2mm 4mm;flex:1;align-content:center}
+.ardoise .prods div{display:flex;justify-content:space-between;align-items:center;gap:2mm;font-size:11.5pt;border-bottom:.2mm dotted #8a9;padding-bottom:1mm}
+.ardoise .prods span.e{font-size:15pt}
+.ardoise .prods b{font-size:13pt;color:#ffe066;white-space:nowrap}
+/* monnaie */
+.monnaie{display:flex;flex-wrap:wrap;gap:2mm;align-content:flex-start;flex:1}
+.monnaie h3{width:100%;margin:2mm 0 0;font-size:11pt;color:#555}
+.coin{border-radius:50%;border:.35mm solid #333;display:flex;align-items:center;justify-content:center;font-weight:bold;flex:none;background:#fff}
+.coin.c1{background:radial-gradient(circle,#fff 0 60%,#f3d2bd 61%)}
+.coin.c2{background:radial-gradient(circle,#fff 0 60%,#f5e2a0 61%)}
+.coin.e1{background:radial-gradient(circle,#eee 0 56%,#333 57% 59%,#f5e2a0 60%)}
+.coin.e2{background:radial-gradient(circle,#f5e2a0 0 56%,#333 57% 59%,#e6e6e6 60%)}
+.billet{border:.35mm solid #333;border-radius:1.5mm;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14pt;flex:none;position:relative}
+.billet::after{content:"EURO";position:absolute;right:2mm;bottom:1mm;font-size:6pt;letter-spacing:.5mm}
+.b500{background:#e4e7ea}.b1000{background:#f8d4d4}.b2000{background:#d4e3f8}.b5000{background:#fde3c6}
+/* fiche élève */
+.ex{border:.35mm solid #b8c6dc;border-radius:2.5mm;padding:2.5mm 3mm;margin-bottom:3mm;break-inside:avoid}
+.ex h3{margin:0 0 2mm;font-size:12pt;color:#1864ab}
+.ex .q{display:flex;align-items:center;gap:3mm;flex-wrap:wrap;padding:1.8mm 0;border-bottom:.25mm dotted #ccc;font-size:12pt}
+.ex .q:last-child{border-bottom:none}
+.ex .q .lot{display:flex;flex-wrap:wrap;gap:1.5mm;align-items:center}
+.ex .q .lot.entoure .coin,.ex .q .lot.entoure .billet{outline:.7mm solid #c0392b;outline-offset:.6mm}
+.case{display:inline-block;min-width:21mm;padding:0 1.5mm;font-size:10.5pt;height:8mm;border:.4mm solid #000;border-radius:1mm;vertical-align:middle;text-align:center;line-height:8mm;color:#c0392b;font-weight:bold}
+.ligne{display:inline-block;min-width:30mm;border-bottom:.35mm dotted #000;height:6mm;color:#c0392b;font-weight:bold;text-align:center}
+.saut{display:flex;align-items:center;gap:1.5mm;flex-wrap:wrap;font-size:11.5pt}
+.saut i{font-style:normal;color:#555;font-size:10pt}
+.ticket{font-family:"Courier New",monospace;border:.35mm dashed #777;padding:2mm 4mm;min-width:80mm;font-size:11.5pt}
+.ticket div{display:flex;justify-content:space-between;gap:6mm}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:0 6mm}
+</style>
+</head>
+<body>
+<div class="barre">
+  <h1>🧺 Le jour du marché — version à imprimer</h1>
+  <label>Classe <select id="niveau"><option>CP</option><option>CE1</option><option>CE2</option></select></label>
+  <label id="ecrL">Prix <select id="ecriture"><option value="mix">les deux écritures</option><option value="ec">3 € 50 c</option><option value="virg">3,50 €</option></select></label>
+  <span class="parts">
+    <label><input type="checkbox" id="pEmploi" checked> Mode d'emploi et listes</label>
+    <label><input type="checkbox" id="pAffiches" checked> Affiches des étals</label>
+    <label><input type="checkbox" id="pMonnaie" checked> Monnaie à découper</label>
+    <label><input type="checkbox" id="pFiche" checked> Fiche élève</label>
+    <label><input type="checkbox" id="pCorr" checked> Corrigé</label>
+  </span>
+  <button id="autres">🎲 Autres prix</button>
+  <button id="imprimer">🖨️ Imprimer</button>
+  <small id="serie"></small>
+</div>
+<div id="pages"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let SERIE = 1 + Math.floor(Math.random() * 9999);
+let rnd;
+function graine(s) { let a = s * 2654435761 >>> 0; rnd = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const hasard = n => Math.floor(rnd() * n);
+const pick = t => t[hasard(t.length)];
+const melange = t => { for (let i = t.length - 1; i > 0; i--) { const j = hasard(i + 1); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+
+/* Les mêmes étals que le jeu (prix en centimes : [min, max]) */
+const ETALS = [
+  { id: "primeur", nom: "Primeur", qui: "Margot la maraîchère", produits: [
+    { e: "🍎", n: "un kilo de pommes", c: "pommes (1 kg)", p: [200, 400] }, { e: "🍓", n: "une barquette de fraises", c: "fraises", p: [300, 550] },
+    { e: "🥬", n: "une salade", c: "salade", p: [90, 200], q: "salades" }, { e: "🍅", n: "un kilo de tomates", c: "tomates (1 kg)", p: [250, 500] },
+    { e: "🥕", n: "une botte de carottes", c: "carottes", p: [120, 300] }, { e: "🍈", n: "un melon", c: "melon", p: [200, 400], q: "melons" } ] },
+  { id: "boulangerie", nom: "Boulangerie", qui: "Rose la boulangère", produits: [
+    { e: "🥖", n: "une baguette", c: "baguette", p: [100, 140], q: "baguettes" }, { e: "🥐", n: "un croissant", c: "croissant", p: [90, 140], q: "croissants" },
+    { e: "🍞", n: "un pain de campagne", c: "pain de campagne", p: [220, 420] }, { e: "🥧", n: "une tarte aux pommes", c: "tarte aux pommes", p: [900, 1600] },
+    { e: "🎂", n: "un gâteau d'anniversaire", c: "gâteau", p: [1200, 2000] } ] },
+  { id: "fromagerie", nom: "Fromagerie", qui: "Mamie Jeanne la fromagère", produits: [
+    { e: "🧀", n: "un morceau de comté", c: "comté", p: [500, 1300] }, { e: "🥚", n: "une boîte de six œufs", c: "six œufs", p: [200, 380] },
+    { e: "🥛", n: "une bouteille de lait", c: "lait", p: [100, 200], q: "bouteilles de lait" }, { e: "🧈", n: "une plaquette de beurre", c: "beurre", p: [200, 350] } ] },
+  { id: "poissonnerie", nom: "Poissonnerie", qui: "Yann le poissonnier", produits: [
+    { e: "🐟", n: "un poisson", c: "poisson", p: [600, 1400] }, { e: "🦐", n: "un sachet de crevettes", c: "crevettes", p: [500, 1000] },
+    { e: "🦀", n: "un crabe", c: "crabe", p: [700, 1500] }, { e: "🦪", n: "six huîtres", c: "six huîtres", p: [600, 1100] } ] },
+  { id: "fleuriste", nom: "Fleuriste", qui: "Lila la fleuriste", produits: [
+    { e: "💐", n: "un bouquet de fleurs", c: "bouquet", p: [1000, 2000] }, { e: "🌻", n: "un tournesol", c: "tournesol", p: [200, 400], q: "tournesols" },
+    { e: "🌹", n: "une rose", c: "rose", p: [150, 300], q: "roses" }, { e: "🌷", n: "un pot de tulipes", c: "pot de tulipes", p: [400, 800] }, { e: "🌵", n: "un petit cactus", c: "petit cactus", p: [300, 650] } ] },
+  { id: "epicerie", nom: "Épicerie", qui: "Papi Louis l'épicier", produits: [
+    { e: "🍯", n: "un pot de miel", c: "pot de miel", p: [550, 950] }, { e: "🍫", n: "une tablette de chocolat", c: "chocolat", p: [120, 300], q: "tablettes de chocolat" },
+    { e: "🍪", n: "un paquet de biscuits", c: "biscuits", p: [130, 300], q: "paquets de biscuits" }, { e: "🧃", n: "une brique de jus de fruits", c: "jus de fruits", p: [110, 280] },
+    { e: "🥜", n: "un sachet de cacahuètes", c: "cacahuètes", p: [100, 250] } ] }
+];
+const PORTE = { CP: [100, 200, 500, 1000, 2000], CE1: [10, 20, 50, 100, 200, 500, 1000], CE2: [5, 10, 20, 50, 100, 200, 500, 1000, 2000] };
+const COUPER = { CP: { pieces: 12, billets: 3 }, CE1: { pieces: 6, billets: 3 }, CE2: { pieces: 5, billets: 2 } };
+const MM = { 1: 16.25, 2: 18.75, 5: 21.25, 10: 19.75, 20: 22.25, 50: 24.25, 100: 23.25, 200: 25.75 }; // diamètres réels (mm)
+const NOMS = ["Léa", "Noé", "Inès", "Hugo", "Jade", "Malo", "Lina", "Sacha", "Zoé", "Adam", "Rose", "Tom"];
+let N = "CP", ECR = "mix";
+
+/* ---------- Écriture des prix ---------- */
+function fmt(c, st) {
+  const e = Math.floor(c / 100), ce = c % 100;
+  if (N === "CP" || st === "ent") return `${e} €`;
+  if (st === "virg") return `${e},${String(ce).padStart(2, "0")} €`;
+  if (e === 0) return `${ce} c`;
+  return ce === 0 ? `${e} €` : `${e} € ${ce} c`;
+}
+function style() { return N === "CP" ? "ent" : ECR === "mix" ? (N === "CE2" ? (rnd() < .75 ? "virg" : "ec") : (rnd() < .5 ? "virg" : "ec")) : ECR; }
+function prix(p) {
+  const pas = N === "CP" ? 100 : N === "CE1" ? 10 : 5;
+  let a = Math.ceil(p[0] / pas), b = Math.floor(p[1] / pas);
+  if (N === "CP") { a = Math.max(1, Math.round(p[0] / 100)); b = Math.max(a, Math.round(p[1] / 100)); }
+  let c = (a + hasard(b - a + 1)) * pas;
+  if (N !== "CP" && rnd() < .2) c = Math.max(100, Math.round(c / 100) * 100);
+  return c;
+}
+const nomV = v => v >= 100 ? `${v / 100} €` : `${v} c`;
+function mo(v, k = 1) { // k : réduction (1 = taille réelle pour les pièces)
+  if (v >= 500) { const w = { 500: 60, 1000: 63.5, 2000: 66.5, 5000: 70 }[v] * k, h = w * .52; return `<span class="billet b${v}" style="width:${w}mm;height:${h}mm;font-size:${Math.max(8, 14 * k)}pt">${v / 100} €</span>`; }
+  const d = MM[v] * k, cl = v <= 5 ? "c1" : v < 100 ? "c2" : v === 100 ? "e1" : "e2";
+  return `<span class="coin ${cl}" style="width:${d}mm;height:${d}mm;font-size:${Math.max(6.5, d * .33)}pt">${nomV(v)}</span>`;
+}
+const somme = t => t.reduce((s, v) => s + v, 0);
+function glouton(s, ds) { const r = []; for (const d of ds.slice().sort((a, b) => b - a)) while (s >= d) { r.push(d); s -= d; } return s === 0 ? r : null; }
+
+/* ---------- Construction ---------- */
+function tete(titre, consigne, corr, nom) {
+  return `<div class="tete"><div class="t"><b>Le jour du marché — ${titre}${corr ? '<span class="badge">CORRIGÉ</span>' : ""}</b><span>${consigne}</span></div>${nom ? '<div class="nom">Prénom : ……………………<br>Date : ……………………</div>' : ""}</div>`;
+}
+const PIED = () => `<div class="pied">toujourscap.com — Le jour du marché (${N}, série n° ${SERIE}) — CC BY-NC-SA 4.0</div>`;
+const page = h => `<div class="page">${h}${PIED()}</div>`;
+
+function construire() {
+  graine(SERIE); N = $("niveau").value; ECR = $("ecriture").value;
+  $("ecrL").style.display = N === "CP" ? "none" : "";
+  $("serie").textContent = `Série n° ${SERIE}`;
+  // prix de tous les produits (identiques dans tout le document)
+  ETALS.forEach(E => E.produits.forEach(p => { p.prix = prix(p.p); p.st = style(); }));
+  const pages = [];
+  if ($("pEmploi").checked) pages.push(pageEmploi());
+  if ($("pAffiches").checked) pages.push(...pagesAffiches());
+  if ($("pMonnaie").checked) pages.push(pageMonnaie());
+  const F = fiche();
+  if ($("pFiche").checked) pages.push(...F.eleve);
+  if ($("pCorr").checked) pages.push(...F.corr);
+  $("pages").innerHTML = pages.join("") || '<p style="text-align:center">Coche au moins une partie.</p>';
+}
+
+function pageEmploi() {
+  const budget = N === "CP" ? 20 : N === "CE1" ? 10 : 20;
+  const regles = {
+    CP: "Les prix sont en euros entiers. On paie avec des pièces de 1 € et 2 € et des billets de 5 €, 10 € et 20 €.",
+    CE1: "Les prix sont en euros et en centimes (3 € 50 c = 3,50 €). On paie avec des pièces de 10 c, 20 c, 50 c, 1 €, 2 € et des billets.",
+    CE2: "Les prix sont écrits avec une virgule (3,50 €). On peut acheter un article en plusieurs exemplaires ; le marchand rend la monnaie en avançant."
+  }[N];
+  const listes = [];
+  for (let k = 0; k < 6; k++) {
+    const etals = melange(ETALS.slice()).slice(0, 3);
+    listes.push(`<div class="liste"><b>✂ Liste de courses n° ${k + 1}</b>${etals.map(E => { const p = pick(E.produits), q = N === "CE2" && p.q && rnd() < .4 ? 2 : 1;
+      return `<div>☐ ${q > 1 ? `2 ${p.q}` : p.n} <small>(${E.nom.toLowerCase()})</small></div>`; }).join("")}<div class="porte">👛 Dans ton porte-monnaie : ${budget} €</div></div>`);
+  }
+  return page(tete(`jouer au marché en classe (${N})`, "Mode d'emploi pour l'enseignant, puis 6 listes de courses à découper.", false, false) +
+    `<div class="emploi"><h3>Préparer</h3><ol>
+    <li>Imprimer les affiches des 6 étals et les poser sur 6 tables (ou au tableau).</li>
+    <li>Imprimer la monnaie (une page par groupe ou par marchand), la plastifier si possible et la découper.</li>
+    <li>Découper les listes de courses ci-dessous. Chaque client reçoit une liste et le porte-monnaie indiqué.</li></ol>
+    <h3>Jouer</h3><ol>
+    <li>Des élèves sont marchands (un par étal), les autres sont clients. On change de rôle à chaque tour.</li>
+    <li>Le client lit sa liste, va à l'étal et lit le prix sur l'ardoise.</li>
+    <li>Il paie le prix juste. S'il n'a pas la monnaie exacte, il donne un billet ou une pièce plus grand et le marchand <b>rend la monnaie en avançant</b> (« 7 €… 8, 9, 10 : je te rends 3 € »).</li>
+    <li>Le client coche l'article sur sa liste. À la fin, il compte ce qu'il a dépensé et ce qui reste dans son porte-monnaie.</li></ol>
+    <h3>Repères (${N})</h3><p style="margin:0">${regles}</p></div>
+    <div class="listes">${listes.join("")}</div>`);
+}
+
+function pagesAffiches() {
+  const aff = ETALS.map(E => `<div class="affiche"><img src="/images/marche/${E.id}.png" alt="${E.nom}"><div class="ardoise"><h2>${E.nom}</h2><div class="prods">${E.produits.map(p =>
+    `<div><span><span class="e">${p.e}</span> ${p.c}</span><b>${fmt(p.prix, p.st)}</b></div>`).join("")}</div></div></div>`);
+  return [0, 3].map(i => page(tete(`les étals (${i ? "2" : "1"}/2)`, "Une affiche par étal : à découper et à poser sur la table du marchand.", false, false) + `<div style="flex:1;display:flex;flex-direction:column">${aff.slice(i, i + 3).join("")}</div>`));
+}
+
+function pageMonnaie() {
+  const C = COUPER[N], ds = PORTE[N], pieces = ds.filter(v => v < 500), billets = ds.filter(v => v >= 500);
+  const k = N === "CE2" ? .6 : .7; // billets réduits
+  return page(tete("la monnaie à découper", `Pièces à peu près à la taille réelle, billets réduits. ${C.pieces} pièces de chaque sorte et ${C.billets} billets de chaque sorte.`, false, false) +
+    `<div class="monnaie">${pieces.map(v => `<h3>Pièces de ${nomV(v)}</h3>` + Array(C.pieces).fill(mo(v)).join("")).join("")}
+     <h3>Billets</h3>${billets.map(v => Array(C.billets).fill(mo(v, k)).join("")).join("")}</div>`);
+}
+
+function fiche() {
+  const ds = PORTE[N], st = () => style(), E = [], C = [];
+  const tous = ETALS.flatMap(Et => Et.produits.map(p => ({ ...p, et: Et })));
+  // 1. Entoure pour payer
+  const ex1 = [], ex1c = [];
+  melange(tous.slice()).filter(p => p.prix <= (N === "CP" ? 15 : 15) * 100).slice(0, 4).forEach(p => {
+    const sol = glouton(p.prix, ds) || [];
+    let lot = sol.slice(); const extra = 2 + hasard(2);
+    for (let i = 0; i < extra; i++) lot.push(pick(ds.filter(v => v <= 1000)));
+    lot = melange(lot); // on entoure, dans le corrigé, une solution possible (le moins de pièces)
+    const marque = lot.map(() => false), reste = sol.slice();
+    lot.forEach((v, i) => { const j = reste.indexOf(v); if (j >= 0) { reste.splice(j, 1); marque[i] = true; } });
+    const ligne = c => `<div class="q"><span>${p.e} ${p.c} : <b>${fmt(p.prix, p.st)}</b></span><span class="lot">${lot.map((v, i) => `<span${c && marque[i] ? ' style="outline:.7mm solid #c0392b;outline-offset:.6mm;border-radius:' + (v >= 500 ? "1.5mm" : "50%") + '"' : ""}>${mo(v, v >= 500 ? .5 : .8)}</span>`).join("")}</span></div>`;
+    ex1.push(ligne(false)); ex1c.push(ligne(true));
+  });
+  E.push(`<div class="ex"><h3>1. Entoure ce qu'il faut pour payer le prix juste.</h3>${ex1.join("")}</div>`);
+  C.push(`<div class="ex"><h3>1. Une solution (il peut y en avoir d'autres).</h3>${ex1c.join("")}</div>`);
+  // 2. Combien d'argent ?
+  const ex2 = [], ex2c = [];
+  for (let k = 0; k < 3; k++) {
+    const n = 3 + hasard(3), lot = []; for (let i = 0; i < n; i++) lot.push(pick(ds.filter(v => v <= (N === "CP" ? 1000 : 500))));
+    lot.sort((a, b) => b - a); const s = somme(lot), sty = N === "CP" ? "ent" : (rnd() < .5 ? "virg" : "ec");
+    const l = c => `<div class="q"><span class="lot">${lot.map(v => mo(v, v >= 500 ? .5 : .8)).join("")}</span><span>Il y a <span class="ligne">${c ? fmt(s, sty) : ""}</span></span></div>`;
+    ex2.push(l(false)); ex2c.push(l(true));
+  }
+  E.push(`<div class="ex"><h3>2. Combien d'argent y a-t-il ?</h3>${ex2.join("")}</div>`);
+  C.push(`<div class="ex"><h3>2. Combien d'argent y a-t-il ?</h3>${ex2c.join("")}</div>`);
+  // 3. Rendre la monnaie en avançant
+  const ex3 = [], ex3c = [];
+  melange(tous.slice()).slice(0, 3).forEach(p => {
+    const du = p.prix, donne = [500, 1000, 2000].find(v => v > du) || 5000;
+    // étapes : jusqu'à l'euro (ou les 10 c) supérieur, puis jusqu'au billet
+    const pas = []; let x = du;
+    if (x % 100) { const y = Math.ceil(x / 100) * 100; pas.push(y); x = y; }
+    if (x < donne && x % 500 && donne > 500) { const y = Math.min(donne, Math.ceil(x / 500) * 500); if (y !== x) { pas.push(y); x = y; } }
+    if (x < donne) pas.push(donne);
+    const l = c => `<div class="q"><span>${p.e} ${p.c} : <b>${fmt(du, p.st)}</b>. Je donne <b>${fmt(donne, "ec")}</b>.</span>
+      <span class="saut"><span class="case" style="color:#000">${fmt(du, "ec")}</span>${pas.map(v => `<i>→</i><span class="case">${c ? fmt(v, "ec") : ""}</span>`).join("")}</span>
+      <span>On me rend <span class="ligne">${c ? fmt(donne - du, "ec") : ""}</span></span></div>`;
+    ex3.push(l(false)); ex3c.push(l(true));
+  });
+  const t3 = "3. Le marchand rend la monnaie en avançant : complète les cases, puis écris combien il rend.";
+  E.push(`<div class="ex"><h3>${t3}</h3>${ex3.join("")}</div>`);
+  C.push(`<div class="ex"><h3>${t3}</h3>${ex3c.join("")}</div>`);
+  let num = 4;
+  // 4. (CE1–CE2) l'autre écriture
+  if (N !== "CP") {
+    const vals = melange(tous.slice()).slice(0, 6).map(p => p.prix);
+    const l = c => `<div class="deux">${vals.map((v, i) => i % 2
+      ? `<div class="q">${fmt(v, "virg")} = <span class="ligne">${c ? fmt(v, "ec") : ""}</span></div>`
+      : `<div class="q">${fmt(v, "ec")} = <span class="ligne">${c ? fmt(v, "virg") : ""}</span></div>`).join("")}</div>`;
+    E.push(`<div class="ex"><h3>4. Écris chaque prix de l'autre façon.</h3>${l(false)}</div>`);
+    C.push(`<div class="ex"><h3>4. Écris chaque prix de l'autre façon.</h3>${l(true)}</div>`);
+    num = 5;
+  }
+  // ticket de caisse
+  const art = melange(tous.slice()).filter(p => p.prix <= 1000).slice(0, 3).map(p => ({ p, q: N === "CE2" && p.q && rnd() < .6 ? 2 : 1 }));
+  const tot = somme(art.map(a => a.p.prix * a.q)), stT = N === "CP" ? "ent" : "virg";
+  const tk = c => `<div class="q"><div class="ticket">${art.map(a => `<div><span>${a.q > 1 ? `2 × ${a.p.c}` : a.p.c}</span><span>${a.q > 1 ? `2 × ${fmt(a.p.prix, stT)}` : fmt(a.p.prix, stT)}</span></div>`).join("")}<div style="border-top:.3mm dashed #777;margin-top:1mm;padding-top:1mm"><b>TOTAL</b><b class="rouge">${c ? fmt(tot, stT) : "……………"}</b></div></div><span>Calcule ici :</span></div>`;
+  E.push(`<div class="ex"><h3>${num}. Le ticket de caisse : combien as-tu dépensé en tout ?</h3>${tk(false)}</div>`);
+  C.push(`<div class="ex"><h3>${num}. Le ticket de caisse.</h3>${tk(true)}</div>`);
+  const coupe = 2;
+  const eleve = [
+    page(tete(`fiche élève (1/2) — ${N}`, "Lis bien les prix. Les pièces et les billets sont plus petits qu'en vrai.", false, true) + E.slice(0, coupe).join("")),
+    page(tete(`fiche élève (2/2) — ${N}`, "", false, false) + E.slice(coupe).join(""))
+  ];
+  const corr = [page(tete(`fiche élève — ${N}`, "Les réponses.", true, false) + `<div style="zoom:.7">${C.join("")}</div>`)];
+  return { eleve, corr };
+}
+
+["niveau", "ecriture", "pEmploi", "pAffiches", "pMonnaie", "pFiche", "pCorr"].forEach(id => $(id).addEventListener("change", construire));
+$("autres").addEventListener("click", () => { SERIE = 1 + Math.floor(Math.random() * 9999); construire(); });
+$("imprimer").addEventListener("click", () => {
+  const imgs = [...document.querySelectorAll("#pages img")]; let reste = imgs.filter(i => !i.complete).length;
+  const go = () => setTimeout(() => window.print(), 150);
+  if (!reste) return go();
+  imgs.forEach(im => { if (!im.complete) im.onload = im.onerror = () => { if (--reste === 0) go(); }; });
+});
+const niv = new URLSearchParams(location.search).get("niveau");
+if (["CP", "CE1", "CE2"].includes(niv)) $("niveau").value = niv;
+construire();
+</script>
+</body>
+</html>
