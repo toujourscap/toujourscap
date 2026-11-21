@@ -194,7 +194,7 @@ td a{font-size:13px;color:var(--bois)}
         <label class="coche"><input type="radio" name="mode" id="mode-adulte" value="adulte" checked> Par l'adulte : boutons « Bien lu » et « Erreur »</label>
         <label class="coche" id="ligne-auto"><input type="radio" name="mode" id="auto" value="auto"> Automatique : le micro reconnaît le mot, sans bouton</label>
       </div>
-      <p class="note" id="note-auto">En mode automatique, le Chaperon avance tout seul quand le mot est reconnu. S'il se trompe, ou s'il clique sur « Entendre le mot », le loup avance d'une case. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome ou Edge avec Internet : la voix est analysée par Google.</p>
+      <p class="note" id="note-auto">En mode automatique, le Chaperon avance tout seul quand le mot est reconnu. S'il se trompe, ou s'il clique sur « Entendre le mot », le loup avance d'une case. À utiliser dans un <strong>environnement calme</strong> (pas de bruit de classe, micro près de l'élève). Fonctionne dans Chrome, Edge ou Firefox avec Internet (la voix est analysée par Google), ou dans Firefox à jour (la voix reste sur l'ordinateur).</p>
       <div class="micro-test">
         <button type="button" class="btn-petit" id="b-micro">Tester le micro</button>
         <div class="jauge" aria-hidden="true"><i id="jauge"></i></div>
@@ -349,7 +349,7 @@ function majSons(sauves){
 majSons((store.get("pcr-sons")||"").split(","));
 $("niveau").addEventListener("change",()=>{ majSons(null); majApercu(); });
 ["nb","erreurs"].forEach(id=>{const v=store.get("pcr-"+id); if(v) $(id).value=v;});
-if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("mode-adulte").checked=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome ou Edge."; }
+if(!(window.SpeechRecognition||window.webkitSpeechRecognition)){ document.getElementById("auto").disabled=true; document.getElementById("mode-adulte").checked=true; document.getElementById("note-auto").textContent="La validation automatique n'est pas disponible dans ce navigateur : utilisez Chrome, Edge ou Firefox."; }
 ["colorier","enregistrer"].forEach(id=>{const v=store.get("pcr-"+id); if(v!==null) $(id).checked=v==="1";});
 if(store.get("pcr-auto")==="1" && !$("auto").disabled) $("auto").checked=true;
 
@@ -383,7 +383,7 @@ $("persos").addEventListener("click",e=>{
 /* ---------- Micro ---------- */
 const MSG_MICRO_BLOQUE = "Le micro est bloqué. Dans Chrome, cliquez sur l'icône à gauche de l'adresse du site, mettez « Micro » sur « Autoriser », puis rechargez la page.";
 function messageMicro(e){
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return "Ce navigateur ne permet pas d'enregistrer. Utilisez Chrome ou Edge.";
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return "Ce navigateur ne permet pas d'enregistrer. Utilisez Chrome, Edge ou Firefox.";
   if(e&&(e.name==="NotFoundError"||e.name==="DevicesNotFoundError")) return "Aucun micro détecté. Branchez un micro ou un casque, puis réessayez.";
   if(e&&(e.name==="NotReadableError"||e.name==="TrackStartError")) return "Le micro est déjà utilisé par une autre application (visio…). Fermez-la puis réessayez.";
   return MSG_MICRO_BLOQUE;

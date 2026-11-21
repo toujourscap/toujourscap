@@ -170,7 +170,7 @@
       <h2>3. Qui vérifie ?</h2>
       <div class="choix" id="modes">
         <button data-m="adulte">🧑‍🏫 Un adulte valide<small>✅ juste / ➡️ mot suivant</small></button>
-        <button data-m="micro">🎤 Le micro écoute<small>Chrome ou Edge</small></button>
+        <button data-m="micro">🎤 Le micro écoute<small>Chrome, Edge ou Firefox</small></button>
       </div>
       <p class="note" id="noteMode"></p>
     </div>
@@ -358,7 +358,7 @@
   document.querySelectorAll("#listes button").forEach(b=>b.onclick=()=>{liste=b.dataset.l;store.set("fiole-liste",liste);marquer();});
   document.querySelectorAll("#objectifs button").forEach(b=>b.onclick=()=>{objectif=+b.dataset.o;store.set("fiole-objectif",String(objectif));marquer();});
   document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{
-    if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
+    if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Chrome, Edge ou Firefox, ou le mode « Un adulte valide »."; return; }
     mode=b.dataset.m;store.set("fiole-mode",mode);marquer();});
   $("mots").oninput=()=>store.set("fiole-mots",$("mots").value);
   $("texte").oninput=()=>{ store.set("fiole-texte",$("texte").value); marquer(); };

@@ -357,9 +357,9 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
     $("modeMicro").disabled = true;
-    $("infoMicro").textContent = "🎤 Micro non disponible sur ce navigateur : utilisez Google Chrome ou Microsoft Edge (connexion internet nécessaire).";
+    $("infoMicro").textContent = "🎤 Micro non disponible sur ce navigateur : utilisez Chrome, Edge ou Firefox (connexion internet nécessaire).";
   } else {
-    $("infoMicro").textContent = "🎤 Mode micro : Chrome ou Edge, connexion internet nécessaire. Parler distinctement, près du micro. Le bouton « Bien lu » reste disponible si le micro n'a pas compris.";
+    $("infoMicro").textContent = "🎤 Mode micro : Chrome, Edge ou Firefox, connexion internet nécessaire. Parler distinctement, près du micro. Le bouton « Bien lu » reste disponible si le micro n'a pas compris.";
   }
 
   function dessinerNiveaux(){

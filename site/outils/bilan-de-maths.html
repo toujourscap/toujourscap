@@ -722,8 +722,8 @@ function finEleve(){
 function blocMode(dispo){
  return `<div class="mode noprint">
   <label class="${auto()?'':'on'}"><input type="radio" name="mode" value="adulte" ${auto()?'':'checked'}> 👩‍🏫 <b>Avec l'enseignant</b><br><span class="note">L'élève répond à l'oral ou montre, l'enseignant valide chaque réponse.</span></label>
-  <label class="${auto()?'on':''}"><input type="radio" name="mode" value="auto" ${auto()?'checked':''}> 🧒 <b>Élève en autonomie</b> (Google Chrome)<br><span class="note">Consignes et questions lues par l'ordinateur ; l'élève touche l'écran, écrit au clavier ou parle au micro. Correction automatique.</span></label>
- </div>${auto()?`<p class="note avert">${RECO?'':'⚠ Le micro ne fonctionne pas dans ce navigateur : ouvrez le bilan dans <b>Google Chrome</b> pour les épreuves à lire à voix haute. '}Autorisez le micro quand Chrome le demande ; un casque avec micro aide beaucoup en classe. ${dispo?`Les épreuves grisées demandent un adulte (${esc(dispo)}). `:''}Les résultats en autonomie ne comptent pas dans les moyennes du site.</p>`:''}`;
+  <label class="${auto()?'on':''}"><input type="radio" name="mode" value="auto" ${auto()?'checked':''}> 🧒 <b>Élève en autonomie</b> (Chrome, Edge ou Firefox)<br><span class="note">Consignes et questions lues par l'ordinateur ; l'élève touche l'écran, écrit au clavier ou parle au micro. Correction automatique.</span></label>
+ </div>${auto()?`<p class="note avert">${RECO?'':'⚠ Le micro ne fonctionne pas dans ce navigateur : ouvrez le bilan dans <b>Chrome, Edge ou Firefox</b> pour les épreuves à lire à voix haute. '}Autorisez le micro quand le navigateur le demande ; un casque avec micro aide beaucoup en classe. ${dispo?`Les épreuves grisées demandent un adulte (${esc(dispo)}). `:''}Les résultats en autonomie ne comptent pas dans les moyennes du site.</p>`:''}`;
 }
 
 /* Autonomie (maths) : ce que l'élève entend avant chaque épreuve, et comment il répond. */

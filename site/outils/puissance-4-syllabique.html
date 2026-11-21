@@ -159,7 +159,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;gap:12p
         <button id="k0" data-k="0" aria-pressed="true">L'adulte</button>
         <button id="k1" data-k="1" aria-pressed="false">Le micro</button>
       </div>
-      <p class="note" id="micNote">Micro : Chrome ou Edge, avec internet.</p>
+      <p class="note" id="micNote">Micro : Chrome, Edge ou Firefox, avec internet.</p>
     </div>
     <div class="group">
       <span class="lbl" id="ecr-l">Écriture</span>
@@ -385,7 +385,7 @@ if(SR){
   rec.onerror=e=>{
     if(e.error==="not-allowed"||e.error==="service-not-allowed")$("rHeard").textContent="Le micro est bloqué : autorise-le (icône à gauche de l'adresse).";
     else if(e.error==="no-speech")$("rHeard").textContent="Je n'ai rien entendu. Appuie et lis plus fort.";
-    else if(e.error==="network")$("rHeard").textContent="La reconnaissance vocale ne répond pas (internet, ou navigateur autre que Chrome/Edge).";
+    else if(e.error==="network")$("rHeard").textContent="La reconnaissance vocale ne répond pas (internet, ou navigateur autre que Chrome, Edge ou Firefox).";
     else if(e.error==="audio-capture")$("rHeard").textContent="Aucun micro trouvé sur cet appareil.";
     else if(e.error!=="aborted")$("rHeard").textContent="Le micro n'a pas marché ("+e.error+"). Réessaie.";
     entendu=true;
@@ -405,7 +405,7 @@ function ecouter(){
 }
 $("bMic").onclick=ecouter;
 document.addEventListener("keydown",e=>{if(e.code==="Space"&&!$("bMic").hidden&&e.target.tagName!=="SELECT"&&e.target.tagName!=="INPUT"){e.preventDefault();ecouter()}});
-if(!rec){$("k1").disabled=true;$("micNote").textContent="Micro indisponible dans ce navigateur : ouvre la page dans Chrome ou Edge."}
+if(!rec){$("k1").disabled=true;$("micNote").textContent="Micro indisponible dans ce navigateur : ouvre la page dans Chrome, Edge ou Firefox."}
 
 function bindSeg(id,attr,set){$(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
   $(id).querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));set(+b.dataset[attr]);newGame()})}

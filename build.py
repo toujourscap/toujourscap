@@ -52,6 +52,7 @@ CATS = {
 #   {"competence": "sons-syllabes" (ou une liste : ["sons-syllabes", "mots"]), "niveaux": ["CP"], "joueurs": "2 joueurs", "supports": ["ecran", "imprimable", "projetable"]}
 COMPETENCES = {
     "discrimination-visuelle": "Discrimination visuelle",
+    "sons": "Sons",
     "sons-syllabes": "Syllabes",
     "mots": "Mots",
     "phrases-textes": "Phrases",
@@ -404,7 +405,7 @@ NOTE_CC = ""
 
 
 # Encadré sous l'introduction de la page Lecture
-NOTE_LECTURE = """<p class="note-accueil">Une des particularités de certains de ces jeux, c'est l'<strong>autoévaluation</strong>&nbsp;: l'enfant doit cliquer sur «&nbsp;Bien lu&nbsp;» lorsqu'il ne s'est pas trompé. Valider ou invalider une réponse est une démarche importante.</p>"""
+NOTE_LECTURE = """"""
 
 
 # Arborescence de la page Outils pédagogiques : tri des articles par niveau ou par catégorie
@@ -805,7 +806,7 @@ def main():
         if k == "lecture":
             lst = sorted(lst, key=lambda q: (list(COMPETENCES).index((comps(q) or ["fluence"])[0]), q["title"]))
             # Les trois filtres « Lecture de… » sont toujours affichés, même sans jeu pour l'instant
-            toujours = ("sons-syllabes", "mots", "phrases-textes")
+            toujours = ("sons", "sons-syllabes", "mots", "phrases-textes")
             presentes = [c for c in COMPETENCES if c in toujours or any(c in comps(q) for q in lst)]
             if len(presentes) > 1:
                 filtres = ('<div class="chips filtres" role="group" aria-label="Trier par compétence">'
