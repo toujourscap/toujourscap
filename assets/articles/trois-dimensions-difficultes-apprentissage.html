@@ -15,7 +15,9 @@
 .td3 .td3-hd{border-width:2px}
 .td3 .td3-centre{max-width:340px;display:block;margin:0 auto 14px;border-width:2px}
 .td3 .td3-lab{font-size:.85rem;color:var(--muted,#5F5E5A);margin:18px 0 6px;font-weight:600}
-.td3 .td3-det{margin-top:16px;border:1px solid var(--bd3);border-radius:12px;padding:14px 16px;background:#fff;min-height:70px}
+.td3 .td3-det{margin:8px 0 4px;border:1px solid var(--bd3);border-radius:12px;padding:14px 16px;background:#fff;min-height:70px}
+.td3 .td3-mm .td3-det{font-size:.95rem;text-align:left}
+.td3 .td3-mm > .td3-det{grid-column:1/-1}
 .td3 .td3-det h3{margin:0 0 6px;font-size:1.05rem}
 .td3 .td3-pr{margin-top:8px;color:var(--muted,#5F5E5A)}
 </style>
@@ -103,12 +105,15 @@ ci_p:["Circulaire 2014-107 : dimension pédagogique","C'est explicite : le maît
 ci_m:["Circulaire 2014-107 : dimension métacognitive","C'est implicite : le mot « métacognition » n'apparaît pas. Le texte parle d'aider les élèves à prendre conscience de leurs méthodes et attitudes de travail, et à les maîtriser.","Écrire « la circulaire évoque la prise de conscience des méthodes », pas « la circulaire parle de métacognition »."],
 ci_c:["Circulaire 2014-107 : rapport à l'école","Ni « rapport au savoir » ni « culturel » n'apparaissent. Le texte rattache au maître G le fait de « faire évoluer leurs rapports aux exigences de l'école » et de restaurer l'investissement scolaire.","Pour le maître E, cette dimension s'appuie sur la recherche (ESCOL), pas sur la circulaire."],
 art:["Articulation des trois dimensions","Ces dimensions sont liées : un élève qui se conforme ne régule pas son activité, et une pédagogie implicite renforce ce malentendu.","Choisir une tâche bien ciblée, expliciter ce qu'on y apprend, puis prendre un temps de retour réflexif."]};
-var box=document.querySelector('.td3'),det=box.querySelector('.td3-det');
-box.querySelectorAll('.td3-nd').forEach(function(n){n.addEventListener('click',function(){
-box.querySelectorAll('.td3-nd.on').forEach(function(x){x.classList.remove('on')});n.classList.add('on');
+var box=document.querySelector('.td3'),det=box.querySelector('.td3-det'),place=det.parentNode,ref=det.nextSibling;
+box.querySelectorAll('.td3-nd').forEach(function(n){n.setAttribute('aria-expanded','false');n.addEventListener('click',function(){
+var deja=n.classList.contains('on');
+box.querySelectorAll('.td3-nd.on').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-expanded','false')});
+if(deja){place.insertBefore(det,ref);det.innerHTML='<span class="muted">Cliquez sur une idée pour afficher son détail.</span>';return;}
+n.classList.add('on');n.setAttribute('aria-expanded','true');
 var d=D[n.dataset.k];det.innerHTML='<h3></h3><div></div><div class="td3-pr"></div>';
 det.children[0].textContent=d[0];det.children[1].textContent=d[1];det.children[2].textContent='En pratique : '+d[2];
-var r=det.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight)det.scrollIntoView({behavior:'smooth',block:'nearest'});
+n.insertAdjacentElement('afterend',det);
 });});
 })();
 </script>
