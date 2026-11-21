@@ -115,7 +115,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     <div class="status" id="status"><span class="dot"></span><span id="statusTxt">Micro arrêté</span></div>
   </div>
 
-  <p class="navwarn" id="navwarn" hidden>⚠️ Ce navigateur ne permet pas la reconnaissance vocale. Ouvrez cette page avec Google Chrome ou Microsoft Edge. En attendant, faites avancer le texte avec la barre d'espace ou « Mot ▶ ».</p>
+  <p class="navwarn" id="navwarn" hidden>⚠️ Ce navigateur ne permet pas la reconnaissance vocale. Ouvrez cette page avec Chrome, Edge ou Firefox. En attendant, faites avancer le texte avec la barre d'espace ou « Mot ▶ ».</p>
 
   <div class="levels" role="group" aria-label="Choisir un texte">
     <span class="lbl">Texte :</span>
@@ -513,7 +513,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
 
   let lastResults = 0;
   function start(){
-    if (!SR){ status("Navigateur non compatible : ouvrez la page avec Chrome ou Edge.","err"); return; }
+    if (!SR){ status("Navigateur non compatible : ouvrez la page avec Chrome, Edge ou Firefox.","err"); return; }
     if (fini || shown.p>=words.length) reset();
     rec = new SR(); rec.lang="fr-FR"; rec.continuous=true; rec.interimResults=true; rec.maxAlternatives=4;
     finalsDone=0; lastResults=0;
@@ -607,7 +607,7 @@ textarea{width:100%;box-sizing:border-box;min-height:160px;font-family:var(--tex
     else if (e.key==="ArrowLeft"){ e.preventDefault(); $("prev").click(); }
     else if (e.key==="ArrowRight"){ e.preventDefault(); avancer(1); }
   });
-  if (!SR){ $("navwarn").hidden = false; status("Navigateur non compatible : Chrome ou Edge requis.","err"); }
+  if (!SR){ $("navwarn").hidden = false; status("Navigateur non compatible : Chrome, Edge ou Firefox requis.","err"); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   render();
 

@@ -111,7 +111,7 @@
       <h2>3. Qui vérifie ?</h2>
       <div class="choix" id="modes">
         <button data-m="adulte">🧑‍🏫 Un adulte valide<small>✅ juste / ❌ erreur</small></button>
-        <button data-m="micro">🎤 Le micro écoute<small>Chrome ou Edge</small></button>
+        <button data-m="micro">🎤 Le micro écoute<small>Chrome, Edge ou Firefox</small></button>
       </div>
       <p class="note" id="noteMode"></p>
     </div>
@@ -320,7 +320,7 @@
   document.querySelectorAll("#listes button").forEach(b=>b.onclick=()=>{liste=b.dataset.l;store.set("tachi-liste",liste);marquer();});
   document.querySelectorAll("#defis button").forEach(b=>b.onclick=()=>{defi=b.dataset.d;store.set("tachi-defi",defi);marquer();});
   document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{
-    if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Google Chrome ou Microsoft Edge, ou le mode « Un adulte valide »."; return; }
+    if (b.dataset.m==="micro" && !SR){ $("noteMode").textContent="⚠️ Ce navigateur ne reconnaît pas la voix : utilisez Chrome, Edge ou Firefox, ou le mode « Un adulte valide »."; return; }
     mode=b.dataset.m;store.set("tachi-mode",mode);marquer();});
   $("mots").oninput=()=>{ perso[pi].mots=$("mots").value; sauverPerso();
     const n = $("mots").value.replace(/[,;]/g," ").split(/\s+/).filter(Boolean).length;

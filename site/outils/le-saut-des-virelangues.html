@@ -110,7 +110,7 @@
     <button class="vert" id="btnOk" disabled>✔ Bien dit ! <small>(Espace)</small></button>
     <button class="rouge" id="btnErreur" disabled>✘ Ça a fourché <small>(X)</small></button>
   </div>
-  <p class="aide">Répète ta phrase piège encore et encore, sans t'emmêler la langue : à chaque phrase bien dite, hop, le skieur reprend de la hauteur ! Une syllabe de travers… et c'est le plongeon dans la poudreuse. Combien de temps tiendras-tu en l'air ?<br>Le micro marche avec Google Chrome (pense à l'autoriser).</p>
+  <p class="aide">Répète ta phrase piège encore et encore, sans t'emmêler la langue : à chaque phrase bien dite, hop, le skieur reprend de la hauteur ! Une syllabe de travers… et c'est le plongeon dans la poudreuse. Combien de temps tiendras-tu en l'air ?<br>Le micro marche avec Chrome, Edge ou Firefox (pense à l'autoriser).</p>
 </div>
 
 <script src="tour-de-controle.js"></script><script src="document-ecrit.js"></script>
@@ -194,7 +194,7 @@
   let rec = null, ecoute = false, finals = "", interim = "", pos = 0, cible = "";
   if (!SR){
     const a = $("alerte"); a.style.display = "block";
-    a.textContent = "La reconnaissance vocale n'est pas disponible dans ce navigateur : ouvre le jeu dans Google Chrome. Tu peux quand même jouer avec les boutons d'arbitre.";
+    a.textContent = "La reconnaissance vocale n'est pas disponible dans ce navigateur : ouvre le jeu dans Chrome, Edge ou Firefox. Tu peux quand même jouer avec les boutons d'arbitre.";
   }
 
   function demarrerEcoute(){

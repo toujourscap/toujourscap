@@ -866,7 +866,7 @@
     "custom": false
    },
    "jeu": {
-    "competence": ["mots"],
+    "competence": ["sons", "mots"],
     "niveaux": ["CP", "CE1"],
     "joueurs": "1 joueur ou la classe",
     "supports": ["ecran", "projetable"]
@@ -3864,7 +3864,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Un adulte valide (✅ juste, ➡️ mot suivant ; ou Espace / X au clavier), ou le micro écoute (Chrome ou Edge) : la goutte tombe dès que le mot est reconnu.",
+             "text": "Un adulte valide (✅ juste, ➡️ mot suivant ; ou Espace / X au clavier), ou le micro écoute (Chrome, Edge ou Firefox) : la goutte tombe dès que le mot est reconnu.",
              "decorations": []
             }
            }
@@ -6678,7 +6678,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": ", sans propositions : il répond avec ses mots, en écrivant ou au micro (Edge ou Chrome). Le professeur dit si c'est trouvé et donne un indice sinon ; à la fin, il pose une ou deux questions pour raconter, expliquer ou donner son avis.",
+             "text": ", sans propositions : il répond avec ses mots, en écrivant ou au micro (Chrome, Edge ou Firefox). Le professeur dit si c'est trouvé et donne un indice sinon ; à la fin, il pose une ou deux questions pour raconter, expliquer ou donner son avis.",
              "decorations": []
             }
            }
@@ -8742,7 +8742,7 @@
      },
      {
       "type": "NOTE",
-      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement</strong>, avec une connexion internet. Si le micro ne comprend pas une syllabe pourtant bien lue, l'adulte peut toujours appuyer sur « Bien lu »."
+      "html": "<strong>Mode micro : Chrome, Edge ou Firefox à jour</strong>, avec une connexion internet. Si le micro ne comprend pas une syllabe pourtant bien lue, l'adulte peut toujours appuyer sur « Bien lu »."
      },
      {
       "type": "HTML",
@@ -9122,7 +9122,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Avec le micro (Chrome ou Edge), l'élève appuie sur « 🎤 Je lis » et lit le nombre : le jeu l'écoute et lui dit s'il s'est trompé, avec une deuxième chance. Sans micro, il valide lui-même : « Bien lu » ou « À revoir ». La case se colore en vert ou en orange dans le château.",
+             "text": "Avec le micro (Chrome, Edge ou Firefox), l'élève appuie sur « 🎤 Je lis » et lit le nombre : le jeu l'écoute et lui dit s'il s'est trompé, avec une deuxième chance. Sans micro, il valide lui-même : « Bien lu » ou « À revoir ». La case se colore en vert ou en orange dans le château.",
              "decorations": []
             }
            }
@@ -10286,7 +10286,7 @@
      },
      {
       "type": "NOTE",
-      "html": "<strong>Mode micro : Google Chrome ou Microsoft Edge uniquement.</strong>"
+      "html": "<strong>Mode micro : Chrome, Edge ou Firefox à jour.</strong>"
      },
      {
       "type": "HTML",
@@ -15591,7 +15591,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Le micro écoute (Chrome ou Edge) : le mot suivant arrive dès que le micro a reconnu le mot. S'il entend autre chose, l'élève peut relire une fois ; la deuxième fois, le mot compte comme une erreur. L'adulte peut toujours corriger avec ✅ / ❌.",
+             "text": "Le micro écoute (Chrome, Edge ou Firefox) : le mot suivant arrive dès que le micro a reconnu le mot. S'il entend autre chose, l'élève peut relire une fois ; la deuxième fois, le mot compte comme une erreur. L'adulte peut toujours corriger avec ✅ / ❌.",
              "decorations": []
             }
            }
@@ -15841,7 +15841,7 @@
    "cat": "lecture",
    "title": "Texte de fluence à vitesse automatique",
    "slug": "teleprompteur-a-l-ecoute",
-   "excerpt": "L'élève lit à voix haute : le texte suit sa lecture, même s'il va vite. Cinq niveaux de textes ou votre propre texte. Bilan à la minute : mots lus et erreurs. Avec Chrome ou Edge.",
+   "excerpt": "L'élève lit à voix haute : le texte suit sa lecture, même s'il va vite. Cinq niveaux de textes ou votre propre texte. Bilan à la minute : mots lus et erreurs. Avec Chrome, Edge ou Firefox.",
    "date": "2026-05-21T11:09:13Z",
    "jeu": {
     "competence": "phrases-textes",
@@ -15980,7 +15980,7 @@
      },
      {
       "type": "NOTE",
-      "html": "<strong>Navigateur : Google Chrome ou Microsoft Edge uniquement.</strong> La reconnaissance vocale ne fonctionne pas avec Firefox, Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace."
+      "html": "<strong>Navigateur : Chrome, Edge ou Firefox à jour.</strong> La reconnaissance vocale ne fonctionne pas avec Safari ou les autres navigateurs. Sinon, le texte peut tout de même avancer avec la barre d'espace."
      },
      {
       "type": "HTML",
@@ -16255,7 +16255,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Qui vérifie la lecture : l'adulte (boutons « Bien lu » / « À revoir ») ou le micro. Au micro, les syllabes jouables sont entourées (le bas de chaque colonne), en rouge ou en jaune selon le joueur : l'enfant appuie sur « Je lis » (ou la barre d'espace) et lit celle où il veut poser son jeton. Bien lue, le jeton tombe dessus. Micro : Google Chrome ou Microsoft Edge, avec internet.",
+             "text": "Qui vérifie la lecture : l'adulte (boutons « Bien lu » / « À revoir ») ou le micro. Au micro, les syllabes jouables sont entourées (le bas de chaque colonne), en rouge ou en jaune selon le joueur : l'enfant appuie sur « Je lis » (ou la barre d'espace) et lit celle où il veut poser son jeton. Bien lue, le jeton tombe dessus. Micro : Chrome, Edge ou Firefox, avec internet.",
              "decorations": []
             }
            }
@@ -16874,7 +16874,7 @@
    "date": "2026-10-27T08:30:00.000Z",
    "cat": "lecture",
    "jeu": {
-    "competence": "mots",
+    "competence": ["sons", "mots"],
     "niveaux": [
      "CP"
     ],
@@ -17173,7 +17173,7 @@
        {
         "type": "TEXT",
         "textData": {
-         "text": "À utiliser dans un environnement calme, micro près de l'élève : le bruit de la classe empêche la reconnaissance. Elle fonctionne dans Chrome ou Edge avec une connexion Internet, la voix étant analysée par Google. Attention : le navigateur cherche toujours un vrai mot et peut accepter une lecture approximative (« lapan » entendu « lapin ») ; l'écoute de l'adulte reste la référence.",
+         "text": "À utiliser dans un environnement calme, micro près de l'élève : le bruit de la classe empêche la reconnaissance. Elle fonctionne dans Chrome, Edge ou Firefox avec une connexion Internet (la voix est analysée par Google), ou dans Firefox à jour (la voix reste sur l'ordinateur). Attention : le navigateur cherche toujours un vrai mot et peut accepter une lecture approximative (« lapan » entendu « lapin ») ; l'écoute de l'adulte reste la référence.",
          "decorations": []
         }
        }
@@ -17759,7 +17759,7 @@
     "custom": false
    },
    "jeu": {
-    "competence": ["sons-syllabes", "mots", "fluence", "discrimination-visuelle"],
+    "competence": ["sons", "sons-syllabes", "mots", "fluence", "discrimination-visuelle"],
     "niveaux": ["GS", "CP", "CE1", "CE2"],
     "joueurs": "1 élève et un adulte",
     "supports": ["ecran", "imprimable"]

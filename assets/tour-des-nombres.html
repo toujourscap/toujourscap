@@ -238,9 +238,9 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
     $("modeEcoute").disabled = true;
-    $("infoEcoute").textContent = "Non disponible sur ce navigateur : utilisez Google Chrome ou Microsoft Edge.";
+    $("infoEcoute").textContent = "Non disponible sur ce navigateur : utilisez Chrome, Edge ou Firefox.";
   } else {
-    $("infoEcoute").textContent = "Chrome ou Edge uniquement. Le micro est demandé au premier nombre ; connexion internet nécessaire.";
+    $("infoEcoute").textContent = "Chrome, Edge ou Firefox à jour. Le micro est demandé au premier nombre ; connexion internet nécessaire.";
   }
 
   const MOTS = {zero:0,un:1,une:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,
