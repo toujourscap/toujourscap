@@ -94,6 +94,10 @@
   @keyframes pose{from{transform:translateY(40px) scale(.5);opacity:0}to{transform:translateY(0) scale(.82);opacity:1}}
   #plateau .mo{animation:pose .25s ease-out}
 
+  #possibles{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;background:#f4e3cf;border:3px solid #b07a45;border-radius:14px;padding:6px 12px;margin:6px auto;max-width:980px}
+  #possibles .zoneT{margin:0;font-size:.95rem;color:#7a4a1f}
+  #possibles .mini .mo{transform:scale(.8);margin:-4px}
+  .lien-papier{display:inline-block;margin:10px 0 2px;color:#1864ab;font-weight:600}
   #classeBtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:8px 0}
   #tester{background:#e8590c;font-size:1.15rem} #solution{background:#1971c2;font-size:1.15rem}
   .ardoise{display:inline-block;background:#2f3a33;color:#fff;border:5px solid #a0784f;border-radius:10px;padding:4px 14px;margin-top:6px;font-size:.95em}
@@ -183,6 +187,7 @@
     </div>
 
     <button class="go" id="jouer">🧺 Aller au marché</button>
+    <br><a class="lien-papier" id="lienPapier" href="/outils/le-jour-du-marche-a-imprimer?niveau=CP" target="_blank" rel="noopener">📄 Version à imprimer : jouer au marché en classe, monnaie à découper, fiche élève</a>
   </div>
 
   <!-- ===== Partie ===== -->
@@ -209,6 +214,7 @@
       <div id="bourse"><div id="bourseT">👛 Ton porte-monnaie (touche pour poser)</div><div id="monnaie"></div></div>
       <div id="actions"><button id="vider">↩ Tout reprendre</button><button id="payer">💶 Payer</button></div>
     </div>
+    <div id="possibles" class="cache"></div>
     <div id="classeBtns" class="cache"><button id="tester">✏️ Vérifier l'ardoise d'un élève</button><button id="solution">👀 Montrer la solution</button></div>
     <div id="reponses"></div>
     <div id="msg"></div>
@@ -384,6 +390,7 @@ function choix(id, cle, conv) {
   }));
 }
 choix("choixNiveau", "niveau"); choix("choixMission", "mission"); choix("choixQui", "qui"); choix("choixNb", "nb", Number); choix("choixEcriture", "ecriture");
+document.querySelectorAll("#choixNiveau button").forEach(b => b.addEventListener("click", () => { $("lienPapier").href = "/outils/le-jour-du-marche-a-imprimer?niveau=" + b.dataset.v; }));
 $("groupeEcriture").classList.add("cache");
 
 function demarrer() {
@@ -414,7 +421,7 @@ function majListe() {
   $("avance").textContent = `🧺 ${S.faits} / ${R_.nb}`;
   $("score").textContent = "⭐ " + S.score;
 }
-function cacherPaiement() { ["paiement", "continuer", "retour", "classeBtns"].forEach(id => $(id).classList.add("cache")); $("reponses").innerHTML = ""; }
+function cacherPaiement() { ["paiement", "continuer", "retour", "classeBtns", "possibles"].forEach(id => $(id).classList.add("cache")); $("reponses").innerHTML = ""; }
 
 function allerMarche(debut) {
   S.vue = "marche"; Q = null;
@@ -496,16 +503,17 @@ function modeArdoise() {
     : "Combien le marchand rend-il ? Écris la somme et dessine les pièces.";
   $("consigne").innerHTML = $("consigne").innerHTML.replace(/<br>.*$/s, "") + `<br><span class="ardoise">✏️ Sur ton ardoise : ${q}</span>`;
   $("paiement").classList.add("cache"); $("classeBtns").classList.remove("cache");
+  $("possibles").innerHTML = `<span class="zoneT">${Q.etape === "payer" ? "Pièces et billets possibles :" : "Pièces et billets pour rendre :"}</span>${miniHTML(Q.ds)}`; $("possibles").classList.remove("cache");
   $("payer").textContent = "✔ Vérifier";
 }
 $("tester").addEventListener("click", () => {
   if (!Q || Q.fini) return;
-  $("paiement").classList.remove("cache"); Q.pose = []; majPlateau();
+  $("paiement").classList.remove("cache"); $("possibles").classList.add("cache"); Q.pose = []; majPlateau();
   $("msg").className = ""; $("msg").textContent = "Pose sur le plateau ce que l'élève a dessiné, puis vérifie.";
 });
 $("solution").addEventListener("click", () => {
   if (!Q || Q.fini) return;
-  $("paiement").classList.remove("cache"); Q.montre = true;
+  $("paiement").classList.remove("cache"); $("possibles").classList.add("cache"); Q.montre = true;
   echec(texteSolution());
 });
 const cap = t => t.charAt(0).toUpperCase() + t.slice(1);

@@ -2095,7 +2095,8 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
-     "projetable"
+     "projetable",
+     "imprimable"
     ]
    },
    "richContent": {
@@ -2438,6 +2439,9 @@
        }
       ]
      },
+     {"type": "HEADING", "headingData": {"level": 2}, "nodes": [{"type": "TEXT", "textData": {"text": "La version à imprimer", "decorations": []}}]},
+     {"type": "PARAGRAPH", "nodes": [{"type": "TEXT", "textData": {"text": "📄 Version à imprimer", "decorations": [{"type": "LINK", "linkData": {"link": {"url": "/outils/le-jour-du-marche-a-imprimer", "target": "_blank"}}}]}}, {"type": "TEXT", "textData": {"text": " (CP, CE1 ou CE2) : un mode d'emploi pour jouer au marché en classe avec 6 listes de courses à découper, les affiches des 6 étals avec leurs prix, la monnaie à découper (pièces presque à la taille réelle) et une fiche élève (payer le prix juste, compter l'argent, rendre la monnaie en avançant, ticket de caisse) avec son corrigé. Le bouton « Autres prix » change tous les prix du document.", "decorations": []}}]},
+     {"type": "PARAGRAPH", "nodes": [{"type": "TEXT", "textData": {"text": "En mode « Toute la classe », pendant que les élèves cherchent sur leur ardoise, l'écran montre les pièces et les billets qu'ils peuvent utiliser.", "decorations": []}}]},
      {
       "type": "HTML",
       "htmlData": {
@@ -2487,7 +2491,8 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
-     "projetable"
+     "projetable",
+     "imprimable"
     ]
    },
    "richContent": {
@@ -2717,6 +2722,8 @@
        }
       ]
      },
+     {"type": "HEADING", "headingData": {"level": 2}, "nodes": [{"type": "TEXT", "textData": {"text": "Les fiches à imprimer", "decorations": []}}]},
+     {"type": "PARAGRAPH", "nodes": [{"type": "TEXT", "textData": {"text": "Sous les réglages du jeu, le cadre « Version papier » imprime jusqu'à 4 fiches avec les fractions choisies : quelle fraction reste-t-il (12 pizzas, en chiffres et en lettres), colorie la commande (12 pizzas), un tableau chiffres ↔ lettres et des fractions égales (2/4 = 1/2…). Le corrigé est ajouté à la suite ; nouveau tirage à chaque impression.", "decorations": []}}]},
      {
       "type": "HTML",
       "htmlData": {

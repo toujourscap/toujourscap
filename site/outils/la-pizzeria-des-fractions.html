@@ -79,6 +79,46 @@
   #finEtoiles{font-size:2.6rem;letter-spacing:6px;margin:4px 0 10px}
   .confetti{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:tombe linear forwards;z-index:9}
   @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
+
+  /* ---------- Version papier ---------- */
+  .papier{background:#fffdf6;border:2px dashed #e9c99a;border-radius:8px;padding:12px;margin:12px 0}
+  .papier p{margin:0 0 8px;color:#495057;font-size:.95rem}
+  #imprimer{background:#1d3557;font-size:1.05rem;padding:10px 20px;margin-top:6px}
+  #impression{display:none}
+  @media print{
+    @page{size:A4 portrait;margin:11mm}
+    html,body{background:#fff!important}
+    body>*:not(#impression){display:none!important}
+    #impression{display:block}
+  }
+  .fiche{height:272mm;break-after:page;page-break-after:always;display:flex;flex-direction:column;font-family:"Andika","Comic Sans MS",Verdana,sans-serif;color:#000;overflow:hidden;text-align:left}
+  .fiche:last-child{break-after:auto;page-break-after:auto}
+  .f-tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #b5371f;padding-bottom:2mm;margin-bottom:3mm}
+  .f-tete img{height:22mm}
+  .f-tete .t{flex:1}
+  .f-tete .t b{display:block;font-size:16pt;color:#b5371f;line-height:1.15}
+  .f-tete .t span{font-size:11pt}
+  .f-tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+  .f-badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+  .f-grille{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:3mm}
+  .f-grille.g4{grid-template-columns:repeat(2,1fr)}
+  .f-case{border:.35mm solid #d9c7a3;border-radius:3mm;padding:2mm;display:flex;flex-direction:column;align-items:center;gap:1.5mm;break-inside:avoid;font-size:12pt}
+  .f-case{justify-content:space-between}
+  .f-case svg{width:34mm;height:34mm}
+  .f-num{font-weight:bold;color:#b5371f;align-self:flex-start;font-size:11pt}
+  .f-rep{display:flex;align-items:center;gap:2mm;font-size:13pt}
+  .f-fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1}
+  .f-boite{display:inline-block;width:9mm;height:8mm;border:.4mm solid #000;border-radius:1mm;text-align:center;line-height:8mm;color:#c0392b;font-weight:bold}
+  .f-fr .f-boite+.f-boite{margin-top:1.5mm;border-top:.6mm solid #000}
+  .f-ligne{border-bottom:.3mm dotted #000;min-width:40mm;display:inline-block;height:6mm;color:#c0392b;font-weight:bold}
+  .f-cmd{font-weight:bold;font-size:14pt;text-align:center}
+  .f-tab{width:100%;border-collapse:collapse;font-size:14pt;flex:1}
+  .f-tab td,.f-tab th{border:.35mm solid #999;padding:3mm;text-align:center;height:19mm}
+  .f-tab th{background:#fbe9cf}
+  .f-tab td.rouge{color:#c0392b;font-weight:bold}
+  .f-paire{display:flex;align-items:center;justify-content:center;gap:3mm;font-size:14pt}
+  .f-paire svg{width:32mm;height:32mm}
+  .f-pied{font-size:8.5pt;color:#555;text-align:center;margin-top:2mm}
   @media (max-width:560px){#reponses button{min-width:72px;padding:6px 12px}#couper button{min-width:46px;padding:5px 8px}}
 </style>
 <script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
@@ -125,6 +165,17 @@
     </div>
 
     <button class="go" id="jouer">🍕 Ouvrir la pizzeria</button>
+
+    <div class="papier" id="papier">
+      <h2>🖨️ Version papier : des fiches à imprimer</h2>
+      <p>Les fiches utilisent les fractions choisies au 2. Nouveau tirage à chaque impression.</p>
+      <label class="opt"><input type="checkbox" id="pF1" checked> Fiche 1 : quelle fraction reste-t-il ?</label>
+      <label class="opt"><input type="checkbox" id="pF2" checked> Fiche 2 : colorie la commande</label>
+      <label class="opt"><input type="checkbox" id="pF3" checked> Fiche 3 : chiffres et lettres</label>
+      <label class="opt"><input type="checkbox" id="pF4"> Fiche 4 : fractions égales</label><br>
+      <label class="opt"><input type="checkbox" id="pCorr" checked> Ajouter le corrigé</label><br>
+      <button id="imprimer">🖨️ Imprimer les fiches</button>
+    </div>
   </div>
 
   <!-- ===== Partie ===== -->
@@ -180,6 +231,7 @@
     <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
   </div>
 </div>
+<div id="impression"></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -499,6 +551,81 @@ function ajuste() {
 addEventListener("resize", ajuste);
 document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
 try { const ro = new ResizeObserver(() => ajuste()); ["consigne", "reponses", "couper", "actions", "msg"].forEach(id => ro.observe($(id))); ro.observe(document.querySelector("#partie .bas")); } catch (e) {}
+
+
+/* ---------- Version papier : fiches à imprimer ---------- */
+/* Pizza au trait (noir et blanc) : d parts, « pleines » = indices des parts garnies ; etat : "garnie" | "vide" | "blanche" | "colorie" */
+function pizzaTrait(d, pleines, colorie) {
+  const c = 50, r = 44, parts = [];
+  for (let i = 0; i < d; i++) {
+    const a0 = -Math.PI / 2 + i * 2 * Math.PI / d, a1 = a0 + 2 * Math.PI / d;
+    const x0 = c + r * Math.cos(a0), y0 = c + r * Math.sin(a0), x1 = c + r * Math.cos(a1), y1 = c + r * Math.sin(a1);
+    const ch = d === 1 ? `M${c - r} ${c}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z` : `M${c} ${c}L${x0.toFixed(2)} ${y0.toFixed(2)}A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z`;
+    const plein = pleines === "toutes" || (pleines || []).includes(i);
+    const col = colorie && colorie.includes(i);
+    let deco = "";
+    if (plein) { // rondelles de mozzarella et feuille de basilic, au milieu de la part
+      const am = (a0 + a1) / 2, rr = d >= 8 ? [26] : [18, 32];
+      rr.forEach((q, k) => { const da = (k ? .18 : -.12) * (2 * Math.PI / d); deco += `<circle cx="${(c + q * Math.cos(am + da)).toFixed(1)}" cy="${(c + q * Math.sin(am + da)).toFixed(1)}" r="${d >= 8 ? 3 : 3.6}" fill="none" stroke="#000" stroke-width=".8"/>`; });
+      const bx = c + 24 * Math.cos(am + .25 * (2 * Math.PI / d) * (d > 2 ? 1 : .5)), by = c + 24 * Math.sin(am + .25 * (2 * Math.PI / d) * (d > 2 ? 1 : .5));
+      if (d < 8) deco += `<path d="M${(bx - 3).toFixed(1)} ${by.toFixed(1)}q3 -4 6 0q-3 4 -6 0Z" fill="none" stroke="#000" stroke-width=".7"/>`;
+    }
+    parts.push(`<path d="${ch}" fill="${col ? "#f4a261" : "#fff"}" stroke="#000" stroke-width="${plein || col ? 1.2 : .9}" ${plein || col || pleines === null ? "" : 'stroke-dasharray="3 2.5"'}/>${deco}`);
+  }
+  const croute = pleines === "toutes" || pleines === null || colorie ? `<circle cx="${c}" cy="${c}" r="${r + 3}" fill="none" stroke="#000" stroke-width="1.2"/>` : "";
+  return `<svg viewBox="0 0 100 100">${croute}${parts.join("")}</svg>`;
+}
+const fr2 = (n, d, rep) => rep ? `<span class="f-fr"><span class="f-boite">${n}</span><span class="f-boite">${d}</span></span>` : `<span class="f-fr"><span class="f-boite"></span><span class="f-boite"></span></span>`;
+const frEcrite = (n, d) => `<span class="f-fr" style="font-weight:bold;font-size:15pt"><span>${n}</span><span style="border-top:.5mm solid #000;padding-top:.5mm">${d}</span></span>`;
+function enTete(titre, consigne, corr) {
+  return `<div class="f-tete"><img src="/images/pizzeria/pizzaiolo.png" alt=""><div class="t"><b>La pizzeria des fractions — ${titre}${corr ? '<span class="f-badge">CORRIGÉ</span>' : ""}</b><span>${consigne}</span></div>${corr ? "" : '<div class="nom">Prénom : ……………………<br>Date : ……………………</div>'}</div>`;
+}
+const PIED_P = `<div class="f-pied">toujourscap.com — La pizzeria des fractions — CC BY-NC-SA 4.0</div>`;
+function tirages(k) { // k fractions différentes autant que possible
+  const ds = DENOMS[R_.frac], tout = [];
+  ds.forEach(d => { for (let n = 1; n < d; n++) tout.push([n, d]); });
+  const res = []; while (res.length < k) res.push(...melange(tout.slice()));
+  return res.slice(0, k);
+}
+function imprimerFiches() {
+  const pages = [], corr = [], avecCorr = $("pCorr").checked;
+  const fiche = (titre, consigne, corps, c) => `<div class="fiche">${enTete(titre, consigne, c)}${corps}${PIED_P}</div>`;
+  if ($("pF1").checked) {
+    const t = tirages(12);
+    const seeds = t.map(([n, d]) => hasard(d));
+    const fait = rep => t.map(([n, d], i) => { const restes = [...Array(n)].map((_, k) => (seeds[i] + k) % d);
+      return `<div class="f-case"><span class="f-num">${i + 1}</span>${pizzaTrait(d, restes)}<div class="f-rep">Il reste ${fr2(n, d, rep)}</div><div><span class="f-ligne">${rep ? mots(n, d) : ""}</span></div></div>`; }).join("");
+    pages.push(fiche("Fiche 1", "Les parts en pointillés ont été mangées. Écris en chiffres puis en lettres la fraction de pizza qui reste.", `<div class="f-grille">${fait(false)}</div>`));
+    corr.push(fiche("Fiche 1", "Fraction de pizza qui reste.", `<div class="f-grille">${fait(true)}</div>`, true));
+  }
+  if ($("pF2").checked) {
+    const t = tirages(12), noms = melange(CLIENTS.slice());
+    const fait = rep => t.map(([n, d], i) => `<div class="f-case"><span class="f-num">${i + 1} — ${noms[i % noms.length]}</span><div class="f-cmd">${i % 2 ? mots(n, d) : frEcrite(n, d)}</div>${pizzaTrait(d, null, rep ? [...Array(n).keys()] : null)}</div>`).join("");
+    pages.push(fiche("Fiche 2", "Lis la commande de chaque client. Colorie les parts de pizza à lui servir.", `<div class="f-grille">${fait(false)}</div>`));
+    corr.push(fiche("Fiche 2", "Les parts à colorier.", `<div class="f-grille">${fait(true)}</div>`, true));
+  }
+  if ($("pF3").checked) {
+    const t = tirages(10), sens = t.map(() => Math.random() < .5);
+    const fait = rep => `<table class="f-tab"><tr><th>En chiffres</th><th>En lettres</th></tr>${t.map(([n, d], i) =>
+      sens[i] ? `<tr><td>${frEcrite(n, d)}</td><td class="rouge">${rep ? mots(n, d) : ""}</td></tr>` : `<tr><td class="rouge">${rep ? frEcrite(n, d) : ""}</td><td>${mots(n, d)}</td></tr>`).join("")}</table>`;
+    pages.push(fiche("Fiche 3", "Complète le tableau : écris chaque fraction en chiffres ou en lettres.", fait(false)));
+    corr.push(fiche("Fiche 3", "Le tableau complété.", fait(true), true));
+  }
+  if ($("pF4").checked) {
+    const max = Math.max(...DENOMS[R_.frac]), paires = [];
+    [[2, 4], [2, 6], [3, 6], [4, 8], [2, 8], [5, 10], [2, 10]].forEach(([a, b]) => { if (b <= Math.max(max, 8)) paires.push([a, b]); });
+    const t = []; while (t.length < 8) { const [a, b] = paires[hasard(paires.length)], n = 1 + hasard(a - 1); t.push([n, a, b]); }
+    const fait = rep => t.map(([n, a, b], i) => `<div class="f-case"><span class="f-num">${i + 1}</span><div class="f-paire">${pizzaTrait(a, [...Array(n).keys()])}<span>${frEcrite(n, a)} =</span>${pizzaTrait(b, null, rep ? [...Array(n * b / a).keys()] : null)}${fr2(n * b / a, b, rep)}</div></div>`).join("");
+    pages.push(fiche("Fiche 4", "Colorie la 2ᵉ pizza pour avoir la même quantité que la 1ʳᵉ. Écris la fraction égale.", `<div class="f-grille g4">${fait(false)}</div>`));
+    corr.push(fiche("Fiche 4", "Les fractions égales.", `<div class="f-grille g4">${fait(true)}</div>`, true));
+  }
+  if (!pages.length) return;
+  const z = $("impression"); z.innerHTML = pages.concat(avecCorr ? corr : []).join("");
+  const imgs = [...z.querySelectorAll("img")]; let reste = imgs.length; const go = () => setTimeout(() => window.print(), 150);
+  if (!reste) return go();
+  imgs.forEach(im => { if (im.complete) { if (--reste === 0) go(); } else im.onload = im.onerror = () => { if (--reste === 0) go(); }; });
+}
+$("imprimer").addEventListener("click", imprimerFiches);
 $("ecran").addEventListener("click", () => { const z = $("pz-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
 </script>
 </body>
