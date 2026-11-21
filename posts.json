@@ -1,6 +1,7 @@
 {
- "count": 61,
+ "count": 62,
  "posts": [
+ {"title": "Écouter un élève lire : une grille pour repérer ses difficultés", "slug": "ecouter-un-eleve-lire-grille-analyse", "cat": "maitre-e", "aussi": ["evaluations"], "excerpt": "Exactitude, automaticité, prosodie : comment écouter un élève lire à voix haute, coder ses erreurs, calculer sa fluence et formuler une hypothèse (décodage, compréhension, fluence). Grille d'analyse d'une page à imprimer.", "date": "2026-11-21T10:00:00.000Z", "categoryIds": [], "richContent": {"nodes": [{"type": "RAW_HTML", "file": "ecouter-un-eleve-lire.html"}]}},
  {"title": "Le saut des virelangues", "slug": "le-saut-des-virelangues", "cat": "cercle-conteur", "excerpt": "Langue qui fourche = skieur qui plonge ! L'élève répète sa phrase piège (« Les chaussettes de l'archiduchesse »…) sans s'emmêler la langue, et le skieur reste en l'air. Patatras à la première erreur ! Langage oral, GS au CE2.", "date": "2026-11-20T18:00:00.000Z", "categoryIds": [], "media": {"displayed": true, "custom": false}, "jeu": {"niveaux": ["GS", "CP", "CE1", "CE2"], "joueurs": "1 joueur ou la classe", "supports": ["ecran", "projetable", "imprimable"]}, "richContent": {"nodes": [{"type": "RAW_HTML", "file": "le-saut-des-virelangues.html"}, {"type": "HTML", "htmlData": {"url": "/outils/le-saut-des-virelangues.html", "containerData": {"height": {"custom": "ecran"}, "large": true}}}, {"type": "RAW_HTML", "file": "le-saut-des-virelangues-suite.html"}]}},
   {
    "title": "La dictée à trous",
