@@ -66,24 +66,24 @@
   
   <div class="prose"><style>
 .td3{--p-bg:#EEEDFE;--p-tx:#3C3489;--p-bd:#534AB7;--t-bg:#E1F5EE;--t-tx:#085041;--t-bd:#0F6E56;--c-bg:#FAECE7;--c-tx:#712B13;--c-bd:#993C1D;--i-bg:#E6F1FB;--i-tx:#0C447C;--i-bd:#185FA5;--bd3:#D3D1C7;--acc3:#185FA5;margin:1.5rem 0}
-.td3 .mm{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media (max-width:640px){.td3 .mm{grid-template-columns:1fr}}
-.td3 .nd{border:1px solid var(--bd3);border-radius:8px;padding:9px 10px;text-align:center;cursor:pointer;background:#fff;color:inherit;font:inherit;width:100%;line-height:1.35}
-.td3 .nd:hover{filter:brightness(.96)}
-.td3 .nd.on{outline:2px solid var(--acc3);outline-offset:1px}
-.td3 .nd b{display:block;font-weight:600;font-size:.95rem}
-.td3 .nd span{font-size:.8rem;opacity:.85}
-.td3 .p{background:var(--p-bg);color:var(--p-tx);border-color:var(--p-bd)}
-.td3 .t{background:var(--t-bg);color:var(--t-tx);border-color:var(--t-bd)}
-.td3 .c{background:var(--c-bg);color:var(--c-tx);border-color:var(--c-bd)}
-.td3 .i{background:var(--i-bg);color:var(--i-tx);border-color:var(--i-bd);border-style:dashed}
-.td3 .col{display:flex;flex-direction:column;gap:8px}
-.td3 .hd{border-width:2px}
-.td3 .centre{max-width:340px;display:block;margin:0 auto 14px;border-width:2px}
-.td3 .lab{font-size:.85rem;color:var(--muted,#5F5E5A);margin:18px 0 6px;font-weight:600}
-.td3 .det{margin-top:16px;border:1px solid var(--bd3);border-radius:12px;padding:14px 16px;background:#fff;min-height:70px}
-.td3 .det h3{margin:0 0 6px;font-size:1.05rem}
-.td3 .det .pr{margin-top:8px;color:var(--muted,#5F5E5A)}
+.td3 .td3-mm{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:640px){.td3 .td3-mm{grid-template-columns:1fr}}
+.td3 .td3-nd{border:1px solid var(--bd3);border-radius:8px;padding:9px 10px;text-align:center;cursor:pointer;background:#fff;color:inherit;font:inherit;width:100%;line-height:1.35}
+.td3 .td3-nd:hover{filter:brightness(.96)}
+.td3 .td3-nd.on{outline:2px solid var(--acc3);outline-offset:1px}
+.td3 .td3-nd b{display:block;font-weight:600;font-size:.95rem}
+.td3 .td3-nd span{font-size:.8rem;opacity:.85}
+.td3 .td3-p{background:var(--p-bg);color:var(--p-tx);border-color:var(--p-bd)}
+.td3 .td3-t{background:var(--t-bg);color:var(--t-tx);border-color:var(--t-bd)}
+.td3 .td3-c{background:var(--c-bg);color:var(--c-tx);border-color:var(--c-bd)}
+.td3 .td3-i{background:var(--i-bg);color:var(--i-tx);border-color:var(--i-bd);border-style:dashed}
+.td3 .td3-col{display:flex;flex-direction:column;gap:8px}
+.td3 .td3-hd{border-width:2px}
+.td3 .td3-centre{max-width:340px;display:block;margin:0 auto 14px;border-width:2px}
+.td3 .td3-lab{font-size:.85rem;color:var(--muted,#5F5E5A);margin:18px 0 6px;font-weight:600}
+.td3 .td3-det{margin-top:16px;border:1px solid var(--bd3);border-radius:12px;padding:14px 16px;background:#fff;min-height:70px}
+.td3 .td3-det h3{margin:0 0 6px;font-size:1.05rem}
+.td3 .td3-pr{margin-top:8px;color:var(--muted,#5F5E5A)}
 </style>
 
 <p class="lead">Pédagogique, métacognitive, culturelle&nbsp;: une carte mentale pour lire les difficultés d'apprentissage avec trois regards issus de la recherche, et savoir précisément ce que la circulaire RASED de 2014 en dit.</p>
@@ -94,38 +94,38 @@
 <p>Au centre&nbsp;: la difficulté d'apprentissage vue par la recherche (Cnesco, CSEN, EEF, équipe ESCOL). Chaque branche indique ses auteurs ou ses sources. Les bandeaux bleus en pointillés, «&nbsp;Ancrage institutionnel&nbsp;», montrent ce que la circulaire n°&nbsp;2014-107 dit vraiment de chaque dimension. <strong>Cliquez sur une bulle pour afficher son détail.</strong></p>
 
 <div class="td3">
-<button type="button" class="nd centre" data-k="centre"><b>Difficultés d'apprentissage</b><span>Trois regards issus de la recherche</span></button>
-<div class="mm">
-<div class="col">
-<button type="button" class="nd p hd" data-k="peda"><b>Pédagogique</b><span>Cnesco, différenciation</span></button>
-<button type="button" class="nd p" data-k="diff"><b>Différenciation</b><span>Cnesco 2017</span></button>
-<button type="button" class="nd p" data-k="exig"><b>Exigence maintenue</b><span>Mêmes objectifs</span></button>
-<button type="button" class="nd p" data-k="tache"><b>Analyse de la tâche</b><span>Obstacles didactiques</span></button>
-<button type="button" class="nd p" data-k="classe"><b>Lien avec la classe</b><span>Co-intervention, transfert</span></button>
+<button type="button" class="td3-nd td3-centre" data-k="centre"><b>Difficultés d'apprentissage</b><span>Trois regards issus de la recherche</span></button>
+<div class="td3-mm">
+<div class="td3-col">
+<button type="button" class="td3-nd td3-p td3-hd" data-k="peda"><b>Pédagogique</b><span>Cnesco, différenciation</span></button>
+<button type="button" class="td3-nd td3-p" data-k="diff"><b>Différenciation</b><span>Cnesco 2017</span></button>
+<button type="button" class="td3-nd td3-p" data-k="exig"><b>Exigence maintenue</b><span>Mêmes objectifs</span></button>
+<button type="button" class="td3-nd td3-p" data-k="tache"><b>Analyse de la tâche</b><span>Obstacles didactiques</span></button>
+<button type="button" class="td3-nd td3-p" data-k="classe"><b>Lien avec la classe</b><span>Co-intervention, transfert</span></button>
 </div>
-<div class="col">
-<button type="button" class="nd t hd" data-k="meta"><b>Métacognitive</b><span>CSEN, EEF</span></button>
-<button type="button" class="nd t" data-k="autoreg"><b>Autorégulation</b><span>Planifier, contrôler</span></button>
-<button type="button" class="nd t" data-k="eef"><b>Effet : +7 mois</b><span>EEF, fort si défavorisés</span></button>
-<button type="button" class="nd t" data-k="explic"><b>Stratégies explicites</b><span>Modéliser à voix haute</span></button>
-<button type="button" class="nd t" data-k="verb"><b>Verbalisation</b><span>Comment as-tu fait ?</span></button>
+<div class="td3-col">
+<button type="button" class="td3-nd td3-t td3-hd" data-k="meta"><b>Métacognitive</b><span>CSEN, EEF</span></button>
+<button type="button" class="td3-nd td3-t" data-k="autoreg"><b>Autorégulation</b><span>Planifier, contrôler</span></button>
+<button type="button" class="td3-nd td3-t" data-k="eef"><b>Effet : +7 mois</b><span>EEF, fort si défavorisés</span></button>
+<button type="button" class="td3-nd td3-t" data-k="explic"><b>Stratégies explicites</b><span>Modéliser à voix haute</span></button>
+<button type="button" class="td3-nd td3-t" data-k="verb"><b>Verbalisation</b><span>Comment as-tu fait ?</span></button>
 </div>
-<div class="col">
-<button type="button" class="nd c hd" data-k="cult"><b>Culturelle</b><span>ESCOL, rapport au savoir</span></button>
-<button type="button" class="nd c" data-k="rs"><b>Rapport au savoir</b><span>Charlot</span></button>
-<button type="button" class="nd c" data-k="conf"><b>Logique de conformité</b><span>Faire ≠ apprendre</span></button>
-<button type="button" class="nd c" data-k="malent"><b>Malentendus</b><span>Bautier, Rayou, Bonnéry</span></button>
-<button type="button" class="nd c" data-k="sens"><b>Expliciter le sens</b><span>À quoi ça sert ?</span></button>
+<div class="td3-col">
+<button type="button" class="td3-nd td3-c td3-hd" data-k="cult"><b>Culturelle</b><span>ESCOL, rapport au savoir</span></button>
+<button type="button" class="td3-nd td3-c" data-k="rs"><b>Rapport au savoir</b><span>Charlot</span></button>
+<button type="button" class="td3-nd td3-c" data-k="conf"><b>Logique de conformité</b><span>Faire ≠ apprendre</span></button>
+<button type="button" class="td3-nd td3-c" data-k="malent"><b>Malentendus</b><span>Bautier, Rayou, Bonnéry</span></button>
+<button type="button" class="td3-nd td3-c" data-k="sens"><b>Expliciter le sens</b><span>À quoi ça sert ?</span></button>
 </div>
 </div>
-<div class="lab">Ancrage institutionnel : ce que dit la circulaire n° 2014-107</div>
-<div class="mm">
-<button type="button" class="nd i" data-k="ci_p"><b>Circulaire : explicite</b><span>« Remédiation pédagogique »</span></button>
-<button type="button" class="nd i" data-k="ci_m"><b>Circulaire : implicite</b><span>Méthodes et attitudes</span></button>
-<button type="button" class="nd i" data-k="ci_c"><b>Circulaire : maître G</b><span>Rapport aux exigences</span></button>
+<div class="td3-lab">Ancrage institutionnel : ce que dit la circulaire n° 2014-107</div>
+<div class="td3-mm">
+<button type="button" class="td3-nd td3-i" data-k="ci_p"><b>Circulaire : explicite</b><span>« Remédiation pédagogique »</span></button>
+<button type="button" class="td3-nd td3-i" data-k="ci_m"><b>Circulaire : implicite</b><span>Méthodes et attitudes</span></button>
+<button type="button" class="td3-nd td3-i" data-k="ci_c"><b>Circulaire : maître G</b><span>Rapport aux exigences</span></button>
 </div>
-<button type="button" class="nd" data-k="art" style="margin-top:12px"><b>Articulation des trois dimensions</b><span>Tâche bien choisie + explicitation + retour réflexif</span></button>
-<div class="det" aria-live="polite"><span class="muted">Cliquez sur une idée pour afficher son détail.</span></div>
+<button type="button" class="td3-nd" data-k="art" style="margin-top:12px"><b>Articulation des trois dimensions</b><span>Tâche bien choisie + explicitation + retour réflexif</span></button>
+<div class="td3-det" aria-live="polite"><span class="muted">Cliquez sur une idée pour afficher son détail.</span></div>
 </div>
 
 <h2>Citer la circulaire dans un écrit</h2>
@@ -169,11 +169,12 @@ ci_p:["Circulaire 2014-107 : dimension pédagogique","C'est explicite : le maît
 ci_m:["Circulaire 2014-107 : dimension métacognitive","C'est implicite : le mot « métacognition » n'apparaît pas. Le texte parle d'aider les élèves à prendre conscience de leurs méthodes et attitudes de travail, et à les maîtriser.","Écrire « la circulaire évoque la prise de conscience des méthodes », pas « la circulaire parle de métacognition »."],
 ci_c:["Circulaire 2014-107 : rapport à l'école","Ni « rapport au savoir » ni « culturel » n'apparaissent. Le texte rattache au maître G le fait de « faire évoluer leurs rapports aux exigences de l'école » et de restaurer l'investissement scolaire.","Pour le maître E, cette dimension s'appuie sur la recherche (ESCOL), pas sur la circulaire."],
 art:["Articulation des trois dimensions","Ces dimensions sont liées : un élève qui se conforme ne régule pas son activité, et une pédagogie implicite renforce ce malentendu.","Choisir une tâche bien ciblée, expliciter ce qu'on y apprend, puis prendre un temps de retour réflexif."]};
-var box=document.querySelector('.td3'),det=box.querySelector('.det');
-box.querySelectorAll('.nd').forEach(function(n){n.addEventListener('click',function(){
-box.querySelectorAll('.nd.on').forEach(function(x){x.classList.remove('on')});n.classList.add('on');
-var d=D[n.dataset.k];det.innerHTML='<h3></h3><div></div><div class="pr"></div>';
+var box=document.querySelector('.td3'),det=box.querySelector('.td3-det');
+box.querySelectorAll('.td3-nd').forEach(function(n){n.addEventListener('click',function(){
+box.querySelectorAll('.td3-nd.on').forEach(function(x){x.classList.remove('on')});n.classList.add('on');
+var d=D[n.dataset.k];det.innerHTML='<h3></h3><div></div><div class="td3-pr"></div>';
 det.children[0].textContent=d[0];det.children[1].textContent=d[1];det.children[2].textContent='En pratique : '+d[2];
+var r=det.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight)det.scrollIntoView({behavior:'smooth',block:'nearest'});
 });});
 })();
 </script>
