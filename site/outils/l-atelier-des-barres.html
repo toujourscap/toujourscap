@@ -102,9 +102,48 @@
   .exemple{display:inline-flex;gap:14px;align-items:flex-end;justify-content:center;margin:2px 0 8px;font-size:.95rem;color:#495057}
   .exemple span{display:flex;flex-direction:column;align-items:center;gap:4px}
   .exemple .plaque,.exemple .barre{--u:5px}
+
+  /* ---------- Version papier ---------- */
+  .papier{background:#fffdf6;border:2px dashed #b9cdf0;border-radius:8px;padding:12px;margin:12px 0;text-align:left}
+  .papier h2{text-align:center}
+  .papier p{margin:0 0 8px;color:#495057;font-size:.95rem;text-align:center}
+  #imprimer{background:#1d3557;font-size:1.05rem;padding:10px 20px;margin:6px auto 0;display:block}
+  #bilan{background:#2e8b57}
+  #impression{display:none}
+  @media print{
+    @page{size:A4 portrait;margin:11mm}
+    html,body{background:#fff!important}
+    body>*:not(#impression){display:none!important}
+    #impression{display:block}
+  }
+  .fiche{height:272mm;break-after:page;page-break-after:always;display:flex;flex-direction:column;font-family:"Andika","Comic Sans MS",Verdana,sans-serif;color:#000;overflow:hidden;text-align:left}
+  .fiche:last-child{break-after:auto;page-break-after:auto}
+  .f-tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #1c4fa1;padding-bottom:2mm;margin-bottom:3mm}
+  .f-tete .t{flex:1}
+  .f-tete .t b{display:block;font-size:16pt;color:#1c4fa1;line-height:1.15}
+  .f-tete .t span{font-size:11pt}
+  .f-tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+  .f-badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+  .f-legende{display:flex;gap:7mm;justify-content:center;align-items:flex-end;font-size:10.5pt;margin-bottom:3mm}
+  .f-legende span{display:flex;align-items:flex-end;gap:2mm}
+  .f-grille{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:3mm}
+  .f-grille.g2{grid-template-columns:repeat(2,1fr)}
+  .f-case{border:.35mm solid #b9cdf0;border-radius:3mm;padding:2mm 3mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:1.5mm;break-inside:avoid;font-size:12.5pt;overflow:hidden}
+  .f-num{font-weight:bold;color:#1c4fa1;align-self:flex-start;font-size:11pt}
+  .f-mat{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+  .f-mat svg{max-width:100%;height:auto}
+  .f-calc{font-size:16pt;font-weight:bold}
+  .f-boite{display:inline-block;min-width:16mm;height:9mm;border:.4mm solid #000;border-radius:1mm;text-align:center;line-height:9mm;color:#c0392b;font-weight:bold;vertical-align:middle;padding:0 1mm}
+  .f-petite{min-width:9mm}
+  .f-dessin{width:100%;flex:1;min-height:18mm;border:.35mm dashed #777;border-radius:2mm;display:flex;align-items:center;justify-content:center;position:relative}
+  .f-dessin em{position:absolute;top:.5mm;left:2mm;font-size:9pt;color:#555;font-style:normal}
+  .f-lignes{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;column-gap:12mm;font-size:17pt}
+  .f-lignes div{display:flex;align-items:center;gap:3mm;border-bottom:.3mm dotted #999}
+  .f-lignes b{font-size:11pt;color:#1c4fa1;width:7mm}
+  .f-pied{font-size:8.5pt;color:#555;text-align:center;margin-top:2mm}
   @media (max-width:640px){#plateau{flex-direction:column}#pave button{min-width:40px;font-size:1.2rem}.outil{font-size:.92rem;padding:8px 10px}}
 </style>
-<script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script></head>
 <body>
 <div id="ab-jeu">
 
@@ -162,6 +201,17 @@
     </div>
 
     <button class="go" id="jouer">🧱 Ouvrir l'atelier</button>
+
+    <div class="papier" id="papier">
+      <h2>🖨️ Version papier : des fiches à imprimer</h2>
+      <p>Les fiches utilisent le niveau, les calculs, l'intervalle et les options choisis plus haut. Nouveau tirage à chaque impression.</p>
+      <label class="opt"><input type="checkbox" id="pF1" checked> Fiche 1 : quel est ce nombre ? (lire le matériel)</label><br>
+      <label class="opt"><input type="checkbox" id="pF2" checked> Fiche 2 : calcule avec le matériel (dessiner ce qu'on ajoute, barrer ce qu'on enlève)</label><br>
+      <label class="opt"><input type="checkbox" id="pF3" checked> Fiche 3 : 20 calculs en ligne</label><br>
+      <label class="opt"><input type="checkbox" id="pF4"> Fiche 4 : dessine le nombre (carré, trait, point)</label><br>
+      <label class="opt"><input type="checkbox" id="pCorr" checked> Ajouter le corrigé</label>
+      <button id="imprimer">🖨️ Imprimer les fiches</button>
+    </div>
   </div>
 
   <!-- ===== Partie ===== -->
@@ -200,13 +250,15 @@
     <p id="finScore"></p>
     <button class="go" id="rejouer">🔁 Rejouer</button>
     <button class="go" id="changer" style="background:#6c757d">⚙️ Changer les réglages</button>
+    <button class="go" id="bilan">📄 Bilan de la partie</button>
   </div>
 </div>
+<div id="impression"></div>
 
 <script>
 const $ = id => document.getElementById(id);
 const R_ = { niveau: 1, min: 0, max: 100, unites: true, op: "les2", nb: 10, echange: false, compte: false, voix: true };
-const S = { i: 0, score: 0, erreurs: 0, fini: false, deja: [] };
+const S = { i: 0, score: 0, erreurs: 0, fini: false, deja: [], log: [] };
 let Q = null;            // calcul en cours : { a, b, op, r }
 let blocs = [];          // plateau : { id, t: "c" | "d", ajout }
 let nid = 0, saisie = "";
@@ -542,6 +594,7 @@ function verifie() {
   const n = parseInt(saisie, 10), c = $("case");
   if (n === Q.r) {
     if (S.erreurs === 0) S.score++;
+    S.log.push({ a: Q.a, op: Q.op, b: Q.b, r: Q.r, res: S.erreurs === 0 ? 2 : 1 });
     c.className = "bon"; S.fini = true; $("score").textContent = "⭐ " + S.score;
     message(["Bravo !", "Super !", "C'est ça !", "Excellent !"][Math.floor(Math.random() * 4)] + ` ${Q.a} ${signe(Q.op)} ${Q.b} = ${Q.r}`, "bravo");
     son(true); dire(`${lu(Q)} égale ${Q.r}`);
@@ -550,6 +603,7 @@ function verifie() {
   S.erreurs++; son(false);
   c.classList.remove("mauvais"); void c.offsetWidth; c.classList.add("mauvais");
   if (S.erreurs === 1) { message("Pas tout à fait… " + aide(), "erreur"); saisie = ""; setTimeout(() => { if (!S.fini && !saisie) c.textContent = ""; }, 700); return; }
+  S.log.push({ a: Q.a, op: Q.op, b: Q.b, r: Q.r, res: 0, faux: n });
   S.fini = true; c.className = "bon"; c.style.background = "#868e96"; c.style.borderColor = "#868e96"; c.textContent = Q.r;
   remplir(Q.r, false); dessine();
   message("La bonne réponse était " + Q.r + ". " + explication(), "erreur");
@@ -576,9 +630,12 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- Partie ---------- */
-function demarrer() {
+function lireReglages() {
   litIntervalle(); R_.unites = $("optUnites").checked; R_.echange = $("optEchange").checked; R_.compte = $("optCompte").checked; R_.voix = $("optVoix").checked;
-  S.i = 0; S.score = 0; S.deja = []; document.querySelectorAll(".confetti").forEach(c => c.remove());
+}
+function demarrer() {
+  lireReglages();
+  S.i = 0; S.score = 0; S.deja = []; S.log = []; document.querySelectorAll(".confetti").forEach(c => c.remove());
   $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
   question();
 }
@@ -620,6 +677,111 @@ function ajuste() {
 }
 addEventListener("resize", () => { ajuste(); accolades(); });
 document.addEventListener("fullscreenchange", () => setTimeout(ajuste, 50));
+/* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
+$("bilan").addEventListener("click", () => {
+  const J = S.log, r2 = J.filter(q => q.res === 2).length, r1 = J.filter(q => q.res === 1).length, r0 = J.filter(q => q.res === 0).length;
+  DocEcrit.ouvrir({ titre: "Bilan de la partie", jeu: "L'atelier des barres", nom: "Bilan atelier des barres", prenom: true, html: () => `
+  <p>Niveau ${R_.niveau} (${NOMS[R_.niveau]}) — ${OPS[R_.op]} — nombres de ${R_.min} à ${R_.max}${R_.echange ? " — avec échanges" : ""}${R_.unites ? " — 1ᵉʳ nombre avec unités" : ""}</p>
+  <h2>Résultats</h2><p><b>${S.score} calcul${S.score > 1 ? "s" : ""} réussi${S.score > 1 ? "s" : ""} du premier coup sur ${J.length}</b> — au deuxième essai : ${r1} ; non réussi : ${r0}.</p>
+  <h2>Calculs à retravailler</h2><p>${J.filter(q => q.res < 2).map(q => `${q.a} ${signe(q.op)} ${q.b} = ${q.r}`).join(" ; ") || "Aucun : bravo !"}</p>
+  <h2>Détail</h2><table><tr><th>Calcul</th><th>Résultat</th></tr>
+  ${J.map(q => `<tr><td>${q.a} ${signe(q.op)} ${q.b} = ${q.r}</td><td>${q.res === 2 ? "✔ du premier coup" : q.res === 1 ? "✔ au 2e essai" : "✘ (réponse donnée : " + q.faux + ")"}</td></tr>`).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>` });
+});
+
+/* ---------- Version papier : fiches à imprimer ---------- */
+/* Matériel au trait (SVG) : liste de blocs { t: "c" | "d" | "u", x: barré, g: grisé (ajout du corrigé) }. 1 cube = 10 unités SVG. */
+function materielSVG(liste, mm) {
+  const c = liste.filter(b => b.t === "c"), d = liste.filter(b => b.t === "d"), u = liste.filter(b => b.t === "u");
+  const G = 8, parts = []; let x = 0, H = 100;
+  const barre = (bx, by, b, rouge) => b.x ? `<line x1="${bx}" y1="${by}" x2="${bx + rouge.w}" y2="${by + rouge.h}" stroke="#c0392b" stroke-width="${rouge.s}" stroke-linecap="round"/>` : "";
+  const fond = b => b.g ? "#d3d3d3" : "#fff";
+  c.forEach((b, k) => {
+    const px = (k % 5) * (100 + G), py = Math.floor(k / 5) * (100 + G); let l = "";
+    for (let i = 1; i < 10; i++) l += `M${px + i * 10} ${py}v100M${px} ${py + i * 10}h100`;
+    parts.push(`<rect x="${px}" y="${py}" width="100" height="100" fill="${fond(b)}" stroke="#000" stroke-width="2"/><path d="${l}" stroke="#777" stroke-width=".5" fill="none"/>` + barre(px, py, b, { w: 100, h: 100, s: 7 }));
+  });
+  if (c.length) { x = Math.min(c.length, 5) * (100 + G) - G; H = Math.max(H, Math.ceil(c.length / 5) * (100 + G) - G); x += 18; }
+  d.forEach((b, k) => {
+    const bx = x + k * 14 + Math.floor(k / 5) * 6; let l = "";
+    for (let i = 1; i < 10; i++) l += `M${bx} ${i * 10}h10`;
+    parts.push(`<rect x="${bx}" y="0" width="10" height="100" fill="${fond(b)}" stroke="#000" stroke-width="1.6"/><path d="${l}" stroke="#777" stroke-width=".5"/>` + barre(bx - 8, 8, b, { w: 26, h: 84, s: 4 }));
+  });
+  if (d.length) x += d.length * 14 + Math.floor((d.length - 1) / 5) * 6 - 4 + 18;
+  u.forEach((b, k) => {
+    const ux = x + (k % 2) * 14, uy = 100 - 10 - Math.floor(k / 2) * 14;
+    parts.push(`<rect x="${ux}" y="${uy}" width="10" height="10" fill="${fond(b)}" stroke="#000" stroke-width="1.4"/>` + barre(ux - 2, uy - 2, b, { w: 14, h: 14, s: 2.5 }));
+  });
+  if (u.length) x += Math.min(u.length, 2) * 14 - 4; else if (x) x -= 18;
+  const W = Math.max(x, 10) + 8;
+  if (!c.length && liste.length > 1) mm *= 1.5;   // sans plaque (niveau 1) : dessin plus grand
+  return `<svg viewBox="-4 -4 ${W} ${H + 8}" width="${(W * mm).toFixed(1)}mm" xmlns="http://www.w3.org/2000/svg">${parts.join("")}</svg>`;
+}
+const blocsDe = (n, opt = {}) => [...Array(C(n))].map(() => ({ t: "c", ...opt })).concat([...Array(D(n))].map(() => ({ t: "d", ...opt })), [...Array(n % 10)].map(() => ({ t: "u", ...opt })));
+const LEGENDE = `<div class="f-legende"><span>${materielSVG([{ t: "c" }], .09)} plaque = 100</span><span>${materielSVG([{ t: "d" }], .09)} barre = 10</span><span>${materielSVG([{ t: "u" }], .09)} cube = 1</span></div>`;
+function enTete(titre, consigne, corr) {
+  return `<div class="f-tete"><div class="t"><b>🧱 L'atelier des barres — ${titre}${corr ? '<span class="f-badge">CORRIGÉ</span>' : ""}</b><span>${consigne}</span></div>${corr ? "" : '<div class="nom">Prénom : ……………………<br>Date : ……………………</div>'}</div>`;
+}
+const PIED_P = `<div class="f-pied">toujourscap.com — L'atelier des barres — CC BY-NC-SA 4.0</div>`;
+const melange = t => { for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; } return t; };
+function calculs(k) {
+  const garde = S.deja; S.deja = []; const t = [];
+  for (let i = 0; i < k; i++) t.push(tirage(R_.op === "add" ? "+" : R_.op === "sous" ? "−" : (i % 2 ? "−" : "+")));
+  S.deja = garde; return melange(t);
+}
+function nombres(k) { // nombres du niveau choisi (1er nombre et résultat des calculs), différents
+  const vus = new Set(), res = [];
+  for (let e = 0; e < 40 && res.length < k; e++) calculs(10).forEach(q => [q.a, q.r].forEach(n => { if (n > 0 && n < 1000 && !vus.has(n) && res.length < k) { vus.add(n); res.push(n); } }));
+  return melange(res);
+}
+function imprimerFiches() {
+  lireReglages();
+  const pages = [], corr = [], avecCorr = $("pCorr").checked;
+  const fiche = (titre, consigne, corps, c, leg) => `<div class="fiche">${enTete(titre, consigne, c)}${leg ? LEGENDE : ""}${corps}${PIED_P}</div>`;
+  if ($("pF1").checked) {
+    const t = nombres(12);
+    const avecC = t.some(n => n >= 100), avecU = t.some(n => n % 10);
+    const ligne = (n, rep) => { const b = v => `<span class="f-boite f-petite">${rep ? v : ""}</span>`;
+      return `<div>${avecC ? b(C(n)) + " c " : ""}${b(D(n))} d${avecU ? " " + b(n % 10) + " u" : ""}</div><div>= <span class="f-boite">${rep ? n : ""}</span></div>`; };
+    const fait = rep => t.map((n, i) => `<div class="f-case"><span class="f-num">${i + 1}</span><div class="f-mat">${materielSVG(blocsDe(n), .1)}</div>${ligne(n, rep)}</div>`).join("");
+    pages.push(fiche("Fiche 1", "Compte les plaques, les barres et les cubes. Écris le nombre.", `<div class="f-grille">${fait(false)}</div>`, false, true));
+    corr.push(fiche("Fiche 1", "Les nombres.", `<div class="f-grille">${fait(true)}</div>`, true));
+  }
+  if ($("pF2").checked) {
+    const t = calculs(6);
+    const fait = rep => t.map((q, i) => {
+      let mat, dessin = "";
+      if (q.op === "+") {
+        mat = materielSVG(blocsDe(q.a), .125);
+        dessin = `<div class="f-dessin"><em>Je dessine ce que j'ajoute : ${q.b}</em>${rep ? materielSVG(blocsDe(q.b, { g: true }), .1) : ""}</div>`;
+      } else if (!rep) mat = materielSVG(blocsDe(q.a), .125);
+      else { // corrigé : on casse une plaque si besoin, puis on barre ce qu'on enlève
+        let nc = C(q.a), nd = D(q.a); const casse = D(q.b) > nd; if (casse) { nc--; nd += 10; }
+        const L = [...Array(nc)].map((_, k) => ({ t: "c", x: k >= nc - C(q.b) })).concat([...Array(nd)].map((_, k) => ({ t: "d", x: k >= nd - D(q.b) })), [...Array(q.a % 10)].map(() => ({ t: "u" })));
+        mat = materielSVG(L, .125) + (casse ? `<div style="font-size:9.5pt;position:absolute;bottom:0">J'ai cassé 1 plaque en 10 barres.</div>` : "");
+      }
+      return `<div class="f-case"><span class="f-num">${i + 1}${q.op === "−" ? " — je barre ce que j'enlève" : ""}</span><div class="f-mat" style="position:relative">${mat}</div>${dessin}<div class="f-calc">${q.a} ${signe(q.op)} ${q.b} = <span class="f-boite">${rep ? q.r : ""}</span></div></div>`;
+    }).join("");
+    pages.push(fiche("Fiche 2", "Pour ajouter : dessine les plaques et les barres. Pour enlever : barre-les (casse une plaque en 10 barres si besoin). Écris le résultat.", `<div class="f-grille g2">${fait(false)}</div>`, false, true));
+    corr.push(fiche("Fiche 2", "Le matériel ajouté est en gris, le matériel enlevé est barré.", `<div class="f-grille g2">${fait(true)}</div>`, true));
+  }
+  if ($("pF3").checked) {
+    const t = calculs(20);
+    const fait = rep => `<div class="f-lignes">${t.map((q, i) => `<div><b>${i + 1}</b>${q.a} ${signe(q.op)} ${q.b} = <span class="f-boite">${rep ? q.r : ""}</span></div>`).join("")}</div>`;
+    pages.push(fiche("Fiche 3", "Calcule. Tu peux penser aux plaques et aux barres, ou les dessiner au brouillon.", fait(false)));
+    corr.push(fiche("Fiche 3", "Les résultats.", fait(true), true));
+  }
+  if ($("pF4").checked) {
+    const t = nombres(12);
+    const fait = rep => t.map((n, i) => `<div class="f-case"><span class="f-num">${i + 1}</span><div class="f-calc">${n}</div><div class="f-dessin">${rep ? materielSVG(blocsDe(n), .085) : ""}</div></div>`).join("");
+    pages.push(fiche("Fiche 4", "Dessine chaque nombre : un carré pour une plaque (100), un trait pour une barre (10), un point pour un cube (1).", `<div class="f-grille">${fait(false)}</div>`, false, true));
+    corr.push(fiche("Fiche 4", "Le matériel de chaque nombre.", `<div class="f-grille">${fait(true)}</div>`, true));
+  }
+  if (!pages.length) return;
+  $("impression").innerHTML = pages.concat(avecCorr ? corr : []).join("");
+  setTimeout(() => window.print(), 150);
+}
+$("imprimer").addEventListener("click", imprimerFiches);
 $("ecran").addEventListener("click", () => { const z = $("ab-jeu"); if (document.fullscreenElement) document.exitFullscreen(); else if (z.requestFullscreen) z.requestFullscreen().catch(() => {}); });
 </script>
 </body>

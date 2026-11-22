@@ -1137,7 +1137,7 @@
    "title": "L'atelier des barres",
    "slug": "l-atelier-des-barres",
    "cat": "calcul",
-   "excerpt": "Additionner et soustraire des dizaines et des centaines entières en manipulant le matériel à l'écran : barres de 10 et plaques de 100, échanges (10 barres = 1 plaque), premier nombre avec ou sans unités (347 + 20), intervalle de nombres au choix. Du CP au CE2.",
+   "excerpt": "Additionner et soustraire des dizaines et des centaines entières en manipulant le matériel à l'écran : barres de 10 et plaques de 100, échanges (10 barres = 1 plaque), premier nombre avec ou sans unités (347 + 20), intervalle de nombres au choix, fiches à imprimer avec corrigé. Du CP au CE2.",
    "date": "2026-11-16T10:30:00.000Z",
    "categoryIds": [],
    "media": {
@@ -1148,7 +1148,7 @@
     "competence": ["addition", "soustraction"],
     "niveaux": ["CP", "CE1", "CE2"],
     "joueurs": "1 joueur ou la classe",
-    "supports": ["ecran", "projetable"]
+    "supports": ["ecran", "projetable", "imprimable"]
    },
    "richContent": {
     "nodes": [
@@ -1425,6 +1425,33 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les fiches à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sous le bouton « Ouvrir l'atelier », la version papier reprend le niveau, les calculs, l'intervalle et les options choisis : fiche 1, quel est ce nombre ? (lire les plaques, les barres et les cubes) ; fiche 2, calculer avec le matériel (dessiner ce qu'on ajoute, barrer ce qu'on enlève, casser une plaque si besoin) ; fiche 3, 20 calculs en ligne ; fiche 4, dessiner le nombre (carré, trait, point). Nouveau tirage à chaque impression, corrigé en option. En fin de partie, un bilan à imprimer ou télécharger (prénom facultatif, rien n'est enregistré).",
+         "decorations": []
+        }
        }
       ]
      },
