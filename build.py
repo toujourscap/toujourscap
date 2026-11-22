@@ -84,6 +84,8 @@ LOCAL_IMAGES = {
     "5e2b25_a8791a9d613648e6918ec94bdb9c01f5~mv2.jpg": "/images/radis/08-souris.jpg",
     "5e2b25_5f68ac9bbc6a4c68a532937c9eab83cb~mv2.jpg": "/images/radis/09-tout-le-monde-tombe.jpg",
     "5e2b25_651e0f1b36634860b8a30def4faf8eef~mv2.jpg": "/images/radis/10-soupe.jpg",
+    "5e2b25_3bc9778b15314e008890c72950529f64~mv2.png": "/images/puissance-4/sons-simples.jpg",
+    "5e2b25_b3ca1bf1b2174c1dbb4fcfda4f2383a1~mv2.png": "/images/puissance-4/sons-complexes.jpg",
 }
 
 
