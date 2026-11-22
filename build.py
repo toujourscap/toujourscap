@@ -69,7 +69,10 @@ def comps(q):
     return [c] if isinstance(c, str) else list(c or [])
 
 
-SUPPORTS = {"ecran": ("🖥️", "À l'écran"), "imprimable": ("🖨️", "À imprimer"), "projetable": ("📽️", "Projetable")}
+SUPPORTS = {"ecran": ("🖥️", "À l'écran"), "imprimable": ("🖨️", "À imprimer"), "projetable": ("📽️", "Projetable"),
+            "plusieurs-ecrans": ("📱", "Plusieurs écrans"),  # ajouté tout seul aux jeux qui utilisent /api/salle
+            "micro": ("🎤", "Avec le micro")}  # ajouté tout seul aux jeux qui écoutent l'élève (getUserMedia, SpeechRecognition)
+ORDRE_SUPPORTS = ["projetable", "imprimable", "ecran", "plusieurs-ecrans", "micro"]  # branches « Par support » du catalogue
 CAT_IDS = {"99949fe7-71e5-42b1-bfde-2cc31c2dac61": "cercle-conteur", "4508e272-b88b-42c8-a68d-b55e8afea67b": "numeration"}
 
 # Images rapatriées localement (identifiant Wix -> chemin sur le site)
@@ -429,6 +432,25 @@ def niveaux_de(p):
     return n
 
 
+SUPPORTS_AUTO = {"plusieurs-ecrans": ("/api/salle",), "micro": ("getUserMedia", "SpeechRecognition")}
+
+
+def supports_auto(nodes):
+    """Supports repérés dans le code des jeux de l'article : plusieurs écrans (/api/salle), micro."""
+    trouves = []
+    for n in nodes:
+        u = (n.get("htmlData") or {}).get("url", "")
+        if not u.startswith("/outils/"):
+            continue
+        b = os.path.basename(u)
+        b = COPIES.get(b, b)
+        f = os.path.join(ROOT, "assets", b if b.endswith(".html") else b + ".html")
+        if os.path.exists(f):
+            code = open(f, encoding="utf-8").read()
+            trouves += [k for k, mots in SUPPORTS_AUTO.items() if k not in trouves and any(m in code for m in mots)]
+    return trouves
+
+
 def arbre(posts):
     """Carte mentale : racine → niveaux (ou domaines) → catégories → articles (liens). Un clic ouvre une branche."""
     COULEURS = ["#2f9b4f", "#3a6fb0", "#e07a2e", "#8e44ad", "#d2503c", "#16a3a8", "#c99400"]
@@ -468,15 +490,24 @@ def arbre(posts):
         if lst:
             par_cat += branche(dn, len(lst), cats_de(lst, True, d), f' style="--b:{COULEURS[i % len(COULEURS)]}"')
             i += 1
+    par_support, i = "", 0
+    for k in ORDRE_SUPPORTS:
+        lst = [p for p in posts if k in (p.get("jeu") or {}).get("supports", [])]
+        if lst:
+            ic, t = SUPPORTS[k]
+            par_support += branche(f"{ic} {t}", len(lst), cats_de(lst, True), f' style="--b:{COULEURS[i % len(COULEURS)]}"')
+            i += 1
     return f"""<details class="arbre" id="tri">
-  <summary class="arbre-titre">🔎 Trouver un article <span class="muted">par niveau ou par catégorie</span></summary>
+  <summary class="arbre-titre">🔎 Trouver un article <span class="muted">par niveau, par catégorie ou par support</span></summary>
   <div class="chips arbre-choix" role="group" aria-label="Trier les articles">
     <button class="chip active" type="button" aria-pressed="true" data-arbre="niveau">Par niveau</button>
     <button class="chip" type="button" aria-pressed="false" data-arbre="categorie">Par catégorie</button>
+    <button class="chip" type="button" aria-pressed="false" data-arbre="support">Par support</button>
   </div>
   <p class="mm-aide muted">Clique sur une bulle pour ouvrir sa branche, puis sur un article pour le lire.</p>
   <div class="arbre-liste" data-vue="niveau">{carte("🎓 Par niveau", par_niveau)}</div>
   <div class="arbre-liste" data-vue="categorie" hidden>{carte("📚 Par catégorie", par_cat)}</div>
+  <div class="arbre-liste" data-vue="support" hidden>{carte("🧰 Par support", par_support)}</div>
 </details>
 <script>
 document.querySelectorAll('.arbre-choix button').forEach(function (b) {{
@@ -711,8 +742,13 @@ def main():
             cover = f"/images/contes/{slug}.jpg"  # illustration dessinée pour le conte
         elif os.path.exists(os.path.join(ROOT, "assets", "images", "jeux", slug + ".jpg")):
             cover = f"/images/jeux/{slug}.jpg"  # plateau du jeu
+        jeu = p.get("jeu")
+        if jeu:
+            plus = [k for k in supports_auto(nodes) if k not in jeu.get("supports", [])]
+            if plus:
+                jeu = dict(jeu, supports=jeu.get("supports", []) + plus)
         posts.append({"slug": slug, "title": p["title"][:1].upper() + p["title"][1:], "excerpt": p.get("excerpt", ""), "date": p["date"],
-                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": p.get("jeu"),
+                      "date_fr": fr_date(p["date"]), "cat": cat, "nodes": nodes, "cover": cover, "jeu": jeu,
                       "epingle": p.get("epingle", False), "aussi": p.get("aussi", [])})
     posts.sort(key=lambda x: x["date"], reverse=True)
     # Articles épinglés ("epingle": true dans posts.json) : toujours en tête de leur rubrique
