@@ -726,9 +726,16 @@ def main():
         maj = max([d for d in (date_git(f) for f in fics) if d] + [p.get("updated") or p["date"]])
         if maj[:10] > p["date"][:10]:
             p["updated"] = maj
-        recent = [q for q in posts if q["slug"] != p["slug"] and q["cat"] == p["cat"]][:3] or [q for q in posts if q["slug"] != p["slug"]][:3]
         cat = CATS[p["cat"]]
         dom = cat["domain"]  # onglet du menu (Français, Maths, Divers) auquel appartient l'article
+        # « À lire aussi » : voisins dans la rubrique (en boucle, pour que chaque article reçoive des liens)
+        # + 2 articles d'autres rubriques du même onglet (maillage interne pour Google)
+        meme = [q for q in posts if q["cat"] == p["cat"]]
+        k = meme.index(p)
+        recent = [meme[(k + j) % len(meme)] for j in range(1, len(meme))][:4]
+        autres = [q for q in posts if q["cat"] != p["cat"] and CATS[q["cat"]]["domain"] == dom] or [q for q in posts if q["cat"] != p["cat"]]
+        if autres:
+            recent += [autres[(i * 2 + j) % len(autres)] for j in range(2) if autres[(i * 2 + j) % len(autres)] not in recent][:6 - len(recent)]
         body = f"""<article class="wrap narrow post">
   <nav class="crumbs"><a href="/{dom}/">{DOM_NOMS[dom]}</a> › <a href="/{dom}/{p['cat']}/">{cat['name']}</a></nav>
   <h1>{esc(p['title'])}</h1>
