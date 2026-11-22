@@ -1,4 +1,4 @@
-/* Voix du site dans les jeux (enregistrées dans le studio /admin/studio).
+/* Voix enregistrées dans les jeux (enregistrées dans le studio /admin/studio).
    Ce script se place devant la synthèse vocale : quand un jeu demande de dire un texte
    et qu'on peut le reconstituer entièrement avec des enregistrements (un texte, une question,
    chaque réponse… ou un nombre : 234 = « deux cents » + « trente-quatre »), on joue les enregistrements ;
