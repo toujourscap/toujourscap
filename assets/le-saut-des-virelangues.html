@@ -97,7 +97,12 @@
       <option value="7" selected>comme un flocon ❄️</option>
       <option value="4.5">comme un caillou 🪨</option>
     </select>
-    <label for="tolerance">L'oreille du juge :</label>
+    <label for="juge">Qui décide qu'il y a une erreur de prononciation ?</label>
+    <select id="juge">
+      <option value="micro" selected>le micro 🎤</option>
+      <option value="prof">l'enseignant 🧑‍🏫</option>
+    </select>
+    <label for="tolerance" id="lblTol">L'oreille du juge :</label>
     <select id="tolerance">
       <option value="0.6">gentille 😊</option>
       <option value="0.72" selected>attentive 🧐</option>
@@ -106,9 +111,9 @@
     <button class="vert" id="btnPartir">🎿 C'est parti !</button>
   </div>
   <div class="barre">
-    <span class="aide">Le juge humain (si le micro est dur de la feuille 👂) :</span>
+    <span class="aide" id="aideJuge">Le juge humain (si le micro est dur de la feuille 👂) :</span>
     <button class="vert" id="btnOk" disabled>✔ Bien dit ! <small>(Espace)</small></button>
-    <button class="rouge" id="btnErreur" disabled>✘ Ça a fourché <small>(X)</small></button>
+    <button class="rouge" id="btnErreur" disabled>✘ Ça a fourché <small>(X ou ↓)</small></button>
   </div>
   <p class="aide">Répète ta phrase piège encore et encore, sans t'emmêler la langue : à chaque phrase bien dite, hop, le skieur reprend de la hauteur ! Une syllabe de travers… et c'est le plongeon dans la poudreuse. Combien de temps tiendras-tu en l'air ?<br>Le micro marche avec Chrome, Edge ou Firefox (pense à l'autoriser).</p>
 </div>
@@ -140,7 +145,17 @@
     return choix.value === "perso" ? (perso.value.trim() || "Invente ta phrase piège ! ✏️") : VIRELANGUES[+choix.value];
   }
   function majPhrase(){ perso.style.display = choix.value === "perso" ? "" : "none"; $("phrase").textContent = phraseActuelle(); }
-  choix.onchange = majPhrase; perso.oninput = majPhrase; majPhrase();
+  choix.onchange = () => { majPhrase(); if (choix.value !== "perso") choix.blur(); }; perso.oninput = majPhrase; majPhrase();
+  function majJuge(){
+    const prof = modeProf();
+    $("tolerance").style.display = $("lblTol").style.display = prof ? "none" : "";
+    $("aideJuge").textContent = prof
+      ? "🧑‍🏫 L'enseignant juge : Espace = bien dit (le skieur remonte), X ou ↓ = erreur (le skieur tombe) :"
+      : "Le juge humain (si le micro est dur de la feuille 👂) :";
+    if (prof) $("alerte").style.display = "none";
+  }
+  $("juge").onchange = () => { majJuge(); $("juge").blur(); };
+  ["chute","tolerance"].forEach(id => $(id).addEventListener("change", e => e.target.blur()));
 
   $("btnEcouter").onclick = () => {
     if (!("speechSynthesis" in window)) return;
@@ -197,9 +212,10 @@
     a.textContent = "La reconnaissance vocale n'est pas disponible dans ce navigateur : ouvre le jeu dans Chrome, Edge ou Firefox. Tu peux quand même jouer avec les boutons d'arbitre.";
   }
 
+  const modeProf = () => $("juge").value === "prof";
   function demarrerEcoute(){
     finals = ""; interim = ""; pos = 0; cible = norm(phraseActuelle());
-    if (!SR) return;
+    if (!SR || modeProf()) return;
     rec = new SR(); rec.lang = "fr-FR"; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
     rec.onresult = e => {
       interim = "";
@@ -446,11 +462,16 @@
   $("btnOk").onclick = reussite;
   $("btnErreur").onclick = erreur;
   document.addEventListener("keydown", e => {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
-    if (e.code === "Space"){ e.preventDefault(); if (etat === "attente") partir(); else reussite(); }
-    else if (e.key === "x" || e.key === "X"){ erreur(); }
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const enJeu = etat !== "attente" && etat !== "fin";
+    if (e.target.tagName === "SELECT" && !enJeu) return;
+    if (e.code === "Space"){ e.preventDefault(); if (e.repeat) return; if (etat === "attente") partir(); else reussite(); }
+    else if (e.key === "x" || e.key === "X" || e.key === "ArrowDown"){ e.preventDefault(); erreur(); }
   });
+  // un bouton cliqué à la souris garde le focus : on le relâche pour que Espace ne le re-déclenche pas
+  document.querySelectorAll("button").forEach(b => b.addEventListener("click", () => b.blur()));
 
+  majJuge();
   reset();
   requestAnimationFrame(boucle);
 })();
