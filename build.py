@@ -587,7 +587,6 @@ SEO_TITRES = {
     "/post/bilan-de-lecture/": "Bilan de lecture cycle 2 : test de lecture GS-CP-CE1-CE2",
     "/post/bilan-de-maths/": "Bilan de maths du cycle 2 : une évaluation par niveau",
     "/post/le-chemin-des-sons/": "Le chemin des sons : lire des mots avec ou, an, in, eu au CP",
-    "/blog/": "Blog : contes, jeux de lecture et numération pour le cycle 2",
     "/francais/": "Français cycle 2 : contes et outils de lecture GS, CP, CE1",
     "/francais/cercle-conteur/": "Langage oral : contes pour le cercle conteur en GS et CP",
     "/francais/lecture/": "Jeux de lecture en ligne gratuits pour le CP et le CE1",
@@ -802,26 +801,6 @@ def main():
         write(f"/post/{p['slug']}/", page(p["title"], body, "/evaluations/" if "evaluations" in p["aussi"] else f"/{dom}/", p["excerpt"], p["cover"], "article", ld),
               lastmod=(p.get("updated") or p["date"])[:10])
 
-    # Blog + catégories
-    chips = '<div class="chips"><a class="chip active" href="/blog/">Toutes</a>' + "".join(
-        f'<a class="chip" href="/blog/{k}/">{v["name"]}</a>' for k, v in CATS.items()) + "</div>"
-    write("/blog/", page("Blog", f"""<section class="wrap">
-  <h1>Le blog</h1>
-  <p class="lead">Contes, jeux et outils testés en classe, à utiliser librement.</p>
-  {chips}
-  {grid(posts)}
-</section>""", "/blog/", "Tous les articles de Toujours cap ! : contes pour le cercle conteur, jeux de lecture et outils de numération pour la GS, le CP et le CE1."))
-    for k, v in CATS.items():
-        sub = epingles_d_abord([p for p in posts if p["cat"] == k or k in p["aussi"]])  # "aussi" : article rangé dans une 2e rubrique
-        chips_k = chips.replace(' active', '').replace(f'href="/blog/{k}/"', f'href="/blog/{k}/" aria-current="page"').replace(f'class="chip" href="/blog/{k}/"', f'class="chip active" href="/blog/{k}/"')
-        write(f"/blog/{k}/", page(v["name"], f"""<section class="wrap">
-  <h1>{v['name']}</h1>
-  <p class="lead">{v['desc']}</p>
-  {chips_k}
-  {grid(sub)}
-</section>""", "/blog/", v["desc"]),
-              canonical=f"/{v['domain']}/{k}/")
-
     # Domaines
     fr = [p for p in posts if CATS[p["cat"]]["domain"] == "francais"]
     cc = epingles_d_abord([p for p in fr if p["cat"] == "cercle-conteur"])
@@ -993,7 +972,7 @@ def main():
 <section class="wrap" style="padding-top:32px">
   <h2 style="margin-top:0">Dernières ressources</h2>
   {grid(posts[:6])}
-  <p><a class="btn" href="/blog/">Toutes les ressources</a></p>
+  <p><a class="btn" href="/outils-pedagogiques/">Toutes les ressources</a></p>
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
          "description": "Jeux et outils pédagogiques gratuits pour les cycles 2 et 3 : lecture, contes du cercle conteur, numération, calcul, évaluations."},
@@ -1019,20 +998,23 @@ def main():
           sitemap=False)
     redirects = ["/langue-francaise /francais/ 301",
                  "/langue-francaise-1 /maths/ 301", "/langue-francaise-2 /divers/ 301",
-                 "/blog/categories/cercle-conteur /blog/cercle-conteur/ 301",
-                 "/blog/categories/num%C3%A9ration /blog/numeration/ 301",
+                 "/blog/categories/cercle-conteur /francais/cercle-conteur/ 301",
+                 "/blog/categories/num%C3%A9ration /maths/numeration/ 301",
                  "/blog/categories/fran%C3%A7ais /francais/ 301"]
     for p in data["posts"]:
         if p["slug"] != ascii_slug(p["slug"]):
             from urllib.parse import quote
             redirects.append(f"/post/{quote(p['slug'])} /post/{ascii_slug(p['slug'])}/ 301")
     # ancienne rubrique Compréhension : ses jeux sont maintenant dans Lecture
-    redirects += ["/francais/comprehension/ /francais/lecture/ 301", "/blog/comprehension/ /blog/lecture/ 301"]
+    redirects += ["/francais/comprehension/ /francais/lecture/ 301", "/blog/comprehension/ /francais/lecture/ 301"]
     # ancien article « Lecture rapide, fluence » : ses trois outils sont devenus des articles
     redirects += ["/post/lecture-rapide-de-mots-avec-le-tachitoscope/ /francais/lecture/ 301",
                   "/francais/lecture/tachistoscope/ /post/lecture-rapide-de-mots-tachistoscope/ 301",
                   "/francais/lecture/teleprompteur-de-lecture/ /post/teleprompteur-de-lecture/ 301",
                   "/francais/lecture/teleprompteur-a-l-ecoute/ /post/teleprompteur-a-l-ecoute/ 301"]
+    # ancien blog : la liste de toutes les ressources est sur /outils-pedagogiques/, les catégories dans leurs onglets
+    redirects += ["/blog/ /outils-pedagogiques/ 301", "/blog /outils-pedagogiques/ 301"]
+    redirects += [f"/blog/{k}/ /{v['domain']}/{k}/ 301" for k, v in CATS.items()]
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
     with open(os.path.join(OUT, "titres.json"), "w") as f:  # titres des pages, pour /admin/stats
