@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Images du quotidien</title><link rel="canonical" href="https://toujourscap.com/post/images-du-quotidien/"><meta name="description" content="Une image, quatre phrases : l&#x27;élève lit et choisit la phrase qui décrit l&#x27;image. Trois niveaux, des pièges de plus en plus proches, pour travailler la…">
+<title>Quelle phrase pour cette image ?</title><link rel="canonical" href="https://toujourscap.com/post/images-du-quotidien/"><meta name="description" content="Une image, quatre phrases : l&#x27;élève lit et choisit la phrase qui décrit l&#x27;image. Trois niveaux, des pièges de plus en plus proches, pour travailler la…">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
 <style>
 /* Layout : cahier d'écolier — grande image à gauche, 4 bandes de phrases lignées Seyès à droite, une colonne sur téléphone */
@@ -143,7 +143,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 <div class="wrap">
   <header>
     <div>
-      <h1>Images du quotidien</h1>
+      <h1>Quelle phrase pour cette image ?</h1>
       <p class="consigne" id="consigne">Choisis un niveau.</p>
     </div>
     <div class="stats" id="stats" hidden>
@@ -291,10 +291,10 @@ document.querySelectorAll("#pNiv button").forEach(b=>b.addEventListener("click",
 const LETTRES="ABCD";
 function vignette(it){return `<div class="f-img">${it.img?`<img src="${it.img}" alt="">`:`<svg viewBox="0 0 100 100">${it.svg}</svg>`}</div>`}
 function tete(l,page,nb,corr){
-  return `<div class="f-tete"><div class="t"><b>Images du quotidien — Niveau ${l+1}${corr?'<span class="f-badge">CORRIGÉ</span>':` — fiche ${page}/${nb}`}</b>
+  return `<div class="f-tete"><div class="t"><b>Quelle phrase pour cette image ? — Niveau ${l+1}${corr?'<span class="f-badge">CORRIGÉ</span>':` — fiche ${page}/${nb}`}</b>
   <span>${corr?"La bonne phrase de chaque image.":"Regarde l'image. Lis les quatre phrases jusqu'au bout. Coche la seule phrase qui va avec l'image."}</span></div>
   ${corr?"":`<div class="nom">Prénom : ……………………<br>Date : ……………………</div>`}</div>`}
-const PIED=`<div class="f-pied">toujourscap.com — Images du quotidien — CC BY-NC-SA 4.0</div>`;
+const PIED=`<div class="f-pied">toujourscap.com — Quelle phrase pour cette image ? — CC BY-NC-SA 4.0</div>`;
 function imprimer(){
   const l=pNiv, ord=shuffle(ITEMS.map((_,i)=>i)), PAR=4, nb=Math.ceil(ord.length/PAR), pages=[], rep=[];
   for(let f=0;f<nb;f++){

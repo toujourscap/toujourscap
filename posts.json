@@ -5877,7 +5877,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "Les outils sans score (téléprompteur de lecture, Jackpot des contes, Images du quotidien) sont notés comme « séance » avec leur durée.",
+             "text": "Les outils sans score (téléprompteur de lecture, Jackpot des contes, « Quelle phrase pour cette image ? ») sont notés comme « séance » avec leur durée.",
              "decorations": []
             }
            }
@@ -16656,7 +16656,7 @@
    }
   },
   {
-   "title": "Images du quotidien",
+   "title": "Quelle phrase pour cette image ?",
    "slug": "images-du-quotidien",
    "excerpt": "Une image, quatre phrases : l'élève lit et choisit la phrase qui décrit l'image. Trois niveaux, des pièges de plus en plus proches, pour travailler la compréhension de phrases au CP et au CE1.",
    "date": "2026-10-26T21:30:00.000Z",

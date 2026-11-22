@@ -634,7 +634,7 @@ SEO_TITRES = {
     "/post/la-dictee-a-trous/": "Dictée à trous en ligne et à imprimer, du CP au CM",
     "/post/la-dictee-de-la-feuille-pliee/": "Prépare ta dictée ! Jeu de la feuille pliée, CP-CE2",
     "/post/redis-la-regle/": "Redis la règle : mémoriser les règles d'orthographe CP-CM2",
-    "/post/images-du-quotidien/": "Images du quotidien : compréhension de phrases CP-CE1",
+    "/post/images-du-quotidien/": "Quelle phrase pour cette image ? Compréhension de phrases CP-CE1",
     "/post/la-tour-des-nombres/": "La tour des nombres : lecture rapide de nombres GS-CE1",
     "/post/le-puzzle-magique-des-additions/": "Puzzle magique des additions : jeu coopératif CP-CE1",
     "/post/le-puzzle-magique-des-multiplications/": "Puzzle magique des multiplications : jeu coopératif CE1-CE2",

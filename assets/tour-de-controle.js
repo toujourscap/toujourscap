@@ -77,7 +77,7 @@
     ["puissance-4-syllabique","Puissance 4 syllabique","puissance-4-syllabiques"],
     ["le-chemin-des-sons","Le chemin des sons","le-chemin-des-sons"],
     ["lecture-rapide-de-mots-avec-le-tachitoscope","Lecture rapide de mots","lecture-rapide-de-mots-tachistoscope"],
-    ["images-du-quotidien","Images du quotidien","images-du-quotidien"],
+    ["images-du-quotidien","Quelle phrase pour cette image ?","images-du-quotidien"],
     ["teleprompteur-a-l-ecoute","Téléprompteur à l'écoute","teleprompteur-a-l-ecoute"],
     ["teleprompteur-de-lecture","Téléprompteur de lecture","teleprompteur-de-lecture"],
     ["le-chateau-des-detectives","Le Château des Détectives","le-chateau-des-detectives"],
