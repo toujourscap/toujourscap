@@ -523,8 +523,8 @@ def grid(posts):
 
 # Titres pour Google (balise <title>) : le titre visible sur la page ne change pas
 SEO_TITRES = {
-    "/post/trois-dimensions-difficultes-apprentissage/": "Difficultés d'apprentissage : carte des 3 dimensions (maître E)",
-    "/post/ecouter-un-eleve-lire-grille-analyse/": "Écouter un élève lire : grille d'analyse des erreurs à imprimer",
+    "/post/trois-dimensions-difficultes-apprentissage/": "Difficultés d'apprentissage : la carte des 3 dimensions",
+    "/post/ecouter-un-eleve-lire-grille-analyse/": "Écouter un élève lire : grille d'analyse des erreurs",
     "/post/synthese-comparative-internationale-aide-specialisee/": "Aide spécialisée : synthèse internationale de la réussite",
     "/post/intelligence-ordinaire-culture-peu-scolaire-maitre-e/": "Intelligence ordinaire et culture peu scolaire : maître E",
     "/post/le-chateau-des-nombres/": "Le château des nombres : lire les nombres de 0 à 99, CP-CE1",
