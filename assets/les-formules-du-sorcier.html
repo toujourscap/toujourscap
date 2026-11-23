@@ -368,11 +368,15 @@ function resultat(n){
   S.mot=tirerMot(J().niv);
   a.innerHTML=`${entete()}<div style="display:flex;align-items:center;gap:12px">${de(n,"small")}<span class="hint">Lis bien la formule pour avancer de ${n} case${n>1?"s":""} !</span></div>
     <div class="ring" id="ring"><span id="sec">${S.delai}</span></div>
-    <div class="btns" id="btns"><button type="button" class="btn" id="skip">J'ai lu, écoute-moi !</button></div>`;
+    <div class="btns" id="btns"><button type="button" class="btn ok" id="oui">Oui, bien lu !</button><button type="button" class="btn no" id="non">Pas encore</button><button type="button" class="btn" id="skip">J'ai lu, écoute-moi !</button></div>`;
   const fo=document.getElementById("formule");
   fo.innerHTML=`<div class="cadre"><span class="cadre-t">Formule magique</span><div class="word ${S.police==="cursive"?"cursive":""} ${S.mot.length>9?"long":""}" id="word">${S.mot}</div></div>`;
   fo.hidden=false;
   document.getElementById("skip").onclick=reveler;
+  // L'enseignant peut valider tout de suite, sans attendre la fin du temps.
+  const stop=()=>{clearInterval(S.timer); document.getElementById("ring").hidden=true;};
+  document.getElementById("oui").onclick=()=>{stop(); reussi();};
+  document.getElementById("non").onclick=()=>{stop(); rate();};
   const t0=performance.now(), ring=document.getElementById("ring"), sec=document.getElementById("sec");
   S.timer=setInterval(()=>{const e=(performance.now()-t0)/1000,p=Math.min(e/S.delai,1); ring.style.setProperty("--p",p); sec.textContent=Math.max(0,Math.ceil(S.delai-e)); if(p>=1)reveler();},50);
 }
@@ -508,6 +512,7 @@ document.addEventListener("keydown",e=>{
   else if([" ","Enter","ArrowRight","PageDown"].includes(e.key)) clic(["roll","skip","oui","nx","again","go"]);
   else if(["ArrowLeft","PageUp","n","N"].includes(e.key)) clic(["non"]);
   else if(e.key==="r"||e.key==="R") clic(["re"]);
+  else if(e.key==="o"||e.key==="O") clic(["oui"]);
   else if(/^[1-6]$/.test(e.key)){ const b=document.querySelector(`[data-de="${e.key}"]`); if(b){ e.preventDefault(); b.click(); } }
 });
 
