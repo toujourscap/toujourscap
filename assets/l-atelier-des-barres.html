@@ -58,7 +58,7 @@
   #plateau{display:flex;gap:8px;justify-content:center;align-items:stretch}
   .colonne{background:#fff;border:3px solid #b9cdf0;border-radius:10px;padding:6px 8px 8px;display:flex;flex-direction:column;min-width:0}
   .colonne.cible{border-color:#2f9e44;background:#f1fbef}
-  #colC{flex:1 1 0} #colD{flex:0 1 auto;min-width:9em} #colU{flex:none;padding-left:6px;padding-right:6px}
+  #colC{flex:0 1 auto;min-width:0} #zoneC{--u:var(--uc,9px)}   /* plaques : taille modérée, seules les barres et les cubes grandissent */ #colD{flex:1 1 auto;min-width:9em} #colU{flex:none;padding-left:6px;padding-right:6px}
   /* Unités : les cubes s'empilent dans le contour d'une barre (10 cubes = 1 barre), juste à côté des dizaines. */
   #zoneU{margin:0 auto}
   #zoneU .blocs{flex-direction:column-reverse;flex-wrap:nowrap;justify-content:flex-start;gap:0;
@@ -82,14 +82,15 @@
   .acc.total{color:#1c64d8;margin-top:4px} .acc.total span{font-size:1.25rem}
   .bloc.enleve{opacity:.35;filter:grayscale(.6)}
   .bloc.enleve::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1.5px),#c92a2a calc(50% - 1.5px),#c92a2a calc(50% + 1.5px),transparent calc(50% + 1.5px))}
-  #outils{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
-  .reserve{display:flex;align-items:center;gap:10px;background:#fff;border:2px dashed #1c64d8;color:#1d3557;padding:6px 16px;font-size:1.1rem;touch-action:none}
+  #commandes{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 22px;margin:8px 0 4px}
+  #outils{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .reserve{display:flex;align-items:center;gap:8px;background:#fff;border:2px dashed #1c64d8;color:#1d3557;padding:5px 12px;font-size:1.1rem;touch-action:none}
   .reserve .plaque{--u:6px} .reserve .barre{--u:6px}
   .reserve b{font-size:1.1rem}
   .outil{background:#5c7cfa;font-size:1rem;padding:9px 14px}
-  #recommencer{background:#868e96}
-  #pave{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
-  #pave button{background:#fff;color:#1d3557;border:2px solid #1c64d8;box-shadow:0 3px 0 #9fbaf0;min-width:44px;padding:7px 0;font-size:1.35rem}
+  #recommencer{background:#868e96;font-size:1.3rem;padding:6px 14px}
+  #pave{display:flex;gap:5px;justify-content:center;flex-wrap:wrap}
+  #pave button{background:#fff;color:#1d3557;border:2px solid #1c64d8;box-shadow:0 3px 0 #9fbaf0;min-width:42px;padding:7px 0;font-size:1.35rem}
   #pave button.eff{min-width:60px;border-color:#868e96;box-shadow:0 3px 0 #ced4da}
   #pave button.val{min-width:100px;background:#2f9e44;border-color:#2f9e44;color:#fff;box-shadow:0 3px 0 #8ccf96}
   #msg{min-height:1.4em;font-size:1.05rem;color:#495057;max-width:880px;margin:2px auto 4px;line-height:1.45}
@@ -236,14 +237,16 @@
       <div class="colonne" id="colD"><h3><span>Dizaines <small>(barres de 10)</small></span><span class="compte" id="nbD"></span></h3><div class="zone" id="zoneD"></div></div>
       <div class="colonne" id="colU"><h3><span>Unités <small>(cubes)</small></span><span class="compte" id="nbU"></span></h3><div class="zone" id="zoneU"></div></div>
     </div>
+    <div id="commandes">
     <div id="outils">
       <button class="reserve" id="resC" title="Touche ou fais glisser sur le plateau"><i class="plaque"></i><b>+ 1 plaque</b></button>
       <button class="reserve" id="resD" title="Touche ou fais glisser sur le plateau"><i class="barre"></i><b>+ 1 barre</b></button>
       <button class="outil" id="grouper">🔁 10 barres → 1 plaque</button>
       <button class="outil" id="casser">🔨 1 plaque → 10 barres</button>
-      <button class="outil" id="recommencer">↩ Recommencer</button>
+      <button class="outil" id="recommencer" title="Recommencer ce calcul">↩</button>
     </div>
     <div id="pave"></div>
+    </div>
     <div id="msg"></div>
     <div class="bas">
       <button id="continuer" class="cache" title="Touche → du clavier (ou Entrée)">Calcul suivant <kbd>→</kbd></button>
@@ -453,8 +456,12 @@ function retrecit() {
   const jeu = $("ab-jeu"); if ($("partie").classList.contains("cache")) return;
   let u = parseFloat(getComputedStyle(jeu).getPropertyValue("--u")) || 9;
   const plaquesEmpilees = () => { const p = [...document.querySelectorAll("#zoneC .blocs")].map(b => [...b.children]).filter(l => l.length > 1 && l.length <= 5); return p.some(l => l[l.length - 1].offsetTop > l[0].offsetTop + 2); };   // jusqu'à 5 plaques : côte à côte
-  const deborde = () => jeu.scrollHeight > innerHeight + 2 || ["colC", "colD", "colU"].some(id => $(id).scrollWidth > $(id).clientWidth + 2) || plaquesEmpilees();
-  for (let k = 0; k < 70 && deborde() && u > 5; k++) { u -= .5; jeu.style.setProperty("--u", u.toFixed(2) + "px"); }
+  /* Plaques : au plus 12 px par carreau, réduites seulement si elles ne tiennent pas côte à côte. */
+  let uc = Math.min(u, 12); const poseC = () => jeu.style.setProperty("--uc", uc.toFixed(2) + "px"); poseC();
+  for (let k = 0; k < 30 && ($("colC").scrollWidth > $("colC").clientWidth + 2 || plaquesEmpilees()) && uc > 4; k++) { uc -= .5; poseC(); }
+  /* Barres et cubes : aussi grands que possible. */
+  const deborde = () => jeu.scrollHeight > innerHeight + 2 || ["colD", "colU"].some(id => $(id).scrollWidth > $(id).clientWidth + 2);
+  for (let k = 0; k < 80 && deborde() && u > 5; k++) { u -= .5; jeu.style.setProperty("--u", u.toFixed(2) + "px"); if (uc > u) { uc = u; poseC(); } }
 }
 /* Accolade horizontale à la largeur exacte de ce qu'elle regroupe. */
 function accolades() {
@@ -516,7 +523,7 @@ let glisse = null;
     if (!glisse) return;
     if (!glisse.bouge && Math.hypot(e.clientX - glisse.x, e.clientY - glisse.y) > 10) {
       glisse.bouge = true; const f = document.createElement("i"); f.id = "fantome"; f.className = t === "c" ? "plaque" : "barre";
-      f.style.setProperty("--u", getComputedStyle($("ab-jeu")).getPropertyValue("--u")); document.body.appendChild(f); glisse.f = f;
+      f.style.setProperty("--u", getComputedStyle($("ab-jeu")).getPropertyValue(t === "c" ? "--uc" : "--u")); document.body.appendChild(f); glisse.f = f;
     }
     if (glisse.f) {
       glisse.f.style.left = e.clientX + "px"; glisse.f.style.top = e.clientY + "px";
@@ -679,7 +686,7 @@ $("ecouter").addEventListener("click", () => { const v = R_.voix; R_.voix = true
 /* La partie tient dans la hauteur de l'écran (ou du cadre) : la taille des cubes s'adapte. */
 function ajuste() {
   const jeu = $("ab-jeu"), partie = $("partie"); if (partie.classList.contains("cache")) return;
-  let u = Math.max(10, Math.min(32, (innerHeight - 330) / 11)); jeu.style.setProperty("--u", u + "px");   // barre ≈ 40 % de l'écran
+  let u = Math.max(10, Math.min(48, (innerHeight - 270) / 10.6)); jeu.style.setProperty("--u", u + "px");   // barre ≈ 40 % de l'écran
   accolades(); retrecit(); accolades();
 }
 addEventListener("resize", () => { ajuste(); accolades(); });
