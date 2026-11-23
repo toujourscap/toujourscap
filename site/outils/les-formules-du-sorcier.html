@@ -8,7 +8,7 @@
   --night:#141a3a; --night2:#1e2550; --card:#262f63; --line:#3a4580;
   --ink:#f4f0ff; --muted:#aeb4dc; --gold:#f5c451; --spell:#7ee0c9;
   --ok:#6fd38a; --no:#f29b8a; --potion:#c58cf5; --monster:#8fbf4a;
-  --p1:#f2716b; --p2:#6fa8f5; --p3:#f5c451; --p4:#6fd38a;
+  --p1:#f2716b; --p2:#6fa8f5; --p3:#f5c451; --p4:#6fd38a; --p5:#f29bd0; --p6:#b39bf5;
   --f-title:"Henny Penny","Andika",cursive;
   --f-script:"Andika","Comic Sans MS",system-ui,sans-serif;
   --f-cursive:"Playwrite FR Moderne","Andika",cursive;
@@ -174,8 +174,10 @@ const NIVEAUX = [
   { nom:"Niveau 3", sous:"formules difficiles", mots:["plartouche","grenvillon","strampogne","brindafric","glopincheur","phrantoisel","crapouillon","trimbalaugne","flourpaigne","scrabilette","brontaflique","gripouchard","splinfaloure","trouvignol","blancrofeuil","chaprignole","frastombil","glaviontre","prouchenaille","struflandin"] }
 ];
 const NB_CASES = 20;
-const COULEURS = ["var(--p1)","var(--p2)","var(--p3)","var(--p4)"];
-const COUL_HEX = ["#f2716b","#6fa8f5","#f5c451","#6fd38a"];
+const COULEURS = ["var(--p1)","var(--p2)","var(--p3)","var(--p4)","var(--p5)","var(--p6)"];
+const COUL_HEX = ["#f2716b","#6fa8f5","#f5c451","#6fd38a","#f29bd0","#b39bf5"];
+// À 5 ou 6 joueurs, le troll ne gagne une fiole que sur le 5 (sinon il gagnerait presque toujours).
+const trollSur=n=>S.nbJ>4 ? n===5 : (n===2||n===5);
 
 const store = {
   get(k,d){try{const v=localStorage.getItem("fm2_"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
@@ -184,9 +186,10 @@ const store = {
 const S = {
   delai: store.get("delai",5), deMode: store.get("deMode","ecran"), auto:null, police: store.get("police","script"), maxFioles: 10,
   nbJ: store.get("nbJ",4), mode: store.get("mode","groupe"), lecteur:"",
-  joueurs: store.get("joueurs",[0,1,2,3].map(k=>({nom:"Joueur "+(k+1),niv:0}))),
+  joueurs: store.get("joueurs",[]),
   cur:0, fioles:0, de:0, mot:"", pools:[[],[],[]], timer:null, phase:"roll"
 };
+while(S.joueurs.length<6) S.joueurs.push({nom:"Joueur "+(S.joueurs.length+1),niv:0});
 const app = document.getElementById("app");
 
 /* ===== Voix ===== */
@@ -229,7 +232,7 @@ function plateau(){
   FIOLES_XY.slice(0,S.fioles).forEach(([x,y])=>{
     s+=`<g><circle cx="${x}" cy="${y+12}" r="36" fill="#a35bf0" opacity=".85"/><circle cx="${x-12}" cy="${y}" r="9" fill="#e9d4ff" opacity=".8"/></g>`;
   });
-  const OFF=[[-26,-26],[26,-26],[-26,26],[26,26]];
+  const OFF=S.nbJ>4 ? [[-44,-24],[0,-24],[44,-24],[-44,24],[0,24],[44,24]] : [[-26,-26],[26,-26],[-26,26],[26,26]];
   S.joueurs.slice(0,S.nbJ).forEach((j,k)=>{
     const [x,y]=caseXY(Math.min(j.pos,NB_CASES+1)); const [dx,dy]=OFF[k];
     const cur=k===S.cur&&S.phase!=="fin";
@@ -255,7 +258,7 @@ function accueil(){
       <div class="panel col">
         ${seg("On joue",[["groupe","en petit groupe"],["classe","en classe (projeté)"]],S.mode,"mode")}
         <h2>${C?"Les équipes":"Les joueurs"}</h2>
-        ${C?seg("Nombre d'équipes",[[1,"toute la classe"],[2,"2"],[3,"3"],[4,"4"]],S.nbJ,"nbJ"):seg("Nombre de joueurs",[[1,"1"],[2,"2"],[3,"3"],[4,"4"]],S.nbJ,"nbJ")}
+        ${C?seg("Nombre d'équipes",[[1,"toute la classe"],[2,"2"],[3,"3"],[4,"4"],[5,"5"],[6,"6"]],S.nbJ,"nbJ"):seg("Nombre de joueurs",[[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"],[6,"6"]],S.nbJ,"nbJ")}
         ${S.joueurs.slice(0,S.nbJ).map((j,k)=>`
           <div class="prow"><span class="dot" style="background:${COULEURS[k]}"></span>
             <input id="nom${k}" value="${j.nom.replace(/"/g,"&quot;")}" maxlength="14" aria-label="Prénom du joueur ${k+1}">
@@ -272,7 +275,7 @@ function accueil(){
         <div class="panel">
           <ol class="rules">
             <li>Lance le dé${S.deMode==="reel"?" (le vrai dé), puis touche le nombre obtenu":""}.</li>
-            <li>Sur <b>2</b> ou <b>5</b>, le troll gagne une fiole de potion.</li>
+            <li>${S.nbJ>4?"Sur <b>5</b>":"Sur <b>2</b> ou <b>5</b>"}, le troll gagne une fiole de potion.</li>
             <li>Sinon, lis la formule magique, puis écoute-la.</li>
             <li>Bien lue ? Avance du nombre de cases du dé.</li>
             <li>Le premier arrivé au château sauve la princesse. Si le troll remplit toutes ses fioles, il gagne.</li>
@@ -354,7 +357,7 @@ function lancer(){
 }
 function resultat(n){
   S.de=n; const a=act();
-  if(n===2||n===5){
+  if(trollSur(n)){
     S.fioles++;
     rendu(); // met à jour les fioles
     const b=act(); const perdu=S.fioles>=S.maxFioles;

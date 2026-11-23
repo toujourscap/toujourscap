@@ -11975,7 +11975,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "De 1 à 4 joueurs, chacun avec son niveau : sons simples, voyelles complexes ou formules difficiles.",
+             "text": "De 1 à 6 joueurs, chacun avec son niveau : sons simples, voyelles complexes ou formules difficiles.",
              "decorations": []
             }
            }
@@ -12026,7 +12026,7 @@
            {
             "type": "TEXT",
             "textData": {
-             "text": "En classe, projeté au tableau : toute la classe contre le troll ou 2 à 4 équipes, avec tirage au sort de l'élève qui lit. Grand affichage, plein écran, et pilotage au clavier ou à la télécommande de présentation.",
+             "text": "En classe, projeté au tableau : toute la classe contre le troll ou 2 à 6 équipes, avec tirage au sort de l'élève qui lit. Grand affichage, plein écran, et pilotage au clavier ou à la télécommande de présentation.",
              "decorations": []
             }
            }
@@ -12105,7 +12105,7 @@
      "CP",
      "CE1"
     ],
-    "joueurs": "1 à 4 joueurs ou la classe",
+    "joueurs": "1 à 6 joueurs ou la classe",
     "supports": [
      "ecran",
      "imprimable",
