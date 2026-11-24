@@ -15,13 +15,19 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{font-family:Arial, Helvetica, sans-serif;background:var(--fond);color:var(--encre);
+body{font-family:Arial, Helvetica, sans-serif;background:#e9cf9c url(/images/additions-colonne/atelier.jpg) center/cover no-repeat fixed;color:var(--encre);
   font-size:20px;line-height:1.5;letter-spacing:.02em}
 button{font-family:inherit;font-size:1em;cursor:pointer;border-radius:14px;border:2px solid #cfcfcf;background:#fff;color:var(--encre)}
 button:focus-visible{outline:4px solid #f2b400;outline-offset:2px}
 .u{color:var(--u)} .d{color:var(--d)} .c{color:var(--c)}
 .ecran{display:none;min-height:100%;padding:16px;flex-direction:column;align-items:center}
 .ecran.actif{display:flex}
+.panneau{background:rgba(255,253,247,.94);border-radius:22px;box-shadow:0 6px 24px rgba(80,50,10,.25);padding:14px 22px;width:min(720px,100%);display:flex;flex-direction:column;align-items:center}
+/* feuille quadrillée, comme sur le plan de travail du décor */
+#zone{background-color:#fff;background-image:linear-gradient(#dfe7f3 1px,transparent 1px),linear-gradient(90deg,#dfe7f3 1px,transparent 1px);background-size:22px 22px;
+  border-radius:18px;box-shadow:0 6px 24px rgba(80,50,10,.3);padding:18px 24px}
+#haut,#bas{background:rgba(255,253,247,.9);border-radius:16px;padding:6px 10px}
+#enligne{background:rgba(255,253,247,.92);border-radius:14px;padding:0 .8em}
 h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 .sous{color:var(--doux);margin:0 0 1em;text-align:center}
 
@@ -70,7 +76,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 .icones{display:flex;gap:6px}
 .icones button{width:48px;height:48px;padding:0;font-size:1.3em}
 #enligne{font-size:1.5em;font-weight:bold;margin:.2em 0}
-#zone{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;max-width:1000px;flex:1}
+#zone{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;width:auto;max-width:1000px;margin:.2em 0}
 #message{min-height:3.2em;max-width:760px;text-align:center;font-size:1.08em;padding:.4em .8em;border-radius:14px;background:#fff;border:2px solid #eee;margin:.4em 0}
 #message b{font-size:1.05em}
 #clavier{display:grid;grid-template-columns:repeat(3, calc(var(--case)*.95));gap:8px}
@@ -93,7 +99,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 <body>
 
 <!-- ================= ACCUEIL ================= -->
-<section id="accueil" class="ecran actif">
+<section id="accueil" class="ecran actif"><div class="panneau">
   <h1>Les additions en colonne</h1>
   <p class="sous">Les <b class="u">unités</b> sous les unités, les <b class="d">dizaines</b> sous les dizaines, les <b class="c">centaines</b> sous les centaines.</p>
 
@@ -131,7 +137,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
   </div>
   <div class="exemple" aria-hidden="true" id="exemple"></div>
   <p class="reference">Gabarits adaptés aux élèves dys, inspirés du <a href="https://www.cartablefantastique.fr/" target="_blank" rel="noopener">Cartable fantastique</a> : <b class="u">unités en bleu</b>, <b class="d">dizaines en rouge</b>, <b class="c">centaines en vert</b>, une case réservée à la retenue.</p>
-</section>
+</div></section>
 
 <!-- ================= JEU ================= -->
 <section id="jeu" class="ecran">
@@ -157,7 +163,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 </section>
 
 <!-- ================= FIN ================= -->
-<section id="fin" class="ecran">
+<section id="fin" class="ecran"><div class="panneau">
   <h1>Bravo !</h1>
   <div id="etoiles"></div>
   <p id="phraseFin"></p>
@@ -168,7 +174,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
     <button id="imprFiche">📄 Fiche d'exercices + corrigé</button>
     <button id="retourAccueil">⌂ Accueil</button>
   </div>
-</section>
+</div></section>
 
 
 <script>
@@ -331,6 +337,7 @@ function choisir(c){
 function lettre(k){return lettres(calc.n)[k];}
 function nomCol(k){var l=lettre(k);return "<b class='"+l+"'>"+NOMS[l]+"</b>";}
 function dire(html){$("message").innerHTML=html;}
+function qte(n,nom){return n+" "+(n>1?nom:nom.replace(/s$/,""));}
 
 function detailColonne(k){
   var t=calc.da[k]+" + "+calc.db[k];
@@ -348,7 +355,7 @@ function allerEtape(){
     dire(msg+"<br>Combien font les "+nomCol(e.k)+" ?");
   } else {
     var s=calc.somme[e.k+1], depuis=lettre(e.k+1);
-    dire("J'ai trouvé <b>"+s+"</b> "+NOMS[depuis]+". C'est 1 "+NOMS[lettre(e.k)].replace(/s$/,"")+" et "+(s-10)+" "+NOMS[depuis]+".<br>"
+    dire("J'ai trouvé <b>"+s+"</b> "+NOMS[depuis]+". C'est 1 "+NOMS[lettre(e.k)].replace(/s$/,"")+" et "+qte(s-10,NOMS[depuis])+".<br>"
       +"J'ai écrit "+(s-10)+". Je retiens <b>1</b> : je l'écris en haut, chez les "+nomCol(e.k)+".");
   }
 }
@@ -391,7 +398,7 @@ function coupDePouce(){
   document.querySelectorAll("#operation .col-"+lettre(k)).forEach(function(x){x.classList.add("allume");});
   var s=calc.somme[k];
   var m="💡 Les "+nomCol(k)+" : "+detailColonne(k)+".";
-  if(s>=10 && k>0) m+="<br>"+s+" "+NOMS[lettre(k)]+", c'est 1 "+NOMS[lettre(k-1)].replace(/s$/,"")+" et "+(s-10)+" "+NOMS[lettre(k)]+" : j'écris <b>"+(s-10)+"</b> et je retiens <b>1</b>.";
+  if(s>=10 && k>0) m+="<br>"+qte(s,NOMS[lettre(k)])+", c'est 1 "+NOMS[lettre(k-1)].replace(/s$/,"")+" et "+qte(s-10,NOMS[lettre(k)])+" : j'écris <b>"+(s-10)+"</b> et je retiens <b>1</b>.";
   else m+="<br>J'écris <b>"+s+"</b>.";
   dire(m);
 }

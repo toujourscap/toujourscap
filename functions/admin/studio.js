@@ -124,7 +124,7 @@ const LISTES = [
     { titre:"Nombres de 0 à 100", items:nombres(0,100) },
     { titre:"Centaines et mille (pour fabriquer tous les nombres jusqu'à 1 000)", items:nombres(200,900,100).concat(nombres(1000,1000)) },
     { titre:"Milliers (pour fabriquer tous les nombres jusqu'à 9 999)", items:nombres(2000,9000,1000) },
-    { titre:"Mots des jeux", mots:true, items:phrases(["plus","briques","est plus grand que","est plus petit que","est égal à"]) },
+    { titre:"Mots des jeux", mots:true, items:phrases(["plus","égale","briques","est plus grand que","est plus petit que","est égal à"]) },
     { titre:"Phrases des jeux", mots:true, items:phrases(["Bravo ! La maison est construite.","Le loup a soufflé. On réessaie ?","Bravo ! La tour est construite !"]) },
   ]},
   { id:"bilan-lecture", titre:"Évaluations – Bilan de lecture (mots dits à l'élève)", charger: async () => {
