@@ -168,11 +168,8 @@ COPIES = {"le-puzzle-magique-des-multiplications.html": "le-puzzle-magique-des-a
 
 
 def embed(src, height, title, lazy=False, large=False):
-    # Empreinte du fichier dans l'adresse : le navigateur recharge le jeu dès qu'il change.
-    local = os.path.join(ROOT, "assets", COPIES.get(os.path.basename(src), os.path.basename(src))) if src.startswith("/outils/") else ""
-    if local and os.path.exists(local) and "?" not in src:
-        import hashlib
-        src += "?v=" + hashlib.md5(open(local, "rb").read()).hexdigest()[:8]
+    # Pas d'empreinte ?v= dans l'adresse (Google y voyait des doublons) : le fichier _headers
+    # demande au navigateur de revérifier les jeux à chaque visite.
     # hauteur "ecran" : le jeu prend la hauteur de la fenêtre (sous le menu) et s'y adapte, sans défilement
     style = "height:calc(100vh - 84px);min-height:460px;max-height:1000px" if str(height) == "ecran" else f"height:{int(height)}px"
     return (f'<div class="embed{" embed-large" if large else ""}"><div class="embed-bar"><button class="btn embed-fs" type="button" onclick="pleinEcran(this)">⛶ Plein écran</button></div>'
@@ -1014,6 +1011,13 @@ def main():
     # ancien blog : la liste de toutes les ressources est sur /outils-pedagogiques/, les catégories dans leurs onglets
     redirects += ["/blog/ /outils-pedagogiques/ 301", "/blog /outils-pedagogiques/ 301"]
     redirects += [f"/blog/{k}/ /{v['domain']}/{k}/ 301" for k, v in CATS.items()]
+    # dossiers d'images repérés par Google dans le code des jeux (ce ne sont pas des pages) : vers l'article du jeu
+    redirects += ["/images/fusees-syllabes/ /post/les-fusees-des-syllabes/ 301",
+                  "/images/fusees-syllabes/mots/ /post/les-fusees-des-syllabes/ 301",
+                  "/images/mistigri/ /post/le-mistigri-des-attitudes/ 301",
+                  "/images/kiosque/mots/ /post/le-kiosque-des-mots/ 301"]
+    with open(os.path.join(OUT, "_headers"), "w") as f:  # jeux : toujours la dernière version
+        f.write("/outils/*\n  Cache-Control: no-cache\n")
     with open(os.path.join(OUT, "_redirects"), "w") as f:
         f.write("\n".join(redirects) + "\n")
     with open(os.path.join(OUT, "titres.json"), "w") as f:  # titres des pages, pour /admin/stats
