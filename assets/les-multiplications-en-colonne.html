@@ -78,7 +78,7 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 .icones button{width:48px;height:48px;padding:0;font-size:1.3em}
 #enligne{font-size:1.5em;font-weight:bold;margin:.2em 0}
 #zone{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;width:auto;max-width:1000px;margin:.2em 0}
-#message{min-height:3.2em;max-width:760px;text-align:center;font-size:1.08em;padding:.4em .8em;border-radius:14px;background:#fff;border:2px solid #eee;margin:.4em 0}
+#message{min-height:4.3em;box-sizing:border-box;max-width:760px;text-align:center;font-size:1.08em;padding:.4em .8em;border-radius:14px;background:#fff;border:2px solid #eee;margin:.4em 0}
 #message b{font-size:1.05em}
 #clavier{display:grid;grid-template-columns:repeat(3, calc(var(--case)*.95));gap:8px}
 #clavier button{height:calc(var(--case)*.85);font-size:calc(var(--case)*.45);font-weight:bold;box-shadow:0 3px 0 #bdbdbd}
@@ -476,15 +476,13 @@ function allerEtape(){
   var mult = e.L ? "<b class='"+(e.L.i?"d":"u")+"'>"+e.L.m+"</b>" : "";
   if(e.g==="zero"){
     vise(["B:1"]);
-    dire("Je multiplie maintenant par le chiffre des <b class='d'>dizaines</b> : "+mult+" dizaines.<br>Le résultat est en dizaines : j'écris d'abord <b>0</b> dans la colonne des <b class='u'>unités</b>.");
+    dire("Je multiplie maintenant par les <b class='d'>dizaines</b> ("+mult+" dizaines).<br>J'écris d'abord <b>0</b> dans la colonne des <b class='u'>unités</b>.");
   } else if(e.g==="mul"){
     vise(["A:"+e.d.p,"B:"+e.L.i]); flecheMul(e);
-    var m = (e.d.p===0 ? "Je multiplie par "+mult+" en commençant par les <b class='u'>unités</b>. " : "")
-      + "<br>Je multiplie les deux chiffres reliés par la flèche : <b>"+e.d.x+" × "+e.L.m+"</b>."
-      + (e.d.c ? "<br>Puis j'ajoute la retenue : <b>+ "+e.d.c+"</b>." : "")
-      + "<br><b>"+expr(e)+"</b> = ?";
-    if(e.dernier) m+="<br>Dernier chiffre : j'écris tout le résultat"+(e.d.c?" (sans oublier la retenue)":"")+".";
-    else m+="<br>"+(e.d.c?"J'ajoute la retenue, puis j'écris":"J'écris")+" le chiffre des unités du résultat.";
+    var m = (e.d.p===0 ? "Je multiplie par "+mult+", en commençant par les <b class='u'>unités</b> : "
+      : (e.d.c ? "Je multiplie, puis j'ajoute la retenue : " : "Je multiplie les chiffres reliés par la flèche : "))
+      + "<b style='white-space:nowrap'>"+e.d.x+" × "+e.L.m+(e.d.c?" + "+e.d.c:"")+"</b>&nbsp;=&nbsp;?<br>"
+      + (e.dernier ? "Dernier chiffre : j'écris tout le résultat." : "J'écris le chiffre des unités du résultat.");
     dire(m);
   } else if(e.g==="ret"){
     flecheMul(e);
