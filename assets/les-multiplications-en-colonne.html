@@ -462,9 +462,7 @@ function construireEtapes(o){
   return E;
 }
 function flecheMul(e){
-  var L=[{de:"B:"+e.L.i, vers:"A:"+e.d.p, coul:COUL[e.L.i?"d":"u"][0], signe:"×"}];
-  if(e.d.c) L.push({de:"R"+e.L.i+":"+e.d.p, vers:etapeMulCle(e), coul:"#e07000", signe:"+", cote:"gauche"});
-  fleche(L);
+  fleche([{de:"B:"+e.L.i, vers:"A:"+e.d.p, coul:COUL[e.L.i?"d":"u"][0]}]);
 }
 function pastille(t,c){ return "<span style='display:inline-block;min-width:1.4em;line-height:1.3em;text-align:center;border:3px solid "+c+";color:"+c+";border-radius:50%;font-weight:800;background:#fff'>"+t+"</span>"; }
 function etapeMulCle(e){ return (calc.lb===1?"F":"L"+e.L.i)+":"+(e.d.p+e.L.i); }
@@ -482,8 +480,8 @@ function allerEtape(){
   } else if(e.g==="mul"){
     vise(["A:"+e.d.p,"B:"+e.L.i]); flecheMul(e);
     var m = (e.d.p===0 ? "Je multiplie par "+mult+" en commençant par les <b class='u'>unités</b>. " : "")
-      + "<br>"+pastille("×",COUL[e.L.i?"d":"u"][0])+" Je multiplie les deux chiffres reliés par la flèche : <b>"+e.d.x+" × "+e.L.m+"</b>."
-      + (e.d.c ? "<br>"+pastille("+","#e07000")+" Puis j'ajoute la retenue montrée par la flèche + : <b>+ "+e.d.c+"</b>." : "")
+      + "<br>Je multiplie les deux chiffres reliés par la flèche : <b>"+e.d.x+" × "+e.L.m+"</b>."
+      + (e.d.c ? "<br>Puis j'ajoute la retenue : <b>+ "+e.d.c+"</b>." : "")
       + "<br><b>"+expr(e)+"</b> = ?";
     if(e.dernier) m+="<br>Dernier chiffre : j'écris tout le résultat"+(e.d.c?" (sans oublier la retenue)":"")+".";
     else m+="<br>"+(e.d.c?"J'ajoute la retenue, puis j'écris":"J'écris")+" le chiffre des unités du résultat.";
