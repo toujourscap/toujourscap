@@ -392,32 +392,45 @@ function choisir(c){
   document.querySelectorAll("#operation .saisie.active").forEach(function(x){x.classList.remove("active");});
   active=c; if(c) c.classList.add("active");
 }
-var flecheDe=null; // [clé départ, clé arrivée, couleur]
-function fleche(de,vers,coul){ flecheDe = de ? [de,vers,coul] : null; dessineFleche(); }
+var flecheDe=null; // liste de flèches {de, vers, coul, signe, cote}
+function fleche(liste){ flecheDe = liste && liste.length ? liste : null; dessineFleche(); }
 function dessineFleche(){
   var g=$("operation"); if(!g) return;
   var old=g.querySelector(".fleche"); if(old) old.remove();
   if(!flecheDe) return;
-  var a=cellule(flecheDe[0]), b=cellule(flecheDe[1]); if(!a||!b) return;
-  var R=g.getBoundingClientRect(), ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
-  var k=ra.width, x1=ra.left+ra.width/2-R.left, y1=ra.top+ra.height/2-R.top, x2=rb.left+rb.width/2-R.left, y2=rb.top+rb.height/2-R.top;
-  var p1,p2,cx,cy;
-  if(Math.abs(x2-x1)<2){ // même colonne : la flèche passe à droite des deux chiffres
-    p1=[x1+k*.42,y1+k*.12]; p2=[x2+k*.42,y2-k*.05]; cx=x1+k*1.05; cy=(y1+y2)/2+k*.1;
-  } else { // en diagonale : d'un coin à l'autre, légèrement bombée
-    var sx=x2>x1?1:-1;
-    p1=[x1+sx*k*.3,y1-k*.36]; p2=[x2-sx*k*.36,y2+k*.32];
-    cx=(p1[0]+p2[0])/2+sx*k*.12; cy=(p1[1]+p2[1])/2+k*.12;
-  }
-  var ex=p2[0]-cx, ey=p2[1]-cy, el=Math.hypot(ex,ey)||1; ex/=el; ey/=el; // direction finale
-  var t=k*.2, w=Math.max(4,k*.07);
-  var pointe="M"+(p2[0]-ex*t-ey*t*.8)+" "+(p2[1]-ey*t+ex*t*.8)+" L"+p2[0]+" "+p2[1]+" L"+(p2[0]-ex*t+ey*t*.8)+" "+(p2[1]-ey*t-ex*t*.8);
-  var courbe="M"+p1[0]+" "+p1[1]+" Q"+cx+" "+cy+" "+p2[0]+" "+p2[1];
-  var ns="http://www.w3.org/2000/svg", svg=document.createElementNS(ns,"svg");
+  var R=g.getBoundingClientRect(), ns="http://www.w3.org/2000/svg", svg=document.createElementNS(ns,"svg");
   svg.setAttribute("class","fleche"); svg.setAttribute("width",R.width); svg.setAttribute("height",R.height);
   svg.setAttribute("aria-hidden","true");
-  [["#fff",w+5],[flecheDe[2],w]].forEach(function(z){
-    [courbe,pointe].forEach(function(d){var p=document.createElementNS(ns,"path");p.setAttribute("d",d);p.setAttribute("stroke",z[0]);p.setAttribute("stroke-width",z[1]);svg.appendChild(p);});
+  var badges=[];
+  flecheDe.forEach(function(F){
+    var a=cellule(F.de), b=cellule(F.vers); if(!a||!b) return;
+    var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+    var k=rb.width, x1=ra.left+ra.width/2-R.left, y1=ra.top+ra.height/2-R.top, x2=rb.left+rb.width/2-R.left, y2=rb.top+rb.height/2-R.top;
+    var p1,p2,cx,cy, ka=ra.width;
+    if(F.cote==="gauche"){ // la retenue descend par la gauche jusqu'à la case à remplir
+      p1=[x1-ka*.45,y1+ka*.1]; p2=[x2-k*.44,y2-k*.12]; cx=Math.min(x1,x2)-k*1.15; cy=(y1+y2)/2;
+    } else if(Math.abs(x2-x1)<2){ // même colonne : à droite des deux chiffres
+      p1=[x1+k*.42,y1+k*.12]; p2=[x2+k*.42,y2-k*.05]; cx=x1+k*1.05; cy=(y1+y2)/2+k*.1;
+    } else { // en diagonale : d'un coin à l'autre, légèrement bombée
+      var sx=x2>x1?1:-1;
+      p1=[x1+sx*k*.3,y1-k*.36]; p2=[x2-sx*k*.36,y2+k*.32];
+      cx=(p1[0]+p2[0])/2+sx*k*.12; cy=(p1[1]+p2[1])/2+k*.12;
+    }
+    var ex=p2[0]-cx, ey=p2[1]-cy, el=Math.hypot(ex,ey)||1; ex/=el; ey/=el;
+    var t=k*.2, w=Math.max(4,k*.07);
+    var pointe="M"+(p2[0]-ex*t-ey*t*.8)+" "+(p2[1]-ey*t+ex*t*.8)+" L"+p2[0]+" "+p2[1]+" L"+(p2[0]-ex*t+ey*t*.8)+" "+(p2[1]-ey*t-ex*t*.8);
+    var courbe="M"+p1[0]+" "+p1[1]+" Q"+cx+" "+cy+" "+p2[0]+" "+p2[1];
+    [["#fff",w+5],[F.coul,w]].forEach(function(z){
+      [courbe,pointe].forEach(function(d){var p=document.createElementNS(ns,"path");p.setAttribute("d",d);p.setAttribute("stroke",z[0]);p.setAttribute("stroke-width",z[1]);svg.appendChild(p);});
+    });
+    if(F.signe) badges.push({x:.25*p1[0]+.5*cx+.25*p2[0], y:.25*p1[1]+.5*cy+.25*p2[1], r:Math.max(11,k*.2), w:w, F:F});
+  });
+  badges.forEach(function(B){ // pastille « × » ou « + » au milieu de la flèche
+    var c=document.createElementNS(ns,"circle"); c.setAttribute("cx",B.x); c.setAttribute("cy",B.y); c.setAttribute("r",B.r);
+    c.setAttribute("fill","#fff"); c.setAttribute("stroke",B.F.coul); c.setAttribute("stroke-width",Math.max(3,B.w*.7)); svg.appendChild(c);
+    var tx=document.createElementNS(ns,"text"); tx.setAttribute("x",B.x); tx.setAttribute("y",B.y); tx.setAttribute("text-anchor","middle");
+    tx.setAttribute("dominant-baseline","central"); tx.setAttribute("font-size",B.r*1.6); tx.setAttribute("font-weight","800");
+    tx.setAttribute("fill",B.F.coul); tx.setAttribute("font-family","Arial, sans-serif"); tx.textContent=B.F.signe; svg.appendChild(tx);
   });
   g.appendChild(svg);
 }
@@ -448,7 +461,13 @@ function construireEtapes(o){
   }
   return E;
 }
-function flecheMul(e){ fleche("B:"+e.L.i, "A:"+e.d.p, COUL[e.L.i?"d":"u"][0]); }
+function flecheMul(e){
+  var L=[{de:"B:"+e.L.i, vers:"A:"+e.d.p, coul:COUL[e.L.i?"d":"u"][0], signe:"×"}];
+  if(e.d.c) L.push({de:"R"+e.L.i+":"+e.d.p, vers:etapeMulCle(e), coul:"#e07000", signe:"+", cote:"gauche"});
+  fleche(L);
+}
+function pastille(t,c){ return "<span style='display:inline-block;min-width:1.4em;line-height:1.3em;text-align:center;border:3px solid "+c+";color:"+c+";border-radius:50%;font-weight:800;background:#fff'>"+t+"</span>"; }
+function etapeMulCle(e){ return (calc.lb===1?"F":"L"+e.L.i)+":"+(e.d.p+e.L.i); }
 function expr(e){ // « 7 × 6 (+ 2) »
   var t=e.d.x+" × "+e.L.m; if(e.d.c) t+=" + "+e.d.c+" <small>(retenue)</small>"; return t;
 }
@@ -463,7 +482,9 @@ function allerEtape(){
   } else if(e.g==="mul"){
     vise(["A:"+e.d.p,"B:"+e.L.i]); flecheMul(e);
     var m = (e.d.p===0 ? "Je multiplie par "+mult+" en commençant par les <b class='u'>unités</b>. " : "")
-      + "<b>"+expr(e)+"</b> = ?";
+      + "<br>"+pastille("×",COUL[e.L.i?"d":"u"][0])+" Je multiplie les deux chiffres reliés par la flèche : <b>"+e.d.x+" × "+e.L.m+"</b>."
+      + (e.d.c ? "<br>"+pastille("+","#e07000")+" Puis j'ajoute la retenue montrée par la flèche + : <b>+ "+e.d.c+"</b>." : "")
+      + "<br><b>"+expr(e)+"</b> = ?";
     if(e.dernier) m+="<br>Dernier chiffre : j'écris tout le résultat"+(e.d.c?" (sans oublier la retenue)":"")+".";
     else m+="<br>"+(e.d.c?"J'ajoute la retenue, puis j'écris":"J'écris")+" le chiffre des unités du résultat.";
     dire(m);
