@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les additions en colonne – avec et sans retenue</title><link rel="canonical" href="https://toujourscap.com/post/les-additions-en-colonne/"><meta name="description" content="Apprendre à poser une addition en colonne, avec et sans retenue, sur des gabarits adaptés aux élèves dys (inspirés du Cartable fantastique) : unités en bleu…">
+<meta name="description" content="Jeu pour apprendre l'addition posée en colonne, avec et sans retenue, sur les gabarits adaptés aux élèves dys (couleurs du Cartable fantastique). CE1, CE2.">
+<style>
+:root{
+  --u:#1d5bd8; --ut:#e6eefc;      /* unités : bleu */
+  --d:#d62828; --dt:#fde8e8;      /* dizaines : rouge */
+  --c:#1b9447; --ct:#e3f5ea;      /* centaines : vert */
+  --fond:#fffdf7; --encre:#1e1e1e; --doux:#6b6b6b; --ok:#1b9447; --oups:#e07b00;
+  --case:clamp(46px, min(13vw, 10.5vh), 92px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Arial, Helvetica, sans-serif;background:var(--fond);color:var(--encre);
+  font-size:20px;line-height:1.5;letter-spacing:.02em}
+button{font-family:inherit;font-size:1em;cursor:pointer;border-radius:14px;border:2px solid #cfcfcf;background:#fff;color:var(--encre)}
+button:focus-visible{outline:4px solid #f2b400;outline-offset:2px}
+.u{color:var(--u)} .d{color:var(--d)} .c{color:var(--c)}
+.ecran{display:none;min-height:100%;padding:16px;flex-direction:column;align-items:center}
+.ecran.actif{display:flex}
+h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
+.sous{color:var(--doux);margin:0 0 1em;text-align:center}
+
+/* ---------- accueil ---------- */
+.reglage{width:min(640px,100%);margin:.4em 0 .8em}
+.reglage h2{font-size:1em;margin:.2em 0 .4em}
+.choix{display:flex;gap:10px;flex-wrap:wrap}
+.choix button{flex:1 1 150px;padding:.7em .6em;font-weight:bold}
+.choix button[aria-pressed="true"]{border-color:var(--encre);background:#fff3c4;box-shadow:0 3px 0 var(--encre)}
+.choix small{display:block;font-weight:normal;color:var(--doux);font-size:.75em}
+.gros{font-size:1.25em;font-weight:bold;padding:.6em 1.8em;background:#ffd54a;border-color:#c79a00;box-shadow:0 4px 0 #c79a00;margin:.6em}
+.lien{border:none;background:none;text-decoration:underline;color:var(--doux);font-size:.85em}
+.bloc-fiche{background:#fff;border:2px dashed #cfcfcf;border-radius:14px;padding:.4em .8em .8em}
+.bloc-fiche h2 small{font-weight:normal;color:var(--doux);font-size:.75em}
+.petit{font-size:.85em;color:var(--doux);margin:0 0 .5em}
+.reference{max-width:640px;text-align:center;font-size:.8em;color:var(--doux);margin:0 0 1em}
+.reference a{color:inherit}
+.exemple{margin:.4em auto 0;transform:scale(.62);transform-origin:top center;height:calc(var(--case)*4.3)}
+
+/* ---------- gabarit d'opération ---------- */
+.operation{display:grid;gap:0;justify-content:center;margin:0 auto}
+.cel{width:var(--case);height:var(--case);display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--case)*.68);font-weight:bold}
+.col-u{background:var(--ut);color:var(--u)} .col-d{background:var(--dt);color:var(--d)} .col-c{background:var(--ct);color:var(--c)}
+.titre-col{height:calc(var(--case)*.62);font-size:calc(var(--case)*.42);border-radius:10px 10px 0 0}
+.ret{height:calc(var(--case)*.8)}
+.ret .boite{width:58%;height:78%;border:3px dashed currentColor;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--case)*.44);background:#fff}
+.signe{font-size:calc(var(--case)*.7);font-weight:bold;color:var(--encre)}
+.barre{height:6px;background:var(--encre);grid-column:1 / -1;margin:4px 0}
+.res .boite{width:84%;height:84%;border:3px solid currentColor;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center}
+.saisie{cursor:pointer}
+.saisie.active .boite{box-shadow:0 0 0 5px #f2b400;}
+.saisie.active.ret .boite{border-style:solid}
+.saisie.juste .boite{border-style:solid;border-width:4px}
+.saisie.oups .boite{border-color:var(--oups);animation:secoue .35s}
+@keyframes secoue{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.col-u.allume{box-shadow:inset 0 0 0 4px var(--u)} .col-d.allume{box-shadow:inset 0 0 0 4px var(--d)} .col-c.allume{box-shadow:inset 0 0 0 4px var(--c)}
+
+/* ---------- jeu ---------- */
+#haut{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pastilles{display:flex;gap:5px;flex-wrap:wrap}
+.pastille{width:16px;height:16px;border-radius:50%;background:#e4e4e4;border:2px solid #bdbdbd}
+.pastille.faite{background:var(--ok);border-color:var(--ok)} .pastille.aidee{background:#f6c66b;border-color:var(--oups)}
+.pastille.encours{border-color:var(--encre);background:#fff}
+.icones{display:flex;gap:6px}
+.icones button{width:48px;height:48px;padding:0;font-size:1.3em}
+#enligne{font-size:1.5em;font-weight:bold;margin:.2em 0}
+#zone{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;max-width:1000px;flex:1}
+#message{min-height:3.2em;max-width:760px;text-align:center;font-size:1.08em;padding:.4em .8em;border-radius:14px;background:#fff;border:2px solid #eee;margin:.4em 0}
+#message b{font-size:1.05em}
+#clavier{display:grid;grid-template-columns:repeat(3, calc(var(--case)*.95));gap:8px}
+#clavier button{height:calc(var(--case)*.85);font-size:calc(var(--case)*.45);font-weight:bold;box-shadow:0 3px 0 #bdbdbd}
+#clavier .efface{font-size:calc(var(--case)*.4)}
+#bas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:.3em 0}
+#bas button{padding:.55em 1.1em;font-weight:bold}
+#suivant{background:#ffd54a;border-color:#c79a00;box-shadow:0 4px 0 #c79a00}
+.cache{display:none !important}
+
+/* ---------- fin ---------- */
+#etoiles{font-size:3em;letter-spacing:.1em}
+#recap{width:min(600px,100%);border-collapse:collapse;margin:.6em 0;font-size:.95em}
+#recap td{padding:.3em .6em;border-bottom:1px solid #e6e6e6}
+#recap td:last-child{text-align:right}
+
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
+</head>
+<body>
+
+<!-- ================= ACCUEIL ================= -->
+<section id="accueil" class="ecran actif">
+  <h1>Les additions en colonne</h1>
+  <p class="sous">Les <b class="u">unités</b> sous les unités, les <b class="d">dizaines</b> sous les dizaines, les <b class="c">centaines</b> sous les centaines.</p>
+
+  <div class="reglage">
+    <h2>1. Quelles additions ?</h2>
+    <div class="choix" data-reglage="type">
+      <button data-v="sans" aria-pressed="true">Sans retenue</button>
+      <button data-v="avec" aria-pressed="false">Avec retenue</button>
+      <button data-v="mix" aria-pressed="false">Les deux mélangées</button>
+    </div>
+  </div>
+  <div class="reglage">
+    <h2>2. Quels nombres ?</h2>
+    <div class="choix" data-reglage="n">
+      <button data-v="2" aria-pressed="true"><span class="d">d</span> <span class="u">u</span><small>nombres à 2 chiffres</small></button>
+      <button data-v="3" aria-pressed="false"><span class="c">c</span> <span class="d">d</span> <span class="u">u</span><small>nombres à 3 chiffres</small></button>
+    </div>
+  </div>
+  <div class="reglage">
+    <h2>3. Comment ?</h2>
+    <div class="choix" data-reglage="guide">
+      <button data-v="1" aria-pressed="true">Pas à pas<small>le jeu montre la case à remplir</small></button>
+      <button data-v="0" aria-pressed="false">Tout seul<small>je remplis puis je vérifie</small></button>
+    </div>
+  </div>
+
+  <button class="gros" id="jouer">Jouer (10 additions)</button>
+  <div class="reglage bloc-fiche">
+    <h2>🖨 Fiche à imprimer <small>(avec les réglages 1 et 2)</small></h2>
+    <p class="petit">À chaque fois, de nouvelles additions sont tirées au hasard. À imprimer ou à télécharger (Word), avec le corrigé à la suite.</p>
+    <div class="choix">
+      <button id="ficheAccueil" data-nb="6">Nouvelle fiche<small>6 additions + corrigé</small></button>
+      <button id="ficheAccueil12" data-nb="12">Nouvelle fiche<small>12 additions (2 pages) + corrigé</small></button>
+    </div>
+  </div>
+  <div class="exemple" aria-hidden="true" id="exemple"></div>
+  <p class="reference">Gabarits adaptés aux élèves dys, inspirés du <a href="https://www.cartablefantastique.fr/" target="_blank" rel="noopener">Cartable fantastique</a> : <b class="u">unités en bleu</b>, <b class="d">dizaines en rouge</b>, <b class="c">centaines en vert</b>, une case réservée à la retenue.</p>
+</section>
+
+<!-- ================= JEU ================= -->
+<section id="jeu" class="ecran">
+  <div id="haut">
+    <div id="pastilles"></div>
+    <div class="icones">
+      <button id="ecouter" title="Écouter le calcul" aria-label="Écouter le calcul">🔊</button>
+      <button id="pleinEcran" title="Plein écran" aria-label="Plein écran">⛶</button>
+      <button id="arreter" title="Arrêter" aria-label="Arrêter">✖</button>
+    </div>
+  </div>
+  <div id="enligne"></div>
+  <div id="message"></div>
+  <div id="zone">
+    <div id="operation" class="operation"></div>
+    <div id="clavier"></div>
+  </div>
+  <div id="bas">
+    <button id="pouce">💡 Coup de pouce</button>
+    <button id="verifier" class="cache">✔ Vérifier</button>
+    <button id="suivant" class="cache">Addition suivante ➜</button>
+  </div>
+</section>
+
+<!-- ================= FIN ================= -->
+<section id="fin" class="ecran">
+  <h1>Bravo !</h1>
+  <div id="etoiles"></div>
+  <p id="phraseFin"></p>
+  <table id="recap"></table>
+  <div class="choix" style="width:min(640px,100%)">
+    <button id="rejouer">↻ Rejouer</button>
+    <button id="imprBilan">📄 Bilan de la partie</button>
+    <button id="imprFiche">📄 Fiche d'exercices + corrigé</button>
+    <button id="retourAccueil">⌂ Accueil</button>
+  </div>
+</section>
+
+
+<script>
+(function(){
+"use strict";
+var NB = 10;
+var NOMS = {u:"unités", d:"dizaines", c:"centaines"};
+var reg = {type:"sans", n:2, guide:true};
+var partie = null;   // {liste, i, resultats}
+var calc = null;     // addition en cours
+var active = null;   // cellule de saisie active
+var etapes = [], etape = 0, erreursCase = 0;
+
+var $ = function(id){return document.getElementById(id);};
+function hasard(a,b){return a + Math.floor(Math.random()*(b-a+1));}
+function lettres(n){return n===3 ? ["c","d","u"] : ["d","u"];}
+function chiffres(x,n){var t=[];for(var i=0;i<n;i++){t.unshift(x%10);x=Math.floor(x/10);}return t;}
+
+/* ---------- génération ---------- */
+function analyse(a,b,n){
+  var da=chiffres(a,n), db=chiffres(b,n), cin=new Array(n).fill(0), somme=new Array(n).fill(0), r=0;
+  for(var k=n-1;k>=0;k--){cin[k]=r; somme[k]=da[k]+db[k]+r; r=somme[k]>=10?1:0;}
+  return {a:a,b:b,s:a+b,n:n,da:da,db:db,ds:chiffres(a+b,n),cin:cin,somme:somme,retenue:cin.some(function(x){return x>0;})};
+}
+function nouvelle(type,n,deja){
+  var min=Math.pow(10,n-1), max=Math.pow(10,n)-1;
+  for(var essai=0;essai<4000;essai++){
+    var a=hasard(min+1,max-min), b=hasard(min,max-a);
+    if(a+b>max) continue;
+    var o=analyse(a,b,n);
+    if(type==="sans" && o.retenue) continue;
+    if(type==="avec" && !o.retenue) continue;
+    // éviter les calculs trop faciles (zéros partout) et les doublons
+    var zeros=o.da.concat(o.db).filter(function(x){return x===0;}).length;
+    if(zeros>1) continue;
+    if(type==="sans" && o.somme[n-1]<4) continue;
+    if(deja && deja.some(function(p){return p.a===a&&p.b===b;})) continue;
+    if(Math.random()<.5){var t=o.a; o=analyse(b,t,n);} // ordre au hasard
+    return o;
+  }
+  return analyse(min+1,min,n);
+}
+function liste(type,n,nb){
+  var l=[];
+  for(var i=0;i<nb;i++){
+    var t=type;
+    if(type==="mix") t = (i%2===0) ? "sans" : "avec";
+    if(type==="avec" && i<2 && n===2) t="avec";
+    l.push(nouvelle(t,n,l));
+  }
+  if(type==="mix") l.sort(function(){return Math.random()-.5;});
+  return l;
+}
+
+/* ---------- dessin du gabarit ---------- */
+function gabarit(o, opts){
+  // opts : {jeu:bool, corrige:bool}
+  opts=opts||{};
+  var L=lettres(o.n), g=document.createElement("div");
+  g.className="operation";
+  g.style.gridTemplateColumns="calc(var(--case)*.8) repeat("+o.n+", var(--case))";
+  function cel(cls,html){var e=document.createElement("div");e.className="cel "+cls;if(html!=null)e.innerHTML=html;g.appendChild(e);return e;}
+  // titres
+  cel("titre-col");
+  L.forEach(function(l){cel("titre-col col-"+l, l);});
+  // retenues (au-dessus des colonnes qui peuvent en recevoir)
+  cel("ret");
+  L.forEach(function(l,k){
+    if(k===o.n-1){cel("ret col-"+l);return;}
+    var e=cel("ret col-"+l,'<span class="boite"></span>');
+    e.dataset.genre="ret"; e.dataset.k=k;
+    if(opts.corrige && o.cin[k]) e.firstChild.textContent=o.cin[k];
+    if(opts.jeu){e.classList.add("saisie");}
+  });
+  // nombres
+  cel("");
+  L.forEach(function(l,k){cel("col-"+l, o.da[k]);});
+  cel("signe","+");
+  L.forEach(function(l,k){cel("col-"+l, o.db[k]);});
+  var b=document.createElement("div");b.className="barre";g.appendChild(b);
+  // résultat
+  cel("");
+  L.forEach(function(l,k){
+    var e=cel("res col-"+l,'<span class="boite"></span>');
+    e.dataset.genre="res"; e.dataset.k=k;
+    if(opts.corrige) e.firstChild.textContent=o.ds[k];
+    if(opts.jeu) e.classList.add("saisie");
+  });
+  return g;
+}
+
+/* ---------- accueil ---------- */
+document.querySelectorAll(".choix[data-reglage]").forEach(function(bloc){
+  bloc.addEventListener("click",function(ev){
+    var bt=ev.target.closest("button"); if(!bt) return;
+    bloc.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed", x===bt?"true":"false");});
+    var k=bloc.dataset.reglage, v=bt.dataset.v;
+    reg[k] = k==="type" ? v : (k==="n" ? +v : v==="1");
+    dessineExemple();
+  });
+});
+function dessineExemple(){
+  var o = reg.n===3 ? analyse(reg.type==="sans"?243:258, reg.type==="sans"?135:167, 3)
+                    : analyse(reg.type==="sans"?34:37, reg.type==="sans"?25:25, 2);
+  var ex=$("exemple"); ex.innerHTML=""; ex.appendChild(gabarit(o,{corrige:true}));
+}
+dessineExemple();
+
+function montre(id){document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});}
+
+/* ---------- partie ---------- */
+$("jouer").onclick=function(){
+  partie={liste:liste(reg.type,reg.n,NB), i:0, resultats:[], type:reg.type, n:reg.n, guide:reg.guide};
+  montre("jeu"); construireClavier(); charger();
+};
+function pastilles(){
+  var p=$("pastilles"); p.innerHTML="";
+  for(var i=0;i<NB;i++){
+    var s=document.createElement("span"); s.className="pastille";
+    var r=partie.resultats[i];
+    if(r) s.classList.add(r.erreurs===0 && !r.aide ? "faite":"aidee");
+    else if(i===partie.i) s.classList.add("encours");
+    p.appendChild(s);
+  }
+}
+function enLigne(o){return o.a+" + "+o.b+" = ?";}
+function charger(){
+  calc=partie.liste[partie.i];
+  calc.erreurs=0; calc.aide=false; calc.fini=false;
+  pastilles();
+  $("enligne").textContent=enLigne(calc);
+  var op=$("operation"); op.replaceWith(gabarit(calc,{jeu:true}));
+  document.querySelector("#zone .operation").id="operation";
+  $("operation").addEventListener("click",function(ev){
+    var c=ev.target.closest(".saisie"); if(!c||calc.fini) return;
+    if(partie.guide) return; // en pas à pas, c'est le jeu qui choisit la case
+    choisir(c);
+  });
+  $("suivant").classList.add("cache");
+  $("pouce").classList.remove("cache");
+  $("verifier").classList.toggle("cache", partie.guide);
+  if(partie.guide){
+    etapes=[];
+    for(var k=calc.n-1;k>=0;k--){
+      etapes.push({genre:"res",k:k});
+      if(calc.somme[k]>=10 && k>0) etapes.push({genre:"ret",k:k-1});
+    }
+    etape=0; allerEtape();
+  } else {
+    choisir(cellule("res",calc.n-1));
+    dire("Je commence toujours par les <b class='u'>unités</b>, à droite.");
+  }
+}
+function cellule(genre,k){return document.querySelector('#operation .saisie[data-genre="'+genre+'"][data-k="'+k+'"]');}
+function choisir(c){
+  document.querySelectorAll("#operation .saisie.active").forEach(function(x){x.classList.remove("active");});
+  active=c; if(c) c.classList.add("active");
+  document.querySelectorAll("#operation .allume").forEach(function(x){x.classList.remove("allume");});
+}
+function lettre(k){return lettres(calc.n)[k];}
+function nomCol(k){var l=lettre(k);return "<b class='"+l+"'>"+NOMS[l]+"</b>";}
+function dire(html){$("message").innerHTML=html;}
+
+function detailColonne(k){
+  var t=calc.da[k]+" + "+calc.db[k];
+  if(calc.cin[k]) t+=" + "+calc.cin[k]+" <small>(retenue)</small>";
+  return t+" = "+calc.somme[k];
+}
+function allerEtape(){
+  erreursCase=0;
+  if(etape>=etapes.length){ terminer(); return; }
+  var e=etapes[etape], c=cellule(e.genre,e.k);
+  choisir(c);
+  if(e.genre==="res"){
+    var msg = (e.k===calc.n-1) ? "Je commence par les "+nomCol(e.k)+", à droite. " : "Maintenant, les "+nomCol(e.k)+". ";
+    if(calc.cin[e.k]) msg+="Je n'oublie pas la retenue ! ";
+    dire(msg+"<br>Combien font les "+nomCol(e.k)+" ?");
+  } else {
+    var s=calc.somme[e.k+1], depuis=lettre(e.k+1);
+    dire("J'ai trouvé <b>"+s+"</b> "+NOMS[depuis]+". C'est 1 "+NOMS[lettre(e.k)].replace(/s$/,"")+" et "+(s-10)+" "+NOMS[depuis]+".<br>"
+      +"J'ai écrit "+(s-10)+". Je retiens <b>1</b> : je l'écris en haut, chez les "+nomCol(e.k)+".");
+  }
+}
+function attendu(genre,k){return genre==="res" ? calc.ds[k] : calc.cin[k];}
+
+function taper(v){
+  if(!active||calc.fini) return;
+  var boite=active.querySelector(".boite");
+  if(v==="x"){ boite.textContent=""; active.classList.remove("juste","oups"); return; }
+  boite.textContent=v;
+  active.classList.remove("oups","juste");
+  if(partie.guide){
+    var e=etapes[etape];
+    if(+v===attendu(e.genre,e.k)){
+      active.classList.add("juste"); etape++; setTimeout(allerEtape,350);
+    } else {
+      void active.offsetWidth; active.classList.add("oups");
+      erreursCase++; calc.erreurs++;
+      if(e.genre==="ret") dire("La retenue, c'est toujours <b>1</b> dizaine… ou 1 centaine ! Je l'écris chez les "+nomCol(e.k)+".");
+      else if(erreursCase===1){
+        var s=calc.somme[e.k];
+        dire("Pas tout à fait. Recompte les "+nomCol(e.k)+"."+(s>=10?"<br>S'il y en a 10 ou plus, je n'écris que le chiffre des "+NOMS[lettre(e.k)]+".":""));
+      } else coupDePouce();
+    }
+  } else {
+    // mode libre : on passe à la case suivante (vers la gauche)
+    var k=+active.dataset.k;
+    if(active.dataset.genre==="res" && k>0){
+      if(calc.somme[k]>=10){} // l'élève choisit lui-même d'écrire la retenue
+      choisir(cellule("res",k-1));
+    }
+  }
+}
+function coupDePouce(){
+  calc.aide=true;
+  var k = partie.guide ? etapes[etape].k : (active ? +active.dataset.k : calc.n-1);
+  var genre = partie.guide ? etapes[etape].genre : (active?active.dataset.genre:"res");
+  if(genre==="ret") k=k+1;
+  document.querySelectorAll("#operation .allume").forEach(function(x){x.classList.remove("allume");});
+  document.querySelectorAll("#operation .col-"+lettre(k)).forEach(function(x){x.classList.add("allume");});
+  var s=calc.somme[k];
+  var m="💡 Les "+nomCol(k)+" : "+detailColonne(k)+".";
+  if(s>=10 && k>0) m+="<br>"+s+" "+NOMS[lettre(k)]+", c'est 1 "+NOMS[lettre(k-1)].replace(/s$/,"")+" et "+(s-10)+" "+NOMS[lettre(k)]+" : j'écris <b>"+(s-10)+"</b> et je retiens <b>1</b>.";
+  else m+="<br>J'écris <b>"+s+"</b>.";
+  dire(m);
+}
+$("pouce").onclick=coupDePouce;
+
+$("verifier").onclick=function(){
+  var faux=0, vides=0;
+  document.querySelectorAll("#operation .saisie").forEach(function(c){
+    var v=c.querySelector(".boite").textContent, k=+c.dataset.k, g=c.dataset.genre;
+    c.classList.remove("juste","oups");
+    if(g==="ret"){
+      if(v==="") return;
+      if(+v===calc.cin[k]) c.classList.add("juste"); else {faux++; void c.offsetWidth; c.classList.add("oups");}
+      return;
+    }
+    if(v===""){vides++; return;}
+    if(+v===calc.ds[k]) c.classList.add("juste"); else {faux++; void c.offsetWidth; c.classList.add("oups");}
+  });
+  if(vides){ dire("Il reste des cases vides dans le résultat."); return; }
+  if(faux){ calc.erreurs++; dire("Les cases en orange ne sont pas justes. Je recommence colonne par colonne, en partant des <b class='u'>unités</b>."); return; }
+  terminer();
+};
+
+function terminer(){
+  calc.fini=true; choisir(null);
+  partie.resultats[partie.i]={a:calc.a,b:calc.b,s:calc.s,retenue:calc.retenue,erreurs:calc.erreurs,aide:calc.aide};
+  pastilles();
+  var bravo=["Bravo !","Super !","C'est juste !","Bien joué !","Excellent !"][hasard(0,4)];
+  dire("<b>"+bravo+"</b> "+calc.a+" + "+calc.b+" = <b>"+calc.s+"</b>");
+  parler(calc.a+" plus "+calc.b+" égale "+calc.s);
+  $("enligne").textContent=calc.a+" + "+calc.b+" = "+calc.s;
+  $("pouce").classList.add("cache"); $("verifier").classList.add("cache");
+  var s=$("suivant"); s.textContent = partie.i<NB-1 ? "Addition suivante ➜" : "Voir mon bilan ➜";
+  s.classList.remove("cache"); s.focus();
+}
+$("suivant").onclick=function(){ partie.i++; if(partie.i>=NB) fin(); else charger(); };
+
+/* ---------- clavier ---------- */
+function construireClavier(){
+  var cl=$("clavier"); if(cl.childElementCount) return;
+  [7,8,9,4,5,6,1,2,3,"x",0].forEach(function(v){
+    var b=document.createElement("button");
+    b.textContent = v==="x" ? "⌫" : v; if(v==="x") b.setAttribute("aria-label","Effacer");
+    if(v==="x") b.className="efface";
+    b.onclick=function(){taper(String(v));};
+    cl.appendChild(b);
+  });
+}
+document.addEventListener("keydown",function(ev){
+  if(!$("jeu").classList.contains("actif")) return;
+  if(/^[0-9]$/.test(ev.key)) taper(ev.key);
+  else if(ev.key==="Backspace"||ev.key==="Delete") taper("x");
+  else if(ev.key==="Enter"){ if(!$("suivant").classList.contains("cache")) $("suivant").click(); else if(!partie.guide) $("verifier").click(); }
+});
+
+/* ---------- voix, plein écran ---------- */
+function parler(t){
+  try{ if(!window.speechSynthesis) return; speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.9; speechSynthesis.speak(u);}catch(e){}
+}
+$("ecouter").onclick=function(){ if(calc) parler(calc.a+" plus "+calc.b); };
+$("pleinEcran").onclick=function(){
+  var d=document; try{ if(!d.fullscreenElement) d.documentElement.requestFullscreen(); else d.exitFullscreen(); }catch(e){}
+};
+$("arreter").onclick=function(){ try{speechSynthesis.cancel();}catch(e){} montre("accueil"); };
+
+/* ---------- fin ---------- */
+function fin(){
+  montre("fin");
+  var r=partie.resultats, seul=r.filter(function(x){return x.erreurs===0&&!x.aide;}).length;
+  var et = seul>=9?3 : seul>=6?2 : 1;
+  $("etoiles").textContent="★".repeat(et)+"☆".repeat(3-et);
+  $("phraseFin").innerHTML="<b>"+seul+" additions sur "+NB+"</b> réussies du premier coup, sans coup de pouce.";
+  var niv="Additions "+libelleType(partie.type)+", "+partie.n+" chiffres";
+  try{ TDC.note({s:seul, n:NB, g:seul>=8, niv:niv, d:seul+" / "+NB+" additions posées réussies du premier coup ("+libelleType(partie.type)+", nombres à "+partie.n+" chiffres, "+(partie.guide?"pas à pas":"tout seul")+")"}); }catch(e){}
+  var t=$("recap"); t.innerHTML="";
+  r.forEach(function(x){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+x.a+" + "+x.b+" = "+x.s+"</td><td>"+(x.retenue?"avec retenue":"sans retenue")+"</td><td>"
+      +(x.erreurs===0&&!x.aide?"✔ du premier coup":(x.erreurs+" essai"+(x.erreurs>1?"s":"")+" de plus"+(x.aide?", 💡":"")))+"</td>";
+    t.appendChild(tr);
+  });
+}
+$("rejouer").onclick=function(){ $("jouer").click(); };
+$("retourAccueil").onclick=function(){ montre("accueil"); };
+
+/* ---------- documents écrits (fiche + bilan, Word ou impression, rien n'est enregistré) ---------- */
+function libelleType(t){return t==="sans"?"sans retenue":t==="avec"?"avec retenue":"avec et sans retenue";}
+var COUL={u:["#1d5bd8","#e6eefc"], d:["#d62828","#fde8e8"], c:["#1b9447","#e3f5ea"]};
+function gabaritTable(o, corrige){
+  // tableau avec styles en ligne : s'imprime et passe dans Word
+  var L=lettres(o.n), W="width:30pt;height:30pt;text-align:center;vertical-align:middle;padding:0;font-family:Arial;";
+  var vide="border:none;"+W;
+  function td(l,txt,extra){return "<td style=\""+W+"border:none;background:"+COUL[l][1]+";color:"+COUL[l][0]+";font-weight:bold;"+(extra||"")+"\">"+txt+"</td>";}
+  var h="<table style=\"border-collapse:separate;border-spacing:0;margin:2pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact\">";
+  h+="<tr><td style=\""+vide+"height:18pt\"></td>"+L.map(function(l){return td(l,l,"height:18pt;font-size:13pt");}).join("")+"</tr>";
+  h+="<tr><td style=\""+vide+"height:22pt\"></td>"+L.map(function(l,k){
+    if(k===o.n-1) return td(l,"","height:22pt");
+    return td(l,"<span style=\"display:inline-block;width:15pt;height:15pt;line-height:15pt;border:1.5pt dashed "+COUL[l][0]+";background:#fff;font-size:11pt\">"+(corrige&&o.cin[k]?o.cin[k]:"&nbsp;")+"</span>","height:22pt");
+  }).join("")+"</tr>";
+  h+="<tr><td style=\""+vide+"\"></td>"+L.map(function(l,k){return td(l,o.da[k],"font-size:20pt");}).join("")+"</tr>";
+  h+="<tr><td style=\""+vide+"font-size:20pt;font-weight:bold\">+</td>"+L.map(function(l,k){return td(l,o.db[k],"font-size:20pt");}).join("")+"</tr>";
+  h+="<tr><td style=\""+vide+"border-top:2.5pt solid #000\"></td>"+L.map(function(l,k){
+    return td(l,"<span style=\"display:inline-block;width:24pt;height:24pt;line-height:24pt;border:1.5pt solid "+COUL[l][0]+";background:#fff;font-size:18pt\">"+(corrige?o.ds[k]:"&nbsp;")+"</span>","border-top:2.5pt solid #000");
+  }).join("")+"</tr></table>";
+  return h;
+}
+function pageFiche(l, corrige, depart){
+  var h="<table style=\"width:100%;border-collapse:collapse\">";
+  for(var i=0;i<l.length;i+=2){
+    h+="<tr>";
+    for(var j=i;j<i+2;j++){
+      h+="<td style=\"width:50%;border:1px solid #ddd;padding:4pt 6pt;vertical-align:top\">"
+        +(l[j]?"<div style=\"font-size:10pt;color:#555\">"+(depart+j+1)+")</div>"+gabaritTable(l[j],corrige):"")+"</td>";
+    }
+    h+="</tr>";
+  }
+  return h+"</table>";
+}
+function ouvrirFiche(type,n,nb){
+  nb=nb||6;
+  var l=liste(type,n,nb), paquets=[];
+  for(var i=0;i<l.length;i+=6) paquets.push(l.slice(i,i+6));
+  var consigne="<p>✏️ <b>Calcule.</b> Je commence par les <b style=\"color:#1d5bd8\">unités</b>. Si je trouve 10 ou plus, j'écris la retenue dans la case du haut.</p>";
+  var leg="<p style=\"font-size:10pt\">"+(n===3?"<b style=\"color:#1b9447\">c = centaines</b> · ":"")+"<b style=\"color:#d62828\">d = dizaines</b> · <b style=\"color:#1d5bd8\">u = unités</b> — additions "+libelleType(type)+". Gabarits inspirés du Cartable fantastique (cartablefantastique.fr).</p>";
+  DocEcrit.ouvrir({titre:"Fiche d'exercices", jeu:"Les additions en colonne", nom:"Fiche additions en colonne", prenom:true, html:function(){
+    var h="";
+    paquets.forEach(function(q,k){ h+=(k?"<div class=\"saut\"></div>":"")+consigne+pageFiche(q,false,k*6)+leg; });
+    paquets.forEach(function(q,k){ h+="<div class=\"saut\"><h2>Corrigé"+(paquets.length>1?" ("+(k+1)+"/"+paquets.length+")":"")+"</h2></div>"+pageFiche(q,true,k*6); });
+    return h;
+  }});
+}
+$("ficheAccueil").onclick=function(){ ouvrirFiche(reg.type,reg.n,6); };
+$("ficheAccueil12").onclick=function(){ ouvrirFiche(reg.type,reg.n,12); };
+$("imprFiche").onclick=function(){ ouvrirFiche(partie.type,partie.n,6); };
+$("imprBilan").onclick=function(){
+  var r=partie.resultats, seul=r.filter(function(x){return x.erreurs===0&&!x.aide;}).length;
+  var a_revoir=r.filter(function(x){return x.erreurs>0||x.aide;});
+  DocEcrit.ouvrir({titre:"Bilan de la partie", jeu:"Les additions en colonne", nom:"Bilan additions en colonne", prenom:true, html:function(){
+    return "<p>Additions "+libelleType(partie.type)+" — nombres à "+partie.n+" chiffres — mode "+(partie.guide?"pas à pas":"tout seul")+"</p>"
+      +"<h2>Résultats</h2><p><b>"+seul+" / "+NB+"</b> additions réussies du premier coup, sans coup de pouce.</p>"
+      +"<h2>Calculs à retravailler</h2><p>"+(a_revoir.map(function(x){return x.a+" + "+x.b+" = "+x.s;}).join(" ; ")||"Aucun : bravo !")+"</p>"
+      +"<h2>Détail</h2><table><tr><th>Calcul</th><th>Type</th><th>Réussite</th></tr>"
+      +r.map(function(x){return "<tr><td>"+x.a+" + "+x.b+" = "+x.s+"</td><td>"+(x.retenue?"avec retenue":"sans retenue")+"</td><td>"
+        +(x.erreurs===0&&!x.aide?"✔ du premier coup":x.erreurs+" erreur"+(x.erreurs>1?"s":"")+(x.aide?", coup de pouce":""))+"</td></tr>";}).join("")+"</table>"
+      +"<p style=\"font-size:12px;color:#666\">Simple outil d'observation, sans valeur officielle.</p>";
+  }});
+};
+})();
+</script>
+</body>
+</html>
