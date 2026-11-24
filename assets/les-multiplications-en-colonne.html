@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les multiplications en colonne – avec et sans retenue</title>
+<meta name="description" content="Jeu pour apprendre la multiplication posée, avec et sans retenue, par un nombre à 1 ou 2 chiffres, sur des gabarits adaptés aux élèves dys (couleurs du Cartable fantastique). CE2, CM1, CM2.">
+<style>
+:root{
+  --u:#1d5bd8; --ut:#e6eefc;      /* unités : bleu */
+  --d:#d62828; --dt:#fde8e8;      /* dizaines : rouge */
+  --c:#1b9447; --ct:#e3f5ea;      /* centaines : vert */
+  --m:#222222; --mt:#e8e8e8;      /* milliers : noir (le « carton noir » du Cartable fantastique) */
+  --fond:#fffdf7; --encre:#1e1e1e; --doux:#6b6b6b; --ok:#1b9447; --oups:#e07b00;
+  --case:clamp(46px, min(13vw, 10.5vh), 92px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Arial, Helvetica, sans-serif;background:#e9cf9c url(/images/additions-colonne/atelier.jpg) center/cover no-repeat fixed;color:var(--encre);
+  font-size:20px;line-height:1.5;letter-spacing:.02em}
+button{font-family:inherit;font-size:1em;cursor:pointer;border-radius:14px;border:2px solid #cfcfcf;background:#fff;color:var(--encre)}
+button:focus-visible{outline:4px solid #f2b400;outline-offset:2px}
+.u{color:var(--u)} .d{color:var(--d)} .c{color:var(--c)} .m{color:var(--m)}
+.ecran{display:none;min-height:100%;padding:16px;flex-direction:column;align-items:center}
+.ecran.actif{display:flex}
+.panneau{background:rgba(255,253,247,.94);border-radius:22px;box-shadow:0 6px 24px rgba(80,50,10,.25);padding:14px 22px;width:min(720px,100%);display:flex;flex-direction:column;align-items:center}
+/* feuille quadrillée, comme sur le plan de travail du décor */
+#zone{background-color:#fff;background-image:linear-gradient(#dfe7f3 1px,transparent 1px),linear-gradient(90deg,#dfe7f3 1px,transparent 1px);background-size:22px 22px;
+  border-radius:18px;box-shadow:0 6px 24px rgba(80,50,10,.3);padding:18px 24px}
+#haut,#bas{background:rgba(255,253,247,.9);border-radius:16px;padding:6px 10px}
+#enligne{background:rgba(255,253,247,.92);border-radius:14px;padding:0 .8em}
+h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
+.sous{color:var(--doux);margin:0 0 1em;text-align:center}
+
+/* ---------- accueil ---------- */
+.reglage{width:min(640px,100%);margin:.4em 0 .8em}
+.reglage h2{font-size:1em;margin:.2em 0 .4em}
+.choix{display:flex;gap:10px;flex-wrap:wrap}
+.choix button{flex:1 1 120px;padding:.7em .6em;font-weight:bold}
+.choix button[aria-pressed="true"]{border-color:var(--encre);background:#fff3c4;box-shadow:0 3px 0 var(--encre)}
+.choix small{display:block;font-weight:normal;color:var(--doux);font-size:.75em}
+.gros{font-size:1.25em;font-weight:bold;padding:.6em 1.8em;background:#ffd54a;border-color:#c79a00;box-shadow:0 4px 0 #c79a00;margin:.6em}
+.lien{border:none;background:none;text-decoration:underline;color:var(--doux);font-size:.85em}
+.bloc-fiche{background:#fff;border:2px dashed #cfcfcf;border-radius:14px;padding:.4em .8em .8em}
+.bloc-fiche h2 small{font-weight:normal;color:var(--doux);font-size:.75em}
+.petit{font-size:.85em;color:var(--doux);margin:0 0 .5em}
+.reference{max-width:640px;text-align:center;font-size:.8em;color:var(--doux);margin:0 0 1em}
+.reference a{color:inherit}
+.exemple{margin:.4em auto 0;transform:scale(.62);transform-origin:top center;height:calc(var(--case)*4.3)}
+
+/* ---------- gabarit d'opération ---------- */
+.operation{display:grid;gap:0;justify-content:center;margin:0 auto}
+.cel{width:var(--case);height:var(--case);display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--case)*.68);font-weight:bold}
+.col-m{background:var(--mt);color:var(--m)} .col-u{background:var(--ut);color:var(--u)} .col-d{background:var(--dt);color:var(--d)} .col-c{background:var(--ct);color:var(--c)}
+.titre-col{height:calc(var(--case)*.62);font-size:calc(var(--case)*.42);border-radius:10px 10px 0 0}
+.ret{height:calc(var(--case)*.8)}
+.ret .boite{width:58%;height:78%;border:3px dashed currentColor;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--case)*.44);background:#fff}
+.signe{font-size:calc(var(--case)*.7);font-weight:bold;color:var(--encre)}
+.barre{height:6px;background:var(--encre);grid-column:1 / -1;margin:4px 0}
+.res .boite{width:84%;height:84%;border:3px solid currentColor;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center}
+.saisie{cursor:pointer}
+.saisie.active .boite{box-shadow:0 0 0 5px #f2b400;}
+.saisie.active.ret .boite{border-style:solid}
+.saisie.juste .boite{border-style:solid;border-width:4px}
+.saisie.oups .boite{border-color:var(--oups);animation:secoue .35s}
+@keyframes secoue{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.col-m.allume{box-shadow:inset 0 0 0 4px var(--m)} .col-u.allume{box-shadow:inset 0 0 0 4px var(--u)} .col-d.allume{box-shadow:inset 0 0 0 4px var(--d)} .col-c.allume{box-shadow:inset 0 0 0 4px var(--c)}
+
+/* ---------- jeu ---------- */
+#haut{width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pastilles{display:flex;gap:5px;flex-wrap:wrap}
+.pastille{width:16px;height:16px;border-radius:50%;background:#e4e4e4;border:2px solid #bdbdbd}
+.pastille.faite{background:var(--ok);border-color:var(--ok)} .pastille.aidee{background:#f6c66b;border-color:var(--oups)}
+.pastille.encours{border-color:var(--encre);background:#fff}
+.icones{display:flex;gap:6px}
+.icones button{width:48px;height:48px;padding:0;font-size:1.3em}
+#enligne{font-size:1.5em;font-weight:bold;margin:.2em 0}
+#zone{display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;width:auto;max-width:1000px;margin:.2em 0}
+#message{min-height:3.2em;max-width:760px;text-align:center;font-size:1.08em;padding:.4em .8em;border-radius:14px;background:#fff;border:2px solid #eee;margin:.4em 0}
+#message b{font-size:1.05em}
+#clavier{display:grid;grid-template-columns:repeat(3, calc(var(--case)*.95));gap:8px}
+#clavier button{height:calc(var(--case)*.85);font-size:calc(var(--case)*.45);font-weight:bold;box-shadow:0 3px 0 #bdbdbd}
+#clavier .efface{font-size:calc(var(--case)*.4)}
+#bas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:.3em 0}
+#bas button{padding:.55em 1.1em;font-weight:bold}
+#suivant{background:#ffd54a;border-color:#c79a00;box-shadow:0 4px 0 #c79a00}
+.cache{display:none !important}
+
+/* ---------- fin ---------- */
+#etoiles{font-size:3em;letter-spacing:.1em}
+#recap{width:min(600px,100%);border-collapse:collapse;margin:.6em 0;font-size:.95em}
+#recap td{padding:.3em .6em;border-bottom:1px solid #e6e6e6}
+#recap td:last-child{text-align:right}
+
+/* ---------- spécifique multiplication ---------- */
+.etiq{font-size:calc(var(--case)*.34);font-weight:bold;white-space:nowrap}
+.ret.etiq,.etiq.ret{height:calc(var(--case)*.8)}
+.vise{outline:4px solid #f2b400;outline-offset:-6px;border-radius:12px}
+.barre.courte{grid-column:2 / -1}
+#table{position:fixed;right:14px;bottom:14px;background:#fff;border:3px solid var(--encre);border-radius:16px;padding:.5em 1em;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:1.05em;z-index:5}
+#table h3{margin:0 0 .3em;font-size:1em}
+#table ol{list-style:none;margin:0;padding:0;columns:2;column-gap:1.4em}
+#table li{white-space:nowrap}
+#table li.ici{background:#fff3c4;border-radius:6px}
+#table button{position:absolute;top:4px;right:6px;border:none;background:none;font-size:1.1em}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
+</head>
+<body>
+
+<!-- ================= ACCUEIL ================= -->
+<section id="accueil" class="ecran actif"><div class="panneau">
+  <h1>Les multiplications en colonne</h1>
+  <p class="sous">Je multiplie chaque chiffre, en commençant par les <b class="u">unités</b>, et j'écris les retenues dans les cases du haut.</p>
+
+  <div class="reglage">
+    <h2>1. Quelles multiplications ?</h2>
+    <div class="choix" data-reglage="type">
+      <button data-v="sans" aria-pressed="false">Sans retenue</button>
+      <button data-v="avec" aria-pressed="true">Avec retenue</button>
+      <button data-v="mix" aria-pressed="false">Les deux mélangées</button>
+    </div>
+  </div>
+  <div class="reglage">
+    <h2>2. Quels nombres ?</h2>
+    <div class="choix" data-reglage="n">
+      <button data-v="1" aria-pressed="true">Niveau 1<small><span class="d">d</span> <span class="u">u</span> × <span class="u">u</span></small></button>
+      <button data-v="2" aria-pressed="false">Niveau 2<small><span class="c">c</span> <span class="d">d</span> <span class="u">u</span> × <span class="u">u</span></small></button>
+      <button data-v="3" aria-pressed="false">Niveau 3<small><span class="m">m</span> <span class="c">c</span> <span class="d">d</span> <span class="u">u</span> × <span class="u">u</span></small></button>
+      <button data-v="4" aria-pressed="false">Niveau 4<small><span class="d">d</span> <span class="u">u</span> × <span class="d">d</span> <span class="u">u</span></small></button>
+      <button data-v="5" aria-pressed="false">Niveau 5<small><span class="c">c</span> <span class="d">d</span> <span class="u">u</span> × <span class="d">d</span> <span class="u">u</span></small></button>
+    </div>
+  </div>
+  <div class="reglage">
+    <h2>3. Comment ?</h2>
+    <div class="choix" data-reglage="guide">
+      <button data-v="1" aria-pressed="true">Pas à pas<small>le jeu montre la case à remplir</small></button>
+      <button data-v="0" aria-pressed="false">Tout seul<small>je remplis puis je vérifie</small></button>
+    </div>
+  </div>
+
+  <button class="gros" id="jouer">Jouer (10 multiplications)</button>
+  <div class="reglage bloc-fiche">
+    <h2>🖨 Fiche à imprimer <small>(avec les réglages 1 et 2)</small></h2>
+    <p class="petit">À chaque fois, de nouvelles multiplications sont tirées au hasard. À imprimer ou à télécharger (Word), avec le corrigé à la suite.</p>
+    <div class="choix">
+      <button id="ficheAccueil">Nouvelle fiche<small>1 page + corrigé</small></button>
+      <button id="ficheAccueil2">Nouvelle fiche<small>2 pages + corrigé</small></button>
+    </div>
+  </div>
+  <div class="exemple" aria-hidden="true" id="exemple"></div>
+  <p class="reference">Gabarits adaptés aux élèves dys, inspirés du <a href="https://www.cartablefantastique.fr/" target="_blank" rel="noopener">Cartable fantastique</a> : <b class="u">unités en bleu</b>, <b class="d">dizaines en rouge</b>, <b class="c">centaines en vert</b>, <b class="m">milliers en noir</b>, une rangée de cases pour les retenues de chaque ligne.</p>
+</div></section>
+
+<!-- ================= JEU ================= -->
+<section id="jeu" class="ecran">
+  <div id="haut">
+    <div id="pastilles"></div>
+    <div class="icones">
+      <button id="ecouter" title="Écouter le calcul" aria-label="Écouter le calcul">🔊</button>
+      <button id="pleinEcran" title="Plein écran" aria-label="Plein écran">⛶</button>
+      <button id="arreter" title="Arrêter" aria-label="Arrêter">✖</button>
+    </div>
+  </div>
+  <div id="enligne"></div>
+  <div id="message"></div>
+  <div id="zone">
+    <div id="operation" class="operation"></div>
+    <div id="clavier"></div>
+  </div>
+  <div id="bas">
+    <button id="pouce">💡 Coup de pouce</button>
+    <button id="voirTable">📋 La table</button>
+    <button id="verifier" class="cache">✔ Vérifier</button>
+    <button id="suivant" class="cache">Multiplication suivante ➜</button>
+  </div>
+  <div id="table" class="cache" role="dialog" aria-label="Table de multiplication"></div>
+</section>
+
+<!-- ================= FIN ================= -->
+<section id="fin" class="ecran"><div class="panneau">
+  <h1>Bravo !</h1>
+  <div id="etoiles"></div>
+  <p id="phraseFin"></p>
+  <table id="recap"></table>
+  <div class="choix" style="width:min(640px,100%)">
+    <button id="rejouer">↻ Rejouer</button>
+    <button id="imprBilan">📄 Bilan de la partie</button>
+    <button id="imprFiche">📄 Fiche d'exercices + corrigé</button>
+    <button id="retourAccueil">⌂ Accueil</button>
+  </div>
+</div></section>
+
+<script>
+(function(){
+"use strict";
+var NB = 10;
+var NOMS = {u:"unités", d:"dizaines", c:"centaines", m:"milliers"};
+/* niveaux : la = chiffres du 1er nombre, lb = chiffres du multiplicateur, C = colonnes */
+var NIV = {"1":{la:2,lb:1,C:3,lib:"niveau 1 (d u × u)"}, "2":{la:3,lb:1,C:4,lib:"niveau 2 (c d u × u)"}, "3":{la:4,lb:1,C:4,lib:"niveau 3 (m c d u × u)"},
+           "4":{la:2,lb:2,C:4,lib:"niveau 4 (d u × d u)"}, "5":{la:3,lb:2,C:4,lib:"niveau 5 (c d u × d u)"}};
+var reg = {type:"avec", n:"1", guide:true};
+var partie=null, calc=null, active=null, etapes=[], etape=0, erreursCase=0;
+
+var $ = function(id){return document.getElementById(id);};
+function hasard(a,b){return a + Math.floor(Math.random()*(b-a+1));}
+function lettres(n){return ["m","c","d","u"].slice(4-n);}
+function pos(x){var t=[];do{t.push(x%10);x=Math.floor(x/10);}while(x>0);return t;} // chiffres par position (0 = unités)
+function sing(nom){return nom.replace(/s$/,"");}
+function qte(n,nom){return n+" "+(n>1?nom:sing(nom));}
+
+/* ---------- calcul complet d'une multiplication posée ---------- */
+function analyse(a,b,C){
+  var A=pos(a), B=pos(b), o={a:a,b:b,p:a*b,C:C,A:A,B:B,la:A.length,lb:B.length,lignes:[],att:{},retenue:false};
+  B.forEach(function(m,i){
+    var L={m:m,i:i,val:a*m*Math.pow(10,i),det:[],ret:{}}, c=0;
+    for(var p=0;p<A.length;p++){
+      var v=A[p]*m+c; L.det.push({p:p,x:A[p],c:c,v:v});
+      c=Math.floor(v/10);
+      if(p<A.length-1 && c>0){ L.ret[p+1]=c; o.retenue=true; }
+    }
+    L.chiffres=pos(L.val);
+    if(i===1) L.chiffres[0]=0;
+    o.lignes.push(L);
+  });
+  o.P=pos(o.p); o.somme={}; o.detS=[];
+  if(o.lb===2){
+    var c=0, l0=o.lignes[0].chiffres, l1=o.lignes[1].chiffres;
+    for(var p=0;p<o.P.length;p++){
+      var x=l0[p]||0, y=l1[p]||0, v=x+y+c; o.detS.push({p:p,x:x,y:y,c:c,v:v,has0:p<l0.length,has1:p<l1.length});
+      c=Math.floor(v/10); if(c>0 && p+1<o.P.length){ o.somme[p+1]=c; o.retenue=true; }
+    }
+  }
+  // réponses attendues
+  o.lignes.forEach(function(L){
+    var cle = o.lb===1 ? "F" : "L"+L.i;
+    L.chiffres.forEach(function(d,p){ o.att[cle+":"+p]=d; });
+    Object.keys(L.ret).forEach(function(p){ o.att["R"+L.i+":"+p]=L.ret[p]; });
+  });
+  if(o.lb===2){
+    o.P.forEach(function(d,p){ o.att["F:"+p]=d; });
+    Object.keys(o.somme).forEach(function(p){ o.att["S:"+p]=o.somme[p]; });
+  }
+  return o;
+}
+function nouvelle(type,niv,deja){
+  var N=NIV[niv];
+  for(var essai=0;essai<30000;essai++){
+    var a=hasard(Math.pow(10,N.la-1),Math.pow(10,N.la)-1), b;
+    if(N.lb===1) b=hasard(2,9); else b=hasard(1,9)*10+hasard(1,9);
+    if(N.lb===2 && b<12) continue;
+    if(a*b>=Math.pow(10,N.C)) continue;
+    var zeros=pos(a).filter(function(x){return x===0;}).length;
+    if(zeros>1) continue;
+    var o=analyse(a,b,N.C);
+    if(type==="sans" && o.retenue) continue;
+    if(type==="avec" && !o.retenue) continue;
+    if(deja && deja.some(function(q){return q.a===a&&q.b===b;})) continue;
+    return o;
+  }
+  var SECOURS={"1":[23,3],"2":[213,3],"3":[2113,3],"4":[21,13],"5":[312,21]}[niv];
+  return analyse(SECOURS[0],SECOURS[1],N.C);
+}
+function liste(type,niv,nb){
+  var l=[];
+  for(var i=0;i<nb;i++) l.push(nouvelle(type==="mix"?(i%2?"avec":"sans"):type,niv,l));
+  if(type==="mix") l.sort(function(){return Math.random()-.5;});
+  return l;
+}
+
+/* ---------- modèle du gabarit (rangées), utilisé à l'écran et sur les fiches ---------- */
+function modele(o){
+  var R=[], C=o.C, plage=function(n,debut){var t=[];for(var p=debut||0;p<n;p++)t.push(p);return t;};
+  var posRet=plage(o.la,1);
+  R.push({t:"titre"});
+  if(o.lb===2) R.push({t:"ret",id:"R1",etiq:"× "+o.B[1],ec:"d",pos:posRet});
+  R.push({t:"ret",id:"R0",etiq:o.lb===2?"× "+o.B[0]:"",ec:"u",pos:posRet});
+  R.push({t:"nb",id:"A",signe:"",ch:o.A});
+  R.push({t:"nb",id:"B",signe:"×",ch:o.B});
+  R.push({t:"barre"});
+  if(o.lb===1){
+    R.push({t:"res",id:"F",signe:"",pos:plage(o.P.length)});
+  } else {
+    R.push({t:"ret",id:"S",etiq:"+",ec:"",pos:plage(o.P.length,1)});
+    R.push({t:"res",id:"L0",signe:"",pos:plage(o.lignes[0].chiffres.length)});
+    R.push({t:"res",id:"L1",signe:"+",pos:plage(o.lignes[1].chiffres.length)});
+    R.push({t:"barre"});
+    R.push({t:"res",id:"F",signe:"",pos:plage(o.P.length)});
+  }
+  return R;
+}
+
+/* ---------- gabarit à l'écran ---------- */
+function gabarit(o, opts){
+  opts=opts||{};
+  var L=lettres(o.C), g=document.createElement("div"); g.className="operation";
+  g.style.gridTemplateColumns="calc(var(--case)*.9) repeat("+o.C+", var(--case))";
+  function cel(cls,html){var e=document.createElement("div");e.className="cel "+cls;if(html!=null)e.innerHTML=html;g.appendChild(e);return e;}
+  modele(o).forEach(function(r){
+    if(r.t==="barre"){var b=document.createElement("div");b.className="barre";g.appendChild(b);return;}
+    if(r.t==="titre"){cel("titre-col");L.forEach(function(l){cel("titre-col col-"+l,l);});return;}
+    var e0 = r.t==="ret" ? cel("ret etiq "+(r.ec||""), r.etiq) : cel("signe", r.t==="nb"||r.t==="res" ? (r.signe||"") : "");
+    L.forEach(function(l,j){
+      var p=o.C-1-j, cle=r.id+":"+p;
+      if(r.t==="nb"){ var e=cel("col-"+l, p<r.ch.length ? r.ch[p] : ""); e.dataset.cle=cle; return; }
+      if(r.pos.indexOf(p)<0){ cel((r.t==="ret"?"ret ":"")+"col-"+l); return; }
+      var c=cel((r.t==="ret"?"ret ":"res ")+"col-"+l,'<span class="boite"></span>');
+      c.dataset.cle=cle;
+      if(opts.corrige){ var v=o.att[cle]; if(v!=null) c.firstChild.textContent=v; }
+      if(opts.jeu) c.classList.add("saisie");
+    });
+  });
+  return g;
+}
+function hauteurCase(o){
+  var u=0; modele(o).forEach(function(r){u += r.t==="titre"?.62 : r.t==="ret"?.8 : r.t==="barre"?.15 : 1;});
+  var large = window.innerWidth>=560;
+  var h=(window.innerHeight-(large?330:560))/u, w=(window.innerWidth-(large?380:60))/(o.C+1.2);
+  return Math.max(34, Math.min(92, h, w));
+}
+/* rétrécit les cases tant que la page dépasse la hauteur de l'écran */
+function ajuste(){
+  var g=$("operation"); if(!calc||!g||!$("jeu").classList.contains("actif")) return;
+  var c=hauteurCase(calc); g.style.setProperty("--case",c+"px");
+  var bas=function(){return $("bas").getBoundingClientRect().bottom+8;};
+  while(c>34 && bas()>window.innerHeight){ c-=2; g.style.setProperty("--case",c+"px"); }
+}
+
+/* ---------- accueil ---------- */
+document.querySelectorAll(".choix[data-reglage]").forEach(function(bloc){
+  bloc.addEventListener("click",function(ev){
+    var bt=ev.target.closest("button"); if(!bt) return;
+    bloc.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed", x===bt?"true":"false");});
+    var k=bloc.dataset.reglage, v=bt.dataset.v;
+    reg[k] = k==="guide" ? v==="1" : v;
+    dessineExemple();
+  });
+});
+function dessineExemple(){
+  var sans=reg.type==="sans", EX={"1":sans?[23,3]:[47,6], "2":sans?[213,3]:[254,7], "3":sans?[2113,3]:[1325,4], "4":sans?[21,13]:[47,36], "5":sans?[312,21]:[253,34]}[reg.n];
+  var o=analyse(EX[0],EX[1],NIV[reg.n].C), ex=$("exemple"); ex.innerHTML="";
+  var g=gabarit(o,{corrige:true}); ex.appendChild(g);
+  ex.style.height = (o.lb===2 ? "calc(var(--case)*5.6)" : "calc(var(--case)*3.6)");
+}
+dessineExemple();
+function montre(id){document.querySelectorAll(".ecran").forEach(function(e){e.classList.toggle("actif",e.id===id);});}
+
+/* ---------- partie ---------- */
+$("jouer").onclick=function(){
+  partie={liste:liste(reg.type,reg.n,NB), i:0, resultats:[], type:reg.type, n:reg.n, guide:reg.guide};
+  montre("jeu"); construireClavier(); charger();
+};
+function pastilles(){
+  var p=$("pastilles"); p.innerHTML="";
+  for(var i=0;i<NB;i++){
+    var s=document.createElement("span"); s.className="pastille";
+    var r=partie.resultats[i];
+    if(r) s.classList.add(r.erreurs===0 && !r.aide ? "faite":"aidee"); else if(i===partie.i) s.classList.add("encours");
+    p.appendChild(s);
+  }
+}
+function lettreP(p){return lettres(calc.C)[calc.C-1-p];}
+function nomP(p){var l=lettreP(p);return "<b class='"+l+"'>"+NOMS[l]+"</b>";}
+function dire(html){$("message").innerHTML=html; ajuste();}
+function cellule(cle){return document.querySelector('#operation [data-cle="'+cle+'"]');}
+
+function charger(){
+  calc=partie.liste[partie.i]; calc.erreurs=0; calc.aide=false; calc.fini=false;
+  pastilles(); fermerTable();
+  $("enligne").textContent=calc.a+" × "+calc.b+" = ?";
+  var g=gabarit(calc,{jeu:true}); g.id="operation"; $("operation").replaceWith(g);
+  g.addEventListener("click",function(ev){
+    var c=ev.target.closest(".saisie"); if(!c||calc.fini||partie.guide) return; choisir(c);
+  });
+  $("suivant").classList.add("cache"); $("pouce").classList.remove("cache"); $("voirTable").classList.remove("cache");
+  $("verifier").classList.toggle("cache", partie.guide);
+  ajuste();
+  if(partie.guide){ etapes=construireEtapes(calc); etape=0; allerEtape(); }
+  else {
+    choisir(cellule((calc.lb===1?"F":"L0")+":0"));
+    dire("Je commence par multiplier le chiffre des <b class='u'>unités</b>, à droite."+(calc.lb===2?"<br>Quand je multiplie par les <b class='d'>dizaines</b>, je commence par écrire <b>0</b> aux unités.":""));
+  }
+}
+function choisir(c){
+  document.querySelectorAll("#operation .saisie.active").forEach(function(x){x.classList.remove("active");});
+  active=c; if(c) c.classList.add("active");
+}
+function vise(cles){
+  document.querySelectorAll("#operation .vise,#operation .allume").forEach(function(x){x.classList.remove("vise","allume");});
+  (cles||[]).forEach(function(k){var e=cellule(k); if(e) e.classList.add("vise");});
+}
+
+/* ---------- étapes du pas à pas ---------- */
+function construireEtapes(o){
+  var E=[];
+  o.lignes.forEach(function(L){
+    var cle = o.lb===1 ? "F" : "L"+L.i;
+    if(L.i===1) E.push({g:"zero",cle:cle+":0",val:0,L:L});
+    L.det.forEach(function(d){
+      var dernier = d.p===o.la-1;
+      E.push({g:"mul",cle:cle+":"+(d.p+L.i),val:d.v%10,L:L,d:d,dernier:dernier});
+      if(!dernier && d.v>=10) E.push({g:"ret",cle:"R"+L.i+":"+(d.p+1),val:Math.floor(d.v/10),L:L,d:d});
+      if(dernier && d.v>=10) E.push({g:"reste",cle:cle+":"+(d.p+L.i+1),val:Math.floor(d.v/10),L:L,d:d});
+    });
+  });
+  if(o.lb===2){
+    o.detS.forEach(function(s){
+      E.push({g:"add",cle:"F:"+s.p,val:s.v%10,s:s});
+      if(s.v>=10 && s.p+1<o.P.length) E.push({g:"addret",cle:"S:"+(s.p+1),val:Math.floor(s.v/10),s:s});
+    });
+  }
+  return E;
+}
+function expr(e){ // « 7 × 6 (+ 2) »
+  var t=e.d.x+" × "+e.L.m; if(e.d.c) t+=" + "+e.d.c+" <small>(retenue)</small>"; return t;
+}
+function allerEtape(){
+  erreursCase=0;
+  if(etape>=etapes.length){ terminer(); return; }
+  var e=etapes[etape]; choisir(cellule(e.cle));
+  var mult = e.L ? "<b class='"+(e.L.i?"d":"u")+"'>"+e.L.m+"</b>" : "";
+  if(e.g==="zero"){
+    vise(["B:1"]);
+    dire("Je multiplie maintenant par le chiffre des <b class='d'>dizaines</b> : "+mult+" dizaines.<br>Le résultat est en dizaines : j'écris d'abord <b>0</b> dans la colonne des <b class='u'>unités</b>.");
+  } else if(e.g==="mul"){
+    vise(["A:"+e.d.p,"B:"+e.L.i]);
+    var m = (e.d.p===0 ? "Je multiplie par "+mult+" en commençant par les <b class='u'>unités</b>. " : "")
+      + "<b>"+expr(e)+"</b> = ?";
+    if(e.dernier) m+="<br>Dernier chiffre : j'écris tout le résultat"+(e.d.c?" (sans oublier la retenue)":"")+".";
+    else m+="<br>"+(e.d.c?"J'ajoute la retenue, puis j'écris":"J'écris")+" le chiffre des unités du résultat.";
+    dire(m);
+  } else if(e.g==="ret"){
+    dire(expr(e)+" = <b>"+e.d.v+"</b>. J'ai écrit "+(e.d.v%10)+".<br>Je retiens <b>"+Math.floor(e.d.v/10)+"</b> : je l'écris dans la case du haut, au-dessus des "+nomP(e.d.p+1)+".");
+  } else if(e.g==="reste"){
+    dire(expr(e)+" = <b>"+e.d.v+"</b>. C'est le dernier chiffre : j'écris aussi le <b>"+Math.floor(e.d.v/10)+"</b>, à gauche.");
+  } else if(e.g==="add"){
+    document.querySelectorAll("#operation .vise").forEach(function(x){x.classList.remove("vise");});
+    document.querySelectorAll("#operation .col-"+lettreP(e.s.p)).forEach(function(x){x.classList.add("allume");});
+    dire((e.s.p===0?"J'additionne les deux lignes, en commençant par les <b class='u'>unités</b>.<br>":"")+"Combien font les "+nomP(e.s.p)+" ?"+(e.s.c?" Je n'oublie pas la retenue.":""));
+  } else if(e.g==="addret"){
+    dire("J'ai trouvé "+qte(e.s.v,NOMS[lettreP(e.s.p)])+" : j'écris "+(e.s.v%10)+" et je retiens <b>1</b> au-dessus des "+nomP(e.s.p+1)+".");
+  }
+}
+function coupDePouce(){
+  calc.aide=true;
+  if(!partie.guide){
+    dire("💡 "+calc.lignes.map(function(L){return calc.a+" × "+L.m+(L.i?" dizaines":"")+" = "+(L.val);}).join(" ; ")
+      +(calc.lb===2?"<br>Puis j'additionne les deux lignes.":""));
+    return;
+  }
+  var e=etapes[etape];
+  if(e.g==="zero") dire("💡 J'écris <b>0</b> aux unités : je multiplie par des dizaines.");
+  else if(e.g==="mul"||e.g==="ret"||e.g==="reste"){
+    var t="💡 "+e.d.x+" × "+e.L.m+" = "+(e.d.x*e.L.m)+(e.d.c?", + "+e.d.c+" = "+e.d.v:"")+".";
+    if(e.g==="mul") t+= e.dernier ? "<br>J'écris <b>"+e.d.v+"</b> en entier." : (e.d.v>=10 ? "<br>J'écris <b>"+(e.d.v%10)+"</b> et je retiens "+Math.floor(e.d.v/10)+"." : "<br>J'écris <b>"+e.d.v+"</b>.");
+    dire(t);
+  } else {
+    var s=e.s, t2="💡 "+s.x+" + "+s.y+(s.c?" + "+s.c+" (retenue)":"")+" = "+s.v+".";
+    t2 += s.v>=10 ? "<br>J'écris <b>"+(s.v%10)+"</b> et je retiens <b>1</b>." : "<br>J'écris <b>"+s.v+"</b>.";
+    dire(t2);
+  }
+}
+$("pouce").onclick=coupDePouce;
+
+function taper(v){
+  if(!active||calc.fini) return;
+  var boite=active.querySelector(".boite");
+  if(v==="x"){ boite.textContent=""; active.classList.remove("juste","oups"); return; }
+  boite.textContent=v; active.classList.remove("oups","juste");
+  if(partie.guide){
+    var e=etapes[etape];
+    if(+v===e.val){ active.classList.add("juste"); etape++; setTimeout(allerEtape,350); }
+    else {
+      void active.offsetWidth; active.classList.add("oups"); erreursCase++; calc.erreurs++;
+      if(e.g==="zero") dire("Je multiplie par des dizaines : aux unités, j'écris toujours <b>0</b>.");
+      else if(erreursCase===1) dire("Pas tout à fait. Recompte : <b>"+(e.d? expr(e) : (e.s.x+" + "+e.s.y+(e.s.c?" + "+e.s.c:"")))+"</b>."+(e.g==="ret"?"<br>La retenue, c'est le chiffre des dizaines du résultat.":""));
+      else coupDePouce();
+    }
+  } else {
+    // passe à la case de droite à gauche dans la même rangée
+    var k=active.dataset.cle.split(":"), suiv=cellule(k[0]+":"+(+k[1]+1));
+    if(suiv) choisir(suiv);
+  }
+}
+$("verifier").onclick=function(){
+  var faux=0, vides=0;
+  document.querySelectorAll("#operation .saisie").forEach(function(c){
+    var v=c.querySelector(".boite").textContent, cle=c.dataset.cle, ret=/^[RS]/.test(cle), att=calc.att[cle];
+    c.classList.remove("juste","oups");
+    if(v===""){ if(!ret) vides++; return; }
+    if(att!=null && +v===att) c.classList.add("juste");
+    else { faux++; void c.offsetWidth; c.classList.add("oups"); }
+  });
+  if(vides){ dire("Il reste des cases vides."); return; }
+  if(faux){ calc.erreurs++; dire("Les cases en orange ne sont pas justes. Je reprends chiffre par chiffre, en partant des <b class='u'>unités</b>."); return; }
+  terminer();
+};
+function terminer(){
+  calc.fini=true; choisir(null); vise([]); fermerTable();
+  partie.resultats[partie.i]={a:calc.a,b:calc.b,p:calc.p,retenue:calc.retenue,erreurs:calc.erreurs,aide:calc.aide};
+  pastilles();
+  var bravo=["Bravo !","Super !","C'est juste !","Bien joué !","Excellent !"][hasard(0,4)];
+  dire("<b>"+bravo+"</b> "+calc.a+" × "+calc.b+" = <b>"+calc.p+"</b>");
+  parler(calc.a+" fois "+calc.b+" égale "+calc.p);
+  $("enligne").textContent=calc.a+" × "+calc.b+" = "+calc.p;
+  ["pouce","voirTable","verifier"].forEach(function(id){$(id).classList.add("cache");});
+  var s=$("suivant"); s.textContent = partie.i<NB-1 ? "Multiplication suivante ➜" : "Voir mon bilan ➜";
+  s.classList.remove("cache"); s.focus();
+}
+$("suivant").onclick=function(){ partie.i++; if(partie.i>=NB) fin(); else charger(); };
+
+/* ---------- table de multiplication (aide-mémoire) ---------- */
+function ouvrirTable(){
+  var m, ici=null;
+  if(partie.guide && etapes[etape] && etapes[etape].L){ m=etapes[etape].L.m; if(etapes[etape].d) ici=etapes[etape].d.x; }
+  else m = calc.B[0];
+  if(partie.guide && etapes[etape] && !etapes[etape].L) m=calc.B[calc.lb-1];
+  var h="<button aria-label='Fermer'>✖</button><h3>Table de "+m+"</h3><ol>";
+  for(var i=1;i<=10;i++) h+="<li"+(i===ici?" class='ici'":"")+">"+i+" × "+m+" = <b>"+(i*m)+"</b></li>";
+  if(ici===0) h+="<li class='ici'>0 × "+m+" = <b>0</b></li>";
+  var t=$("table"); t.innerHTML=h+"</ol>"; t.classList.remove("cache");
+  t.querySelector("button").onclick=fermerTable;
+  calc.aide=true;
+}
+function fermerTable(){ $("table").classList.add("cache"); }
+$("voirTable").onclick=function(){ if($("table").classList.contains("cache")) ouvrirTable(); else fermerTable(); };
+
+/* ---------- clavier ---------- */
+function construireClavier(){
+  var cl=$("clavier"); if(cl.childElementCount) return;
+  [7,8,9,4,5,6,1,2,3,"x",0].forEach(function(v){
+    var b=document.createElement("button");
+    b.textContent = v==="x" ? "⌫" : v; if(v==="x"){ b.className="efface"; b.setAttribute("aria-label","Effacer"); }
+    b.onclick=function(){taper(String(v));}; cl.appendChild(b);
+  });
+}
+document.addEventListener("keydown",function(ev){
+  if(!$("jeu").classList.contains("actif")) return;
+  if(/^[0-9]$/.test(ev.key)) taper(ev.key);
+  else if(ev.key==="Backspace"||ev.key==="Delete") taper("x");
+  else if(ev.key==="Enter"){ if(!$("suivant").classList.contains("cache")) $("suivant").click(); else if(!partie.guide) $("verifier").click(); }
+  else if(ev.key==="Escape") fermerTable();
+});
+window.addEventListener("resize",ajuste);
+
+/* ---------- voix, plein écran ---------- */
+function parler(t){
+  try{ if(!window.speechSynthesis) return; speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; u.rate=.9; speechSynthesis.speak(u);}catch(e){}
+}
+$("ecouter").onclick=function(){ if(calc) parler(calc.a+" fois "+calc.b); };
+$("pleinEcran").onclick=function(){ var d=document; try{ if(!d.fullscreenElement) d.documentElement.requestFullscreen(); else d.exitFullscreen(); }catch(e){} };
+$("arreter").onclick=function(){ try{speechSynthesis.cancel();}catch(e){} fermerTable(); montre("accueil"); };
+
+/* ---------- fin ---------- */
+function libelleType(t){return t==="sans"?"sans retenue":t==="avec"?"avec retenue":"avec et sans retenue";}
+function fin(){
+  montre("fin");
+  var r=partie.resultats, seul=r.filter(function(x){return x.erreurs===0&&!x.aide;}).length;
+  var et = seul>=9?3 : seul>=6?2 : 1;
+  $("etoiles").textContent="★".repeat(et)+"☆".repeat(3-et);
+  $("phraseFin").innerHTML="<b>"+seul+" multiplications sur "+NB+"</b> réussies du premier coup, sans aide.";
+  try{ TDC.note({s:seul, n:NB, g:seul>=8, niv:"Multiplications "+libelleType(partie.type)+", "+NIV[partie.n].lib,
+    d:seul+" / "+NB+" multiplications posées réussies du premier coup ("+libelleType(partie.type)+", "+NIV[partie.n].lib+", "+(partie.guide?"pas à pas":"tout seul")+")"}); }catch(e){}
+  var t=$("recap"); t.innerHTML="";
+  r.forEach(function(x){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+x.a+" × "+x.b+" = "+x.p+"</td><td>"+(x.retenue?"avec retenue":"sans retenue")+"</td><td>"
+      +(x.erreurs===0&&!x.aide?"✔ du premier coup":(x.erreurs+" essai"+(x.erreurs>1?"s":"")+" de plus"+(x.aide?", 💡":"")))+"</td>";
+    t.appendChild(tr);
+  });
+}
+$("rejouer").onclick=function(){ $("jouer").click(); };
+$("retourAccueil").onclick=function(){ montre("accueil"); };
+
+/* ---------- documents écrits (fiche + bilan, Word ou impression, rien n'est enregistré) ---------- */
+var COUL={u:["#1d5bd8","#e6eefc"], d:["#d62828","#fde8e8"], c:["#1b9447","#e3f5ea"], m:["#222222","#e8e8e8"]};
+function gabaritTable(o, corrige){
+  var L=lettres(o.C), W="width:28pt;height:28pt;text-align:center;vertical-align:middle;padding:0;font-family:Arial;";
+  function td(l,txt,extra){return "<td style=\""+W+"border:none;background:"+COUL[l][1]+";color:"+COUL[l][0]+";font-weight:bold;"+(extra||"")+"\">"+txt+"</td>";}
+  function gauche(txt,extra){return "<td style=\""+W+"border:none;font-weight:bold;"+(extra||"")+"\">"+txt+"</td>";}
+  var h="<table style=\"border-collapse:separate;border-spacing:0;margin:2pt auto;-webkit-print-color-adjust:exact;print-color-adjust:exact\">", barre=false;
+  modele(o).forEach(function(r){
+    if(r.t==="barre"){ barre=true; return; }
+    var bt = barre ? "border-top:2.5pt solid #000;" : ""; barre=false;
+    if(r.t==="titre"){ h+="<tr>"+gauche("","height:16pt")+L.map(function(l){return td(l,l,"height:16pt;font-size:12pt");}).join("")+"</tr>"; return; }
+    h+="<tr>";
+    if(r.t==="ret") h+=gauche(r.etiq||"","height:20pt;font-size:10pt;"+bt+"color:"+(r.ec?COUL[r.ec][0]:"#000"));
+    else h+=gauche(r.signe||"","font-size:18pt;"+bt);
+    L.forEach(function(l,j){
+      var p=o.C-1-j, cle=r.id+":"+p;
+      if(r.t==="nb"){ h+=td(l, p<r.ch.length?r.ch[p]:"", "font-size:18pt"); return; }
+      var hauteur = r.t==="ret" ? "height:20pt;"+bt : "";
+      if(r.pos.indexOf(p)<0){ h+=td(l,"",hauteur||bt); return; }
+      var v = corrige && o.att[cle]!=null ? o.att[cle] : "&nbsp;";
+      if(r.t==="ret") h+=td(l,"<span style=\"display:inline-block;width:14pt;height:14pt;line-height:14pt;border:1.5pt dashed "+COUL[l][0]+";background:#fff;font-size:10pt\">"+v+"</span>",hauteur);
+      else h+=td(l,"<span style=\"display:inline-block;width:22pt;height:22pt;line-height:22pt;border:1.5pt solid "+COUL[l][0]+";background:#fff;font-size:16pt\">"+v+"</span>",bt);
+    });
+    h+="</tr>";
+  });
+  return h+"</table>";
+}
+function pageFiche(l, corrige, depart){
+  var h="<table style=\"width:100%;border-collapse:collapse\">";
+  for(var i=0;i<l.length;i+=2){
+    h+="<tr>";
+    for(var j=i;j<i+2;j++) h+="<td style=\"width:50%;border:1px solid #ddd;padding:3pt 6pt;vertical-align:top\">"
+      +(l[j]?"<div style=\"font-size:10pt;color:#555\">"+(depart+j+1)+")</div>"+gabaritTable(l[j],corrige):"")+"</td>";
+    h+="</tr>";
+  }
+  return h+"</table>";
+}
+function ouvrirFiche(type,niv,pages){
+  var N=NIV[niv], parPage = N.lb===2 ? 4 : 6, l=liste(type,niv,parPage*(pages||1)), paquets=[];
+  for(var i=0;i<l.length;i+=parPage) paquets.push(l.slice(i,i+parPage));
+  var consigne="<p>✏️ <b>Calcule.</b> Je commence par les <b style=\"color:#1d5bd8\">unités</b> et j'écris chaque retenue dans la case du haut."
+    +(N.lb===2?" Pour la 2ᵉ ligne, j'écris d'abord <b>0</b> aux unités.":"")+"</p>";
+  var leg="<p style=\"font-size:10pt\">"+(N.C===4?"<b style=\"color:#222\">m = milliers</b> · ":"")+"<b style=\"color:#1b9447\">c = centaines</b> · <b style=\"color:#d62828\">d = dizaines</b> · <b style=\"color:#1d5bd8\">u = unités</b> — multiplications "+libelleType(type)+", "+N.lib+". Gabarits inspirés du <a href=\"https://www.cartablefantastique.fr/\">Cartable fantastique</a>.</p>";
+  DocEcrit.ouvrir({titre:"Fiche d'exercices", jeu:"Les multiplications en colonne", nom:"Fiche multiplications en colonne", prenom:true, html:function(){
+    var h="";
+    paquets.forEach(function(q,k){ h+=(k?"<div class=\"saut\"></div>":"")+consigne+pageFiche(q,false,k*parPage)+leg; });
+    paquets.forEach(function(q,k){ h+="<div class=\"saut\"><h2>Corrigé"+(paquets.length>1?" ("+(k+1)+"/"+paquets.length+")":"")+"</h2></div>"+pageFiche(q,true,k*parPage); });
+    return h;
+  }});
+}
+$("ficheAccueil").onclick=function(){ ouvrirFiche(reg.type,reg.n,1); };
+$("ficheAccueil2").onclick=function(){ ouvrirFiche(reg.type,reg.n,2); };
+$("imprFiche").onclick=function(){ ouvrirFiche(partie.type,partie.n,1); };
+$("imprBilan").onclick=function(){
+  var r=partie.resultats, seul=r.filter(function(x){return x.erreurs===0&&!x.aide;}).length;
+  var revoir=r.filter(function(x){return x.erreurs>0||x.aide;});
+  DocEcrit.ouvrir({titre:"Bilan de la partie", jeu:"Les multiplications en colonne", nom:"Bilan multiplications en colonne", prenom:true, html:function(){
+    return "<p>Multiplications "+libelleType(partie.type)+" — "+NIV[partie.n].lib+" — mode "+(partie.guide?"pas à pas":"tout seul")+"</p>"
+      +"<h2>Résultats</h2><p><b>"+seul+" / "+NB+"</b> multiplications réussies du premier coup, sans aide.</p>"
+      +"<h2>Calculs à retravailler</h2><p>"+(revoir.map(function(x){return x.a+" × "+x.b+" = "+x.p;}).join(" ; ")||"Aucun : bravo !")+"</p>"
+      +"<h2>Détail</h2><table><tr><th>Calcul</th><th>Type</th><th>Réussite</th></tr>"
+      +r.map(function(x){return "<tr><td>"+x.a+" × "+x.b+" = "+x.p+"</td><td>"+(x.retenue?"avec retenue":"sans retenue")+"</td><td>"
+        +(x.erreurs===0&&!x.aide?"✔ du premier coup":x.erreurs+" erreur"+(x.erreurs>1?"s":"")+(x.aide?", aide":""))+"</td></tr>";}).join("")+"</table>"
+      +"<p style=\"font-size:12px;color:#666\">Simple outil d'observation, sans valeur officielle.</p>";
+  }});
+};
+})();
+</script>
+</body>
+</html>
