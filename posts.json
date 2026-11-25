@@ -862,7 +862,7 @@
   {
    "title": "Les cristaux de la planète Sonora",
    "slug": "les-cristaux-de-la-planete-sonora",
-   "excerpt": "Sur une planète lointaine, la fusée de Zouk est en panne : chaque mot a perdu son son complexe. L'élève retrouve le bon cristal (ou, oi, an, en, au, eau, ai, ei, on, om, in, im, eu) pour remplir le réservoir. Cristaux pièges, révision des mots ratés, plus de 100 mots illustrés.",
+   "excerpt": "Sur une planète lointaine, la fusée de Zouk est en panne : chaque mot a perdu son son complexe. L'élève retrouve le bon cristal (ou, oi, an, en, au, eau, ai, ei, on, om, in, im, eu) pour remplir le réservoir. Cristaux pièges, révision des mots ratés, plus de 100 mots illustrés. Fiches à imprimer avec corrigé.",
    "date": "2026-11-16T14:50:00.000Z",
    "categoryIds": [],
    "media": {
@@ -873,7 +873,7 @@
     "competence": ["sons", "mots"],
     "niveaux": ["CP", "CE1"],
     "joueurs": "1 joueur ou la classe",
-    "supports": ["ecran", "projetable"]
+    "supports": ["ecran", "projetable", "imprimable"]
    },
    "richContent": {
     "nodes": [
@@ -884,6 +884,33 @@
         "type": "TEXT",
         "textData": {
          "text": "Zouk, un petit extraterrestre, est en panne sur la planète Sonora. Sur sa planète, les mots ont perdu leurs sons ! Un mot apparaît avec un trou à la place du son complexe (p▢da) ; l'ordinateur le lit à voix haute. L'élève touche le cristal qui manque. Chaque bonne réponse remplit le réservoir de la fusée ; quand il est plein, la fusée décolle.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les fiches à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sous le bouton « Partir en mission », la version papier reprend les sons, le nombre de cristaux et les cristaux pièges choisis : fiche 1, entourer le bon cristal et compléter le mot (le trou a toujours la même taille) ; fiche 2, écrire le mot de l'image (l'adulte peut le dire) ; fiche 3, ranger les mots dans la colonne de leur son. Corrigé en option, avec les règles à retenir. Nouveau tirage à chaque impression. En fin de partie, un bilan à imprimer ou à télécharger (Word) récapitule les mots trouvés et ceux à retravailler (prénom facultatif, rien n'est enregistré).",
          "decorations": []
         }
        }

@@ -93,9 +93,54 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
 .ligne .r{margin-left:auto;font-size:1rem}
 .regle{background:#2d2461;border-left:5px solid var(--or);padding:.5em .8em;border-radius:8px;margin:.6em 0}
 .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
+/* ---------- Version papier ---------- */
+.papier{background:#fffdf6;color:#2b2550;border:2px dashed #b9a8ff;border-radius:16px;padding:14px 18px;margin:16px 0}
+.papier h2{margin:0 0 .4em;color:#5b3fa8;font-size:1.15rem;text-align:center}
+.papier p{margin:0 0 8px;font-size:.95rem;text-align:center;color:#4a4470}
+.papier label{display:flex;gap:8px;align-items:flex-start;margin:.35em 0;cursor:pointer}
+.papier input{accent-color:#5b3fa8;width:1.15em;height:1.15em;margin-top:.15em}
+#imprimer{display:block;margin:10px auto 0}
+#impression{display:none}
+@media print{
+ @page{size:A4 portrait;margin:11mm}
+ html,body{background:#fff!important;color:#000;height:auto}
+ body>*:not(#impression){display:none!important}
+ #impression{display:block}
+}
+.fiche{height:272mm;break-after:page;page-break-after:always;display:flex;flex-direction:column;font-family:"Andika","Comic Sans MS",Verdana,sans-serif;color:#000;overflow:hidden;background:#fff}
+.fiche:last-child{break-after:auto;page-break-after:auto}
+.f-tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #5b3fa8;padding-bottom:2mm;margin-bottom:3mm}
+.f-tete .t{flex:1}
+.f-tete .t b{display:block;font-size:16pt;color:#5b3fa8;line-height:1.15}
+.f-tete .t span{font-size:11pt}
+.f-tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+.f-badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+.f-sons{font-size:11pt;margin:0 0 3mm;text-align:center}
+.f-sons b{display:inline-block;border:.4mm solid #5b3fa8;border-radius:2mm;padding:0 2mm;margin:0 .8mm;font-size:13pt}
+.f-grille{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:3mm}
+.f-grille.g3{grid-template-columns:repeat(3,1fr)}
+.f-case{border:.35mm solid #c9bdf5;border-radius:3mm;padding:2mm 3mm;display:flex;align-items:center;gap:3mm;break-inside:avoid;overflow:hidden;position:relative}
+.f-case.col{flex-direction:column;justify-content:space-between;gap:1.5mm}
+.f-num{position:absolute;top:1mm;left:2mm;font-weight:bold;color:#5b3fa8;font-size:10pt}
+.f-img{font-size:15mm;line-height:1;width:20mm;text-align:center;flex:none;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
+.f-case.col .f-img{font-size:17mm;width:auto;margin-top:2mm}
+.f-droite{flex:1;display:flex;flex-direction:column;align-items:center;gap:2.5mm}
+.f-mot{font-size:22pt;font-weight:bold;letter-spacing:.03em;display:flex;align-items:center;white-space:nowrap}
+.f-trou{display:inline-block;width:15mm;height:10mm;border:.4mm dashed #000;border-radius:1.5mm;margin:0 .6mm;text-align:center;line-height:10mm;color:#c0392b;font-size:18pt}
+.f-trou.ok{border-style:solid}
+.f-cris{display:flex;gap:2.5mm}
+.f-ligne{width:92%;height:11mm;border-bottom:.35mm solid #000;background:linear-gradient(transparent 49%,#bbb 50%,transparent 51%);font-size:18pt;font-weight:bold;text-align:center;line-height:11mm}
+.f-rouge{color:#c0392b}
+.f-boite{border:.4mm solid #5b3fa8;border-radius:3mm;padding:2.5mm 4mm;margin-bottom:4mm;font-size:16pt;font-weight:bold;display:flex;flex-wrap:wrap;gap:2mm 7mm;justify-content:center}
+.f-tri{flex:1;display:grid;gap:3mm}
+.f-col{border:.35mm solid #c9bdf5;border-radius:3mm;display:flex;flex-direction:column;align-items:center;padding:2mm}
+.f-col .f-ligne{flex:1;max-height:16mm;width:94%}
+.f-regles{font-size:11pt;border-left:1.2mm solid #f0a020;padding:1.5mm 3mm;margin-top:3mm}
+.f-regles p{margin:.8mm 0}
+.f-pied{font-size:8.5pt;color:#555;text-align:center;margin-top:2mm}
 @media (max-height:520px) and (orientation:landscape){.image{font-size:60px}.mot{font-size:2.4rem}.cristal{height:100px;width:96px;font-size:1.7rem}.scene{padding:8px}}
 </style>
-<script src="tour-de-controle.js"></script><script src="voix.js"></script>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
 </head>
 <body>
 <div class="ciel"><img src="/images/planete-sons/decor.jpg" alt="" onerror="this.remove()"></div>
@@ -152,6 +197,17 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
 
  <p class="centre"><button class="btn" id="go">🚀 Partir en mission</button></p>
  <p class="centre alerte" id="alerte"></p>
+
+ <div class="papier" id="papier">
+  <h2>🖨️ Version papier : des fiches à imprimer</h2>
+  <p>Les fiches utilisent les sons, le nombre de cristaux et les cristaux pièges choisis plus haut. Nouveau tirage à chaque impression.</p>
+  <label><input type="checkbox" id="pF1" checked> <span>Fiche 1 : entoure le bon cristal et complète le mot (12 mots)</span></label>
+  <label><input type="checkbox" id="pF2" checked> <span>Fiche 2 : écris le mot de l'image (12 images, l'adulte peut dire le mot)</span></label>
+  <label><input type="checkbox" id="pF3"> <span>Fiche 3 : range les mots dans la colonne de leur son</span></label>
+  <label><input type="checkbox" id="pCorr" checked> <span>Ajouter le corrigé (avec les règles à retenir)</span></label>
+  <button class="btn sec" id="imprimer">🖨️ Imprimer les fiches</button>
+  <p class="alerte" id="alerteP" style="color:#c0392b"></p>
+ </div>
 </section>
 
 <!-- ===== JEU ===== -->
@@ -185,9 +241,11 @@ h1{font-size:clamp(1.5rem,4vw,2.4rem);text-align:center;margin:.3em 0 .1em;color
   <button class="btn" id="rejouer">🔄 Nouvelle mission</button>
   <button class="btn sec" id="rates">🔁 Revoir les mots ratés</button>
   <button class="btn sec" id="changer">⚙️ Changer les sons</button>
+  <button class="btn sec" id="bilanDoc">📄 Bilan de la partie</button>
  </div>
 </section>
 </main>
+<div id="impression"></div>
 
 <script>
 /* ---------- Les mots : [son] à trouver | image ---------- */
@@ -334,6 +392,79 @@ function finir(){
 $("rejouer").onclick=()=>demarrer();
 $("rates").onclick=()=>{const l=resultats.filter(r=>!r.premier).map(({premier,revu,...m})=>m);demarrer(l.length?l:null)};
 $("changer").onclick=()=>montre("reglages");
+
+/* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
+$("bilanDoc").onclick=()=>{
+ const J=resultats||[],ok=J.filter(r=>r.premier),ko=J.filter(r=>!r.premier),sons=[...new Set(J.map(r=>r.son))];
+ const m=r=>`${r.avant}<b>${r.son}</b>${r.apres}`;
+ DocEcrit.ouvrir({titre:"Bilan de la partie",jeu:"Les cristaux de la planète Sonora",nom:"Bilan cristaux Sonora",prenom:true,html:()=>`
+ <p>Sons travaillés : <b>${sons.join(", ")}</b> — ${R.nb} cristaux proposés${R.pieges?" — avec cristaux pièges":""}</p>
+ <h2>Résultats</h2><p><b>${ok.length} mot${ok.length>1?"s":""} trouvé${ok.length>1?"s":""} du premier coup sur ${J.length}</b>.</p>
+ <h2>Mots à retravailler</h2><p>${ko.map(m).join(" ; ")||"Aucun : bravo !"}</p>
+ <h2>Détail</h2><table><tr><th>Mot</th><th>Son</th><th>Résultat</th></tr>
+ ${J.map(r=>`<tr><td>${m(r)}</td><td>${r.son}</td><td>${r.premier?"✔ du premier coup":"✘ erreur"+(r.revu?" (réussi à la révision)":"")}</td></tr>`).join("")}</table>
+ <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+};
+
+/* ---------- Version papier : fiches à imprimer ---------- */
+function tirerMots(sons,n,exclure){ // mots différents, répartis entre les sons choisis (pas de répétition)
+ const paquets=sons.map(s=>melange(MOTS[s].map(lire)));const out=[],vus=new Set(exclure||[]);let i=0;
+ while(out.length<n&&paquets.some(p=>p.length)){const p=paquets[i%paquets.length];i++;if(!p.length)continue;
+  const m=p.shift();if(vus.has(m.mot)||vus.has(m.img))continue;vus.add(m.mot);vus.add(m.img);out.push(m)}
+ return melange(out);
+}
+const cristalSVG=(son,entoure)=>`<svg viewBox="-8 -8 116 116" width="13mm" height="13mm" xmlns="http://www.w3.org/2000/svg">${entoure?'<ellipse cx="50" cy="50" rx="56" ry="56" fill="none" stroke="#c0392b" stroke-width="5"/>':""}<polygon points="50,2 90,23 98,62 50,98 2,62 10,23" fill="#fff" stroke="#5b3fa8" stroke-width="4"/><polyline points="10,23 50,40 90,23" fill="none" stroke="#c9bdf5" stroke-width="2"/><line x1="50" y1="40" x2="50" y2="98" stroke="#c9bdf5" stroke-width="2"/><text x="50" y="70" text-anchor="middle" font-family="Andika,Comic Sans MS,Verdana,sans-serif" font-weight="bold" font-size="${son.length>2?30:36}">${son}</text></svg>`;
+function reglesHTML(sons){
+ const h=s=>sons.has(s);let t="";
+ if(h("om")||h("im"))t+="<p>📌 Devant <b>m, b, p</b>, on écrit <b>om</b>, <b>im</b> (et am, em) : pompier, timbre.</p>";
+ if(h("on")||h("in"))t+="<p>📌 Ailleurs, on écrit <b>on</b>, <b>in</b> : ballon, lapin.</p>";
+ if(h("an")||h("en"))t+="<p>📌 <b>an</b> et <b>en</b> font le même son : il faut retenir comment s'écrit chaque mot (maman, dent).</p>";
+ if(h("au")||h("eau"))t+="<p>📌 <b>eau</b> est souvent à la fin du mot : bateau, gâteau. <b>au</b> est souvent au début ou au milieu : auto, chaussure.</p>";
+ if(h("ai")||h("ei"))t+="<p>📌 <b>ai</b> et <b>ei</b> font le même son : neige, baleine, reine s'écrivent avec <b>ei</b>.</p>";
+ return t?`<div class="f-regles"><b>À retenir</b>${t}</div>`:"";
+}
+function imprimerFiches(){
+ R=reglages();
+ if(!R.sons.length){$("alerteP").textContent="Choisis au moins un son (en haut, partie 1).";return}
+ $("alerteP").textContent="";
+ const avecCorr=$("pCorr").checked,pages=[],corr=[],sons=new Set();
+ const ordre=a=>a.slice().sort((x,y)=>SONS.indexOf(x)-SONS.indexOf(y));
+ const listeSons=`<p class="f-sons">Les sons : ${ordre(R.sons).map(s=>`<b>${s}</b>`).join("")}</p>`;
+ const tete=(titre,consigne,c)=>`<div class="f-tete"><div class="t"><b>🚀 Les cristaux de Sonora — ${titre}${c?'<span class="f-badge">CORRIGÉ</span>':""}</b><span>${consigne}</span></div>${c?"":'<div class="nom">Prénom : ……………………<br>Date : ……………………</div>'}</div>`;
+ const pied='<div class="f-pied">toujourscap.com — Les cristaux de la planète Sonora — CC BY-NC-SA 4.0</div>';
+ const fiche=(titre,consigne,corps,c,fin)=>`<div class="fiche">${tete(titre,consigne,c)}${corps}${fin||""}${pied}</div>`;
+ const motRouge=q=>`${q.avant}<span class="f-rouge">${q.son}</span>${q.apres}`;
+ let dejaVus=[];
+ if($("pF1").checked){
+  const t=tirerMots(R.sons,12).map(q=>({...q,choix:choixPour(q.son)}));t.forEach(q=>{sons.add(q.son);dejaVus.push(q.mot,q.img)});
+  const fait=rep=>`<div class="f-grille">${t.map((q,i)=>`<div class="f-case"><span class="f-num">${i+1}</span><div class="f-img">${q.img}</div><div class="f-droite"><div class="f-mot">${q.avant}<span class="f-trou${rep?" ok":""}">${rep?q.son:""}</span>${q.apres}</div><div class="f-cris">${q.choix.map(s=>cristalSVG(s,rep&&s===q.son)).join("")}</div></div></div>`).join("")}</div>`;
+  pages.push(fiche("Fiche 1","Regarde l'image et lis le mot. Entoure le cristal qui manque, puis écris-le dans le mot.",fait(false)));
+  corr.push(fiche("Fiche 1","Le bon cristal est entouré.",fait(true),true));
+ }
+ if($("pF2").checked){
+  let t=tirerMots(R.sons,12,dejaVus);if(t.length<12)t=t.concat(tirerMots(R.sons,12-t.length,t.flatMap(q=>[q.mot,q.img])));
+  t.forEach(q=>sons.add(q.son));
+  const fait=rep=>`<div class="f-grille g3">${t.map((q,i)=>`<div class="f-case col"><span class="f-num">${i+1}</span><div class="f-img">${q.img}</div><div class="f-ligne">${rep?motRouge(q):""}</div></div>`).join("")}</div>`;
+  pages.push(fiche("Fiche 2","Écris le mot de chaque image. Pense au son qui s'y cache ! (L'adulte peut dire le mot.)",listeSons+fait(false)));
+  corr.push(fiche("Fiche 2","Les mots (le son est en rouge). L'adulte peut aussi les dicter.",fait(true),true));
+ }
+ if($("pF3").checked){
+  let cols=ordre(R.sons).slice(0,4);
+  if(cols.length===1)cols=ordre([cols[0],PAREIL[cols[0]]||RESSEMBLE[cols[0]][0]]);
+  const par=cols.length<=2?6:cols.length===3?5:4;
+  const t=[];const vus=new Set();
+  cols.forEach(s=>melange(MOTS[s].map(lire)).filter(q=>!vus.has(q.mot)&&vus.add(q.mot)).slice(0,par).forEach(q=>{t.push(q);sons.add(q.son)}));
+  const lignes=Math.max(...cols.map(s=>t.filter(q=>q.son===s).length));
+  const fait=rep=>`${rep?"":`<div class="f-boite">${melange(t.slice()).map(q=>`<span>${q.mot}</span>`).join("")}</div>`}<div class="f-tri" style="grid-template-columns:repeat(${cols.length},1fr)">${cols.map(s=>{const m=t.filter(q=>q.son===s);return`<div class="f-col">${cristalSVG(s)}${[...Array(lignes)].map((_,k)=>`<div class="f-ligne">${rep&&m[k]?motRouge(m[k]):""}</div>`).join("")}</div>`}).join("")}</div>`;
+  pages.push(fiche("Fiche 3","Lis les mots. Recopie chaque mot dans la colonne de son son, puis entoure le son en couleur.",fait(false)));
+  corr.push(fiche("Fiche 3","Les mots rangés par son.",fait(true),true));
+ }
+ if(!pages.length){$("alerteP").textContent="Coche au moins une fiche.";return}
+ if(avecCorr&&corr.length){const k=corr.length-1;corr[k]=corr[k].replace('<div class="f-pied">',reglesHTML(sons)+'<div class="f-pied">')}
+ $("impression").innerHTML=pages.concat(avecCorr?corr:[]).join("");
+ setTimeout(()=>window.print(),150);
+}
+$("imprimer").onclick=imprimerFiches;
 </script>
 </body>
 </html>
