@@ -198,9 +198,58 @@ table.conf th,table.conf td{border:1px solid #e6dcef;padding:5px 10px;text-align
 table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
 .lg{font-size:22px;font-weight:700}
 
+/* ---------- Version papier ---------- */
+.papier{background:#fffdf6;border:2px dashed #b9a7cc;border-radius:14px;padding:12px 16px;margin-top:14px}
+.papier h2{font-size:19px;color:var(--violet-fonce);text-align:center;margin-bottom:4px}
+.papier p{margin:0 0 6px;font-size:14px;color:var(--gris);text-align:center}
+#imprimer{display:block;margin:10px auto 0;font-size:18px;padding:11px 20px}
+#impression{display:none}
+@media print{
+ @page{size:A4 portrait;margin:11mm}
+ html,body{background:#fff!important;min-height:0}
+ body>*:not(#impression){display:none!important}
+ #impression{display:block}
+}
+.fiche{height:272mm;break-after:page;page-break-after:always;display:flex;flex-direction:column;font-family:"Andika","Arial",sans-serif;color:#000;overflow:hidden;background:#fff}
+.fiche:last-child{break-after:auto;page-break-after:auto}
+.f-tete{display:flex;align-items:flex-end;gap:4mm;border-bottom:.6mm solid #6b3fa0;padding-bottom:2mm;margin-bottom:3mm}
+.f-tete .t{flex:1}
+.f-tete .t b{display:block;font-size:16pt;color:#6b3fa0;line-height:1.15;font-family:"Grandstander","Comic Sans MS",sans-serif}
+.f-tete .t span{font-size:11pt}
+.f-tete .nom{font-size:10.5pt;line-height:1.9;white-space:nowrap;text-align:right}
+.f-badge{display:inline-block;margin-left:3mm;border:.5mm solid #c0392b;color:#c0392b;font-size:10pt;padding:.4mm 2.5mm;border-radius:2mm;vertical-align:middle}
+.f-rappel{display:flex;justify-content:center;gap:6mm;font-size:12pt;margin:0 0 3mm;align-items:center}
+.f-rappel b{font-size:20pt;border:.4mm solid #6b3fa0;border-radius:2mm;padding:0 2.5mm;line-height:1.2}
+.f-grille{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:3mm}
+.f-case{border:.35mm solid #d3c4e6;border-radius:3mm;padding:2mm 3mm;display:flex;align-items:center;gap:3mm;overflow:hidden;position:relative}
+.f-num{position:absolute;top:1mm;left:2mm;font-weight:bold;color:#6b3fa0;font-size:10pt}
+.f-img{width:27mm;height:27mm;object-fit:contain;flex:none}
+.f-droite{flex:1;display:flex;flex-direction:column;align-items:center;gap:1.5mm;min-width:0}
+.f-modele{font-size:12pt;color:#666;letter-spacing:.05em}
+.f-mot{font-size:22pt;display:flex;align-items:flex-end;white-space:nowrap}
+.f-trou{display:inline-block;width:10mm;height:12mm;border:.4mm dashed #000;border-radius:1.5mm;margin:0 .5mm;text-align:center;line-height:12mm;color:#c0392b;font-weight:bold}
+.f-trou.ok{border-style:solid}
+.f-lignes{flex:1;display:flex;flex-direction:column;justify-content:space-around}
+.f-ligne{display:flex;align-items:center;gap:4mm;border:.35mm solid #d3c4e6;border-radius:3mm;padding:2mm 3mm}
+.f-cible{flex:none;width:15mm;height:15mm;border:.6mm solid #6b3fa0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24pt;font-weight:bold;color:#6b3fa0}
+.f-serie{flex:1;display:flex;justify-content:space-between;font-size:21pt}
+.f-serie span{width:8.5mm;height:10mm;line-height:10mm;text-align:center;border-radius:50%}
+.f-serie span.e{outline:.6mm solid #c0392b;color:#c0392b;font-weight:bold}
+.f-compte{flex:none;font-size:10pt;text-align:center;width:16mm}
+.f-compte i{display:block;border:.35mm solid #000;border-radius:1.5mm;height:9mm;line-height:9mm;font-style:normal;font-size:15pt;color:#c0392b;font-weight:bold;margin-top:.5mm}
+.f-roues{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:3mm}
+.f-roue{border:.35mm solid #d3c4e6;border-radius:3mm;display:flex;align-items:center;justify-content:space-around;padding:2mm;position:relative}
+.f-disque{width:21mm;height:21mm;border-radius:50%;border:1.4mm solid #f2c14e;outline:.4mm solid #6b3fa0;display:flex;align-items:center;justify-content:center;font-size:30pt;font-weight:bold;color:#46246f}
+.f-action{font-size:11pt;text-align:center;line-height:1.25}
+.f-action big{display:block;font-size:22pt;line-height:1}
+.f-rep{width:21mm;height:21mm;border:.4mm dashed #000;border-radius:3mm;font-size:30pt;font-weight:bold;color:#c0392b;display:flex;align-items:center;justify-content:center}
+.f-rep.ok{border-style:solid}
+.f-exemple{font-size:11pt;border-left:1.2mm solid #f2c14e;padding:1.5mm 3mm;margin:0 0 3mm}
+.f-pied{font-size:8.5pt;color:#555;text-align:center;margin-top:2mm}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<script src="tour-de-controle.js"></script></head>
+<script src="tour-de-controle.js"></script><script src="document-ecrit.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -260,6 +309,17 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
   <div class="actions">
     <span class="note" id="msg-reglages"></span>
     <button class="btn btn-go" id="jouer">✨ Lever le rideau</button>
+  </div>
+
+  <div class="papier" id="papier">
+    <h2>🖨️ Version papier : des fiches à imprimer</h2>
+    <p>Les fiches reprennent le niveau, les lettres cochées et le mot modèle choisis plus haut. Nouveau tirage à chaque impression.</p>
+    <label class="coche"><input type="checkbox" id="pF1" checked><span>Fiche 1 : regarde l'image et complète le mot avec b, d, p ou q (12 mots)</span></label>
+    <label class="coche"><input type="checkbox" id="pF2" checked><span>Fiche 2 : entoure la lettre magique dans chaque ligne, puis compte-les</span></label>
+    <label class="coche"><input type="checkbox" id="pF3" checked><span>Fiche 3 : la roue magique, que devient la lettre quand on la tourne ou la retourne ?</span></label>
+    <label class="coche"><input type="checkbox" id="pCorr" checked><span>Ajouter le corrigé</span></label>
+    <button class="btn btn-sec" id="imprimer">🖨️ Imprimer les fiches</button>
+    <p id="alerteP" style="color:var(--err)"></p>
   </div>
 </section>
 
@@ -342,11 +402,13 @@ table.conf th{background:#f3ecfb;font-family:var(--f-titre);font-weight:600}
   <div id="bilan-conf"></div>
   <div class="actions">
     <button class="btn btn-sec" id="b-reglages">Réglages</button>
+    <button class="btn btn-sec" id="b-bilan">📄 Bilan de la partie</button>
     <button class="btn btn-go" id="b-rejouer">✨ Rejouer</button>
   </div>
 </section>
 
 </div>
+<div id="impression"></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -617,6 +679,82 @@ $("jouer").onclick = demarrer;
 $("b-rejouer").onclick = demarrer;
 $("b-reglages").onclick = () => { $("ecran-fin").hidden = true; $("ecran-reglages").hidden = false; };
 $("quitter").onclick = () => { $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; activer(false); if("speechSynthesis" in window) speechSynthesis.cancel(); };
+
+/* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
+$("b-bilan").onclick = () => {
+  const M = stats.mots, ok = M.filter(m=>!m.erreurs), ko = M.filter(m=>m.erreurs);
+  const gras = m => [...m].map(c => lettres.includes(c) ? `<b>${c}</b>` : c).join("");
+  const c = Object.entries(stats.conf).sort((a,b)=>b[1]-a[1]);
+  const niv = val("niveau");
+  DocEcrit.ouvrir({titre:"Bilan de la partie", jeu:"La roue du magicien", nom:"Bilan roue du magicien", prenom:true, html:()=>`
+  <p>${niv==="perso"?"Mes mots":"Niveau "+niv} — lettres travaillées : <b>${lettres.join(", ")}</b>${$("opt-modele").checked?" — avec le mot modèle":" — sans modèle"}</p>
+  <h2>Résultats</h2><p><b>${ok.length} mot${ok.length>1?"s":""} sur ${M.length} écrit${ok.length>1?"s":""} sans erreur</b> ; ${stats.premierCoup} lettre${stats.premierCoup>1?"s":""} sur ${stats.total} trouvée${stats.total>1?"s":""} du premier coup.</p>
+  <h2>Mots à retravailler</h2><p>${ko.map(m=>gras(m.m)).join(" ; ")||"Aucun : bravo !"}</p>
+  <h2>Confusions</h2>${c.length?`<table><tr><th>Il fallait</th><th>L'élève a écrit</th><th>Fois</th></tr>${c.map(([k,n])=>{const [a,b]=k.split("→");return `<tr><td>${a}</td><td>${b}</td><td>${n}</td></tr>`}).join("")}</table>`:"<p>Aucune confusion pendant cette partie.</p>"}
+  <h2>Détail</h2><table><tr><th>Mot</th><th>Résultat</th></tr>${M.map(m=>`<tr><td>${gras(m.m)}</td><td>${m.erreurs?"✘ "+m.erreurs+" erreur"+(m.erreurs>1?"s":""):"✔ du premier coup"}</td></tr>`).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+};
+
+/* ---------- Version papier : fiches à imprimer ---------- */
+const TOURNE = {d:"p",p:"d",b:"q",q:"b"}, RETOURNE = {d:"b",b:"d",p:"q",q:"p"};
+const ACTIONS = [
+  {n:"tourner", ic:"↻", f:l=>TOURNE[l]},
+  {n:"retourner", ic:"⇆", f:l=>RETOURNE[l]},
+  {n:"tourner et retourner", ic:"↻ ⇆", f:l=>RETOURNE[TOURNE[l]]}
+];
+const hasard = a => a[Math.floor(Math.random()*a.length)];
+function imprimerFiches(){
+  const L = lettresChoisies();
+  if(!L.length){ $("alerteP").textContent = "Coche au moins une lettre (b, d, p ou q) plus haut."; return; }
+  if(!$("pF1").checked && !$("pF2").checked && !$("pF3").checked){ $("alerteP").textContent = "Coche au moins une fiche."; return; }
+  const liste = listeMots();
+  if($("pF1").checked && !liste.length){ $("alerteP").textContent = "Aucun mot avec ces lettres à ce niveau : décoche la fiche 1 ou change de réglage."; return; }
+  $("alerteP").textContent = "";
+  const avecCorr = $("pCorr").checked, modele = $("opt-modele").checked, pages = [], corr = [];
+  const tete = (titre, consigne, c) => `<div class="f-tete"><div class="t"><b>🎩 La roue du magicien — ${titre}${c?'<span class="f-badge">CORRIGÉ</span>':""}</b><span>${consigne}</span></div>${c?"":'<div class="nom">Prénom : ……………………<br>Date : ……………………</div>'}</div>`;
+  const pied = '<div class="f-pied">toujourscap.com — La roue du magicien — CC BY-NC-SA 4.0</div>';
+  const fiche = (titre, consigne, corps, c) => `<div class="fiche">${tete(titre, consigne, c)}${corps}${pied}</div>`;
+  const rappel = `<div class="f-rappel">Les lettres magiques : ${["b","d","p","q"].filter(l=>L.includes(l)).map(l=>`<b>${l}</b>`).join("")}</div>`;
+
+  if($("pF1").checked){
+    const t = melanger(liste).slice(0,12);
+    const sansImage = t.some(o=>!o.i);
+    const fait = rep => `<div class="f-grille">${t.map((o,k)=>{
+      const tr = cibles(o.m, L);
+      const mot = [...o.m].map((c,j)=> tr.includes(j) ? `<span class="f-trou${rep?" ok":""}">${rep?c:""}</span>` : (c===" "?"&nbsp;":c)).join("");
+      return `<div class="f-case"><span class="f-num">${k+1}</span>${o.i?`<img class="f-img" src="${IMG}${o.i}.jpg" alt="">`:""}<div class="f-droite">${modele?`<div class="f-modele">${o.m}</div>`:""}<div class="f-mot">${mot}</div></div></div>`;
+    }).join("")}</div>`;
+    const consigne = modele ? "Lis le modèle et écris la lettre qui manque : b, d, p ou q." : (sansImage ? "L'adulte dit le mot. Écris la lettre qui manque : b, d, p ou q." : "Regarde l'image, dis le mot et écris la lettre qui manque : b, d, p ou q.");
+    pages.push(fiche("Fiche 1", consigne, rappel + fait(false)));
+    corr.push(fiche("Fiche 1", "Les lettres qui manquaient sont en rouge.", fait(true), true));
+  }
+  if($("pF2").checked){
+    const autresPour = l => { const a = L.filter(x=>x!==l); return a.length ? a.concat(["b","d","p","q"].filter(x=>x!==l && !a.includes(x)).slice(0, a.length>=2?0:1)) : ["b","d","p","q"].filter(x=>x!==l); };
+    const lignes = [];
+    for(let k=0;k<9;k++){
+      const c = L[k % L.length], nb = 5 + Math.floor(Math.random()*3), aut = autresPour(c);
+      const serie = melanger([...Array(nb)].map(()=>c).concat([...Array(16-nb)].map(()=>hasard(aut))));
+      lignes.push({c, serie, nb});
+    }
+    const fait = rep => `<div class="f-lignes">${lignes.map(l=>`<div class="f-ligne"><div class="f-cible">${l.c}</div><div class="f-serie">${l.serie.map(x=>`<span${rep&&x===l.c?' class="e"':""}>${x}</span>`).join("")}</div><div class="f-compte">J'en ai trouvé<i>${rep?l.nb:""}</i></div></div>`).join("")}</div>`;
+    pages.push(fiche("Fiche 2", "Entoure toutes les lettres pareilles à celle du rond. Attention aux pièges ! Puis écris combien tu en as trouvé.", fait(false)));
+    corr.push(fiche("Fiche 2", "Les bonnes lettres sont entourées.", fait(true), true));
+  }
+  if($("pF3").checked){
+    const dep = L.length >= 2 ? L : ["b","d","p","q"];
+    const items = [...Array(12)].map((_,k)=>{ const a = ACTIONS[k<4?0:k<8?1:2]; return {l:hasard(dep), a}; });
+    const melange12 = melanger(items);
+    const ex = `<div class="f-exemple"><b>Rappel :</b> ↻ <b>tourner</b> = la roue fait un demi-tour (d devient p) ; ⇆ <b>retourner</b> = la lettre se regarde dans un miroir (d devient b). Tu peux découper un petit carton avec un <b>d</b> pour vérifier.</div>`;
+    const fait = rep => `<div class="f-roues">${melange12.map((it,k)=>`<div class="f-roue"><span class="f-num">${k+1}</span><div class="f-disque">${it.l}</div><div class="f-action"><big>${it.a.ic}</big>${it.a.n}</div><div style="font-size:20pt">→</div><div class="f-rep${rep?" ok":""}">${rep?it.a.f(it.l):""}</div></div>`).join("")}</div>`;
+    pages.push(fiche("Fiche 3", "Que devient la lettre de la roue ? Écris la nouvelle lettre dans la case.", ex + fait(false)));
+    corr.push(fiche("Fiche 3", "La nouvelle lettre est en rouge.", fait(true), true));
+  }
+  $("impression").innerHTML = pages.concat(avecCorr ? corr : []).join("");
+  // Attendre le chargement des images avant d'imprimer
+  const imgs = [...$("impression").querySelectorAll("img")].map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; })).filter(Boolean);
+  Promise.race([Promise.all(imgs), new Promise(r=>setTimeout(r,4000))]).then(()=>setTimeout(()=>window.print(), 150));
+}
+$("imprimer").onclick = imprimerFiches;
 majApercu();
 </script>
 </body>

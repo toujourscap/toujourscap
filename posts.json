@@ -6346,7 +6346,7 @@
   {
    "title": "La roue du magicien",
    "slug": "la-roue-du-magicien",
-   "excerpt": "Sur la scène du magicien, une roue magique contient un d. En la tournant et en la retournant, l'élève obtient b, d, p ou q pour compléter le mot. Un jeu de discrimination visuelle avec trois niveaux et un bilan des confusions.",
+   "excerpt": "Sur la scène du magicien, une roue magique contient un d. En la tournant et en la retournant, l'élève obtient b, d, p ou q pour compléter le mot. Un jeu de discrimination visuelle avec trois niveaux et un bilan des confusions. Fiches à imprimer avec corrigé.",
    "date": "2026-11-04T17:30:00.000Z",
    "categoryIds": [],
    "media": {
@@ -6363,7 +6363,8 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
-     "projetable"
+     "projetable",
+     "imprimable"
     ]
    },
    "richContent": {
@@ -6641,6 +6642,33 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Les fiches à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Sous le bouton « Lever le rideau », la version papier reprend le niveau, les lettres cochées et le mot modèle choisis : fiche 1, regarder l'image et écrire la lettre qui manque (b, d, p ou q) ; fiche 2, entourer la lettre magique dans des lignes de lettres pièges puis les compter ; fiche 3, la roue magique sur papier : écrire ce que devient la lettre quand on la tourne, la retourne ou les deux. Corrigé en option. Nouveau tirage à chaque impression. En fin de partie, un bilan à imprimer ou à télécharger (Word) récapitule les mots réussis et les confusions (prénom facultatif, rien n'est enregistré).",
+         "decorations": []
+        }
        }
       ]
      },
