@@ -139,6 +139,22 @@ const LISTES = [
       { titre:"Mots dictés", mots:true, items:phrases(DMOT) },
     ];
   }},
+  { id:"sous-marin", titre:"Lecture – Le sous-marin des syllabes (pla, bra, cri…)", charger: async () => {
+    const GR = await donnees("le-sous-marin-des-syllabes", "GR", "};");
+    const VOY = await donnees("le-sous-marin-des-syllabes", "VOY", "];");
+    // Mêmes règles que le jeu : on n'enregistre pas « ci », « gé »… (pièges écartés dans le jeu)
+    const lisible = (x) => !/[cg][iéey]/.test(x);
+    const syl = (gs) => gs.flatMap((g) => VOY.map((v) => g + v));
+    const tout = syl(GR.r.concat(GR.l));
+    const inv = tout.map((s) => s[0] + s.slice(2) + s[1]).filter(lisible);
+    const sans = tout.flatMap((s) => [s[0] + s.slice(2), s[1] + s.slice(2)]).filter(lisible);
+    return [
+      { titre:"Syllabes avec r (dis-les bien détachées, sans épeler)", mots:true, items:phrases(syl(GR.r)) },
+      { titre:"Syllabes avec l", mots:true, items:phrases(syl(GR.l)) },
+      { titre:"Pièges entendus dans « Pareil ou pas pareil » : inversions (pal pour pla)", mots:true, items:phrases(inv) },
+      { titre:"Pièges entendus dans « Pareil ou pas pareil » : consonne oubliée (pa, la pour pla)", mots:true, items:phrases(sans) },
+    ];
+  }},
   { id:"devinettes", titre:"Compréhension – Les devinettes de la forêt", charger: async () => {
     const DEV = await donnees("les-devinettes-de-la-foret", "DEV", "\\n];");
     return [{ titre:"Fin de chaque devinette", mots:true, items:phrases(["Qui suis-je ?"]) }]
