@@ -117,6 +117,8 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu
 .poisson.petit{width:16cqw}.poisson.petit .etiquette{font-size:3.7cqw;border-radius:1.4cqw}
 .poisson.mini{width:12.5cqw}.poisson.mini .etiquette{font-size:2.9cqw;border-radius:1.1cqw;box-shadow:inset 0 0 0 .25cqw rgba(0,0,0,.08)}
 .poisson.trouve{cursor:default}
+.poisson.libre{transition:opacity .4s,transform .3s}
+.poisson.droite svg{transform:scaleX(-1)}
 .poisson.faux{opacity:.35;cursor:default}
 .poisson.faux .corps{animation:none;transform:rotate(14deg)}
 .poisson.secoue .corps{animation:secoue .45s}
@@ -220,6 +222,12 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
         <label class="chip"><input type="radio" name="banc" value="9"><span>9</span></label>
         <label class="chip"><input type="radio" name="banc" value="12"><span>12</span></label>
         <label class="chip"><input type="radio" name="banc" value="16"><span>16</span></label>
+      </div>
+      <div class="etiq">Les poissons nagent, chacun à sa vitesse</div>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="bouge" value="0" checked><span>Non</span></label>
+        <label class="chip"><input type="radio" name="bouge" value="1"><span>Lentement</span></label>
+        <label class="chip"><input type="radio" name="bouge" value="2"><span>Vite</span></label>
       </div>
       <p class="note">Grand banc : beaucoup de poissons, dont 2 à 4 portent la syllabe du hublot. L'élève doit tous les trouver.</p>
     </fieldset>
@@ -491,6 +499,7 @@ function placer(n){
 }
 
 function tourSuivant(){
+  arreterNage();
   clearTimeout(cacheTimer);
   [...$("progres").children].forEach((e,k)=>{ if(k===idx) e.classList.add("encours"); else e.classList.remove("encours"); });
   tour = Object.assign({}, tours[idx]); essais = 0;
@@ -533,10 +542,10 @@ function tourSuivant(){
   stats.tours.push({ mode:tour.mode, s:tour.s, erreurs:0, faux:[] , ok:false });
 
   setTimeout(() => {
-    if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
-    else if(tour.mode === "regarde"){ montrerModele(); activer(true); }
+    if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); nager(pos); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
+    else if(tour.mode === "regarde"){ montrerModele(); activer(true); nager(pos); }
     else if(tour.mode === "ecrit"){ bulle("Écoute le sonar…"); majHublot(); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Écris la syllabe !"); }), 450); }
-    else { bulle("Écoute bien les deux poissons…"); direPaire(); }
+    else { bulle("Écoute bien les deux poissons…"); direPaire(); nager(pos); }
   }, 1000);
 }
 
@@ -610,6 +619,44 @@ function validerEcrit(){
   }
 }
 
+/* ---------- Les poissons nagent (option) ---------- */
+let nageId = 0;
+function arreterNage(){ cancelAnimationFrame(nageId); nageId = 0; }
+function nager(pos){
+  const vitesse = [0, 2.6, 6][+val("bouge") || 0];
+  if(!vitesse || !pos) return;
+  const btns = [...$("banc").children];
+  const w = btns[0].classList.contains("mini") ? 12.5 : btns[0].classList.contains("petit") ? 16 : 22;
+  const h = w * .575 / 56.25 * 100;           // hauteur du poisson en % de la scène (16/9)
+  const xmin = 40, xmax = 98 - w, ymin = 3, ymax = 84 - h;
+  const P = btns.map((b,k) => { const a = Math.random() * Math.PI * 2, v = vitesse * (.35 + Math.random() * 1.3); // chaque poisson a sa vitesse
+    return { b, x: pos[k][0], y: pos[k][1], vx: Math.cos(a) * v, vy: Math.sin(a) * v * .6 }; });
+  let t0 = null;
+  const pas = t => {
+    if(!nageId) return;
+    const dt = t0 === null ? 0 : Math.min(.05, (t - t0) / 1000); t0 = t;
+    const vivants = P.filter(p => !p.b.classList.contains("trouve") && !p.b.classList.contains("faux"));
+    vivants.forEach(p => {
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      if(p.x < xmin){ p.x = xmin; p.vx = Math.abs(p.vx); } if(p.x > xmax){ p.x = xmax; p.vx = -Math.abs(p.vx); }
+      if(p.y < ymin){ p.y = ymin; p.vy = Math.abs(p.vy); } if(p.y > ymax){ p.y = ymax; p.vy = -Math.abs(p.vy); }
+    });
+    // deux poissons qui se touchent repartent chacun de leur côté (les étiquettes restent lisibles)
+    for(let i = 0; i < P.length; i++) for(let j = i + 1; j < P.length; j++){
+      const a = P[i], c = P[j], dx = c.x - a.x, dy = c.y - a.y;
+      if(Math.abs(dx) < w * .92 && Math.abs(dy) < h * .9){
+        const ma = vivants.includes(a), mc = vivants.includes(c);
+        if(Math.abs(dx) / w > Math.abs(dy) / h){ if(ma) a.vx = -Math.abs(a.vx) * Math.sign(dx || 1); if(mc) c.vx = Math.abs(c.vx) * Math.sign(dx || 1); }
+        else { if(ma) a.vy = -Math.abs(a.vy || 1) * Math.sign(dy || 1); if(mc) c.vy = Math.abs(c.vy || 1) * Math.sign(dy || 1); }
+      }
+    }
+    vivants.forEach(p => { p.b.style.left = p.x + "%"; p.b.style.top = p.y + "%"; p.b.classList.toggle("droite", p.vx > 0); });
+    nageId = requestAnimationFrame(pas);
+  };
+  // on attend que les poissons soient arrivés à leur place avant de les laisser nager
+  setTimeout(() => { if(tour && $("banc").children[0] === btns[0]){ btns.forEach(b => b.classList.add("libre")); nageId = requestAnimationFrame(pas); } }, 300 + btns.length * 140);
+}
+
 function choisir(k){
   if(!enJeu || tour.mode === "pareil") return;
   const c = tour.choix[k], b = $("banc").children[k], st = stats.tours[stats.tours.length-1];
@@ -624,6 +671,7 @@ function choisir(k){
     bulle(essais ? `Oui : ${tour.s} !` : "Bravo !", "ok");
     if(tour.mode === "regarde" && $("opt-dire").checked) dire(tour.s);
     bulles(b);
+    arreterNage(); [...$("banc").children].forEach(x => x.classList.remove("libre","droite"));
     [...$("banc").children].filter(x => x === b || x.classList.contains("trouve")).forEach(x =>
       setTimeout(() => { x.style.left = "18%"; x.style.top = "36%"; x.style.opacity = "0"; x.style.transform = "scale(.4)"; }, 700));
     finTour(essais === 0);
@@ -659,6 +707,7 @@ function repondrePP(meme){
 }
 
 function finTour(reussi, delai=2200){
+  arreterNage();
   const p = $("progres").children[idx]; p.classList.remove("encours"); p.classList.add(reussi ? "fait" : "rate");
   setTimeout(() => { idx++; if(idx < tours.length) tourSuivant(); else finPartie(); }, delai);
 }
@@ -722,7 +771,7 @@ document.addEventListener("keydown", e => {
 $("jouer").onclick = demarrer;
 $("b-rejouer").onclick = demarrer;
 $("b-reglages").onclick = () => { $("ecran-fin").hidden = true; $("ecran-reglages").hidden = false; };
-$("quitter").onclick = () => { $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; enJeu = false; clearTimeout(cacheTimer); if("speechSynthesis" in window) speechSynthesis.cancel(); };
+$("quitter").onclick = () => { arreterNage(); $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; enJeu = false; clearTimeout(cacheTimer); if("speechSynthesis" in window) speechSynthesis.cancel(); };
 
 /* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
 $("b-bilan").onclick = () => {
@@ -750,24 +799,31 @@ $("b-fiche").onclick = () => {
   const ex2 = [...Array(7)].map((_,k) => { const s = pick(k+7); return { s, ligne: melanger([s, ...distracteurs(s, 4, tps, vs).map(x=>x.s)]) }; });
   // Exercice 3 : pareil ou pas pareil (oral)
   const ex3 = [...Array(10)].map((_,k) => { const s = pick(k+3), d = distracteurs(s, 2, tps, vs)[0]; const meme = !d || Math.random() < .45; const b = meme ? s : d.s; return { a: Math.random()<.5 ? [s,b] : [b,s], meme }; });
+  // Exercice 5 : le grand banc, entourer toutes les syllabes pareilles au modèle
+  const ex5 = [0,1].map(k => { const s = pick(k+5), d = distracteurs(s, 6, tps, vs).map(x=>x.s), justes = 4 + Math.floor(Math.random()*3), faux = [];
+    for(let j=0; faux.length < 24 - justes; j++) faux.push(d[j % d.length] || s);
+    return { s, justes, grille: melanger([...Array(justes)].map(()=>s).concat(faux)) }; });
   // Exercice 4 : dictée de syllabes
   const ex4 = [...Array(8)].map((_,k) => pick(k+11));
   const ligne = (l, cible) => l.map(x => `<td ${td}>${cible && x===cible ? `<span style="border:2px solid #c0392b;border-radius:50%;padding:0 6pt;color:#c0392b">${x}</span>` : x}</td>`).join("");
   const exos = corr => `
     <h2>1. Entoure les syllabes pareilles au modèle (il y en a 2 par ligne).</h2>
     <table>${ex1.map(e=>`<tr><td ${tdm}>${e.s}</td>${ligne(e.ligne, corr && e.s)}</tr>`).join("")}</table>
-    <h2>2. J'écoute la syllabe et je l'entoure.</h2>
+    <h2>2. Le grand banc : entoure toutes les syllabes pareilles au modèle, puis compte-les.</h2>
+    ${ex5.map(e=>`<table style="margin-bottom:8pt"><tr><td rowspan="4" ${tdm}>${e.s}</td>${[0,1,2,3].map(r=>(r?"<tr>":"")+e.grille.slice(r*6,r*6+6).map(x=>`<td style="font-size:17pt;padding:3pt 8pt;text-align:center;border-radius:12pt">${corr && x===e.s ? `<span style="border:2px solid #c0392b;border-radius:50%;padding:0 5pt;color:#c0392b">${x}</span>` : x}</td>`).join("")+"</tr>").join("")}</table>
+    <p style="margin:0 0 10pt">J'en ai trouvé : <span style="display:inline-block;min-width:36pt;border-bottom:1px solid #000;text-align:center;color:#c0392b;font-weight:bold">${corr ? e.justes : "&nbsp;"}</span></p>`).join("")}
+    <h2>3. J'écoute la syllabe et je l'entoure.</h2>
     <table>${ex2.map((e,k)=>`<tr><td style="font-size:12pt;padding:4pt 8pt">${k+1}</td>${ligne(e.ligne, corr && e.s)}</tr>`).join("")}</table>
-    <h2>3. Pareil ou pas pareil ? J'écoute et je colorie = ou ≠.</h2>
+    <h2>4. Pareil ou pas pareil ? J'écoute et je colorie = ou ≠.</h2>
     <table><tr>${ex3.map((e,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt">${k+1}<br><span style="font-size:20pt">${corr ? (e.meme ? "<b style='color:#2e8b57'>=</b> ≠" : "= <b style='color:#c0392b'>≠</b>") : "= &nbsp;≠"}</span></td>`).join("")}</tr></table>
-    <h2>4. J'écoute et j'écris la syllabe.</h2>
+    <h2>5. J'écoute et j'écris la syllabe.</h2>
     <table><tr>${ex4.map((x,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt;width:62pt">${k+1}<br><span style="display:inline-block;height:30pt;line-height:30pt;font-size:20pt;color:#c0392b">${corr ? x : "&nbsp;"}</span></td>`).join("")}</tr></table>`;
   DocEcrit.ouvrir({titre:"Fiche d'exercices", jeu:"Le sous-marin des syllabes", nom:"Fiche sous-marin des syllabes", prenom:true, html:()=>`
     ${exos(false)}
     <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Pour l'adulte</h1>
-    <p><b>Exercice 2</b> — dire une seule fois, distinctement : ${ex2.map((e,k)=>`${k+1}. <b>${e.s}</b>`).join(" &nbsp; ")}</p>
-    <p><b>Exercice 3</b> — dire les deux syllabes, une seconde d'écart : ${ex3.map((e,k)=>`${k+1}. ${e.a[0]} … ${e.a[1]}`).join(" &nbsp; ")}</p>
-    <p><b>Exercice 4</b> — dicter chaque syllabe deux fois : ${ex4.map((x,k)=>`${k+1}. <b>${x}</b>`).join(" &nbsp; ")}</p>
+    <p><b>Exercice 3</b> — dire une seule fois, distinctement : ${ex2.map((e,k)=>`${k+1}. <b>${e.s}</b>`).join(" &nbsp; ")}</p>
+    <p><b>Exercice 4</b> — dire les deux syllabes, une seconde d'écart : ${ex3.map((e,k)=>`${k+1}. ${e.a[0]} … ${e.a[1]}`).join(" &nbsp; ")}</p>
+    <p><b>Exercice 5</b> — dicter chaque syllabe deux fois : ${ex4.map((x,k)=>`${k+1}. <b>${x}</b>`).join(" &nbsp; ")}</p>
     <p style="font-size:12px;color:#666">Ne pas montrer sa bouche (ou se placer derrière l'élève) pour un vrai travail d'écoute.</p></div>
     <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Corrigé</h1>${exos(true)}</div>`});
 };
