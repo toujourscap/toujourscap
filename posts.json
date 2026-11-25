@@ -5993,7 +5993,8 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
-     "projetable"
+     "projetable",
+     "imprimable"
     ]
    },
    "richContent": {
@@ -6227,6 +6228,101 @@
         "type": "TEXT",
         "textData": {
          "text": "Aux niveaux 2 à 4, on peut choisir des syllabes à lire ou des lettres au hasard : avec des lettres au hasard, l'élève ne peut pas s'aider de la lecture et doit regarder chaque lettre.",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Document à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Dans les réglages, le bouton « Fiche à imprimer » prépare une fiche papier adaptée au niveau, aux familles de lettres et au nombre de cibles choisis. Une nouvelle fiche est tirée au hasard à chaque fois. On peut l'imprimer ou la télécharger (Word).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "BULLETED_LIST",
+      "nodes": [
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Aide Robin : l'élève entoure la cible qui porte exactement le modèle. Pour travailler l'empan visuel, l'adulte montre le modèle quelques secondes, puis le cache avec une bande de papier.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "La chasse de Marion : l'élève entoure le modèle chaque fois qu'il le voit, parmi des suites qui lui ressemblent.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "type": "LIST_ITEM",
+        "nodes": [
+         {
+          "type": "PARAGRAPH",
+          "nodes": [
+           {
+            "type": "TEXT",
+            "textData": {
+             "text": "Un corrigé, sur une page à part.",
+             "decorations": []
+            }
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En fin de partie, le bouton « Bilan de la partie » donne un bilan à imprimer : réglages, cibles touchées du premier coup, confusions à retravailler (b / d, m / n…) et détail des tirs. Le prénom est facultatif et n'est pas enregistré.",
          "decorations": []
         }
        }

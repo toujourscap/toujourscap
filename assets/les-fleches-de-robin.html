@@ -167,7 +167,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<script src="tour-de-controle.js"></script></head>
+<script src="tour-de-controle.js"></script><script src="document-ecrit.js"></script></head>
 <body>
 <div class="wrap">
 
@@ -241,6 +241,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
 
   <div class="actions">
     <span class="note" id="msg-reglages"></span>
+    <button class="btn btn-sec" id="b-fiche">📄 Fiche à imprimer</button>
     <button class="btn btn-go" id="jouer">🏹 Entrer dans la forêt</button>
   </div>
 </section>
@@ -279,6 +280,7 @@ table.conf td.l{font-size:24px;letter-spacing:.08em}
   <div class="barres" id="barres"></div>
   <div id="bilan-conf"></div>
   <div class="actions">
+    <button class="btn btn-sec" id="b-bilan">📄 Bilan de la partie</button>
     <button class="btn btn-sec" id="b-reglages">Réglages</button>
     <button class="btn btn-go" id="b-rejouer">🏹 Rejouer</button>
   </div>
@@ -360,7 +362,7 @@ function leurres(m, k){
 
 function majApercu(){
   const L = lettresJeu(), mots = val("niveau") === "5";
-  $("jouer").disabled = !L.length && !mots;
+  $("jouer").disabled = $("b-fiche").disabled = !L.length && !mots;
   $("msg-reglages").textContent = L.length || mots ? "" : "Coche au moins une famille de lettres.";
   if(!L.length && !mots){ $("apercu").innerHTML = ""; return; }
   const m = fabriqueModele(+val("niveau"), val("suite"));
@@ -516,7 +518,7 @@ function impact(cible){
     return;
   }
   erreurs++;
-  stats.rates.push({ m, s, type: typeErreur(m, s) });
+  stats.rates.push({ m, s, type: typeErreur(m, s), i: idx });
   son("err");
   cible.classList.add("rate"); cible.disabled = true;
   if(erreurs >= 2){
@@ -558,7 +560,65 @@ function finPartie(){
 }
 function marque(m, s){ return [...s].map((c,i)=> c!==m[i] ? `<b style="color:var(--err)">${c}</b>` : c).join(""); }
 
+/* ---------- Document écrit : fiche à imprimer et bilan de partie ---------- */
+const NIVNOM = {1:"Niveau 1 · une lettre", 2:"Niveau 2 · deux lettres", 3:"Niveau 3 · trois lettres", 4:"Niveau 4 · quatre lettres", 5:"Niveau 5 · petits mots courants"};
+const LET = 'font-family:Andika,Arial,sans-serif;font-size:26px;letter-spacing:.08em';
+function reglagesTexte(){
+  const niv = +val("niveau");
+  let t = NIVNOM[niv];
+  if(niv < 5) t += " — lettres : " + familles().map(f=>[...f].join(" ")).join(" ; ");
+  if(niv > 1 && niv < 5) t += " — " + (val("suite")==="syll" ? "syllabes à lire" : "lettres au hasard");
+  return t;
+}
+function ouvrirFiche(){
+  const niv = +val("niveau"), suite = val("suite"), n = +val("cibles"), nb = Math.min(+val("nb"), 8);
+  if(!lettresJeu().length && niv !== 5) return;
+  const modeles = (k) => { const a = [], vus = new Set();
+    for(let t=0; a.length<k && t<k*30; t++){ const m = fabriqueModele(niv, suite); if(vus.has(m) && t<k*15) continue; vus.add(m); a.push(m); } return a; };
+  // Exercice 1 : une ligne = un modèle et ses cibles
+  const ex1 = modeles(nb).map(m => { const c = melange([m, ...leurres(m, n-1)]); return { m, c, bon: c.indexOf(m) }; });
+  // Exercice 2 : la chasse — une ligne de 12 suites, le modèle caché 3 ou 4 fois
+  const ex2 = modeles(3).map(m => { const k = 3 + rnd(2), l = leurres(m, 6); const a = [];
+    for(let i=0;i<k;i++) a.push(m); while(a.length<12) a.push(pick(l.length ? l : [m])); return { m, a: melange(a) }; });
+  const cible = (s, k) => `<td style="border:2px solid #7a4a24;border-radius:50%;width:78px;height:62px;text-align:center;vertical-align:middle;${LET}"><span style="display:block;font-size:11px;color:#888;letter-spacing:0;font-family:Arial">${k+1}</span>${s}</td>`;
+  const parch = m => `<td style="border:2px solid #a8783a;border-right:3px dashed #888;background:#fbf1d6;text-align:center;padding:4px 14px;${LET};font-weight:700">${m}</td>`;
+  const vide = '<td style="border:none;width:10px"></td>';
+  const chasse = (a, f) => `<table style="border-collapse:collapse;margin:2px 0 6px">${[0,6].map(d=>`<tr>${a.slice(d,d+6).map(s=>`<td style="border:none;width:92px;padding:4px 6px;${LET}">${f(s)}</td>`).join("")}</tr>`).join("")}</table>`;
+  DocEcrit.ouvrir({ titre:"Fiche à imprimer", jeu:"Les flèches de Robin", nom:"Fiche flèches de Robin", prenom:true, html:() => `
+  <p>${reglagesTexte()}</p>
+  <h2>1. Aide Robin : entoure la cible qui porte exactement le modèle.</h2>
+  <p style="font-size:13px;color:#555">Variante pour l'empan visuel : l'adulte montre le modèle quelques secondes, puis le cache (bande de papier, ou feuille pliée sur les pointillés) avant que l'élève cherche la cible.</p>
+  <table style="border-collapse:separate;border-spacing:0 10px">${ex1.map(e=>`<tr style="page-break-inside:avoid;break-inside:avoid">${parch(e.m)}${vide}${e.c.map(cible).join(vide)}</tr>`).join("")}</table>
+  <h2>2. La chasse de Marion : entoure le modèle chaque fois que tu le vois.</h2>
+  ${ex2.map((e,i)=>`<p style="margin:14px 0 4px">${String.fromCharCode(97+i)}) Modèle : <b style="${LET};background:#fbf1d6;border:2px solid #a8783a;padding:0 10px">${e.m}</b></p>
+  ${chasse(e.a, s=>s)}`).join("")}
+  <div class="saut"><h2>Corrigé</h2>
+  <p><b>1.</b> ${ex1.map((e,i)=>`${i+1}) ${e.m} : cible ${e.bon+1}`).join(" ; ")}</p>
+  <p><b>2.</b> ${ex2.map((e,i)=>`${String.fromCharCode(97+i)}) ${e.m} : ${e.a.filter(s=>s===e.m).length} fois`).join(" ; ")}</p>
+  ${ex2.map(e=>chasse(e.a, s=>s===e.m?`<u><b>${s}</b></u>`:`<span style="color:#aaa">${s}</span>`)).join("")}
+  </div>`});
+}
+function ouvrirBilan(){
+  if(!stats) return;
+  const N = partie.length, p = stats.premier;
+  const nl = stats.rates.filter(r=>r.type==="lettre").length, no = stats.rates.filter(r=>r.type==="ordre").length;
+  const conf = {};
+  stats.rates.filter(r=>r.type==="lettre" && r.m.length===r.s.length).forEach(r=>[...r.m].forEach((c,i)=>{ if(c!==r.s[i]){ const k=c+" / "+r.s[i]; conf[k]=(conf[k]||0)+1; } }));
+  const ck = Object.keys(conf).sort((a,b)=>conf[b]-conf[a]);
+  const fl = flash(), duree = fl ? `modèle caché après ${String(fl/1000).replace(".",",")} s` : "modèle laissé affiché";
+  const ligne = (m,i) => { const r = stats.rates.filter(x=>x.i===i);
+    return `<tr><td style="${LET};font-size:20px">${m}</td><td>${!r.length?"✔ du premier coup":r.length===1?"✔ au 2e essai":"✔ avec l'aide (cible qui brille)"}</td><td style="${LET};font-size:20px">${r.map(x=>marque(m,x.s).replace(/var\(--err\)/g,"#c8501b")).join(" , ")||"—"}</td></tr>`; };
+  DocEcrit.ouvrir({ titre:"Bilan de la partie", jeu:"Les flèches de Robin", nom:"Bilan flèches de Robin", prenom:true, html:() => `
+  <p>${reglagesTexte()} — ${+val("cibles")} cibles — ${duree}</p>
+  <h2>Résultats</h2><p><b>${p} cible${p>1?"s":""} sur ${N}</b> touchée${p>1?"s":""} du premier coup. Erreurs : lettre ressemblante ${nl}${+val("niveau")>1?` ; lettres dans le désordre ${no}`:""}.</p>
+  <h2>Confusions à retravailler</h2><p>${ck.length ? ck.map(k=>`<b style="${LET};font-size:20px">${k}</b> (${conf[k]})`).join(" ; ") : no ? "Pas de lettre confondue, mais attention à l'ordre des lettres." : "Aucune : bravo !"}</p>
+  <h2>Détail des tirs</h2><table><tr><th>Modèle</th><th>Résultat</th><th>Cibles ratées</th></tr>${partie.map(ligne).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+}
+
 /* ---------- Commandes ---------- */
+$("b-fiche").onclick = () => window.DocEcrit && ouvrirFiche();
+$("b-bilan").onclick = () => window.DocEcrit && ouvrirBilan();
 $("b-revoir").onclick = () => montrerModele(false);
 document.addEventListener("keydown", e => {
   if($("ecran-jeu").hidden) return;
