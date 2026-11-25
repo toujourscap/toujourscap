@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le sous-marin des syllabes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Grandstander:wght@600;800&display=swap">
+<style>
+/* Le sous-marin des syllabes : discrimination auditive et visuelle des syllabes à deux consonnes (pla, dra, cri…).
+   Trois jeux : J'écoute (le sonar dit la syllabe, on touche le bon poisson), Je regarde (on retrouve la syllabe du hublot),
+   Pareil ou pas pareil (deux syllabes entendues). Pièges réglables : pal, pa, pra, bla, plo. */
+:root{
+  --mer:#0b3a5a; --mer-2:#08263d; --bleu:#1f6fa3; --bleu-fonce:#124a70; --jaune:#f6c445; --jaune-fonce:#b9861c;
+  --papier:#f7fbff; --encre:#14283a; --gris:#5d6f7d; --ok:#2f8a4e; --err:#d0661b; --corail:#ef7d5b;
+  --f-titre:"Grandstander","Comic Sans MS",system-ui,sans-serif;
+  --f-lecture:"Andika","Arial",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--mer-2);color:var(--encre);font-family:var(--f-lecture);font-size:16px;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:10px 16px 12px}
+#ecran-jeu{max-width:min(100%,calc((100vh - 170px) * 1.7778));margin:0 auto}
+h1,h2,h3{font-family:var(--f-titre);text-wrap:balance;margin:0}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* ---------- Réglages ---------- */
+.carte{background:var(--papier);border-radius:18px;padding:18px 22px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.entete{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.entete svg{width:52px;height:52px;flex:0 0 auto}
+.entete h1{font-size:clamp(24px,4vw,36px);color:var(--bleu-fonce)}
+.entete p{margin:4px 0 0;color:var(--gris)}
+.niveaux{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.niv{position:relative}
+.niv input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.niv span{display:block;height:100%;border:3px solid #d6e6f2;border-radius:14px;padding:9px 12px;background:#fff}
+.niv span>b{display:block;font-family:var(--f-titre);font-size:20px;color:var(--bleu-fonce)}
+.niv small{display:block;color:var(--gris);font-size:14px;margin-top:4px;line-height:1.35}
+.niv input:checked+span{border-color:var(--bleu);background:#e9f4fc;box-shadow:0 4px 0 var(--bleu)}
+.niv input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+fieldset{border:2px solid #d6e6f2;border-radius:14px;padding:12px 16px;margin:0;min-width:0}
+legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu-fonce)}
+.choix{display:flex;flex-wrap:wrap;gap:7px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.chip span{display:inline-block;padding:5px 12px;border-radius:999px;border:2px solid #c9dceb;background:#fff;font-weight:700;font-size:18px}
+.chip input:checked+span{background:var(--bleu);border-color:var(--bleu);color:#fff}
+.chip input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
+.etiq{font-size:13px;color:var(--gris);margin:9px 0 5px}
+.etiq:first-of-type{margin-top:0}
+.coche{display:flex;gap:10px;align-items:flex-start;margin:6px 0;font-size:15px}
+.coche input{width:20px;height:20px;flex:0 0 auto;margin:1px 0 0}
+.coche b{color:var(--bleu-fonce)}
+.mini{border:none;background:#e3eff8;border-radius:8px;padding:3px 9px;font-size:13px;color:var(--bleu-fonce);margin-left:4px}
+.note{font-size:13px;color:var(--gris);margin:6px 0 0;line-height:1.45}
+.apercu{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:12px;font-size:18px}
+.apercu span{background:#e9f4fc;border-radius:8px;padding:1px 8px}
+.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.btn{border:none;border-radius:14px;padding:13px 24px;font-size:20px;font-weight:800;font-family:var(--f-titre)}
+.btn-go{background:var(--bleu);color:#fff;box-shadow:0 5px 0 var(--bleu-fonce)}
+.btn-go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--bleu-fonce)}
+.btn-go:disabled{opacity:.45;cursor:default;transform:none}
+.btn-sec{background:#e3eff8;color:var(--encre)}
+
+/* ---------- Jeu ---------- */
+.bandeau{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#e2f2ff;margin-bottom:8px;flex-wrap:wrap}
+.bandeau h2{font-size:20px}
+.progres{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.progres i{width:16px;height:16px;border-radius:50%;background:rgba(226,242,255,.22);display:block}
+.progres i.fait{background:var(--jaune);box-shadow:0 0 8px var(--jaune)}
+.progres i.rate{background:#7fb3d6}
+.progres i.encours{outline:2px solid #e2f2ff}
+.lien{background:none;border:2px solid rgba(226,242,255,.5);color:#e2f2ff;border-radius:10px;padding:5px 12px;font-size:15px}
+
+.scene{position:relative;aspect-ratio:16/9;width:100%;border-radius:18px;overflow:hidden;container-type:inline-size;
+  background:linear-gradient(#2b8cc4 0%,#14629a 38%,#0b3a5a 80%,#08263d 100%);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.scene.decor-image{background:#0b3a5a center/cover no-repeat}
+.scene.decor-image .decor{display:none}
+.decor{position:absolute;inset:0;pointer-events:none}
+.rayon{position:absolute;top:-10%;width:9%;height:85%;background:linear-gradient(rgba(255,255,255,.22),transparent);transform:skewX(-14deg);filter:blur(.4cqw)}
+.sable{position:absolute;left:-2%;right:-2%;bottom:-6%;height:17%;background:#e8c98a;border-radius:50% 50% 0 0/40% 40% 0 0;box-shadow:inset 0 1cqw 0 #f3dba6}
+.algue{position:absolute;bottom:6%;width:5%;transform-origin:50% 100%;animation:ondule 4s ease-in-out infinite}
+@keyframes ondule{50%{transform:rotate(6deg)}}
+.bulles-fond i{position:absolute;bottom:-4%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:.18cqw solid rgba(255,255,255,.6);animation:monte 7s linear infinite}
+@keyframes monte{to{transform:translateY(-62cqw);opacity:0}}
+
+/* Le sous-marin */
+.sm{position:absolute;left:1.5%;top:24%;width:36%;pointer-events:none;animation:flotte 3.5s ease-in-out infinite}
+@keyframes flotte{50%{transform:translateY(-1.5%)}}
+.sm svg{width:100%;display:block;transform:scaleX(-1);filter:drop-shadow(0 1cqw .6cqw rgba(0,0,0,.3))}
+.hublot{position:absolute;left:34.67%;top:34.1%;width:30.67%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:4.2cqw;font-weight:700;color:var(--encre);line-height:1;text-align:center}
+.hublot.cache{color:#9fb8c9}
+.sonar{position:absolute;left:88%;top:52%;width:5cqw;aspect-ratio:1;border-radius:50%;border:.5cqw solid rgba(255,255,255,.8);opacity:0;pointer-events:none}
+.sonar.ping{animation:ping 1.1s ease-out}
+.sonar.ping.b{animation-delay:.25s}
+@keyframes ping{0%{transform:scale(.4);opacity:.9}100%{transform:scale(7);opacity:0}}
+.ecouter{position:absolute;left:5%;top:5%;background:var(--jaune);color:var(--encre);border:none;border-radius:999px;font-size:2cqw;padding:.7cqw 1.6cqw;font-weight:800;
+  font-family:var(--f-titre);box-shadow:0 .4cqw 0 var(--jaune-fonce)}
+.ecouter:active{transform:translateY(.25cqw);box-shadow:0 .15cqw 0 var(--jaune-fonce)}
+
+/* Les poissons */
+.poisson{position:absolute;width:22cqw;aspect-ratio:2/1.15;border:none;background:none;padding:0;cursor:pointer;
+  transition:left .9s cubic-bezier(.3,1.1,.5,1),top .9s cubic-bezier(.3,1.1,.5,1),opacity .4s,transform .3s;-webkit-tap-highlight-color:transparent}
+.poisson .corps{position:absolute;inset:0;animation:nage 2.6s ease-in-out infinite}
+.poisson:nth-child(2n) .corps{animation-delay:-1.1s}
+@keyframes nage{50%{transform:translateY(-6%) rotate(-2deg)}}
+.poisson svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 .6cqw .3cqw rgba(0,0,0,.25))}
+.poisson .etiquette{position:absolute;left:8%;top:25%;width:56%;height:50%;display:flex;align-items:center;justify-content:center;
+  background:#fff;border-radius:2cqw;font-size:5cqw;font-weight:700;color:var(--encre);line-height:1;box-shadow:inset 0 0 0 .35cqw rgba(0,0,0,.08)}
+.poisson .etiquette.cache{color:#b7c9d6}
+.poisson.faux{opacity:.35;cursor:default}
+.poisson.faux .corps{animation:none;transform:rotate(14deg)}
+.poisson.secoue .corps{animation:secoue .45s}
+@keyframes secoue{20%,60%{transform:translateX(-6%)}40%,80%{transform:translateX(6%)}}
+.poisson.indice .etiquette{box-shadow:0 0 0 .6cqw var(--jaune),0 0 3cqw var(--jaune)}
+.poisson.bon .etiquette{background:#dff5e5;box-shadow:0 0 0 .6cqw var(--ok)}
+.poisson.parle .corps{animation:parle .5s ease 2}
+@keyframes parle{50%{transform:scale(1.12)}}
+.poisson:disabled{cursor:default}
+
+/* Pareil ou pas pareil */
+.choix-pp{position:absolute;right:5%;bottom:5%;display:flex;gap:2cqw}
+.pp{border:none;border-radius:2cqw;padding:1.3cqw 2.6cqw;font-family:var(--f-titre);font-weight:800;font-size:3cqw;color:#fff;display:flex;align-items:center;gap:1cqw}
+.pp big{font-size:4.2cqw;line-height:1}
+.pp.pareil{background:var(--ok);box-shadow:0 .6cqw 0 #1e5d33}
+.pp.diff{background:var(--corail);box-shadow:0 .6cqw 0 #a54a2f}
+.pp:active{transform:translateY(.4cqw);box-shadow:none}
+.pp:disabled{opacity:.5;cursor:default}
+
+.bulle{position:absolute;left:2.5%;bottom:4%;background:#fff;border-radius:1.6cqw;padding:.7cqw 1.6cqw;font-family:var(--f-titre);
+  font-size:2.3cqw;color:var(--bleu-fonce);box-shadow:0 .5cqw 0 rgba(0,0,0,.25);max-width:38cqw;text-wrap:balance}
+.bulle.err{color:var(--err)}
+.bulle.ok{color:var(--ok)}
+.bulle-ok{position:fixed;z-index:21;pointer-events:none;width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.9);background:rgba(255,255,255,.15)}
+.aide-touches{color:#a9cbe2;text-align:center;font-size:13px;margin:8px 0 0}
+
+/* Fin */
+.fin h2{color:var(--bleu-fonce);font-size:clamp(26px,4vw,38px)}
+.lg{font-size:22px;font-weight:700}
+table.conf{border-collapse:collapse;margin-top:6px;font-size:16px}
+table.conf th,table.conf td{border:1px solid #d6e6f2;padding:5px 10px;text-align:center}
+table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
+.liste-fin{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.liste-fin span{background:#fff;border:2px solid #d6e6f2;border-radius:10px;padding:4px 10px;font-size:20px}
+.liste-fin span.ko{border-color:var(--err)}
+.liste-fin small{font-size:12px;color:var(--gris);margin-left:4px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script></head>
+<body>
+<div class="wrap">
+
+<!-- ======== Réglages ======== -->
+<section id="ecran-reglages" class="carte">
+  <div class="entete">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#1f6fa3" stroke="#f6c445" stroke-width="7"/><path d="M20 60 Q22 44 44 44 L70 44 Q82 44 82 56 Q82 68 70 68 L32 68 Q20 68 20 60Z" fill="#f6c445"/><rect x="46" y="30" width="12" height="16" rx="3" fill="#f6c445"/><circle cx="52" cy="56" r="6" fill="#bfe3f7" stroke="#124a70" stroke-width="2.5"/></svg>
+    <div>
+      <h1>Le sous-marin des syllabes</h1>
+      <p>Écoute le sonar, regarde bien : pla, pal ou pa ? Trouve le bon poisson.</p>
+    </div>
+  </div>
+
+  <div class="niveaux" role="radiogroup" aria-label="Niveau">
+    <label class="niv"><input type="radio" name="niveau" value="1" checked><span><b>Niveau 1</b><small>Groupes avec r (bra, tri, cro…). Pièges faciles : <b>pa</b> au lieu de <b>pra</b>, <b>pro</b> au lieu de <b>pra</b>.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Groupes avec r et l. Pièges : l'inversion <b>pal</b> / <b>pla</b>, la consonne oubliée.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Tous les groupes. Pièges fins : <b>pla</b> / <b>pra</b>, <b>pla</b> / <b>bla</b>, <b>pla</b> / <b>pal</b>.</small></span></label>
+  </div>
+
+  <div class="grille">
+    <fieldset>
+      <legend>Les jeux</legend>
+      <label class="coche"><input type="checkbox" name="mode" value="ecoute" checked><span><b>J'écoute</b> : le sonar dit la syllabe, l'élève touche le poisson qui la porte (auditif → écrit).</span></label>
+      <label class="coche"><input type="checkbox" name="mode" value="regarde" checked><span><b>Je regarde</b> : la syllabe s'affiche dans le hublot, l'élève retrouve la même (visuel).</span></label>
+      <label class="coche"><input type="checkbox" name="mode" value="pareil" checked><span><b>Pareil ou pas pareil ?</b> : deux syllabes entendues, sans rien lire (auditif seul).</span></label>
+      <p class="note">Plusieurs jeux cochés : ils sont mélangés pendant la partie.</p>
+      <div class="etiq">Nombre de tours</div>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="nb" value="6"><span>6</span></label>
+        <label class="chip"><input type="radio" name="nb" value="10" checked><span>10</span></label>
+        <label class="chip"><input type="radio" name="nb" value="15"><span>15</span></label>
+        <label class="chip"><input type="radio" name="nb" value="20"><span>20</span></label>
+      </div>
+      <div class="etiq">Nombre de poissons</div>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="np" value="2"><span>2</span></label>
+        <label class="chip"><input type="radio" name="np" value="3" checked><span>3</span></label>
+        <label class="chip"><input type="radio" name="np" value="4"><span>4</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Les syllabes</legend>
+      <div class="etiq">Avec r <button class="mini" type="button" data-tout="r">tout</button><button class="mini" type="button" data-rien="r">rien</button></div>
+      <div class="choix" id="gr-r"></div>
+      <div class="etiq">Avec l <button class="mini" type="button" data-tout="l">tout</button><button class="mini" type="button" data-rien="l">rien</button></div>
+      <div class="choix" id="gr-l"></div>
+      <div class="etiq">Voyelles</div>
+      <div class="choix" id="voy"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Les pièges (poissons faux)</legend>
+      <label class="coche"><input type="checkbox" name="piege" value="inv"><span>Inversion : <b>pal</b> pour pla, <b>bir</b> pour bri</span></label>
+      <label class="coche"><input type="checkbox" name="piege" value="sans"><span>Consonne oubliée : <b>pa</b> ou <b>la</b> pour pla</span></label>
+      <label class="coche"><input type="checkbox" name="piege" value="lr"><span>l ou r : <b>pra</b> pour pla</span></label>
+      <label class="coche"><input type="checkbox" name="piege" value="son"><span>Sourde ou sonore : <b>bla</b> pour pla, <b>tra</b> pour dra</span></label>
+      <label class="coche"><input type="checkbox" name="piege" value="voy"><span>Autre voyelle : <b>plo</b> pour pla</span></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Aides</legend>
+      <label class="coche"><input type="checkbox" id="opt-cache"><span>Je regarde : la syllabe disparaît du hublot après 2 secondes (mémoire visuelle)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-montre" checked><span>Pareil ou pas pareil : montrer les syllabes écrites après la réponse</span></label>
+      <label class="coche"><input type="checkbox" id="opt-dire" checked><span>Je regarde : dire la syllabe quand elle est trouvée</span></label>
+      <label class="coche"><input type="checkbox" id="opt-son" checked><span>Bruitages</span></label>
+      <p class="note">La voix est celle de l'ordinateur, sauf pour les syllabes enregistrées dans le studio du site.</p>
+    </fieldset>
+  </div>
+
+  <div class="apercu" id="apercu" aria-live="polite"></div>
+
+  <div class="actions">
+    <span class="note" id="msg-reglages"></span>
+    <button class="btn btn-sec" id="b-fiche">🖨️ Fiche à imprimer</button>
+    <button class="btn btn-go" id="jouer">🌊 Plonger</button>
+  </div>
+</section>
+
+<!-- ======== Jeu ======== -->
+<section id="ecran-jeu" hidden>
+  <div class="bandeau">
+    <h2 id="titre-jeu">J'écoute</h2>
+    <div class="progres" id="progres" aria-label="Progression"></div>
+    <button class="lien" id="quitter">✕ Réglages</button>
+  </div>
+
+  <div class="scene" id="scene">
+    <div class="decor" aria-hidden="true">
+      <i class="rayon" style="left:30%"></i><i class="rayon" style="left:52%;width:6%"></i><i class="rayon" style="left:76%"></i>
+      <div class="bulles-fond"><i style="left:12%"></i><i style="left:47%;animation-delay:-2.5s"></i><i style="left:66%;animation-delay:-5s;width:.8cqw;height:.8cqw"></i><i style="left:88%;animation-delay:-1.2s"></i></div>
+      <svg class="algue" style="left:6%;height:30%" viewBox="0 0 20 100" preserveAspectRatio="none"><path d="M10 100 C0 80 20 70 8 50 C0 35 18 25 10 0" stroke="#2f8a4e" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+      <svg class="algue" style="left:40%;height:22%;animation-delay:-1.5s" viewBox="0 0 20 100" preserveAspectRatio="none"><path d="M10 100 C0 80 20 70 8 50 C0 35 18 25 10 0" stroke="#3aa35c" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+      <svg class="algue" style="left:93%;height:34%;animation-delay:-2.6s" viewBox="0 0 20 100" preserveAspectRatio="none"><path d="M10 100 C0 80 20 70 8 50 C0 35 18 25 10 0" stroke="#2f8a4e" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+      <div class="sable"></div>
+    </div>
+
+    <div class="sm" aria-hidden="true">
+      <svg viewBox="0 0 300 170">
+        <rect x="132" y="8" width="10" height="40" rx="4" fill="#d9a623"/><rect x="132" y="6" width="34" height="10" rx="4" fill="#d9a623"/>
+        <rect x="104" y="30" width="70" height="40" rx="14" fill="#f6c445"/>
+        <path d="M30 105 Q30 58 95 58 L215 58 Q262 58 262 105 Q262 152 215 152 L95 152 Q30 152 30 105Z" fill="#f6c445"/>
+        <path d="M40 120 Q60 145 100 148 L215 148 Q250 146 258 120 Z" fill="#e0a92e" opacity=".7"/>
+        <path d="M262 95 L292 75 L292 135 L262 115Z" fill="#ef7d5b"/>
+        <circle cx="150" cy="104" r="46" fill="#cfe9f8" stroke="#124a70" stroke-width="8"/>
+        <circle cx="232" cy="104" r="11" fill="#cfe9f8" stroke="#124a70" stroke-width="5"/>
+        <circle cx="66" cy="104" r="10" fill="#124a70"/><circle cx="66" cy="104" r="4" fill="#cfe9f8"/>
+        <g fill="#b9861c"><circle cx="100" cy="68" r="3"/><circle cx="200" cy="68" r="3"/><circle cx="100" cy="142" r="3"/><circle cx="200" cy="142" r="3"/></g>
+      </svg>
+      <div class="hublot" id="hublot"></div>
+      <span class="sonar" id="sonar1"></span><span class="sonar b" id="sonar2"></span>
+    </div>
+    <button class="ecouter" id="ecouter" type="button">🔊 Réécouter</button>
+
+    <div id="banc"></div>
+
+    <div class="choix-pp" id="choix-pp" hidden>
+      <button class="pp pareil" id="b-pareil" type="button"><big>=</big>Pareil</button>
+      <button class="pp diff" id="b-diff" type="button"><big>≠</big>Pas pareil</button>
+    </div>
+
+    <div class="bulle" id="bulle">Écoute le sonar !</div>
+  </div>
+  <p class="aide-touches">Touche le bon poisson (clavier : 1, 2, 3, 4). Espace : réécouter. Pareil ou pas pareil : touches = et ≠ (ou P et D).</p>
+</section>
+
+<!-- ======== Fin ======== -->
+<section id="ecran-fin" class="carte fin" hidden>
+  <h2 id="titre-fin">Bravo, capitaine !</h2>
+  <p id="resume-fin" class="lg"></p>
+  <div class="liste-fin" id="liste-fin"></div>
+  <div id="bilan-conf"></div>
+  <div class="actions">
+    <button class="btn btn-sec" id="b-reglages">Réglages</button>
+    <button class="btn btn-sec" id="b-bilan">📄 Bilan de la partie</button>
+    <button class="btn btn-go" id="b-rejouer">🌊 Rejouer</button>
+  </div>
+</section>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const DECOR = "/images/sous-marin-syllabes/decor.jpg";
+
+/* ---------- Syllabes ---------- */
+const GR = { r:["br","cr","dr","fr","gr","pr","tr","vr"], l:["bl","cl","fl","gl","pl"] };
+const VOY = ["a","i","o","u","ou","é"];
+const SONORE = {p:"b",b:"p",t:"d",d:"t",c:"g",g:"c",f:"v",v:"f"};
+const VALIDES = new Set([...GR.r, ...GR.l]);
+const PIEGES = { inv:"inversion (pal / pla)", sans:"consonne oubliée (pa / pla)", lr:"l ou r (pra / pla)", son:"sourde ou sonore (bla / pla)", voy:"autre voyelle (plo / pla)" };
+const NIVEAUX = {
+  1: { r:["br","cr","dr","fr","gr","pr","tr"], l:[], v:["a","i","o"], p:["sans","voy"], np:"3" },
+  2: { r:GR.r, l:GR.l, v:["a","i","o","u"], p:["inv","sans","voy"], np:"3" },
+  3: { r:GR.r, l:GR.l, v:VOY, p:["inv","lr","son"], np:"4" }
+};
+
+(function(){
+  const chip = (nom, v) => `<label class="chip"><input type="checkbox" name="${nom}" value="${v}"><span>${v}</span></label>`;
+  $("gr-r").innerHTML = GR.r.map(g => chip("groupe", g)).join("");
+  $("gr-l").innerHTML = GR.l.map(g => chip("groupe", g)).join("");
+  $("voy").innerHTML = VOY.map(v => chip("voyelle", v)).join("");
+})();
+
+const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
+const coches = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i=>i.value);
+const melanger = a => { a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const hasard = a => a[Math.floor(Math.random()*a.length)];
+
+/* « ci », « gé »… se lisent [si], [jé] : on évite ces pièges, qui ne se prononcent pas comme ils s'écrivent. */
+const lisible = s => !/[cg][iéey]/.test(s);
+
+function syllabes(){ const g = coches("groupe"), v = coches("voyelle"); const l = []; g.forEach(x => v.forEach(y => l.push(x+y))); return l; }
+function decoupe(s){ return { c1:s[0], c2:s[1], v:s.slice(2) }; }
+
+/* Les pièges possibles pour une syllabe, avec leur type */
+function pieges(s, types, voyelles){
+  const {c1,c2,v} = decoupe(s), out = [];
+  const add = (t, x) => { if(x && x !== s && lisible(x) && !out.some(o=>o.s===x)) out.push({s:x, t}); };
+  if(types.includes("inv")) add("inv", c1+v+c2);
+  if(types.includes("sans")){ add("sans", c1+v); add("sans", c2+v); }
+  if(types.includes("lr")){ const g = c1+(c2==="r"?"l":"r"); if(VALIDES.has(g)) add("lr", g+v); }
+  if(types.includes("son")){ const g = SONORE[c1]+c2; if(VALIDES.has(g)) add("son", g+v); }
+  if(types.includes("voy")){ melanger((voyelles.length>1?voyelles:VOY).filter(x=>x!==v)).slice(0,2).forEach(x => add("voy", c1+c2+x)); }
+  return out;
+}
+/* Choisit n-1 pièges variés (un de chaque type d'abord) ; complète si besoin. */
+function distracteurs(s, n, types, voyelles){
+  let p = pieges(s, types, voyelles);
+  if(p.length < n-1) pieges(s, ["inv","sans","voy","lr","son"], voyelles).forEach(x => { if(!p.some(o=>o.s===x.s)) p.push(x); });
+  const parType = {}; melanger(p).forEach(x => (parType[x.t] = parType[x.t] || []).push(x));
+  const res = []; let k = 0;
+  const ordre = melanger(Object.keys(parType)).sort((a,b)=>types.includes(b)-types.includes(a));
+  while(res.length < n-1 && ordre.some(t=>parType[t].length)){ const t = ordre[k++ % ordre.length]; if(parType[t].length) res.push(parType[t].shift()); }
+  return res;
+}
+
+function appliquerNiveau(){
+  const N = NIVEAUX[val("niveau")]; if(!N) return;
+  document.querySelectorAll('input[name="groupe"]').forEach(i => i.checked = N.r.includes(i.value) || N.l.includes(i.value));
+  document.querySelectorAll('input[name="voyelle"]').forEach(i => i.checked = N.v.includes(i.value));
+  document.querySelectorAll('input[name="piege"]').forEach(i => i.checked = N.p.includes(i.value));
+  document.querySelector(`input[name="np"][value="${N.np}"]`).checked = true;
+  majApercu();
+}
+function majApercu(){
+  const l = syllabes(), modes = coches("mode"), types = coches("piege");
+  $("apercu").innerHTML = l.length ? l.map(s=>`<span>${s}</span>`).join("") : `<span style="background:none;color:var(--err)">Choisis au moins un groupe et une voyelle.</span>`;
+  const ok = l.length && modes.length && (types.length || modes.every(m=>m==="pareil"));
+  $("jouer").disabled = !ok; $("b-fiche").disabled = !l.length;
+  $("msg-reglages").textContent = !l.length ? "" : !modes.length ? "Coche au moins un jeu." : !ok ? "Coche au moins un piège." : `${l.length} syllabe${l.length>1?"s":""}`;
+}
+document.querySelectorAll('input[name="niveau"]').forEach(i => i.addEventListener("change", appliquerNiveau));
+document.querySelectorAll("#ecran-reglages input:not([name=niveau])").forEach(i => i.addEventListener("change", majApercu));
+document.querySelectorAll("[data-tout],[data-rien]").forEach(b => b.onclick = () => {
+  const g = b.dataset.tout || b.dataset.rien; document.querySelectorAll(`#gr-${g} input`).forEach(i => i.checked = !!b.dataset.tout); majApercu(); });
+appliquerNiveau();
+
+/* ---------- Sons ---------- */
+let ac = null;
+function son(type){
+  if(!$("opt-son").checked) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state!=="running") ac.resume();
+    const t = ac.currentTime;
+    const note = (f, d, v=.15, onde="triangle", dt=0) => { const o=ac.createOscillator(), g=ac.createGain(); o.type=onde; o.frequency.setValueAtTime(f,t+dt);
+      g.gain.setValueAtTime(0,t+dt); g.gain.linearRampToValueAtTime(v,t+dt+.01); g.gain.exponentialRampToValueAtTime(.001,t+dt+d); o.connect(g).connect(ac.destination); o.start(t+dt); o.stop(t+dt+d+.05); return o; };
+    if(type==="ping"){ const o=note(1250,.7,.09,"sine"); o.frequency.exponentialRampToValueAtTime(1150,t+.6); }
+    if(type==="ok"){ [659,784,988,1319].forEach((f,k)=>note(f,.3,.11,"triangle",k*.07)); }
+    if(type==="bulles"){ for(let k=0;k<6;k++){ const o=note(400+Math.random()*500,.08,.06,"sine",k*.06); o.frequency.exponentialRampToValueAtTime(1400,t+k*.06+.07); } }
+    if(type==="err"){ const o=note(240,.4,.12,"sawtooth"); o.frequency.linearRampToValueAtTime(160,t+.38); }
+    if(type==="fin"){ [523,659,784,1047,784,1047].forEach((f,k)=>note(f,.35,.1,"triangle",k*.12)); }
+  }catch(e){}
+}
+
+/* ---------- Voix (voix.js remplace par les enregistrements du studio quand ils existent) ---------- */
+let voix = null;
+function choisirVoix(){ const v=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang)); voix = v.find(x=>/fr-FR/i.test(x.lang)&&/google|amélie|thomas|denise|julie/i.test(x.name)) || v.find(x=>/fr-FR/i.test(x.lang)) || v[0] || null; }
+if("speechSynthesis" in window){ choisirVoix(); speechSynthesis.onvoiceschanged = choisirVoix; }
+let jetonVoix = 0;
+function dire(t, apres){
+  const moi = ++jetonVoix; let fini = false;
+  const suite = () => { if(fini || moi !== jetonVoix) return; fini = true; if(apres) apres(); };
+  if(!("speechSynthesis" in window) || !t){ setTimeout(suite, 300); return; }
+  const parler = () => { const u=new SpeechSynthesisUtterance(t); u.lang="fr-FR"; if(voix) u.voice=voix; u.rate=.8;
+    u.onend = suite; u.onerror = suite; speechSynthesis.speak(u); };
+  setTimeout(suite, 2600); // filet de sécurité si la fin de phrase n'est jamais signalée
+  if(speechSynthesis.speaking || speechSynthesis.pending){ speechSynthesis.cancel(); setTimeout(parler, 120); } else parler();
+}
+function debloquerSon(){
+  try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); if(ac.state!=="running") ac.resume();
+    const b=ac.createBuffer(1,1,22050), src=ac.createBufferSource(); src.buffer=b; src.connect(ac.destination); src.start(0); }catch(e){}
+  try{ if("speechSynthesis" in window){ speechSynthesis.resume(); const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); } }catch(e){}
+}
+document.addEventListener("pointerdown", debloquerSon, {once:true, capture:true});
+
+/* ---------- Partie ---------- */
+const NOMS = { ecoute:"J'écoute", regarde:"Je regarde", pareil:"Pareil ou pas pareil ?" };
+let tours = [], idx = 0, enJeu = false, essais = 0, tour = null, cacheTimer = null, types = [], voyelles = [];
+let stats = { tours:[], conf:{} };
+
+function poissonSVG(c1, c2){
+  return `<svg viewBox="0 0 200 115" aria-hidden="true">
+    <path d="M150 57 L196 18 Q186 57 196 96 Z" fill="${c2}"/>
+    <path d="M70 14 Q95 -6 120 16 Z" fill="${c2}"/><path d="M78 100 Q96 118 112 98 Z" fill="${c2}"/>
+    <ellipse cx="85" cy="57" rx="80" ry="46" fill="${c1}"/>
+    <circle cx="146" cy="44" r="9" fill="#fff"/><circle cx="148" cy="44" r="4.5" fill="#14283a"/>
+    <path d="M160 66 Q154 72 146 70" stroke="#14283a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+}
+const COULEURS = [["#ef7d5b","#c75a3b"],["#9b6ad6","#7446ae"],["#3fb7a4","#26877a"],["#f19ac0","#cf6f98"],["#7fc4f0","#4f98c8"]];
+
+function demarrer(){
+  const syl = syllabes(), modes = coches("mode"), nb = +val("nb");
+  types = coches("piege"); voyelles = coches("voyelle");
+  const modesOk = modes.filter(m => m === "pareil" || types.length);
+  // Les syllabes tournent : chacune revient avant qu'une autre ne revienne deux fois.
+  let sac = [];
+  tours = [...Array(nb)].map((_, k) => { if(!sac.length) sac = melanger(syl); return { mode: modesOk[k % modesOk.length], s: sac.pop() }; });
+  tours = melanger(tours);
+  idx = 0; stats = { tours:[], conf:{} };
+  $("progres").innerHTML = tours.map(()=>"<i></i>").join("");
+  $("ecran-reglages").hidden = true; $("ecran-fin").hidden = true; $("ecran-jeu").hidden = false;
+  const img = new Image(); img.onload = () => { $("scene").style.backgroundImage = `url("${DECOR}")`; $("scene").classList.add("decor-image"); }; img.src = DECOR;
+  tourSuivant();
+}
+
+function placer(n){
+  // positions (en % de la scène) à droite du sous-marin
+  return ({2:[[46,16],[68,52]], 3:[[44,8],[70,34],[46,60]], 4:[[42,10],[70,10],[42,52],[70,52]]})[n];
+}
+
+function tourSuivant(){
+  clearTimeout(cacheTimer);
+  [...$("progres").children].forEach((e,k)=>{ if(k===idx) e.classList.add("encours"); else e.classList.remove("encours"); });
+  tour = Object.assign({}, tours[idx]); essais = 0;
+  $("titre-jeu").textContent = NOMS[tour.mode];
+  $("hublot").textContent = ""; $("hublot").className = "hublot";
+  $("choix-pp").hidden = tour.mode !== "pareil";
+  $("ecouter").textContent = tour.mode === "regarde" ? "👁 Revoir" : "🔊 Réécouter";
+  $("ecouter").hidden = tour.mode === "regarde" && !$("opt-cache").checked;
+
+  let poissons;
+  if(tour.mode === "pareil"){
+    tour.meme = Math.random() < .5;
+    tour.autre = tour.meme ? null : (distracteurs(tour.s, 2, types.length ? types : ["inv","sans","lr","son"], voyelles)[0] || {s:tour.s+"", t:"voy"});
+    if(!tour.meme && tour.autre.s === tour.s) tour.meme = true;
+    const b = tour.meme ? tour.s : tour.autre.s;
+    tour.paire = Math.random() < .5 ? [tour.s, b] : [b, tour.s];
+    poissons = tour.paire.map(s => ({s, cache:true}));
+  } else {
+    const d = distracteurs(tour.s, +val("np"), types, voyelles);
+    tour.choix = melanger([{s:tour.s, t:"bon"}, ...d]);
+    poissons = tour.choix.map(c => ({s:c.s, t:c.t}));
+  }
+  const pos = placer(poissons.length), coul = melanger(COULEURS);
+  $("banc").innerHTML = poissons.map((p,k) => `<button class="poisson" data-k="${k}" type="button" aria-label="${p.cache ? "Poisson "+(k+1) : p.s}" style="left:110%;top:${pos[k][1]}%">
+    <span class="corps">${poissonSVG(coul[k][0], coul[k][1])}<span class="etiquette${p.cache?" cache":""}">${p.cache ? "?" : p.s}</span></span></button>`).join("");
+  const btns = [...$("banc").children];
+  btns.forEach((b,k) => { b.onclick = () => choisir(k); setTimeout(() => b.style.left = pos[k][0]+"%", 60 + k*140); });
+  activer(false);
+  stats.tours.push({ mode:tour.mode, s:tour.s, erreurs:0, faux:[] , ok:false });
+
+  setTimeout(() => {
+    if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
+    else if(tour.mode === "regarde"){ montrerModele(); activer(true); }
+    else { bulle("Écoute bien les deux poissons…"); direPaire(); }
+  }, 1000);
+}
+
+function montrerModele(){
+  clearTimeout(cacheTimer);
+  const h = $("hublot"); h.textContent = tour.s; h.className = "hublot";
+  bulle("Trouve la même syllabe !");
+  if($("opt-cache").checked) cacheTimer = setTimeout(() => { h.textContent = "?"; h.className = "hublot cache"; }, 2000);
+}
+function direPaire(){
+  activer(false);
+  const b = [...$("banc").children];
+  sonar();
+  setTimeout(() => { b[0].classList.add("parle");
+    dire(tour.paire[0], () => { b[0].classList.remove("parle"); setTimeout(() => { b[1].classList.add("parle");
+      dire(tour.paire[1], () => { b[1].classList.remove("parle"); activer(true); bulle("Pareil ou pas pareil ?"); }); }, 600); }); }, 450);
+}
+function sonar(){ son("ping"); ["sonar1","sonar2"].forEach(id => { const s=$(id); s.classList.remove("ping"); void s.offsetWidth; s.classList.add("ping"); }); }
+
+function bulle(t, cls=""){ const b=$("bulle"); b.textContent=t; b.className="bulle "+cls; }
+function activer(on){
+  enJeu = on;
+  ["b-pareil","b-diff"].forEach(id => $(id).disabled = !on);
+  [...$("banc").children].forEach(b => { if(tour.mode !== "pareil" && !b.classList.contains("faux")) b.disabled = !on; else if(tour.mode === "pareil") b.disabled = true; });
+}
+
+function choisir(k){
+  if(!enJeu || tour.mode === "pareil") return;
+  const c = tour.choix[k], b = $("banc").children[k], st = stats.tours[stats.tours.length-1];
+  if(c.t === "bon"){
+    activer(false); st.ok = true; b.classList.add("bon"); son("ok");
+    if(tour.mode === "regarde"){ $("hublot").textContent = tour.s; $("hublot").className = "hublot"; clearTimeout(cacheTimer); }
+    bulle(essais ? `Oui : ${tour.s} !` : "Bravo !", "ok");
+    if(tour.mode === "regarde" && $("opt-dire").checked) dire(tour.s);
+    bulles(b);
+    setTimeout(() => { b.style.left = "18%"; b.style.top = "36%"; b.style.opacity = "0"; b.style.transform = "scale(.4)"; }, 700);
+    finTour(essais === 0);
+  } else {
+    essais++; st.erreurs++; st.faux.push(c.s);
+    stats.conf[c.t] = (stats.conf[c.t]||0) + 1;
+    son("err");
+    b.classList.add("secoue"); setTimeout(() => { b.classList.remove("secoue"); b.classList.add("faux"); b.disabled = true; }, 450);
+    const bon = [...$("banc").children][tour.choix.findIndex(x=>x.t==="bon")];
+    if(essais >= 2){ bon.classList.add("indice"); bulle(tour.mode === "ecoute" ? "Écoute encore, regarde le poisson qui brille." : "Regarde le poisson qui brille.", "err"); }
+    else bulle(`Ce n'est pas ${c.s}… ${tour.mode === "ecoute" ? "écoute encore !" : "regarde bien !"}`, "err");
+    if(tour.mode === "ecoute") setTimeout(() => dire(tour.s), 700);
+    if(tour.mode === "regarde" && $("opt-cache").checked && essais >= 2) montrerModele();
+  }
+}
+
+function repondrePP(meme){
+  if(!enJeu || tour.mode !== "pareil") return;
+  activer(false);
+  const st = stats.tours[stats.tours.length-1], juste = meme === tour.meme;
+  const b = [...$("banc").children];
+  st.paire = tour.paire.join(" / ");
+  if($("opt-montre").checked) b.forEach((x,k) => { const e = x.querySelector(".etiquette"); e.textContent = tour.paire[k]; e.classList.remove("cache"); });
+  if(juste){ st.ok = true; son("ok"); b.forEach(x => x.classList.add("bon")); bulle(tour.meme ? "Oui, c'est pareil !" : "Oui, ce n'est pas pareil !", "ok"); bulles(b[0]); bulles(b[1]); }
+  else {
+    st.erreurs = 1; st.faux.push(meme ? "pareil" : "pas pareil"); son("err");
+    if(!tour.meme){ stats.conf[tour.autre.t] = (stats.conf[tour.autre.t]||0) + 1; }
+    else stats.conf.pp = (stats.conf.pp||0) + 1;
+    bulle(tour.meme ? "Non, c'était pareil. Écoute encore…" : "Non, ce n'était pas pareil. Écoute encore…", "err");
+    setTimeout(() => { b[0].classList.add("parle"); dire(tour.paire[0], () => { b[0].classList.remove("parle"); setTimeout(() => { b[1].classList.add("parle"); dire(tour.paire[1], () => b[1].classList.remove("parle")); }, 500); }); }, 600);
+  }
+  finTour(juste, juste ? 1800 : 4200);
+}
+
+function finTour(reussi, delai=2200){
+  const p = $("progres").children[idx]; p.classList.remove("encours"); p.classList.add(reussi ? "fait" : "rate");
+  setTimeout(() => { idx++; if(idx < tours.length) tourSuivant(); else finPartie(); }, delai);
+}
+
+function bulles(cible, n=12){
+  son("bulles");
+  const r = cible.getBoundingClientRect();
+  for(let k=0;k<n;k++){
+    const p = document.createElement("span"); p.className="bulle-ok";
+    const s = 6 + Math.random()*12; p.style.width = p.style.height = s+"px";
+    p.style.left = (r.left + r.width*(.2+Math.random()*.6))+"px"; p.style.top = (r.top + r.height/2)+"px";
+    document.body.appendChild(p);
+    p.animate([{transform:"translate(-50%,-50%)",opacity:1},{transform:`translate(calc(-50% + ${(Math.random()-.5)*40}px), calc(-50% - ${60+Math.random()*90}px))`,opacity:0}],{duration:900+Math.random()*500,easing:"ease-out"}).onfinish=()=>p.remove();
+  }
+}
+
+function resume(){
+  const T = stats.tours, prem = T.filter(t=>t.ok && !t.erreurs).length;
+  return { T, prem, txt:`${prem} tour${prem>1?"s":""} sur ${T.length} réussi${prem>1?"s":""} du premier coup.` };
+}
+function tableConf(cls){
+  const c = Object.entries(stats.conf).sort((a,b)=>b[1]-a[1]);
+  const nom = t => t === "pp" ? "a dit « pas pareil » pour deux syllabes identiques" : PIEGES[t];
+  return c.length ? `<table${cls?` class="${cls}"`:""}><tr><th>Piège</th><th>Fois</th></tr>${c.map(([t,n])=>`<tr><td>${nom(t)}</td><td>${n}</td></tr>`).join("")}</table>` : "<p>Aucun piège n'a trompé l'élève.</p>";
+}
+function finPartie(){
+  $("ecran-jeu").hidden = true; $("ecran-fin").hidden = false;
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  son("fin");
+  const {T, prem, txt} = resume();
+  $("titre-fin").textContent = prem === T.length ? "Capitaine des syllabes !" : "Bravo, capitaine !";
+  $("resume-fin").textContent = txt;
+  try{TDC.note({s:prem, n:T.length, d:txt, g: prem >= T.length*.8})}catch(e){}
+  $("liste-fin").innerHTML = T.map(t => `<span class="${t.erreurs?"ko":""}">${t.mode==="pareil" ? (t.paire||t.s) : t.s}<small>${t.mode==="ecoute"?"🔊":t.mode==="regarde"?"👁":"="}${t.erreurs ? " ✘ "+t.faux.join(", ") : " ✔"}</small></span>`).join("");
+  $("bilan-conf").innerHTML = `<p class="note" style="font-size:15px">Pour l'enseignant : les pièges qui ont trompé l'élève.</p>` + tableConf("conf");
+}
+
+/* ---------- Boutons et clavier ---------- */
+$("b-pareil").onclick = () => repondrePP(true);
+$("b-diff").onclick = () => repondrePP(false);
+$("ecouter").onclick = () => {
+  if(!tour) return;
+  if(tour.mode === "ecoute"){ sonar(); dire(tour.s); }
+  else if(tour.mode === "regarde") montrerModele();
+  else if(enJeu) direPaire();
+};
+document.addEventListener("keydown", e => {
+  if($("ecran-jeu").hidden || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if(/^[1-4]$/.test(e.key)){ const b = $("banc").children[+e.key-1]; if(b && !b.disabled) choisir(+e.key-1); }
+  else if(e.key === " "){ $("ecouter").click(); e.preventDefault(); }
+  else if(e.key === "=" || e.key.toLowerCase() === "p") repondrePP(true);
+  else if(e.key === "≠" || e.key.toLowerCase() === "d") repondrePP(false);
+});
+$("jouer").onclick = demarrer;
+$("b-rejouer").onclick = demarrer;
+$("b-reglages").onclick = () => { $("ecran-fin").hidden = true; $("ecran-reglages").hidden = false; };
+$("quitter").onclick = () => { $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; enJeu = false; clearTimeout(cacheTimer); if("speechSynthesis" in window) speechSynthesis.cancel(); };
+
+/* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
+$("b-bilan").onclick = () => {
+  const {T, txt} = resume(), ko = T.filter(t=>t.erreurs);
+  const modes = [...new Set(T.map(t=>NOMS[t.mode]))].join(", ");
+  DocEcrit.ouvrir({titre:"Bilan de la partie", jeu:"Le sous-marin des syllabes", nom:"Bilan sous-marin des syllabes", prenom:true, html:()=>`
+  <p>${(document.querySelector('input[name="niveau"]:checked').closest("label").querySelector("b")||{}).textContent||""} — jeux : ${modes}<br>Syllabes travaillées : <b>${syllabes().join(", ")}</b><br>Pièges : ${types.map(t=>PIEGES[t]).join(" ; ")||"aucun"}</p>
+  <h2>Résultats</h2><p><b>${txt}</b></p>
+  <h2>À retravailler</h2><p>${ko.map(t=>t.mode==="pareil" ? t.paire : `<b>${t.s}</b> (choisi : ${t.faux.join(", ")})`).join(" ; ")||"Rien : bravo !"}</p>
+  <h2>Pièges qui ont trompé l'élève</h2>${tableConf()}
+  <h2>Détail</h2><table><tr><th>Jeu</th><th>Syllabe</th><th>Résultat</th></tr>${T.map(t=>`<tr><td>${NOMS[t.mode]}</td><td>${t.mode==="pareil"?t.paire:t.s}</td><td>${t.erreurs?"✘ "+t.faux.join(", "):"✔ du premier coup"}</td></tr>`).join("")}</table>
+  <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+};
+
+/* ---------- Fiche à imprimer : 3 exercices + corrigé, nouveau tirage à chaque ouverture ---------- */
+$("b-fiche").onclick = () => {
+  const syl = melanger(syllabes()), tps = coches("piege").length ? coches("piege") : ["inv","sans","lr","son"], vs = coches("voyelle");
+  const pick = k => syl[k % syl.length];
+  const td = 'style="font-size:22pt;padding:4pt 10pt;text-align:center;min-width:46pt"';
+  const tdm = 'style="font-size:22pt;padding:4pt 10pt;text-align:center;font-weight:bold;background:#e9f4fc;border:2px solid #1f6fa3"';
+  // Exercice 1 : entoure la syllabe pareille au modèle (2 fois dans la ligne)
+  const ex1 = [...Array(7)].map((_,k) => { const s = pick(k); const d = distracteurs(s, 5, tps, vs).map(x=>x.s); while(d.length<4) d.push(d[0]||s+"");
+    return { s, ligne: melanger([s, s, ...d.slice(0,4)]) }; });
+  // Exercice 2 : l'adulte dit une syllabe, l'élève l'entoure parmi 4
+  const ex2 = [...Array(7)].map((_,k) => { const s = pick(k+7); return { s, ligne: melanger([s, ...distracteurs(s, 4, tps, vs).map(x=>x.s)]) }; });
+  // Exercice 3 : pareil ou pas pareil (oral)
+  const ex3 = [...Array(10)].map((_,k) => { const s = pick(k+3), d = distracteurs(s, 2, tps, vs)[0]; const meme = !d || Math.random() < .45; const b = meme ? s : d.s; return { a: Math.random()<.5 ? [s,b] : [b,s], meme }; });
+  const ligne = (l, cible) => l.map(x => `<td ${td}>${cible && x===cible ? `<span style="border:2px solid #c0392b;border-radius:50%;padding:0 6pt;color:#c0392b">${x}</span>` : x}</td>`).join("");
+  const exos = corr => `
+    <h2>1. Entoure les syllabes pareilles au modèle (il y en a 2 par ligne).</h2>
+    <table>${ex1.map(e=>`<tr><td ${tdm}>${e.s}</td>${ligne(e.ligne, corr && e.s)}</tr>`).join("")}</table>
+    <h2>2. J'écoute la syllabe et je l'entoure.</h2>
+    <table>${ex2.map((e,k)=>`<tr><td style="font-size:12pt;padding:4pt 8pt">${k+1}</td>${ligne(e.ligne, corr && e.s)}</tr>`).join("")}</table>
+    <h2>3. Pareil ou pas pareil ? J'écoute et je colorie = ou ≠.</h2>
+    <table><tr>${ex3.map((e,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt">${k+1}<br><span style="font-size:20pt">${corr ? (e.meme ? "<b style='color:#2e8b57'>=</b> ≠" : "= <b style='color:#c0392b'>≠</b>") : "= &nbsp;≠"}</span></td>`).join("")}</tr></table>`;
+  DocEcrit.ouvrir({titre:"Fiche d'exercices", jeu:"Le sous-marin des syllabes", nom:"Fiche sous-marin des syllabes", prenom:true, html:()=>`
+    ${exos(false)}
+    <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Pour l'adulte</h1>
+    <p><b>Exercice 2</b> — dire une seule fois, distinctement : ${ex2.map((e,k)=>`${k+1}. <b>${e.s}</b>`).join(" &nbsp; ")}</p>
+    <p><b>Exercice 3</b> — dire les deux syllabes, une seconde d'écart : ${ex3.map((e,k)=>`${k+1}. ${e.a[0]} … ${e.a[1]}`).join(" &nbsp; ")}</p>
+    <p style="font-size:12px;color:#666">Ne pas montrer sa bouche (ou se placer derrière l'élève) pour un vrai travail d'écoute.</p></div>
+    <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Corrigé</h1>${exos(true)}</div>`});
+};
+</script>
+</body>
+</html>

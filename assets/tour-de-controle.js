@@ -72,6 +72,7 @@
   ["Français : lire", [
     ["les-fleches-de-robin","Les flèches de Robin","les-fleches-de-robin"],
     ["la-roue-du-magicien","La roue du magicien","la-roue-du-magicien"],
+    ["le-sous-marin-des-syllabes","Le sous-marin des syllabes","le-sous-marin-des-syllabes"],
     ["les-fusees-des-syllabes","Les fusées des syllabes","les-fusees-des-syllabes"],
     ["la-minute-des-syllabes","La minute des syllabes","la-minute-des-syllabes"],
     ["puissance-4-syllabique","Puissance 4 syllabique","puissance-4-syllabiques"],
@@ -177,6 +178,7 @@
     "la-maison-de-briques": { b: "#reglages" },
     "la-minute-des-syllabes": { b: "#btnRejouer" },
     "la-roue-du-magicien": { b: "#b-rejouer" },
+    "le-sous-marin-des-syllabes": { b: "#b-rejouer" },
     "le-chateau-des-detectives": { b: "#again" },
     "le-chateau-des-nombres": { b: "#finRejouer" },
     "le-chemin-des-sons": { b: "#b-rejouer" },
