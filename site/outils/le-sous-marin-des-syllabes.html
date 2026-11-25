@@ -43,6 +43,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .niv input:focus-visible+span{outline:3px solid var(--jaune);outline-offset:2px}
 .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 fieldset{border:2px solid #d6e6f2;border-radius:14px;padding:12px 16px;margin:0;min-width:0}
+fieldset.famille{border-color:#9cc6e4;background:#f3f9fe}
+fieldset.famille legend{font-size:19px}
+fieldset.famille legend input{width:20px;height:20px;vertical-align:-3px;margin:0 4px 0 0}
 legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu-fonce)}
 .choix{display:flex;flex-wrap:wrap;gap:7px}
 .chip{position:relative}
@@ -117,8 +120,7 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu
 .poisson.petit{width:16cqw}.poisson.petit .etiquette{font-size:3.7cqw;border-radius:1.4cqw}
 .poisson.mini{width:12.5cqw}.poisson.mini .etiquette{font-size:2.9cqw;border-radius:1.1cqw;box-shadow:inset 0 0 0 .25cqw rgba(0,0,0,.08)}
 .poisson.trouve{cursor:default}
-.poisson.libre{transition:opacity .4s,transform .3s}
-.poisson.droite svg{transform:scaleX(-1)}
+
 .poisson.faux{opacity:.35;cursor:default}
 .poisson.faux .corps{animation:none;transform:rotate(14deg)}
 .poisson.secoue .corps{animation:secoue .45s}
@@ -195,27 +197,10 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
   </div>
 
   <div class="grille">
-    <fieldset>
-      <legend>Les jeux</legend>
-      <label class="coche"><input type="checkbox" name="mode" value="ecoute" checked><span><b>J'écoute</b> : le sonar dit la syllabe, l'élève touche le poisson qui la porte (auditif → écrit).</span></label>
-      <label class="coche"><input type="checkbox" name="mode" value="regarde" checked><span><b>Je regarde</b> : la syllabe s'affiche dans le hublot, l'élève retrouve la même (visuel).</span></label>
-      <label class="coche"><input type="checkbox" name="mode" value="pareil" checked><span><b>Pareil ou pas pareil ?</b> : deux syllabes entendues, sans rien lire (auditif seul).</span></label>
-      <label class="coche"><input type="checkbox" name="mode" value="ecrit"><span><b>J'écris</b> : le sonar dit la syllabe, l'élève l'écrit avec les lettres-bulles (ou le clavier).</span></label>
-      <p class="note">Plusieurs jeux cochés : ils sont mélangés pendant la partie.</p>
-      <div class="etiq">Nombre de tours</div>
-      <div class="choix">
-        <label class="chip"><input type="radio" name="nb" value="6"><span>6</span></label>
-        <label class="chip"><input type="radio" name="nb" value="10" checked><span>10</span></label>
-        <label class="chip"><input type="radio" name="nb" value="15"><span>15</span></label>
-        <label class="chip"><input type="radio" name="nb" value="20"><span>20</span></label>
-      </div>
-      <div class="etiq">Nombre de poissons</div>
-      <div class="choix">
-        <label class="chip"><input type="radio" name="np" value="2"><span>2</span></label>
-        <label class="chip"><input type="radio" name="np" value="3" checked><span>3</span></label>
-        <label class="chip"><input type="radio" name="np" value="4"><span>4</span></label>
-      </div>
-      <div class="etiq">Je regarde : grand banc de poissons</div>
+    <fieldset class="famille">
+      <legend><label><input type="checkbox" name="mode" value="regarde" checked> 👁 Discrimination visuelle</label></legend>
+      <p class="note" style="margin-top:0">La syllabe s'affiche dans le hublot, l'élève touche le poisson qui porte la même (sans le son).</p>
+      <div class="etiq">Grand banc de poissons</div>
       <div class="choix">
         <label class="chip"><input type="radio" name="banc" value="0" checked><span>Non</span></label>
         <label class="chip"><input type="radio" name="banc" value="6"><span>6</span></label>
@@ -223,13 +208,35 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
         <label class="chip"><input type="radio" name="banc" value="12"><span>12</span></label>
         <label class="chip"><input type="radio" name="banc" value="16"><span>16</span></label>
       </div>
-      <div class="etiq">Les poissons nagent, chacun à sa vitesse</div>
+      <p class="note">Avec un grand banc, 2 à 4 poissons portent la syllabe du hublot : l'élève doit tous les trouver.</p>
+      <label class="coche"><input type="checkbox" id="opt-cache"><span>La syllabe disparaît du hublot après 2 secondes (mémoire visuelle)</span></label>
+      <label class="coche"><input type="checkbox" id="opt-dire" checked><span>Dire la syllabe quand elle est trouvée</span></label>
+    </fieldset>
+
+    <fieldset class="famille">
+      <legend><label><input type="checkbox" id="tout-auditif" checked> 👂 Discrimination auditive</label></legend>
+      <label class="coche"><input type="checkbox" name="mode" value="ecoute" checked><span><b>J'écoute</b> : le sonar dit la syllabe, l'élève touche le poisson qui la porte.</span></label>
+      <label class="coche"><input type="checkbox" name="mode" value="pareil" checked><span><b>Pareil ou pas pareil ?</b> : deux syllabes entendues, sans rien lire.</span></label>
+      <label class="coche"><input type="checkbox" name="mode" value="ecrit"><span><b>J'écris</b> : le sonar dit la syllabe, l'élève l'écrit avec les lettres-bulles (ou le clavier).</span></label>
+      <label class="coche"><input type="checkbox" id="opt-montre" checked><span>Pareil ou pas pareil : montrer les syllabes écrites après la réponse</span></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>La partie</legend>
+      <p class="note" style="margin-top:0">Visuelle et auditive cochées ensemble : les jeux sont mélangés pendant la partie.</p>
+      <div class="etiq">Nombre de tours</div>
       <div class="choix">
-        <label class="chip"><input type="radio" name="bouge" value="0" checked><span>Non</span></label>
-        <label class="chip"><input type="radio" name="bouge" value="1"><span>Lentement</span></label>
-        <label class="chip"><input type="radio" name="bouge" value="2"><span>Vite</span></label>
+        <label class="chip"><input type="radio" name="nb" value="6"><span>6</span></label>
+        <label class="chip"><input type="radio" name="nb" value="10" checked><span>10</span></label>
+        <label class="chip"><input type="radio" name="nb" value="15"><span>15</span></label>
+        <label class="chip"><input type="radio" name="nb" value="20"><span>20</span></label>
       </div>
-      <p class="note">Grand banc : beaucoup de poissons, dont 2 à 4 portent la syllabe du hublot. L'élève doit tous les trouver.</p>
+      <div class="etiq">Nombre de poissons (hors grand banc)</div>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="np" value="2"><span>2</span></label>
+        <label class="chip"><input type="radio" name="np" value="3" checked><span>3</span></label>
+        <label class="chip"><input type="radio" name="np" value="4"><span>4</span></label>
+      </div>
     </fieldset>
 
     <fieldset>
@@ -252,10 +259,7 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
     </fieldset>
 
     <fieldset>
-      <legend>Aides</legend>
-      <label class="coche"><input type="checkbox" id="opt-cache"><span>Je regarde : la syllabe disparaît du hublot après 2 secondes (mémoire visuelle)</span></label>
-      <label class="coche"><input type="checkbox" id="opt-montre" checked><span>Pareil ou pas pareil : montrer les syllabes écrites après la réponse</span></label>
-      <label class="coche"><input type="checkbox" id="opt-dire" checked><span>Je regarde : dire la syllabe quand elle est trouvée</span></label>
+      <legend>Le son</legend>
       <label class="coche"><input type="checkbox" id="opt-son" checked><span>Bruitages</span></label>
       <p class="note">La voix est celle de l'ordinateur, sauf pour les syllabes enregistrées dans le studio du site.</p>
     </fieldset>
@@ -405,12 +409,16 @@ function appliquerNiveau(){
   document.querySelectorAll('input[name="mode"]').forEach(i => i.checked = M.includes(i.value));
   majApercu();
 }
+const AUDITIFS = () => [...document.querySelectorAll('input[name="mode"]:not([value="regarde"])')];
+function majFamille(){ const c = AUDITIFS().filter(i=>i.checked).length; $("tout-auditif").checked = c > 0; $("tout-auditif").indeterminate = c > 0 && c < AUDITIFS().length; }
+$("tout-auditif").addEventListener("change", e => { const on = e.target.checked; AUDITIFS().forEach(i => i.checked = on && (i.value !== "ecrit" || val("niveau") === "4")); if(on && !AUDITIFS().some(i=>i.checked)) AUDITIFS()[0].checked = true; majFamille(); majApercu(); });
 function majApercu(){
+  majFamille();
   const l = syllabes(), modes = coches("mode"), types = coches("piege");
   $("apercu").innerHTML = l.length ? l.map(s=>`<span>${s}</span>`).join("") : `<span style="background:none;color:var(--err)">Choisis au moins un groupe et une voyelle.</span>`;
   const ok = l.length && modes.length && (types.length || modes.every(m=>m==="pareil"||m==="ecrit"));
   $("jouer").disabled = !ok; $("b-fiche").disabled = !l.length;
-  $("msg-reglages").textContent = !l.length ? "" : !modes.length ? "Coche au moins un jeu." : !ok ? "Coche au moins un piège." : `${l.length} syllabe${l.length>1?"s":""}`;
+  $("msg-reglages").textContent = !l.length ? "" : !modes.length ? "Coche la discrimination visuelle ou auditive." : !ok ? "Coche au moins un piège." : `${l.length} syllabe${l.length>1?"s":""}`;
 }
 document.querySelectorAll('input[name="niveau"]').forEach(i => i.addEventListener("change", appliquerNiveau));
 document.querySelectorAll("#ecran-reglages input:not([name=niveau])").forEach(i => i.addEventListener("change", majApercu));
@@ -499,7 +507,6 @@ function placer(n){
 }
 
 function tourSuivant(){
-  arreterNage();
   clearTimeout(cacheTimer);
   [...$("progres").children].forEach((e,k)=>{ if(k===idx) e.classList.add("encours"); else e.classList.remove("encours"); });
   tour = Object.assign({}, tours[idx]); essais = 0;
@@ -542,10 +549,10 @@ function tourSuivant(){
   stats.tours.push({ mode:tour.mode, s:tour.s, erreurs:0, faux:[] , ok:false });
 
   setTimeout(() => {
-    if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); nager(pos); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
-    else if(tour.mode === "regarde"){ montrerModele(); activer(true); nager(pos); }
+    if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
+    else if(tour.mode === "regarde"){ montrerModele(); activer(true); }
     else if(tour.mode === "ecrit"){ bulle("Écoute le sonar…"); majHublot(); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Écris la syllabe !"); }), 450); }
-    else { bulle("Écoute bien les deux poissons…"); direPaire(); nager(pos); }
+    else { bulle("Écoute bien les deux poissons…"); direPaire(); }
   }, 1000);
 }
 
@@ -619,44 +626,6 @@ function validerEcrit(){
   }
 }
 
-/* ---------- Les poissons nagent (option) ---------- */
-let nageId = 0;
-function arreterNage(){ cancelAnimationFrame(nageId); nageId = 0; }
-function nager(pos){
-  const vitesse = [0, 2.6, 6][+val("bouge") || 0];
-  if(!vitesse || !pos) return;
-  const btns = [...$("banc").children];
-  const w = btns[0].classList.contains("mini") ? 12.5 : btns[0].classList.contains("petit") ? 16 : 22;
-  const h = w * .575 / 56.25 * 100;           // hauteur du poisson en % de la scène (16/9)
-  const xmin = 40, xmax = 98 - w, ymin = 3, ymax = 84 - h;
-  const P = btns.map((b,k) => { const a = Math.random() * Math.PI * 2, v = vitesse * (.35 + Math.random() * 1.3); // chaque poisson a sa vitesse
-    return { b, x: pos[k][0], y: pos[k][1], vx: Math.cos(a) * v, vy: Math.sin(a) * v * .6 }; });
-  let t0 = null;
-  const pas = t => {
-    if(!nageId) return;
-    const dt = t0 === null ? 0 : Math.min(.05, (t - t0) / 1000); t0 = t;
-    const vivants = P.filter(p => !p.b.classList.contains("trouve") && !p.b.classList.contains("faux"));
-    vivants.forEach(p => {
-      p.x += p.vx * dt; p.y += p.vy * dt;
-      if(p.x < xmin){ p.x = xmin; p.vx = Math.abs(p.vx); } if(p.x > xmax){ p.x = xmax; p.vx = -Math.abs(p.vx); }
-      if(p.y < ymin){ p.y = ymin; p.vy = Math.abs(p.vy); } if(p.y > ymax){ p.y = ymax; p.vy = -Math.abs(p.vy); }
-    });
-    // deux poissons qui se touchent repartent chacun de leur côté (les étiquettes restent lisibles)
-    for(let i = 0; i < P.length; i++) for(let j = i + 1; j < P.length; j++){
-      const a = P[i], c = P[j], dx = c.x - a.x, dy = c.y - a.y;
-      if(Math.abs(dx) < w * .92 && Math.abs(dy) < h * .9){
-        const ma = vivants.includes(a), mc = vivants.includes(c);
-        if(Math.abs(dx) / w > Math.abs(dy) / h){ if(ma) a.vx = -Math.abs(a.vx) * Math.sign(dx || 1); if(mc) c.vx = Math.abs(c.vx) * Math.sign(dx || 1); }
-        else { if(ma) a.vy = -Math.abs(a.vy || 1) * Math.sign(dy || 1); if(mc) c.vy = Math.abs(c.vy || 1) * Math.sign(dy || 1); }
-      }
-    }
-    vivants.forEach(p => { p.b.style.left = p.x + "%"; p.b.style.top = p.y + "%"; p.b.classList.toggle("droite", p.vx > 0); });
-    nageId = requestAnimationFrame(pas);
-  };
-  // on attend que les poissons soient arrivés à leur place avant de les laisser nager
-  setTimeout(() => { if(tour && $("banc").children[0] === btns[0]){ btns.forEach(b => b.classList.add("libre")); nageId = requestAnimationFrame(pas); } }, 300 + btns.length * 140);
-}
-
 function choisir(k){
   if(!enJeu || tour.mode === "pareil") return;
   const c = tour.choix[k], b = $("banc").children[k], st = stats.tours[stats.tours.length-1];
@@ -671,7 +640,6 @@ function choisir(k){
     bulle(essais ? `Oui : ${tour.s} !` : "Bravo !", "ok");
     if(tour.mode === "regarde" && $("opt-dire").checked) dire(tour.s);
     bulles(b);
-    arreterNage(); [...$("banc").children].forEach(x => x.classList.remove("libre","droite"));
     [...$("banc").children].filter(x => x === b || x.classList.contains("trouve")).forEach(x =>
       setTimeout(() => { x.style.left = "18%"; x.style.top = "36%"; x.style.opacity = "0"; x.style.transform = "scale(.4)"; }, 700));
     finTour(essais === 0);
@@ -707,7 +675,6 @@ function repondrePP(meme){
 }
 
 function finTour(reussi, delai=2200){
-  arreterNage();
   const p = $("progres").children[idx]; p.classList.remove("encours"); p.classList.add(reussi ? "fait" : "rate");
   setTimeout(() => { idx++; if(idx < tours.length) tourSuivant(); else finPartie(); }, delai);
 }
@@ -771,7 +738,7 @@ document.addEventListener("keydown", e => {
 $("jouer").onclick = demarrer;
 $("b-rejouer").onclick = demarrer;
 $("b-reglages").onclick = () => { $("ecran-fin").hidden = true; $("ecran-reglages").hidden = false; };
-$("quitter").onclick = () => { arreterNage(); $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; enJeu = false; clearTimeout(cacheTimer); if("speechSynthesis" in window) speechSynthesis.cancel(); };
+$("quitter").onclick = () => { $("ecran-jeu").hidden = true; $("ecran-reglages").hidden = false; enJeu = false; clearTimeout(cacheTimer); if("speechSynthesis" in window) speechSynthesis.cancel(); };
 
 /* ---------- Bilan de la partie (document commun, rien n'est enregistré) ---------- */
 $("b-bilan").onclick = () => {
