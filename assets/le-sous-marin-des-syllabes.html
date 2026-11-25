@@ -111,7 +111,7 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu
 .poisson:nth-child(2n) .corps{animation-delay:-1.1s}
 @keyframes nage{50%{transform:translateY(-6%) rotate(-2deg)}}
 .poisson svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 .6cqw .3cqw rgba(0,0,0,.25))}
-.poisson .etiquette{position:absolute;left:8%;top:25%;width:56%;height:50%;display:flex;align-items:center;justify-content:center;
+.poisson .etiquette{position:absolute;left:24%;top:25%;width:52%;height:50%;display:flex;align-items:center;justify-content:center;
   background:#fff;border-radius:2cqw;font-size:5cqw;font-weight:700;color:var(--encre);line-height:1;box-shadow:inset 0 0 0 .35cqw rgba(0,0,0,.08)}
 .poisson .etiquette.cache{color:#b7c9d6}
 .poisson.faux{opacity:.35;cursor:default}
@@ -133,6 +133,21 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu
 .pp:active{transform:translateY(.4cqw);box-shadow:none}
 .pp:disabled{opacity:.5;cursor:default}
 
+.clavier{position:absolute;left:44%;right:3%;top:12%;display:flex;flex-direction:column;align-items:center;gap:2cqw}
+.clavier .ecrit-titre{font-family:var(--f-titre);color:#fff;font-size:2.4cqw;text-shadow:0 .2cqw .4cqw rgba(0,0,0,.4)}
+.touches{display:flex;flex-wrap:wrap;justify-content:center;gap:1.4cqw}
+.touche{width:7.6cqw;height:7.6cqw;border:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#d6ecfa 70%);
+  font-family:var(--f-lecture);font-weight:700;font-size:4.4cqw;color:var(--encre);box-shadow:0 .5cqw 0 #7fa9c6,0 0 0 .3cqw rgba(255,255,255,.5)}
+.touche:active{transform:translateY(.35cqw);box-shadow:0 .15cqw 0 #7fa9c6}
+.touche:disabled{opacity:.5;cursor:default}
+.actions-ecrit{display:flex;gap:1.6cqw}
+.ae{border:none;border-radius:1.6cqw;padding:1cqw 2.2cqw;font-family:var(--f-titre);font-weight:800;font-size:2.6cqw}
+.ae.eff{background:#e3eff8;color:var(--bleu-fonce);box-shadow:0 .5cqw 0 #7fa9c6}
+.ae.val{background:var(--jaune);color:var(--encre);box-shadow:0 .5cqw 0 var(--jaune-fonce)}
+.ae:active{transform:translateY(.35cqw);box-shadow:none}
+.ae:disabled{opacity:.5;cursor:default}
+.hublot.ecrit{color:var(--bleu)}
+.hublot.modele-gris{color:#9fb8c9}
 .bulle{position:absolute;left:2.5%;bottom:4%;background:#fff;border-radius:1.6cqw;padding:.7cqw 1.6cqw;font-family:var(--f-titre);
   font-size:2.3cqw;color:var(--bleu-fonce);box-shadow:0 .5cqw 0 rgba(0,0,0,.25);max-width:38cqw;text-wrap:balance}
 .bulle.err{color:var(--err)}
@@ -171,6 +186,7 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
     <label class="niv"><input type="radio" name="niveau" value="1" checked><span><b>Niveau 1</b><small>Groupes avec r (bra, tri, cro…). Pièges faciles : <b>pa</b> au lieu de <b>pra</b>, <b>pro</b> au lieu de <b>pra</b>.</small></span></label>
     <label class="niv"><input type="radio" name="niveau" value="2"><span><b>Niveau 2</b><small>Groupes avec r et l. Pièges : l'inversion <b>pal</b> / <b>pla</b>, la consonne oubliée.</small></span></label>
     <label class="niv"><input type="radio" name="niveau" value="3"><span><b>Niveau 3</b><small>Tous les groupes. Pièges fins : <b>pla</b> / <b>pra</b>, <b>pla</b> / <b>bla</b>, <b>pla</b> / <b>pal</b>.</small></span></label>
+    <label class="niv"><input type="radio" name="niveau" value="4"><span><b>Niveau 4 : j'écris</b><small>Le sonar dit la syllabe, l'élève l'écrit avec les lettres-bulles : <b>p</b>, <b>l</b>, <b>a</b>… parmi des lettres pièges.</small></span></label>
   </div>
 
   <div class="grille">
@@ -179,6 +195,7 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
       <label class="coche"><input type="checkbox" name="mode" value="ecoute" checked><span><b>J'écoute</b> : le sonar dit la syllabe, l'élève touche le poisson qui la porte (auditif → écrit).</span></label>
       <label class="coche"><input type="checkbox" name="mode" value="regarde" checked><span><b>Je regarde</b> : la syllabe s'affiche dans le hublot, l'élève retrouve la même (visuel).</span></label>
       <label class="coche"><input type="checkbox" name="mode" value="pareil" checked><span><b>Pareil ou pas pareil ?</b> : deux syllabes entendues, sans rien lire (auditif seul).</span></label>
+      <label class="coche"><input type="checkbox" name="mode" value="ecrit"><span><b>J'écris</b> : le sonar dit la syllabe, l'élève l'écrit avec les lettres-bulles (ou le clavier).</span></label>
       <p class="note">Plusieurs jeux cochés : ils sont mélangés pendant la partie.</p>
       <div class="etiq">Nombre de tours</div>
       <div class="choix">
@@ -270,6 +287,12 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
 
     <div id="banc"></div>
 
+    <div class="clavier" id="clavier" hidden>
+      <div class="ecrit-titre">Écris la syllabe dans le hublot</div>
+      <div class="touches" id="touches"></div>
+      <div class="actions-ecrit"><button class="ae eff" id="b-effacer" type="button">⌫ Effacer</button><button class="ae val" id="b-valider" type="button">✓ Valider</button></div>
+    </div>
+
     <div class="choix-pp" id="choix-pp" hidden>
       <button class="pp pareil" id="b-pareil" type="button"><big>=</big>Pareil</button>
       <button class="pp diff" id="b-diff" type="button"><big>≠</big>Pas pareil</button>
@@ -277,7 +300,7 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
 
     <div class="bulle" id="bulle">Écoute le sonar !</div>
   </div>
-  <p class="aide-touches">Touche le bon poisson (clavier : 1, 2, 3, 4). Espace : réécouter. Pareil ou pas pareil : touches = et ≠ (ou P et D).</p>
+  <p class="aide-touches">Touche le bon poisson (clavier : 1, 2, 3, 4). Espace : réécouter. Pareil ou pas pareil : touches = et ≠ (ou P et D). J'écris : lettres du clavier, Retour arrière, Entrée.</p>
 </section>
 
 <!-- ======== Fin ======== -->
@@ -308,7 +331,8 @@ const PIEGES = { inv:"inversion (pal / pla)", sans:"consonne oubliée (pa / pla)
 const NIVEAUX = {
   1: { r:["br","cr","dr","fr","gr","pr","tr"], l:[], v:["a","i","o"], p:["sans","voy"], np:"3" },
   2: { r:GR.r, l:GR.l, v:["a","i","o","u"], p:["inv","sans","voy"], np:"3" },
-  3: { r:GR.r, l:GR.l, v:VOY, p:["inv","lr","son"], np:"4" }
+  3: { r:GR.r, l:GR.l, v:VOY, p:["inv","lr","son"], np:"4" },
+  4: { r:GR.r, l:GR.l, v:["a","i","o","u","ou"], p:["inv","lr","son"], np:"3", m:["ecrit"] }
 };
 
 (function(){
@@ -357,12 +381,14 @@ function appliquerNiveau(){
   document.querySelectorAll('input[name="voyelle"]').forEach(i => i.checked = N.v.includes(i.value));
   document.querySelectorAll('input[name="piege"]').forEach(i => i.checked = N.p.includes(i.value));
   document.querySelector(`input[name="np"][value="${N.np}"]`).checked = true;
+  const M = N.m || ["ecoute","regarde","pareil"];
+  document.querySelectorAll('input[name="mode"]').forEach(i => i.checked = M.includes(i.value));
   majApercu();
 }
 function majApercu(){
   const l = syllabes(), modes = coches("mode"), types = coches("piege");
   $("apercu").innerHTML = l.length ? l.map(s=>`<span>${s}</span>`).join("") : `<span style="background:none;color:var(--err)">Choisis au moins un groupe et une voyelle.</span>`;
-  const ok = l.length && modes.length && (types.length || modes.every(m=>m==="pareil"));
+  const ok = l.length && modes.length && (types.length || modes.every(m=>m==="pareil"||m==="ecrit"));
   $("jouer").disabled = !ok; $("b-fiche").disabled = !l.length;
   $("msg-reglages").textContent = !l.length ? "" : !modes.length ? "Coche au moins un jeu." : !ok ? "Coche au moins un piège." : `${l.length} syllabe${l.length>1?"s":""}`;
 }
@@ -412,7 +438,7 @@ function debloquerSon(){
 document.addEventListener("pointerdown", debloquerSon, {once:true, capture:true});
 
 /* ---------- Partie ---------- */
-const NOMS = { ecoute:"J'écoute", regarde:"Je regarde", pareil:"Pareil ou pas pareil ?" };
+const NOMS = { ecoute:"J'écoute", regarde:"Je regarde", pareil:"Pareil ou pas pareil ?", ecrit:"J'écris" };
 let tours = [], idx = 0, enJeu = false, essais = 0, tour = null, cacheTimer = null, types = [], voyelles = [];
 let stats = { tours:[], conf:{} };
 
@@ -421,15 +447,15 @@ function poissonSVG(c1, c2){
     <path d="M150 57 L196 18 Q186 57 196 96 Z" fill="${c2}"/>
     <path d="M70 14 Q95 -6 120 16 Z" fill="${c2}"/><path d="M78 100 Q96 118 112 98 Z" fill="${c2}"/>
     <ellipse cx="85" cy="57" rx="80" ry="46" fill="${c1}"/>
-    <circle cx="146" cy="44" r="9" fill="#fff"/><circle cx="148" cy="44" r="4.5" fill="#14283a"/>
-    <path d="M160 66 Q154 72 146 70" stroke="#14283a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+    <circle cx="32" cy="44" r="9" fill="#fff"/><circle cx="30" cy="44" r="4.5" fill="#14283a"/>
+    <path d="M14 66 Q20 72 28 70" stroke="#14283a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
 }
 const COULEURS = [["#ef7d5b","#c75a3b"],["#9b6ad6","#7446ae"],["#3fb7a4","#26877a"],["#f19ac0","#cf6f98"],["#7fc4f0","#4f98c8"]];
 
 function demarrer(){
   const syl = syllabes(), modes = coches("mode"), nb = +val("nb");
   types = coches("piege"); voyelles = coches("voyelle");
-  const modesOk = modes.filter(m => m === "pareil" || types.length);
+  const modesOk = modes.filter(m => m === "pareil" || m === "ecrit" || types.length);
   // Les syllabes tournent : chacune revient avant qu'une autre ne revienne deux fois.
   let sac = [];
   tours = [...Array(nb)].map((_, k) => { if(!sac.length) sac = melanger(syl); return { mode: modesOk[k % modesOk.length], s: sac.pop() }; });
@@ -453,6 +479,7 @@ function tourSuivant(){
   $("titre-jeu").textContent = NOMS[tour.mode];
   $("hublot").textContent = ""; $("hublot").className = "hublot";
   $("choix-pp").hidden = tour.mode !== "pareil";
+  $("clavier").hidden = tour.mode !== "ecrit"; tape = "";
   $("ecouter").textContent = tour.mode === "regarde" ? "👁 Revoir" : "🔊 Réécouter";
   $("ecouter").hidden = tour.mode === "regarde" && !$("opt-cache").checked;
 
@@ -464,12 +491,14 @@ function tourSuivant(){
     const b = tour.meme ? tour.s : tour.autre.s;
     tour.paire = Math.random() < .5 ? [tour.s, b] : [b, tour.s];
     poissons = tour.paire.map(s => ({s, cache:true}));
+  } else if(tour.mode === "ecrit"){
+    poissons = []; preparerClavier();
   } else {
     const d = distracteurs(tour.s, +val("np"), types, voyelles);
     tour.choix = melanger([{s:tour.s, t:"bon"}, ...d]);
     poissons = tour.choix.map(c => ({s:c.s, t:c.t}));
   }
-  const pos = placer(poissons.length), coul = melanger(COULEURS);
+  const pos = placer(poissons.length) || [], coul = melanger(COULEURS);
   $("banc").innerHTML = poissons.map((p,k) => `<button class="poisson" data-k="${k}" type="button" aria-label="${p.cache ? "Poisson "+(k+1) : p.s}" style="left:110%;top:${pos[k][1]}%">
     <span class="corps">${poissonSVG(coul[k][0], coul[k][1])}<span class="etiquette${p.cache?" cache":""}">${p.cache ? "?" : p.s}</span></span></button>`).join("");
   const btns = [...$("banc").children];
@@ -480,6 +509,7 @@ function tourSuivant(){
   setTimeout(() => {
     if(tour.mode === "ecoute"){ bulle("Écoute le sonar…"); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Touche le bon poisson !"); }), 450); }
     else if(tour.mode === "regarde"){ montrerModele(); activer(true); }
+    else if(tour.mode === "ecrit"){ bulle("Écoute le sonar…"); majHublot(); sonar(); setTimeout(() => dire(tour.s, () => { activer(true); bulle("Écris la syllabe !"); }), 450); }
     else { bulle("Écoute bien les deux poissons…"); direPaire(); }
   }, 1000);
 }
@@ -503,8 +533,55 @@ function sonar(){ son("ping"); ["sonar1","sonar2"].forEach(id => { const s=$(id)
 function bulle(t, cls=""){ const b=$("bulle"); b.textContent=t; b.className="bulle "+cls; }
 function activer(on){
   enJeu = on;
-  ["b-pareil","b-diff"].forEach(id => $(id).disabled = !on);
+  ["b-pareil","b-diff","b-effacer","b-valider"].forEach(id => $(id).disabled = !on);
+  document.querySelectorAll("#touches .touche").forEach(b => b.disabled = !on);
   [...$("banc").children].forEach(b => { if(tour.mode !== "pareil" && !b.classList.contains("faux")) b.disabled = !on; else if(tour.mode === "pareil") b.disabled = true; });
+}
+
+/* ---------- J'écris : lettres-bulles ---------- */
+let tape = "";
+function lettresDe(x){ return [...x]; }
+function preparerClavier(){
+  const {c1,c2,v} = decoupe(tour.s);
+  const L = new Set(lettresDe(tour.s));
+  const pieges = [SONORE[c1], c2 === "r" ? "l" : "r", ...melanger(["a","i","o","u","é"].filter(x => !v.includes(x))).slice(0, v.length > 1 ? 1 : 2)];
+  if(v === "ou") pieges.push("a"); // « ou » : un piège de plus parmi les voyelles
+  pieges.forEach(x => { if(x && L.size < 8) L.add(x); });
+  $("touches").innerHTML = melanger([...L]).map(x => `<button class="touche" type="button" data-l="${x}">${x}</button>`).join("");
+  $("touches").querySelectorAll(".touche").forEach(b => b.onclick = () => taper(b.dataset.l));
+}
+function majHublot(gris){
+  const h = $("hublot");
+  if(gris){ h.textContent = tour.s; h.className = "hublot modele-gris"; return; }
+  h.textContent = tape || "…"; h.className = "hublot ecrit" + (tape ? "" : " cache");
+}
+function taper(l){ if(!enJeu || tour.mode !== "ecrit" || tape.length >= 5) return; tape += l; son("ping"); majHublot(); }
+function effacer(){ if(!enJeu || tour.mode !== "ecrit") return; tape = tape.slice(0, -1); majHublot(); }
+function typeErreur(s, x){
+  const {c1,c2,v} = decoupe(s);
+  if(x === c1+v+c2) return "inv";
+  if(x === c1+v || x === c2+v) return "sans";
+  if(x === c1+(c2==="r"?"l":"r")+v) return "lr";
+  if(x === SONORE[c1]+c2+v) return "son";
+  if(x.startsWith(c1+c2) && VOY.includes(x.slice(2))) return "voy";
+  return "autre";
+}
+function validerEcrit(){
+  if(!enJeu || tour.mode !== "ecrit" || !tape) return;
+  const st = stats.tours[stats.tours.length-1];
+  if(tape === tour.s){
+    activer(false); st.ok = true; son("ok"); majHublot();
+    bulle(essais ? `Oui : ${tour.s} !` : "Bravo !", "ok"); bulles($("hublot"), 16);
+    finTour(essais === 0);
+  } else {
+    essais++; st.erreurs++; st.faux.push(tape);
+    const t = typeErreur(tour.s, tape); stats.conf[t] = (stats.conf[t]||0) + 1;
+    son("err");
+    if(essais >= 2){ tape = ""; majHublot(true); bulle(`Regarde bien : ${tour.s}. Écris-la à ton tour !`, "err");
+      setTimeout(() => { if(tour.mode === "ecrit" && !st.ok) majHublot(); }, 2500); }
+    else { bulle(`Tu as écrit ${tape}… écoute encore !`, "err"); tape = ""; setTimeout(majHublot, 900); }
+    setTimeout(() => dire(tour.s), 700);
+  }
 }
 
 function choisir(k){
@@ -572,7 +649,7 @@ function resume(){
 }
 function tableConf(cls){
   const c = Object.entries(stats.conf).sort((a,b)=>b[1]-a[1]);
-  const nom = t => t === "pp" ? "a dit « pas pareil » pour deux syllabes identiques" : PIEGES[t];
+  const nom = t => t === "pp" ? "a dit « pas pareil » pour deux syllabes identiques" : t === "autre" ? "autre erreur d'écriture" : PIEGES[t];
   return c.length ? `<table${cls?` class="${cls}"`:""}><tr><th>Piège</th><th>Fois</th></tr>${c.map(([t,n])=>`<tr><td>${nom(t)}</td><td>${n}</td></tr>`).join("")}</table>` : "<p>Aucun piège n'a trompé l'élève.</p>";
 }
 function finPartie(){
@@ -583,21 +660,28 @@ function finPartie(){
   $("titre-fin").textContent = prem === T.length ? "Capitaine des syllabes !" : "Bravo, capitaine !";
   $("resume-fin").textContent = txt;
   try{TDC.note({s:prem, n:T.length, d:txt, g: prem >= T.length*.8})}catch(e){}
-  $("liste-fin").innerHTML = T.map(t => `<span class="${t.erreurs?"ko":""}">${t.mode==="pareil" ? (t.paire||t.s) : t.s}<small>${t.mode==="ecoute"?"🔊":t.mode==="regarde"?"👁":"="}${t.erreurs ? " ✘ "+t.faux.join(", ") : " ✔"}</small></span>`).join("");
+  $("liste-fin").innerHTML = T.map(t => `<span class="${t.erreurs?"ko":""}">${t.mode==="pareil" ? (t.paire||t.s) : t.s}<small>${t.mode==="ecoute"?"🔊":t.mode==="regarde"?"👁":t.mode==="ecrit"?"✏️":"="}${t.erreurs ? " ✘ "+t.faux.join(", ") : " ✔"}</small></span>`).join("");
   $("bilan-conf").innerHTML = `<p class="note" style="font-size:15px">Pour l'enseignant : les pièges qui ont trompé l'élève.</p>` + tableConf("conf");
 }
 
 /* ---------- Boutons et clavier ---------- */
+$("b-effacer").onclick = effacer;
+$("b-valider").onclick = validerEcrit;
 $("b-pareil").onclick = () => repondrePP(true);
 $("b-diff").onclick = () => repondrePP(false);
 $("ecouter").onclick = () => {
   if(!tour) return;
-  if(tour.mode === "ecoute"){ sonar(); dire(tour.s); }
+  if(tour.mode === "ecoute" || tour.mode === "ecrit"){ sonar(); dire(tour.s); }
   else if(tour.mode === "regarde") montrerModele();
   else if(enJeu) direPaire();
 };
 document.addEventListener("keydown", e => {
   if($("ecran-jeu").hidden || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if(tour && tour.mode === "ecrit"){
+    if(e.key === "Backspace"){ effacer(); e.preventDefault(); return; }
+    if(e.key === "Enter"){ validerEcrit(); e.preventDefault(); return; }
+    if(/^[a-zé]$/i.test(e.key)){ taper(e.key.toLowerCase()); e.preventDefault(); return; }
+  }
   if(/^[1-4]$/.test(e.key)){ const b = $("banc").children[+e.key-1]; if(b && !b.disabled) choisir(+e.key-1); }
   else if(e.key === " "){ $("ecouter").click(); e.preventDefault(); }
   else if(e.key === "=" || e.key.toLowerCase() === "p") repondrePP(true);
@@ -634,6 +718,8 @@ $("b-fiche").onclick = () => {
   const ex2 = [...Array(7)].map((_,k) => { const s = pick(k+7); return { s, ligne: melanger([s, ...distracteurs(s, 4, tps, vs).map(x=>x.s)]) }; });
   // Exercice 3 : pareil ou pas pareil (oral)
   const ex3 = [...Array(10)].map((_,k) => { const s = pick(k+3), d = distracteurs(s, 2, tps, vs)[0]; const meme = !d || Math.random() < .45; const b = meme ? s : d.s; return { a: Math.random()<.5 ? [s,b] : [b,s], meme }; });
+  // Exercice 4 : dictée de syllabes
+  const ex4 = [...Array(8)].map((_,k) => pick(k+11));
   const ligne = (l, cible) => l.map(x => `<td ${td}>${cible && x===cible ? `<span style="border:2px solid #c0392b;border-radius:50%;padding:0 6pt;color:#c0392b">${x}</span>` : x}</td>`).join("");
   const exos = corr => `
     <h2>1. Entoure les syllabes pareilles au modèle (il y en a 2 par ligne).</h2>
@@ -641,12 +727,15 @@ $("b-fiche").onclick = () => {
     <h2>2. J'écoute la syllabe et je l'entoure.</h2>
     <table>${ex2.map((e,k)=>`<tr><td style="font-size:12pt;padding:4pt 8pt">${k+1}</td>${ligne(e.ligne, corr && e.s)}</tr>`).join("")}</table>
     <h2>3. Pareil ou pas pareil ? J'écoute et je colorie = ou ≠.</h2>
-    <table><tr>${ex3.map((e,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt">${k+1}<br><span style="font-size:20pt">${corr ? (e.meme ? "<b style='color:#2e8b57'>=</b> ≠" : "= <b style='color:#c0392b'>≠</b>") : "= &nbsp;≠"}</span></td>`).join("")}</tr></table>`;
+    <table><tr>${ex3.map((e,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt">${k+1}<br><span style="font-size:20pt">${corr ? (e.meme ? "<b style='color:#2e8b57'>=</b> ≠" : "= <b style='color:#c0392b'>≠</b>") : "= &nbsp;≠"}</span></td>`).join("")}</tr></table>
+    <h2>4. J'écoute et j'écris la syllabe.</h2>
+    <table><tr>${ex4.map((x,k)=>`<td style="text-align:center;padding:4pt 6pt;font-size:12pt;width:62pt">${k+1}<br><span style="display:inline-block;height:30pt;line-height:30pt;font-size:20pt;color:#c0392b">${corr ? x : "&nbsp;"}</span></td>`).join("")}</tr></table>`;
   DocEcrit.ouvrir({titre:"Fiche d'exercices", jeu:"Le sous-marin des syllabes", nom:"Fiche sous-marin des syllabes", prenom:true, html:()=>`
     ${exos(false)}
     <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Pour l'adulte</h1>
     <p><b>Exercice 2</b> — dire une seule fois, distinctement : ${ex2.map((e,k)=>`${k+1}. <b>${e.s}</b>`).join(" &nbsp; ")}</p>
     <p><b>Exercice 3</b> — dire les deux syllabes, une seconde d'écart : ${ex3.map((e,k)=>`${k+1}. ${e.a[0]} … ${e.a[1]}`).join(" &nbsp; ")}</p>
+    <p><b>Exercice 4</b> — dicter chaque syllabe deux fois : ${ex4.map((x,k)=>`${k+1}. <b>${x}</b>`).join(" &nbsp; ")}</p>
     <p style="font-size:12px;color:#666">Ne pas montrer sa bouche (ou se placer derrière l'élève) pour un vrai travail d'écoute.</p></div>
     <div class="saut"><h1 style="font-size:18px;color:#7b4fa0">Corrigé</h1>${exos(true)}</div>`});
 };
