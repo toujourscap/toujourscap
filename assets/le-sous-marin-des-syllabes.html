@@ -114,6 +114,9 @@ legend{font-family:var(--f-titre);font-weight:600;padding:0 6px;color:var(--bleu
 .poisson .etiquette{position:absolute;left:24%;top:25%;width:52%;height:50%;display:flex;align-items:center;justify-content:center;
   background:#fff;border-radius:2cqw;font-size:5cqw;font-weight:700;color:var(--encre);line-height:1;box-shadow:inset 0 0 0 .35cqw rgba(0,0,0,.08)}
 .poisson .etiquette.cache{color:#b7c9d6}
+.poisson.petit{width:16cqw}.poisson.petit .etiquette{font-size:3.7cqw;border-radius:1.4cqw}
+.poisson.mini{width:12.5cqw}.poisson.mini .etiquette{font-size:2.9cqw;border-radius:1.1cqw;box-shadow:inset 0 0 0 .25cqw rgba(0,0,0,.08)}
+.poisson.trouve{cursor:default}
 .poisson.faux{opacity:.35;cursor:default}
 .poisson.faux .corps{animation:none;transform:rotate(14deg)}
 .poisson.secoue .corps{animation:secoue .45s}
@@ -210,6 +213,15 @@ table.conf th{background:#e9f4fc;font-family:var(--f-titre);font-weight:600}
         <label class="chip"><input type="radio" name="np" value="3" checked><span>3</span></label>
         <label class="chip"><input type="radio" name="np" value="4"><span>4</span></label>
       </div>
+      <div class="etiq">Je regarde : grand banc de poissons</div>
+      <div class="choix">
+        <label class="chip"><input type="radio" name="banc" value="0" checked><span>Non</span></label>
+        <label class="chip"><input type="radio" name="banc" value="6"><span>6</span></label>
+        <label class="chip"><input type="radio" name="banc" value="9"><span>9</span></label>
+        <label class="chip"><input type="radio" name="banc" value="12"><span>12</span></label>
+        <label class="chip"><input type="radio" name="banc" value="16"><span>16</span></label>
+      </div>
+      <p class="note">Grand banc : beaucoup de poissons, dont 2 à 4 portent la syllabe du hublot. L'élève doit tous les trouver.</p>
     </fieldset>
 
     <fieldset>
@@ -450,7 +462,7 @@ function poissonSVG(c1, c2){
     <circle cx="32" cy="44" r="9" fill="#fff"/><circle cx="30" cy="44" r="4.5" fill="#14283a"/>
     <path d="M14 66 Q20 72 28 70" stroke="#14283a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
 }
-const COULEURS = [["#ef7d5b","#c75a3b"],["#9b6ad6","#7446ae"],["#3fb7a4","#26877a"],["#f19ac0","#cf6f98"],["#7fc4f0","#4f98c8"]];
+const COULEURS = [["#ef7d5b","#c75a3b"],["#f6a93b","#c97f16"],["#6cc46a","#3f9b3d"],["#9b6ad6","#7446ae"],["#3fb7a4","#26877a"],["#f19ac0","#cf6f98"],["#7fc4f0","#4f98c8"]];
 
 function demarrer(){
   const syl = syllabes(), modes = coches("mode"), nb = +val("nb");
@@ -469,7 +481,13 @@ function demarrer(){
 
 function placer(n){
   // positions (en % de la scène) à droite du sous-marin
-  return ({2:[[46,16],[68,52]], 3:[[44,8],[70,34],[46,60]], 4:[[42,10],[70,10],[42,52],[70,52]]})[n];
+  const P = {2:[[46,16],[68,52]], 3:[[44,8],[70,34],[46,60]], 4:[[42,10],[70,10],[42,52],[70,52]]};
+  if(P[n] || !n) return P[n];
+  // grand banc : grille en quinconce à droite du sous-marin
+  const cols = n > 9 ? 4 : 3, lig = Math.ceil(n / cols), w = n > 9 ? 12.5 : 16;
+  const x0 = 40, x1 = 97 - w, y0 = 4, y1 = 84 - (n > 9 ? 16 : 20);
+  return [...Array(n)].map((_, k) => { const c = k % cols, r = Math.floor(k / cols);
+    return [x0 + (cols > 1 ? c * (x1 - x0) / (cols - 1) : 0) + (r % 2 ? -2 : 2), y0 + (lig > 1 ? r * (y1 - y0) / (lig - 1) : 0)]; });
 }
 
 function tourSuivant(){
@@ -493,14 +511,22 @@ function tourSuivant(){
     poissons = tour.paire.map(s => ({s, cache:true}));
   } else if(tour.mode === "ecrit"){
     poissons = []; preparerClavier();
+  } else if(tour.mode === "regarde" && +val("banc")){
+    const n = +val("banc"), justes = n <= 6 ? 2 : n <= 12 ? 3 : 4;
+    const d = distracteurs(tour.s, 6, types, voyelles), faux = [];
+    for(let k=0; faux.length < n - justes; k++) faux.push(Object.assign({}, d[k % d.length]));
+    tour.choix = melanger([...Array(justes)].map(() => ({s:tour.s, t:"bon"})).concat(faux));
+    poissons = tour.choix.map(c => ({s:c.s, t:c.t}));
   } else {
     const d = distracteurs(tour.s, +val("np"), types, voyelles);
     tour.choix = melanger([{s:tour.s, t:"bon"}, ...d]);
     poissons = tour.choix.map(c => ({s:c.s, t:c.t}));
   }
   const pos = placer(poissons.length) || [], coul = melanger(COULEURS);
-  $("banc").innerHTML = poissons.map((p,k) => `<button class="poisson" data-k="${k}" type="button" aria-label="${p.cache ? "Poisson "+(k+1) : p.s}" style="left:110%;top:${pos[k][1]}%">
-    <span class="corps">${poissonSVG(coul[k][0], coul[k][1])}<span class="etiquette${p.cache?" cache":""}">${p.cache ? "?" : p.s}</span></span></button>`).join("");
+  const taille = poissons.length > 9 ? " mini" : poissons.length > 4 ? " petit" : "";
+  tour.reste = poissons.filter(p => p.t === "bon").length;
+  $("banc").innerHTML = poissons.map((p,k) => `<button class="poisson${taille}" data-k="${k}" type="button" aria-label="${p.cache ? "Poisson "+(k+1) : p.s}" style="left:110%;top:${pos[k][1]}%">
+    <span class="corps">${poissonSVG(coul[k % coul.length][0], coul[k % coul.length][1])}<span class="etiquette${p.cache?" cache":""}">${p.cache ? "?" : p.s}</span></span></button>`).join("");
   const btns = [...$("banc").children];
   btns.forEach((b,k) => { b.onclick = () => choisir(k); setTimeout(() => b.style.left = pos[k][0]+"%", 60 + k*140); });
   activer(false);
@@ -517,7 +543,7 @@ function tourSuivant(){
 function montrerModele(){
   clearTimeout(cacheTimer);
   const h = $("hublot"); h.textContent = tour.s; h.className = "hublot";
-  bulle("Trouve la même syllabe !");
+  bulle(tour.reste > 1 ? `Trouve les ${tour.reste} poissons pareils !` : "Trouve la même syllabe !");
   if($("opt-cache").checked) cacheTimer = setTimeout(() => { h.textContent = "?"; h.className = "hublot cache"; }, 2000);
 }
 function direPaire(){
@@ -535,7 +561,7 @@ function activer(on){
   enJeu = on;
   ["b-pareil","b-diff","b-effacer","b-valider"].forEach(id => $(id).disabled = !on);
   document.querySelectorAll("#touches .touche").forEach(b => b.disabled = !on);
-  [...$("banc").children].forEach(b => { if(tour.mode !== "pareil" && !b.classList.contains("faux")) b.disabled = !on; else if(tour.mode === "pareil") b.disabled = true; });
+  [...$("banc").children].forEach(b => { if(tour.mode !== "pareil" && !b.classList.contains("faux") && !b.classList.contains("trouve")) b.disabled = !on; else if(tour.mode === "pareil") b.disabled = true; });
 }
 
 /* ---------- J'écris : lettres-bulles ---------- */
@@ -587,21 +613,27 @@ function validerEcrit(){
 function choisir(k){
   if(!enJeu || tour.mode === "pareil") return;
   const c = tour.choix[k], b = $("banc").children[k], st = stats.tours[stats.tours.length-1];
+  if(c.t === "bon" && --tour.reste > 0){
+    b.classList.add("bon","trouve"); b.classList.remove("indice"); b.disabled = true; son("ok"); bulles(b, 6);
+    bulle(`Bravo ! Encore ${tour.reste}…`, "ok");
+    return;
+  }
   if(c.t === "bon"){
     activer(false); st.ok = true; b.classList.add("bon"); son("ok");
     if(tour.mode === "regarde"){ $("hublot").textContent = tour.s; $("hublot").className = "hublot"; clearTimeout(cacheTimer); }
     bulle(essais ? `Oui : ${tour.s} !` : "Bravo !", "ok");
     if(tour.mode === "regarde" && $("opt-dire").checked) dire(tour.s);
     bulles(b);
-    setTimeout(() => { b.style.left = "18%"; b.style.top = "36%"; b.style.opacity = "0"; b.style.transform = "scale(.4)"; }, 700);
+    [...$("banc").children].filter(x => x === b || x.classList.contains("trouve")).forEach(x =>
+      setTimeout(() => { x.style.left = "18%"; x.style.top = "36%"; x.style.opacity = "0"; x.style.transform = "scale(.4)"; }, 700));
     finTour(essais === 0);
   } else {
     essais++; st.erreurs++; st.faux.push(c.s);
     stats.conf[c.t] = (stats.conf[c.t]||0) + 1;
     son("err");
     b.classList.add("secoue"); setTimeout(() => { b.classList.remove("secoue"); b.classList.add("faux"); b.disabled = true; }, 450);
-    const bon = [...$("banc").children][tour.choix.findIndex(x=>x.t==="bon")];
-    if(essais >= 2){ bon.classList.add("indice"); bulle(tour.mode === "ecoute" ? "Écoute encore, regarde le poisson qui brille." : "Regarde le poisson qui brille.", "err"); }
+    const bons = [...$("banc").children].filter((x,j) => tour.choix[j].t === "bon" && !x.classList.contains("trouve"));
+    if(essais >= 2){ bons.forEach(x => x.classList.add("indice")); bulle(tour.mode === "ecoute" ? "Écoute encore, regarde le poisson qui brille." : (bons.length > 1 ? "Regarde les poissons qui brillent." : "Regarde le poisson qui brille."), "err"); }
     else bulle(`Ce n'est pas ${c.s}… ${tour.mode === "ecoute" ? "écoute encore !" : "regarde bien !"}`, "err");
     if(tour.mode === "ecoute") setTimeout(() => dire(tour.s), 700);
     if(tour.mode === "regarde" && $("opt-cache").checked && essais >= 2) montrerModele();
