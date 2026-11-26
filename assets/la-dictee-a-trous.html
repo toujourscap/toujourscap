@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script src="document-ecrit.js"></script>
 <style>
   :root{
     --bg:#fbf7f0; --card:#fff; --ink:#23302c; --muted:#6b6f76; --line:#e3e0d8;
@@ -94,6 +95,34 @@
   .lien-box{display:none;margin-top:10px;gap:8px}
   .lien-box.on{display:flex}
   .lien-box input{flex:1;font-size:13px}
+  .choix{display:flex;gap:6px;margin-bottom:10px}
+  .choix button{flex:1}
+  .choix button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  #hasardOpts.off{display:none}
+  /* ---- Mots au hasard ---- */
+  #hasard{display:none;max-width:760px;margin:0 auto;padding:18px 20px 40px}
+  body.mode-hasard header, body.mode-hasard main{display:none}
+  body.mode-hasard #hasard{display:block}
+  .ha-prog{display:flex;justify-content:space-between;font-size:15px;color:var(--muted);margin-bottom:6px}
+  .ha-prog b{color:var(--ink)}
+  .ha-barre{height:10px;border-radius:6px;background:#eee9df;overflow:hidden;margin-bottom:18px}
+  .ha-barre div{height:100%;width:0;background:#1f8a4c;transition:width .3s}
+  .ha-zone{text-align:center}
+  .ha-zone .el-ecoute{justify-content:center}
+  #haIn{font-family:Andika,sans-serif;font-size:34px;text-align:center;width:min(100%,420px);border:0;border-bottom:3px solid #23302c;background:#f4f8f6;border-radius:8px 8px 0 0;padding:6px 10px;color:#1d4fa3;margin:10px 0 4px}
+  #haIn:focus{outline:3px solid #4fa3ff;outline-offset:1px;background:#fff}
+  #haIn.ok{border-bottom-color:#1f8a4c;background:#e4f4ea;color:#1f8a4c}
+  #haIn.ko{border-bottom-color:#d23c3c;background:#fde8e8;color:#b02a2a}
+  .ha-zone .accents{justify-content:center}
+  .ha-zone .btns{justify-content:center}
+  .ha-msg{min-height:2.4em;margin-top:12px;font-size:20px;font-weight:600}
+  .ha-msg.ok{color:#1f8a4c}
+  .ha-msg.ko{color:#b02a2a}
+  .ha-msg .bon{font-family:Andika,sans-serif;font-size:30px;color:#1f8a4c;display:block;margin-top:4px}
+  .ha-fin h3{font-family:Andika,sans-serif;font-size:26px;margin:0 0 10px;text-align:center}
+  .ha-fin ul{font-family:Andika,sans-serif;font-size:20px;line-height:1.8;margin:6px 0 14px}
+  .ha-fin .barre{color:#b02a2a;text-decoration:line-through}
+  .ha-debut{text-align:center;font-size:18px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:16mm 15mm}
@@ -199,6 +228,18 @@
       <button id="word">Télécharger en Word (.docx)</button>
     </div>
     <h2 style="margin-top:22px"><span class="step">5</span> Sur l'ordinateur</h2>
+    <div class="choix" id="ecranChoix">
+      <button type="button" data-e="trous" class="active">✏️ Dictée à trous</button>
+      <button type="button" data-e="hasard">🎲 Mots au hasard</button>
+    </div>
+    <div id="hasardOpts" class="off" style="margin-bottom:10px">
+      <label for="source">Mots tirés au hasard</label>
+      <select id="source">
+        <option value="trous">Les mots des trous</option>
+        <option value="tous">Tous les mots du texte (sauf les mots d'une lettre)</option>
+      </select>
+      <p class="hint">L'élève entend un mot et l'écrit. Un mot faux est corrigé, puis il revient un peu plus tard, jusqu'à ce qu'il soit écrit juste.</p>
+    </div>
     <div class="btns" style="margin-top:0">
       <button class="primary" id="faireEcran">▶ Faire la dictée à l'écran</button>
       <button id="creerLien">🔗 Créer le lien pour les élèves</button>
@@ -234,6 +275,35 @@
     </div>
     <div class="el-res" id="elRes"></div>
   </div>
+</section>
+
+<section id="hasard">
+  <div class="el-top">
+    <h2 id="haTitre">Mots au hasard</h2>
+    <button id="haRetour">← Retour aux réglages</button>
+  </div>
+  <div class="el-card ha-debut" id="haDebut">
+    <p>🎲 Écoute chaque mot et écris-le. Si tu te trompes, le mot reviendra plus tard.</p>
+    <p id="haNb" style="color:var(--muted)"></p>
+    <div class="btns" style="justify-content:center"><button class="primary" id="haGo" style="font-size:20px;padding:10px 22px">▶ Commencer</button></div>
+  </div>
+  <div class="el-card" id="haJeu" hidden>
+    <div class="ha-prog"><span>✔ <b id="haOk">0</b> / <b id="haTotal">0</b> mots réussis</span><span id="haReste"></span></div>
+    <div class="ha-barre"><div id="haBarre"></div></div>
+    <div class="ha-zone">
+      <div class="el-ecoute">
+        <button class="primary" id="haMot">🔊 Écouter le mot</button>
+        <button id="haPhrase">🔊 Dans la phrase</button>
+        <label class="phr" style="display:flex;gap:6px;align-items:center;margin:0">Vitesse
+          <select id="haVit" style="width:auto;padding:4px"><option value="0.6">lente</option><option value="0.8" selected>normale</option><option value="1">rapide</option></select></label>
+      </div>
+      <input id="haIn" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Écris le mot">
+      <div class="accents" id="haAcc"></div>
+      <div class="btns"><button class="primary" id="haValider">✔ Valider</button></div>
+      <div class="ha-msg" id="haMsg"></div>
+    </div>
+  </div>
+  <div class="el-card ha-fin" id="haFin" hidden></div>
 </section>
 
 <div id="printArea"></div>
@@ -571,17 +641,20 @@ $("elTxt").addEventListener("keydown", e => {
 // Clavier des accents
 let dernierChamp = null;
 $("elTxt").addEventListener("focusin", e => { if (e.target.tagName === "INPUT") dernierChamp = e.target; });
-"é è ê ë à â ç ù û î ï ô œ".split(" ").forEach(c => {
-  const b = document.createElement("button"); b.type = "button"; b.textContent = c;
-  b.onmousedown = e => e.preventDefault();
-  b.onclick = () => {
-    const inp = dernierChamp || elInputs[0]; if (!inp) return;
-    const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a;
-    inp.value = inp.value.slice(0,a) + c + inp.value.slice(z); inp.focus(); inp.setSelectionRange(a+1, a+1);
-    inp.classList.remove("ok","ko","maj");
-  };
-  $("elAcc").appendChild(b);
-});
+function clavier(boite, champ){
+  "é è ê ë à â ç ù û î ï ô œ".split(" ").forEach(c => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = c;
+    b.onmousedown = e => e.preventDefault();
+    b.onclick = () => {
+      const inp = champ(); if (!inp || inp.readOnly) return;
+      const a = inp.selectionStart ?? inp.value.length, z = inp.selectionEnd ?? a;
+      inp.value = inp.value.slice(0,a) + c + inp.value.slice(z); inp.focus(); inp.setSelectionRange(a+1, a+1);
+      inp.classList.remove("ok","ko","maj");
+    };
+    boite.appendChild(b);
+  });
+}
+clavier($("elAcc"), () => dernierChamp || elInputs[0]);
 // Écoute
 $("elTout").onclick = () => dire(elPhrases.join(" "));
 $("elPhrase").onclick = () => dire(elPhrases[elIdx] || "");
@@ -589,17 +662,161 @@ $("elPrec").onclick = () => { elIdx = Math.max(0, elIdx-1); $("elNum").textConte
 $("elSuiv").onclick = () => { elIdx = Math.min(elPhrases.length-1, elIdx+1); $("elNum").textContent = elIdx+1; dire(elPhrases[elIdx] || ""); };
 $("elStop").onclick = () => { try { synth.cancel(); } catch(e){} };
 
+/* ============ Mots au hasard ============ */
+// Un mot tiré au hasard dans le texte est dit ; l'élève l'écrit. Faux : correction, puis le mot revient plus tard.
+let ha = null;
+function melanger(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function motsHasard(d){
+  const toks = decouper(d.x || ""), on = new Set(d.h || []), vus = new Map();
+  toks.forEach(tk => {
+    if (!tk.word) return;
+    const k = tk.t.toLowerCase();
+    if (d.r === "trous" ? !on.has(tk.id) : (k.length < 2 && !HOMOPHONES.has(k))) return;
+    const m = vus.get(k);
+    if (!m) vus.set(k, {k, aff: tk.t, err: 0, essais: []});
+    else if (tk.t === k) m.aff = k;          // forme en minuscules si elle existe (majuscule de début de phrase)
+  });
+  vus.forEach(m => { if (m.aff !== m.k && m.aff.slice(1) === m.k.slice(1) && !/^[A-ZÀ-Ö]/.test(m.aff.slice(1))) {
+    // mot seulement écrit avec une majuscule : on la garde si ce n'est jamais en début de phrase (nom propre)
+    const debut = new RegExp("(^|[.!?…]\\s*[«\"]?\\s*)" + m.aff.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "(?![\\p{L}])", "u");
+    if (debut.test((d.x || "").replace(/\s+/g," ").trim())) m.aff = m.k;
+  }});
+  return [...vus.values()];
+}
+function phraseDuMot(m){
+  const re = new RegExp("(^|[^\\p{L}])" + m.k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "(?![\\p{L}])", "iu");
+  return (ha.phrases.find(p => re.test(p)) || "").trim();
+}
+function direMot(avecPhrase){
+  if (!ha || !ha.cur) return;
+  const m = ha.cur, ph = phraseDuMot(m);
+  // homophones (a/à, et/est…) : le mot seul est ambigu, on le dit dans sa phrase
+  const phrase = avecPhrase || HOMOPHONES.has(m.k);
+  direHa(phrase && ph ? `${m.aff}… ${ph} … ${m.aff}.` : m.aff);
+}
+function direHa(txt){
+  if (!synth) return;
+  try { synth.cancel(); const u = new SpeechSynthesisUtterance(txt); u.lang = "fr-FR"; u.rate = +$("haVit").value; const v = voixFr(); if (v) u.voice = v; synth.speak(u); } catch(e){}
+}
+function ouvrirHasard(d){
+  const mots = motsHasard(d);
+  if (!mots.length){ toast(d.r === "trous" ? "Aucun trou sélectionné." : "Aucun mot dans le texte."); return false; }
+  ha = {d, mots, file: [], cur: null, ok: 0, attente: false, phrases: phrasesDe(d.x || "")};
+  $("haTitre").textContent = (d.t || "Dictée") + " – mots au hasard";
+  $("haNb").textContent = `${mots.length} mot${mots.length > 1 ? "s" : ""} à écrire.`;
+  $("haDebut").hidden = false; $("haJeu").hidden = true; $("haFin").hidden = true;
+  $("haRetour").style.display = elDepuisLien ? "none" : "";
+  if (!synth) $("haNb").textContent += " ⚠️ Cet appareil ne peut pas lire les mots à voix haute : un adulte les dit.";
+  document.body.classList.remove("mode-eleve"); document.body.classList.add("mode-hasard");
+  window.scrollTo(0,0);
+  return true;
+}
+function haDemarrer(){
+  ha.mots.forEach(m => { m.err = 0; m.essais = []; m.fait = false; });
+  ha.file = melanger([...ha.mots]); ha.ok = 0;
+  $("haDebut").hidden = true; $("haFin").hidden = true; $("haJeu").hidden = false;
+  $("haTotal").textContent = ha.mots.length;
+  haSuivant();
+}
+function haProgres(){
+  $("haOk").textContent = ha.ok;
+  $("haBarre").style.width = (100 * ha.ok / ha.mots.length) + "%";
+  const r = ha.mots.length - ha.ok;
+  $("haReste").textContent = r ? `encore ${r} mot${r > 1 ? "s" : ""}` : "";
+}
+function haSuivant(){
+  haProgres();
+  if (!ha.file.length) return haFinir();
+  ha.cur = ha.file.shift(); ha.attente = false;
+  const inp = $("haIn"); inp.value = ""; inp.readOnly = false; inp.classList.remove("ok","ko");
+  $("haMsg").className = "ha-msg"; $("haMsg").innerHTML = "";
+  $("haValider").textContent = "✔ Valider";
+  inp.focus();
+  setTimeout(() => direMot(false), 250);
+}
+function haValider(){
+  if (!ha || !ha.cur) return;
+  if (ha.attente) return haSuivant();
+  const inp = $("haIn"), v = norm(inp.value);
+  if (!v){ inp.focus(); return; }
+  const m = ha.cur;
+  if (v.toLowerCase() === norm(m.aff).toLowerCase()){
+    m.fait = true; ha.ok++; inp.classList.add("ok"); inp.readOnly = true;
+    $("haMsg").className = "ha-msg ok"; $("haMsg").textContent = ["Bravo !","Très bien !","C'est juste !","Super !"][Math.floor(Math.random()*4)] + " ✔";
+    ha.attente = true; haProgres();
+    setTimeout(() => { if (ha.attente && ha.cur === m) haSuivant(); }, 1100);
+  } else {
+    m.err++; m.essais.push(v); inp.classList.add("ko"); inp.readOnly = true;
+    $("haMsg").className = "ha-msg ko";
+    $("haMsg").innerHTML = `Pas tout à fait. Regarde bien comment il s'écrit :<span class="bon">${esc(m.aff)}</span>`;
+    // le mot revient après 2 autres mots (ou tout de suite s'il n'en reste plus)
+    ha.file.splice(Math.min(2, ha.file.length), 0, m);
+    ha.attente = true; $("haValider").textContent = "Mot suivant ➜";
+    inp.focus();
+  }
+}
+function haFinir(){
+  ha.cur = null;
+  $("haJeu").hidden = true;
+  const n = ha.mots.length, premier = ha.mots.filter(m => !m.err), revoir = ha.mots.filter(m => m.err);
+  let h = `<h3>🎉 Bravo ! Les ${n} mot${n > 1 ? "s sont écrits" : " est écrit"} juste.</h3>`;
+  h += `<p><b>${premier.length}</b> réussi${premier.length > 1 ? "s" : ""} du premier coup sur ${n}.</p>`;
+  if (revoir.length) h += `<p><b>À revoir :</b></p><ul>${revoir.map(m => `<li>${esc(m.aff)} <span style="color:var(--muted);font-size:15px">(${m.err} erreur${m.err > 1 ? "s" : ""} : <span class="barre">${m.essais.map(esc).join("</span>, <span class=\"barre\">")}</span>)</span></li>`).join("")}</ul>`;
+  h += `<div class="btns" style="justify-content:center"><button class="primary" id="haRejouer">🔁 Rejouer</button>` +
+       (revoir.length ? `<button id="haRevoir">🎯 Seulement les mots à revoir</button>` : "") +
+       (window.DocEcrit ? `<button id="haDoc">📄 Bilan à imprimer ou télécharger</button>` : "") + `</div>`;
+  $("haFin").innerHTML = h; $("haFin").hidden = false;
+  $("haRejouer").onclick = () => { ha.mots = ha.tous || ha.mots; haDemarrer(); };
+  if ($("haRevoir")) $("haRevoir").onclick = () => { ha.tous = ha.tous || ha.mots; ha.mots = revoir; haDemarrer(); };
+  if ($("haDoc")) $("haDoc").onclick = () => haDocument(premier, revoir);
+}
+function haDocument(premier, revoir){
+  const titre = ha.d.t || "Dictée";
+  DocEcrit.ouvrir({ titre: "Bilan – mots au hasard", jeu: "La dictée à trous", nom: "Bilan mots au hasard", prenom: true,
+    html: () => `<p><b>${esc(titre)}</b> — ${ha.mots.length} mot${ha.mots.length > 1 ? "s" : ""} écrits juste, dont <b>${premier.length}</b> du premier coup.</p>
+      <h2>Réussis du premier coup</h2><p>${premier.length ? premier.map(m => esc(m.aff)).join(", ") : "—"}</p>
+      <h2>Mots à revoir</h2>${revoir.length ? `<table><tr><th>Mot</th><th>Erreurs</th><th>Ce que l'élève a écrit</th></tr>${revoir.map(m => `<tr><td><b>${esc(m.aff)}</b></td><td>${m.err}</td><td>${m.essais.map(esc).join(", ")}</td></tr>`).join("")}</table>
+      <h2>Je m'entraîne : j'écris chaque mot 3 fois</h2><table>${revoir.map(m => `<tr><td style="width:28%"><b>${esc(m.aff)}</b></td><td style="width:24%">&nbsp;</td><td style="width:24%">&nbsp;</td><td style="width:24%">&nbsp;</td></tr>`).join("")}</table>` : "<p>Aucun : tout est juste du premier coup. 🎉</p>"}` });
+}
+$("haGo").onclick = haDemarrer;
+$("haValider").onclick = haValider;
+$("haMot").onclick = () => direMot(false);
+$("haPhrase").onclick = () => direMot(true);
+$("haIn").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); haValider(); } });
+$("haIn").addEventListener("input", e => e.target.classList.remove("ok","ko"));
+clavier($("haAcc"), () => $("haIn"));
+$("haRetour").onclick = () => {
+  try { synth.cancel(); } catch(e){}
+  ha = null; document.body.classList.remove("mode-hasard"); toutRendre();
+};
+
+// Choix de l'écran : dictée à trous ou mots au hasard
+let ecran = "trous";
+function setEcran(e){
+  ecran = e === "hasard" ? "hasard" : "trous";
+  document.querySelectorAll("#ecranChoix button").forEach(b => b.classList.toggle("active", b.dataset.e === ecran));
+  $("hasardOpts").classList.toggle("off", ecran !== "hasard");
+  $("faireEcran").textContent = ecran === "hasard" ? "▶ Lancer les mots au hasard" : "▶ Faire la dictée à l'écran";
+  $("lienBox").classList.remove("on");
+}
+document.querySelectorAll("#ecranChoix button").forEach(b => b.onclick = () => { setEcran(b.dataset.e); sauver(); });
+$("source").addEventListener("input", () => { $("lienBox").classList.remove("on"); sauver(); });
+const besoinTrous = () => ecran === "trous" || $("source").value === "trous";
+
 // Données de la dictée (texte + trous) <-> lien
 function donnees(){
-  return {t:$("titre").value.trim(), x:$("texte").value, h:tokens.filter(t=>t.word&&t.on).map(t=>t.id), i:$("ini").checked, b:$("banque").checked, e:$("egal").checked};
+  const d = {t:$("titre").value.trim(), x:$("texte").value, h:tokens.filter(t=>t.word&&t.on).map(t=>t.id), i:$("ini").checked, b:$("banque").checked, e:$("egal").checked};
+  if (ecran === "hasard") d.r = $("source").value;
+  return d;
 }
 function encoder(d){ const b = new TextEncoder().encode(JSON.stringify(d)); let s = ""; b.forEach(c => s += String.fromCharCode(c)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
 function decoder(s){ s = s.replace(/-/g,"+").replace(/_/g,"/"); const bin = atob(s); return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)))); }
 
 let etatEnseignant = null;
 $("faireEcran").onclick = () => {
-  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
-  etatEnseignant = donnees(); ouvrirEleve(etatEnseignant);
+  if (besoinTrous() && !tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  etatEnseignant = donnees();
+  if (etatEnseignant.r) ouvrirHasard(etatEnseignant); else ouvrirEleve(etatEnseignant);
 };
 $("elRetour").onclick = () => {
   try { synth.cancel(); } catch(e){}
@@ -609,7 +826,7 @@ $("elRetour").onclick = () => {
   toutRendre();
 };
 $("creerLien").onclick = () => {
-  if (!tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  if (besoinTrous() && !tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
   const base = location.origin + location.pathname.replace(/\.html$/,"");
   $("lienTxt").value = base + "#d=" + encoder(donnees());
   $("lienBox").classList.add("on"); $("lienTxt").select();
@@ -626,8 +843,8 @@ const KEY = "dictee-a-trous-v1";
 function sauver(){
   try {
     localStorage.setItem(KEY, JSON.stringify({
-      mode, titre:$("titre").value, texte:$("texte").value, off:tokens.filter(t=>t.word&&!t.on).map(t=>t.id), on:tokens.filter(t=>t.word&&t.on).map(t=>t.id),
-      opts:Object.fromEntries(["seuil","niveau","police","taille","interligne"].map(i=>[i,$(i).value]).concat(["homo","ini","egal","banque","corrige"].map(i=>[i,$(i).checked])))
+      mode, ecran, titre:$("titre").value, texte:$("texte").value, off:tokens.filter(t=>t.word&&!t.on).map(t=>t.id), on:tokens.filter(t=>t.word&&t.on).map(t=>t.id),
+      opts:Object.fromEntries(["seuil","niveau","police","taille","interligne"].map(i=>[i,$(i).value]).concat([["source",$("source").value]]).concat(["homo","ini","egal","banque","corrige"].map(i=>[i,$(i).checked])))
     }));
   } catch(e){}
 }
@@ -636,7 +853,7 @@ function charger(){
     const d = JSON.parse(localStorage.getItem(KEY) || "null"); if (!d) return false;
     $("titre").value = d.titre || ""; $("texte").value = d.texte || "";
     Object.entries(d.opts || {}).forEach(([k,v]) => { if (typeof v === "boolean") $(k).checked = v; else $(k).value = v; });
-    setMode(d.mode || "auto", true);
+    setMode(d.mode || "auto", true); setEcran(d.ecran);
     tokens = decouper($("texte").value); proposer();
     const on = new Set(d.on || []); tokens.forEach(t => { if (t.word) t.on = on.has(t.id); });
     return true;
@@ -646,7 +863,7 @@ function charger(){
 majSeuil();
 const mLien = location.hash.match(/^#d=([\w-]+)/);
 let lienOk = false;
-if (mLien){ try { const d = decoder(mLien[1]); elDepuisLien = true; ouvrirEleve(d); lienOk = true; } catch(e){ toast("Lien de dictée illisible."); } }
+if (mLien){ try { const d = decoder(mLien[1]); elDepuisLien = true; if (d.r) ouvrirHasard(d); else ouvrirEleve(d); lienOk = true; } catch(e){ toast("Lien de dictée illisible."); } }
 if (lienOk){ /* écran élève seul */ }
 else if (!charger()){
   $("titre").value = "Dictée – l'automne";
