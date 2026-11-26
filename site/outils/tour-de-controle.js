@@ -115,6 +115,7 @@
     lire: lire, ecrire: ecrire, propre: propre,
     note: function (r) {
       r = r || {};
+      try { if (window.TCStats) TCStats.fin(r.cle); } catch (e) {} // statistiques du site (anonymes)
       if (!TDC.pilote() || jeu === "la-tour-de-controle") return false;
       var maintenant = Date.now();
       var v = { j: jeu, t: maintenant, ses: ses, dur: Math.round((maintenant - (r.cle && TDC._debutCle === r.cle ? TDC._t0Cle : dernier)) / 1000) };

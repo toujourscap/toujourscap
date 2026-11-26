@@ -61,7 +61,7 @@
       document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);msg("Document téléchargé : "+nom+" (si rien ne se passe ici, le téléchargement fonctionne sur le site).");}
     catch(e){msg("Le téléchargement n'est pas possible ici : il fonctionne sur le site.");}
   }
-  window.DocEcrit={ouvrir(o){prepare();opts=Object.assign({prenom:true,nom:o.titre},o);
+  window.DocEcrit={ouvrir(o){prepare();try{window.TCStats&&TCStats.doc("doc");}catch(e){}opts=Object.assign({prenom:true,nom:o.titre},o);
     el.querySelector(".de-prenom").style.display=opts.prenom?"":"none";msg("Le prénom sert seulement au document : rien n'est enregistré.");
     rendu();el.style.display="flex";el.scrollTop=0;}};
 })();

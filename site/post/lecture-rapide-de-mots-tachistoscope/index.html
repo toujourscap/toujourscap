@@ -155,6 +155,6 @@ function pleinEcran(b){
     <p class="muted">© 2026 Toujours cap&nbsp;! — Contenus sous licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a> : libres pour la classe, avec mention de la source, sans usage commercial.</p>
   </div>
 </footer>
-<script>try{navigator.sendBeacon("/api/vue",JSON.stringify({p:location.pathname,r:document.referrer}))}catch(e){}</script>
+<script>(function(){try{var B=function(m){navigator.sendBeacon('/api/vue',JSON.stringify(m))},v=Math.random().toString(36).slice(2,12),n=null,u='';try{n=!localStorage.getItem('tc_vu');localStorage.setItem('tc_vu','1')}catch(e){}try{u=new URLSearchParams(location.search).get('utm_source')||''}catch(e){}B({p:location.pathname,r:document.referrer,u:u,v:v,n:n});var t=0,d=document.visibilityState=='visible'?Date.now():0,s=0;var f=function(){if(d){t+=Date.now()-d;d=0}var x=Math.round(t/1000);if(x>s){s=x;B({v:v,t:x})}};document.addEventListener('visibilitychange',function(){if(document.visibilityState=='visible')d=Date.now();else f()});addEventListener('pagehide',f);var P=[10,30,60,120,300,600,1200,1800];setInterval(function(){var x=Math.round((t+(d?Date.now()-d:0))/1000);if(P.length&&x>=P[0]){while(P.length&&x>=P[0])P.shift();if(x>s){s=x;B({v:v,t:x})}}},5000)}catch(e){}})()</script>
 </body>
 </html>

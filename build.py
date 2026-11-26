@@ -25,6 +25,22 @@ def _version(nom):
 
 
 CSS_V = _version("style.css")
+
+# Mesure d'audience de chaque page (voir functions/api/vue.js) : page vue, provenance, puis temps passé (onglet visible).
+# « tc_vu » : simple repère « déjà venu » dans le navigateur, sans identifiant.
+VUE_JS = ("(function(){try{var B=function(m){navigator.sendBeacon('/api/vue',JSON.stringify(m))},"
+          "v=Math.random().toString(36).slice(2,12),n=null,u='';"
+          "try{n=!localStorage.getItem('tc_vu');localStorage.setItem('tc_vu','1')}catch(e){}"
+          "try{u=new URLSearchParams(location.search).get('utm_source')||''}catch(e){}"
+          "B({p:location.pathname,r:document.referrer,u:u,v:v,n:n});"
+          "var t=0,d=document.visibilityState=='visible'?Date.now():0,s=0;"
+          "var f=function(){if(d){t+=Date.now()-d;d=0}var x=Math.round(t/1000);if(x>s){s=x;B({v:v,t:x})}};"
+          "document.addEventListener('visibilitychange',function(){if(document.visibilityState=='visible')d=Date.now();else f()});"
+          "addEventListener('pagehide',f);"
+          # filet de sécurité si la page se ferme sans prévenir : envoi à 10 s, 30 s, 1, 2, 5, 10, 20 et 30 min visibles
+          "var P=[10,30,60,120,300,600,1200,1800];setInterval(function(){var x=Math.round((t+(d?Date.now()-d:0))/1000);"
+          "if(P.length&&x>=P[0]){while(P.length&&x>=P[0])P.shift();if(x>s){s=x;B({v:v,t:x})}}},5000)"
+          "}catch(e){}})()")
 JS_V = _version("commentaires.js")
 # Lien de paiement pour l'encart « Offrir un café » (page Qui suis-je ?). Vide = encart masqué.
 DON_URL = ""
@@ -329,7 +345,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
     <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! — Contenus sous licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a> : libres pour la classe, avec mention de la source, sans usage commercial.</p>
   </div>
 </footer>
-<script>try{{navigator.sendBeacon("/api/vue",JSON.stringify({{p:location.pathname,r:document.referrer}}))}}catch(e){{}}</script>
+<script>{VUE_JS}</script>
 </body>
 </html>
 """
@@ -750,7 +766,7 @@ def main():
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     shutil.copytree(os.path.join(ROOT, "assets", "audio"), os.path.join(OUT, "audio"))  # voix enregistrées des jeux
-    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "le-sous-marin-des-syllabes.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "la-machine-a-conjuguer.html", "la-fiole-de-la-grenouille.html", "la-grande-roue-des-complements.html", "les-jumeaux-des-doubles.html", "le-crocodile-glouton.html", "la-pizzeria-des-fractions.html", "l-atelier-des-barres.html", "les-additions-en-colonne.html", "les-multiplications-en-colonne.html", "le-bal-masque-des-nombres.html", "le-saut-des-virelangues.html", "les-nombres-farceurs.html", "la-dictee-a-trous.html", "le-jour-du-marche.html", "le-jour-du-marche-a-imprimer.html", "le-kiosque-des-mots.html", "les-cristaux-de-la-planete-sonora.html", "bilan-de-lecture.html", "bilan-de-lecture-documents.html", "bilan-de-maths.html", "tour-de-controle.js", "voix.js", "document-ecrit.js"):
+    for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "le-sous-marin-des-syllabes.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "la-machine-a-conjuguer.html", "la-fiole-de-la-grenouille.html", "la-grande-roue-des-complements.html", "les-jumeaux-des-doubles.html", "le-crocodile-glouton.html", "la-pizzeria-des-fractions.html", "l-atelier-des-barres.html", "les-additions-en-colonne.html", "les-multiplications-en-colonne.html", "le-bal-masque-des-nombres.html", "le-saut-des-virelangues.html", "les-nombres-farceurs.html", "la-dictee-a-trous.html", "le-jour-du-marche.html", "le-jour-du-marche-a-imprimer.html", "le-kiosque-des-mots.html", "les-cristaux-de-la-planete-sonora.html", "bilan-de-lecture.html", "bilan-de-lecture-documents.html", "bilan-de-maths.html", "tour-de-controle.js", "voix.js", "document-ecrit.js", "mesure.js"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
     for copie, source in COPIES.items():
         shutil.copy(os.path.join(ROOT, "assets", source), os.path.join(OUT, "outils", copie))
@@ -1125,6 +1141,28 @@ def main():
                    for path, lm in sorted(SITEMAP, key=lambda x: (x[0] != "/", x[0])))
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
+    # Mesure d'audience des jeux (parties, temps de jeu, documents) : mesure.js chargé en premier dans chaque jeu.
+    for nom in os.listdir(os.path.join(OUT, "outils")):
+        if nom.endswith(".html"):
+            chemin = os.path.join(OUT, "outils", nom)
+            txt = open(chemin).read()
+            if "mesure.js" not in txt:
+                motif = r"(<meta charset[^>]*>)" if re.search(r"<meta charset", txt, re.I) else r"(<head[^>]*>)"
+                txt = re.sub(motif, r'\1\n<script src="/outils/mesure.js"></script>', txt, count=1, flags=re.I)
+                open(chemin, "w").write(txt)
+    # Jeux → article qui les contient (pour /admin/stats).
+    jeux = {}
+    for d in sorted(os.listdir(os.path.join(OUT, "post"))):
+        f = os.path.join(OUT, "post", d, "index.html")
+        if not os.path.exists(f):
+            continue
+        txt = open(f).read()
+        h1 = re.search(r"<h1[^>]*>(.*?)</h1>", txt, re.S)
+        titre = html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() if h1 else d
+        for j in re.findall(r'<iframe[^>]+src="/outils/([a-z0-9-]+)', txt):
+            jeux.setdefault(j, {"titre": titre, "article": f"/post/{d}/"})
+    with open(os.path.join(OUT, "jeux.json"), "w") as f:
+        json.dump(jeux, f, ensure_ascii=False)
     print(f"OK : {len(posts)} articles, {len(SITEMAP)} pages dans le sitemap")
 
 

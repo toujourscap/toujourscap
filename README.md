@@ -22,6 +22,12 @@ Compteur de visites maison, consultable sur https://toujourscap.com/admin/stats 
 Chaque page envoie une requête à `/api/vue`, enregistrée dans la table `vues` de la même base D1.
 Aucun cookie de suivi ni adresse IP stockée : un visiteur est reconnu seulement le temps d'une journée.
 Les visites faites depuis un appareil où l'admin a été ouvert ne sont pas comptées (cookie `tc_admin`).
+Depuis le 26/11/2026 : temps passé (onglet visible, `vid` + `duree`), heure, pays et région (Cloudflare), repère « déjà venu »
+(localStorage `tc_vu`, sans identifiant), provenance précise (`utm_source`, navigateurs intégrés Instagram/Facebook/Pinterest),
+classée par `categorie()` dans `lib/stats.js`. Jeux : `assets/mesure.js` (injecté par build.py dans chaque /outils/*.html)
+→ table `jeux_ev` (ouvert, commence, fin via `TDC.note`, duree, doc, word, impr). `site/jeux.json` relie chaque jeu à son article.
+Page admin : périodes 7 j / 30 j / 3 mois / 12 mois ou dates au choix, comparaison avec la période précédente,
+filtre par page (`?f=/post/…/`), export CSV (`?csv=pages|jeux|sources|jours`) et bouton « Copier » sur chaque tableau.
 
 ## Correction par IA (professeur Zigzag)
 
