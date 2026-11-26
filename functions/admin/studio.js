@@ -64,10 +64,10 @@ select,input[type=text]{font:inherit;padding:8px 12px;border:1px solid #e7e0d4;b
   <span class="compteur" id="compteur"></span>
 </div>
 <div class="poste">
-  <div class="aide" id="consigne">Choisis une case, appuie une fois sur le bouton rouge (ou la barre d'espace) pour commencer, une fois pour arrêter.</div>
+  <div class="aide" id="consigne">Choisis une case, puis maintiens le bouton rouge (ou la barre d'espace) appuyé pendant que tu parles.</div>
   <div class="grand" id="texte">—</div>
   <div class="aide" id="dire"></div>
-  <button class="micro" id="micro" type="button"><span>🎙️</span>Appuie pour<br>commencer</button>
+  <button class="micro" id="micro" type="button"><span>🎙️</span>Maintenir<br>pour parler</button>
   <div class="outils" style="margin-top:10px">
     <button type="button" id="prec">◀ Précédent</button>
     <button type="button" id="ecouter">▶ Écouter</button>
@@ -212,10 +212,10 @@ function maj(){
   const it = items[courant];
   $("texte").textContent = it ? it.texte : "—";
   const long = !!(it && it.texte.length > 40);
-  $("consigne").textContent = "Appuie une fois sur le bouton rouge (ou la barre d'espace) pour commencer, une fois pour arrêter.";
+  $("consigne").textContent = "Maintiens le bouton rouge (ou la barre d'espace) appuyé pendant que tu parles, lâche une demi-seconde après.";
   if(liste.groupes) $("groupes").querySelectorAll("small[data-g]").forEach((e) => { const g = liste.groupes[+e.dataset.g]; e.textContent = g.items.filter((x) => voix[x.cle]).length + " / " + g.items.length; });
   $("texte").classList.toggle("long", long);
-  if(!enreg) $("micro").innerHTML = "<span>🎙️</span>Appuie pour<br>commencer";
+  if(!enreg) $("micro").innerHTML = "<span>🎙️</span>Maintenir<br>pour parler";
   $("dire").textContent = it && it.dire ? "Dire : « " + it.dire + " »" : "";
   $("ecouter").disabled = $("effacer").disabled = !(it && voix[it.cle]);
 }
@@ -257,14 +257,13 @@ async function demarrer(){
   if(!(await micro())) return;
   prises = avant.slice(); avant = []; enreg = true; debut = Date.now();
   $("micro").classList.add("rec"); etat("🔴 Je t'écoute…");
-  $("micro").innerHTML = "<span>⏹</span>Appuie pour<br>arrêter";
+  $("micro").innerHTML = "<span>🔴</span>Lâche pour<br>arrêter";
 }
 function arreter(){
   if(!enreg) return;
   enreg = false; $("micro").classList.remove("rec"); maj();
   clearTimeout(fin);
-  // On arrête tout de suite et on retire les 0,15 dernière seconde : le bruit du clic ou de la barre d'espace.
-  const p = prises; prises = null; traiter(p, Math.round(sr * .15));
+  fin = setTimeout(() => { const p = prises; prises = null; traiter(p); }, 350); // garde la fin du mot
 }
 
 async function traiter(p, retire){
@@ -325,17 +324,17 @@ function nettoyer(x, sr){
 }
 
 const m = $("micro");
-// Toujours le même geste : un appui pour commencer, un appui pour arrêter (mot court ou texte long).
-function basculer(){ if(enreg) arreter(); else demarrer(); }
-m.addEventListener("pointerdown", (e) => { e.preventDefault(); basculer(); });
+// Toujours le même geste : on maintient le bouton (ou la barre d'espace) pendant qu'on parle, mot court ou texte long.
+m.addEventListener("pointerdown", (e) => { e.preventDefault(); try{ m.setPointerCapture(e.pointerId); }catch(x){} demarrer(); });
+["pointerup","pointercancel","lostpointercapture"].forEach((t) => m.addEventListener(t, arreter));
 m.addEventListener("contextmenu", (e) => e.preventDefault());
 document.addEventListener("keydown", (e) => {
   if(/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
-  if(e.code === "Space"){ e.preventDefault(); if(e.repeat) return; basculer(); }
+  if(e.code === "Space"){ e.preventDefault(); if(e.repeat) return; demarrer(); }
   if(e.key === "ArrowRight") choisir(courant + 1);
   if(e.key === "ArrowLeft") choisir(courant - 1);
 });
-document.addEventListener("keyup", (e) => { if(e.code === "Space" && !/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) e.preventDefault(); });
+document.addEventListener("keyup", (e) => { if(e.code === "Space" && !/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)){ e.preventDefault(); arreter(); } });
 // La barre d'espace sert au micro : elle ne doit pas « recliquer » le dernier bouton utilisé.
 document.addEventListener("click", (e) => { if(e.target.closest && e.target.closest("button")) e.target.closest("button").blur(); });
 $("prec").onclick = () => choisir(courant - 1);
