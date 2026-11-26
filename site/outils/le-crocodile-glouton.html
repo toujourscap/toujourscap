@@ -66,7 +66,7 @@
   @keyframes tombe{to{transform:translateY(760px) rotate(540deg)}}
   @media (max-width:560px){#signes button{min-width:92px;padding:4px 8px}#signes button b{font-size:2.3rem}#signes button small{font-size:.7rem}}
 </style>
-<script src="tour-de-controle.js"></script><script src="voix.js"></script></head>
+<script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script></head>
 <body>
 <div id="croco-jeu">
 
@@ -112,6 +112,7 @@
     </div>
 
     <button class="go" id="jouer">🐊 Jouer</button>
+    <button class="go second" id="fiche">📄 Fiche à imprimer</button>
   </div>
 
   <!-- ===== Partie ===== -->
@@ -143,6 +144,7 @@
     <div class="bas">
       <button class="go" id="rejouer">🔁 Rejouer</button>
       <button class="go second" id="changer">⚙️ Changer les réglages</button>
+      <button class="go second" id="bilan">📄 Bilan de la partie</button>
     </div>
   </div>
 </div>
@@ -330,7 +332,7 @@ function dire(t){
 let Q = {};
 function demarrer(){
   R_.egal = $("optEgal").checked; R_.voix = $("optVoix").checked; R_.couleurs = $("optCouleurs").checked;
-  S.i = 0; S.score = 0; S.jeton++;
+  S.i = 0; S.score = 0; S.jeton++; S.histo = [];
   $("reglages").classList.add("cache"); $("fin").classList.add("cache"); $("partie").classList.remove("cache");
   construireSignes();
   question();
@@ -418,6 +420,7 @@ async function repondre(s, bouton){
 }
 function finQuestion(ok){
   const s = bonSigne();
+  S.histo.push({ q:S.i, L:Q.L.txt, R:Q.R.txt, s, essais: ok ? S.essais : 2 });
   if(Q.suite) Q.signes[Q.k] = s;
   afficherEgalite(true);
   const phrase = `${Q.L.txt} ${SIGNE_TXT[s]} ${Q.R.txt}`;
@@ -521,6 +524,71 @@ document.addEventListener("keydown", e => {
     if(b && !b.disabled) repondre(e.key, b);
   }
 });
+
+/* ---------- Documents écrits : fiche à imprimer et bilan de la partie ---------- */
+const NIVEAUX = ["", "de 1 à 10", "jusqu'à 20", "jusqu'à 100", "jusqu'à 1 000", "un calcul et un nombre", "suites de 4 nombres jusqu'à 1 000"];
+const COUL = { cu:"#1c7ed6", cd:"#e03131", cc:"#2f9e44", cm:"#7048e8" };
+const escH = t => t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function nbFiche(txt){ return morceaux(txt).map(o => o.cl ? `<span style="color:${COUL[o.cl]}">${o.t}</span>` : escH(o.t)).join(""); }
+function lireReglages(){ R_.egal = $("optEgal").checked; R_.voix = $("optVoix").checked; R_.couleurs = $("optCouleurs").checked; }
+function reglagesTexte(){ return `Niveau ${R_.niveau} (${NIVEAUX[R_.niveau]})${R_.couleurs ? " — chiffres en couleur" : ""}${R_.egal || R_.niveau === 5 ? " — avec le signe =" : ""}`; }
+function tirage(k, f){ const a = [], vus = new Set(); for(let t=0; a.length<k && t<k*40; t++){ const x = f(), c = JSON.stringify(x.map(o=>o.txt)); if(vus.has(c)) continue; vus.add(c); a.push(x); } return a; }
+const sg = (a,b) => a.v > b.v ? ">" : a.v < b.v ? "<" : "=";
+function ouvrirFiche(){
+  lireReglages();
+  const niv = R_.niveau, egal0 = R_.egal;
+  const IMGA = location.origin + IMG;
+  const CASE = 'display:inline-block;width:44px;height:40px;border:2px solid #2f9e44;border-radius:8px;vertical-align:middle;margin:0 10px';
+  const NB = 'font-size:24px;font-weight:bold;font-family:Arial,sans-serif';
+  const memo = `<table style="border:none;margin:4px 0 8px"><tr><td style="border:none;vertical-align:middle"><img src="${IMGA}croco-ouvert.png" alt="" width="120" style="width:120px"></td>
+    <td style="border:2px solid #b9d8a0;background:#f3f8ea;border-radius:10px;padding:8px 14px;font-size:15px">Le crocodile ouvre toujours sa bouche vers <b>le plus grand</b> nombre.<br>
+    <b style="font-size:20px">7 &gt; 3</b> : 7 est plus grand que 3 &nbsp;&nbsp; <b style="font-size:20px">3 &lt; 7</b> : 3 est plus petit que 7${egal0 || niv === 5 ? ` &nbsp;&nbsp; <b style="font-size:20px">5 = 5</b> : 5 est égal à 5` : ""}</td></tr></table>`;
+  let corps = "", corrige = "";
+  if(niv === 6){
+    R_.niveau = 4; R_.egal = false; const ex1 = tirage(8, paire); R_.niveau = 6; R_.egal = egal0;
+    const ex2 = tirage(8, suite);
+    corps = `<h2>1. Écris le signe &lt; ou &gt; dans la case.</h2>
+      <table style="border:none">${[0,4].map(d=>`<tr>${ex1.slice(d,d+4).map(([a,b])=>`<td style="border:none;padding:10px 18px 10px 0;white-space:nowrap;${NB}">${nbFiche(a.txt)}<span style="${CASE}"></span>${nbFiche(b.txt)}</td>`).join("")}</tr>`).join("")}</table>
+      <h2>2. Le crocodile a faim trois fois : écris les 3 signes.</h2>
+      <table style="border:none">${ex2.map(t=>`<tr style="page-break-inside:avoid;break-inside:avoid"><td style="border:none;padding:9px 0;white-space:nowrap;${NB}">${t.map((o,i)=>(i?`<span style="${CASE}"></span>`:"")+nbFiche(o.txt)).join("")}</td></tr>`).join("")}</table>`;
+    corrige = `<p><b>1.</b> ${ex1.map(([a,b],i)=>`${i+1}) ${escH(a.txt)} ${escH(sg(a,b))} ${escH(b.txt)}`).join(" ; ")}</p>
+      <p><b>2.</b><br>${ex2.map((t,i)=>`${i+1}) `+t.map((o,j)=>(j?` ${escH(sg(t[j-1],o))} `:"")+o.txt).join("")).join("<br>")}</p>`;
+  } else {
+    R_.egal = false; const ex1 = tirage(8, () => { let p; do p = paire(); while(p[0].v === p[1].v); return p; }); R_.egal = egal0;
+    const ex2 = tirage(12, paire);
+    const avecEgal = egal0 || niv === 5;
+    corps = `<h2>1. Le crocodile va manger le plus grand : entoure-le.</h2>
+      <table style="border-collapse:separate;border-spacing:0 12px">${[0,4].map(d=>`<tr>${ex1.slice(d,d+4).map(([a,b])=>`<td style="border:2px dashed #b9d8a0;border-radius:12px;padding:10px 16px;white-space:nowrap;text-align:center;${NB}">${nbFiche(a.txt)} <span style="font-size:14px;font-weight:normal;color:#888;padding:0 12px">ou</span> ${nbFiche(b.txt)}</td><td style="border:none;width:14px"></td>`).join("")}</tr>`).join("")}</table>
+      <h2>2. Écris le signe ${avecEgal ? "&lt;, &gt; ou =" : "&lt; ou &gt;"} dans la case.</h2>
+      <table style="border:none">${[0,3,6,9].map(d=>`<tr>${ex2.slice(d,d+3).map(([a,b])=>`<td style="border:none;padding:10px 26px 10px 0;white-space:nowrap;${NB}">${nbFiche(a.txt)}<span style="${CASE}"></span>${nbFiche(b.txt)}</td>`).join("")}</tr>`).join("")}</table>
+      <h2>3. Écris la phrase.</h2>
+      ${ex2.slice(0,3).map(([a,b])=>`<p style="margin:12px 0;${NB.replace("24px","20px")}">${nbFiche(a.txt)} &nbsp; ${nbFiche(b.txt)} : <span style="font-weight:normal;color:#aaa">………………………………………………………………</span></p>`).join("")}`;
+    const G = ([a,b]) => a.v > b.v ? a.txt : b.txt;
+    corrige = `<p><b>1.</b> ${ex1.map((p,i)=>`${i+1}) ${escH(G(p))}`).join(" ; ")}</p>
+      <p><b>2.</b> ${ex2.map(([a,b],i)=>`${i+1}) ${escH(a.txt)} ${escH(sg(a,b))} ${escH(b.txt)}`).join(" ; ")}</p>
+      <p><b>3.</b> ${ex2.slice(0,3).map(([a,b])=>`${escH(a.txt)} ${SIGNE_TXT[sg(a,b)]} ${escH(b.txt)}.`).join(" ")}</p>`;
+  }
+  DocEcrit.ouvrir({ titre:"Fiche à imprimer", jeu:"Le crocodile glouton", nom:"Fiche crocodile glouton", prenom:true, html:() => `
+    <p>${reglagesTexte()}</p>${memo}${corps}
+    <div class="saut"><h2>Corrigé</h2>${corrige}</div>`});
+}
+function ouvrirBilan(){
+  const h = S.histo || []; if(!h.length) return;
+  const t = h.length, p = h.filter(x=>x.essais===0).length, e2 = h.filter(x=>x.essais===1).length, ex = h.filter(x=>x.essais>=2).length;
+  const rates = h.filter(x=>x.essais>0);
+  const conseil = !rates.length ? "Aucune erreur : on peut passer au niveau suivant."
+    : R_.niveau >= 3 && rates.some(x=>x.L.length===x.R.length && /^\d+$/.test(x.L)) ? "Revoir la comparaison chiffre par chiffre : d'abord les centaines, puis les dizaines, puis les unités."
+    : R_.niveau === 5 ? "Revoir le calcul avant de comparer : on calcule d'abord, puis on compare deux nombres."
+    : "Rejouer à ce niveau avec la réponse « je touche le bonhomme », puis avec les signes.";
+  DocEcrit.ouvrir({ titre:"Bilan de la partie", jeu:"Le crocodile glouton", nom:"Bilan crocodile glouton", prenom:true, html:() => `
+    <p>${reglagesTexte()} — réponse : ${R_.rep === "clic" ? "toucher le bonhomme" : "choisir le signe"}</p>
+    <h2>Résultats</h2><p><b>${p} comparaison${p>1?"s":""} sur ${t}</b> juste${p>1?"s":""} du premier coup ; ${e2} au 2e essai ; ${ex} avec l'explication.</p>
+    <h2>À retravailler</h2><p>${conseil}</p>
+    <h2>Détail</h2><table><tr><th>Comparaison</th><th>Résultat</th></tr>${h.map(x=>`<tr><td style="font-size:18px;font-weight:bold">${nbFiche(x.L)} ${escH(x.s)} ${nbFiche(x.R)}</td><td>${x.essais===0?"✔ du premier coup":x.essais===1?"✔ au 2e essai":"✘ explication donnée"}</td></tr>`).join("")}</table>
+    <p style="font-size:12px;color:#666">Simple outil d'observation, sans valeur officielle.</p>`});
+}
+$("fiche").addEventListener("click", () => window.DocEcrit && ouvrirFiche());
+$("bilan").addEventListener("click", () => window.DocEcrit && ouvrirBilan());
 
 decor();
 crocodile();

@@ -2848,7 +2848,8 @@
     "joueurs": "1 joueur ou la classe",
     "supports": [
      "ecran",
-     "projetable"
+     "projetable",
+     "imprimable"
     ]
    },
    "richContent": {
@@ -3177,6 +3178,45 @@
           ]
          }
         ]
+       }
+      ]
+     },
+     {
+      "type": "HEADING",
+      "headingData": {
+       "level": 2
+      },
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Document à imprimer",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "Dans les réglages, le bouton « Fiche à imprimer » prépare une fiche papier adaptée au niveau et aux options choisis (chiffres en couleur, signe =) : entourer le nombre que le crocodile mange, écrire le signe < ou > dans la case, écrire la phrase (« 9 est plus grand que 4 »). Au niveau 6, l'élève place les 3 signes d'une suite de 4 nombres. Le corrigé est sur une page à part. Une nouvelle fiche est tirée au hasard à chaque fois ; on peut l'imprimer ou la télécharger (Word).",
+         "decorations": []
+        }
+       }
+      ]
+     },
+     {
+      "type": "PARAGRAPH",
+      "nodes": [
+       {
+        "type": "TEXT",
+        "textData": {
+         "text": "En fin de partie, le bouton « Bilan de la partie » donne un bilan à imprimer : comparaisons justes du premier coup, au 2e essai ou avec l'explication, piste à retravailler et détail des questions. Le prénom est facultatif et n'est pas enregistré.",
+         "decorations": []
+        }
        }
       ]
      },
