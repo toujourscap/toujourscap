@@ -267,21 +267,21 @@ def render(n, ctx):
 
 # ---------- Gabarit ----------
 NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/francais/", "Français"),
-       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/evaluations/", "Évaluations"), ("/qui-suis-je/", "Qui suis-je ?")]
+       ("/maths/", "Maths"), ("/divers/", "Divers"), ("/evaluations/", "Évaluations"), ("/parents/", "Parents"), ("/qui-suis-je/", "Qui suis-je ?")]
 
 
 DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
 
 
 FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
-    "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues", "/evaluations/": "cascade"}
+    "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues", "/evaluations/": "cascade", "/parents/": "lac-foret"}
 
 
 def page(title, body, active="", desc="", og_image="", og_type="website", jsonld=None, noindex=False):
     fond = FONDS.get(active, "canopee")
     nav = "".join(f'<a href="{h}"{" aria-current=\"page\"" if h == active else ""}>{l}</a>' for h, l in NAV)
     full_title = f"{title} | Toujours cap !" if title != "Toujours cap !" else "Toujours cap ! Jeux et outils pédagogiques, cycles 2 et 3"
-    desc = meta_desc(desc) or "Jeux et outils pédagogiques gratuits, sans publicité, pour les cycles 2 et 3 (GS, CP, CE1, CE2…) : lecture, contes, numération, calcul, à projeter ou imprimer."
+    desc = meta_desc(desc) or "Jeux et outils pédagogiques gratuits, sans publicité, pour les cycles 2 et 3 (GS, CP, CE1, CE2…), en classe ou à la maison : lecture, contes, numération, calcul."
     og_image = og_image or DEFAULT_IMAGE
     if og_image.startswith("/"):
         og_image = SITE + og_image
@@ -381,6 +381,33 @@ def comments(p):
   </form>
 </section>
 <script src="/commentaires.js?v={JS_V}" defer></script>"""
+
+
+# Page Parents : (titre de la section, phrase d'explication, articles dans l'ordre)
+PARENTS_BESOINS = [
+    ("Reconnaître les sons et lire des syllabes", "Pour l'enfant qui débute (GS, CP) ou qui hésite encore sur « ba, bi, bo » et les sons comme « ou », « on », « ch ».",
+     ["le-sous-marin-des-syllabes", "les-fusees-des-syllabes", "la-minute-des-syllabes", "le-chemin-des-sons", "les-cristaux-de-la-planete-sonora", "puissance-4-syllabiques"]),
+    ("Confondre b, d, p, q", "Des jeux courts pour bien regarder les lettres et ne plus les mélanger.",
+     ["la-roue-du-magicien", "les-fleches-de-robin"]),
+    ("Lire les mots plus vite", "Pour que la lecture des mots devienne automatique, sans tout déchiffrer.",
+     ["les-formules-du-sorcier", "lecture-rapide-de-mots-tachistoscope"]),
+    ("Lire des phrases avec fluidité", "Lire à voix haute, avec le bon rythme, des phrases puis des textes.",
+     ["teleprompteur-de-lecture", "teleprompteur-a-l-ecoute", "images-du-quotidien"]),
+    ("Comprendre ce qu'il lit", "Il lit les mots mais ne sait pas raconter ce qu'il a lu&nbsp;? Ces jeux posent des questions sur le texte.",
+     ["les-devinettes-de-la-foret", "le-chateau-des-detectives", "la-bibliotheque-des-contes"]),
+    ("Apprendre sa dictée et l'orthographe", "Une méthode simple pour préparer la dictée de la semaine, et des jeux pour les règles et la conjugaison.",
+     ["apprendre-sa-dictee-methode-de-la-feuille-pliee", "la-dictee-de-la-feuille-pliee", "la-dictee-a-trous", "redis-la-regle", "le-kiosque-des-mots", "la-machine-a-conjuguer"]),
+    ("Lire et comprendre les nombres", "Lire, écrire et comparer les nombres, comprendre les dizaines et les fractions.",
+     ["la-tour-des-nombres", "le-chateau-des-nombres", "le-crocodile-glouton", "le-bal-masque-des-nombres", "les-nombres-farceurs", "la-pizzeria-des-fractions"]),
+    ("Apprendre les tables d'addition et calculer", "Les doubles, les compléments à 10, le calcul mental et les additions posées.",
+     ["les-jumeaux-des-doubles", "la-grande-roue-des-complements", "la-course-des-additions", "le-tape-taupe-des-additions", "l-atelier-des-barres", "les-additions-en-colonne"]),
+    ("Apprendre les tables de multiplication", "Réviser les tables en s'amusant, puis poser les multiplications.",
+     ["la-course-des-multiplications", "le-puzzle-magique-des-multiplications", "les-multiplications-en-colonne"]),
+    ("Résoudre des problèmes", "Comprendre l'énoncé, choisir le bon calcul, compter la monnaie.",
+     ["le-secret-de-la-pyramide", "le-jour-du-marche"]),
+    ("Apprendre ses leçons", "Comprendre comment fonctionne la mémoire et suivre ses progrès d'un jeu à l'autre.",
+     ["les-explorateurs-du-cerveau", "la-tour-de-controle"]),
+]
 
 
 FILTRES_JS = """<script>
@@ -621,6 +648,7 @@ SEO_TITRES = {
     "/qui-suis-je/": "Qui suis-je ? Enseignant spécialisé, ESADP",
     "/divers/": "Divers : maître E, évaluations, métacognition, mémorisation",
     "/evaluations/": "Évaluations cycle 2 : bilans de lecture et de maths GS-CE2",
+    "/parents/": "Devoirs à la maison : jeux de lecture et de maths, CP au CM2",
     "/divers/evaluations/": "Évaluations cycle 2 : bilans de lecture et de maths",
     "/francais/evaluations/": "Bilan de lecture cycle 2 : évaluations GS, CP, CE1, CE2",
     "/maths/evaluations/": "Bilan de maths cycle 2 : évaluations CP, CE1, CE2",
@@ -916,6 +944,69 @@ def main():
   </div>
 </section>""", "/evaluations/", "Bilans de lecture et de maths gratuits pour le cycle 2 (GS, CP, CE1, CE2) : une évaluation par niveau, avec l'enseignant ou en autonomie, et un document à imprimer."))
 
+    # Page Parents : les jeux classés par besoin, pour faire travailler son enfant à la maison
+    parslug = {p["slug"]: p for p in posts}
+    besoins = []
+    for titre, intro, slugs in PARENTS_BESOINS:
+        lst = [parslug[x] for x in slugs if x in parslug]
+        if lst:
+            besoins.append((titre, intro, lst))
+    def pcard(p):
+        niv = " ".join((p.get("jeu") or {}).get("niveaux") or niveaux_de(p))
+        return card(p).replace('<a class="card"', f'<a class="card" data-niv="{esc(niv)}"', 1)
+    psections = "".join(f"""<section class="besoin">
+  <h2>{esc(t)}</h2>
+  <p class="muted">{d}</p>
+  <div class="grid">{"".join(pcard(p) for p in lst)}</div>
+</section>""" for t, d, lst in besoins)
+    pniv = ["GS", "CP", "CE1", "CE2", "CM1", "CM2"]
+    write("/parents/", page("Parents", f"""<section class="wrap">
+  <h1>Parents&nbsp;: faire réviser son enfant à la maison</h1>
+  <p class="lead">Lecture, dictée, tables, calcul mental… Des jeux gratuits, sans publicité et sans inscription, de la grande section au CM2. Choisissez la classe de votre enfant, puis un jeu selon sa difficulté&nbsp;: la plupart se jouent seul sur un ordinateur, une tablette ou un téléphone, et proposent une fiche à imprimer avec son corrigé.</p>
+  <div class="chips filtres-niv" role="group" aria-label="Choisir la classe de votre enfant">
+    <span class="filtres-label">Mon enfant est en :</span>
+    <button class="chip active" data-n="" aria-pressed="true">Toutes les classes</button>
+    {"".join(f'<button class="chip" data-n="{n}" aria-pressed="false">{n}</button>' for n in pniv)}
+  </div>
+  <nav class="sommaire-parents" aria-label="Sommaire"><strong>Aller à&nbsp;:</strong> {" ".join(f'<a href="#b{i}">{esc(t)}</a>' for i, (t, d, lst) in enumerate(besoins))}</nav>
+  {psections}
+  <div class="prose conseils-parents">
+    <h2>Quelques conseils pour les devoirs à la maison</h2>
+    <ul>
+      <li><strong>Court et régulier</strong>&nbsp;: 10 à 15 minutes par jour valent mieux qu'une heure le dimanche.</li>
+      <li><strong>Laissez-le chercher</strong>&nbsp;: plutôt que de donner la réponse, demandez-lui comment il a fait.</li>
+      <li><strong>Finissez sur une réussite</strong>, pour qu'il ait envie de recommencer le lendemain.</li>
+      <li><strong>Gardez une trace</strong>&nbsp;: à la fin de la plupart des jeux, un bilan de la partie peut être imprimé ou montré à l'enseignant.</li>
+    </ul>
+    <p class="muted">Ces jeux ne remplacent pas le travail de la classe&nbsp;: en cas de doute, parlez-en à l'enseignant de votre enfant.</p>
+  </div>
+</section>
+<script>
+(function () {{
+  document.querySelectorAll('.besoin').forEach(function (s, i) {{ s.id = 'b' + i; }});
+  var bs = document.querySelectorAll('.filtres-niv button');
+  function filtre(n) {{
+    bs.forEach(function (x) {{ var on = x.dataset.n === n; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); }});
+    document.querySelectorAll('.besoin').forEach(function (s) {{
+      var k = 0;
+      s.querySelectorAll('.card').forEach(function (c) {{
+        c.hidden = !!n && c.dataset.niv.split(' ').indexOf(n) < 0;
+        if (!c.hidden) k++;
+      }});
+      s.hidden = k === 0;
+      var a = document.querySelector('.sommaire-parents a[href="#' + s.id + '"]');
+      if (a) a.hidden = k === 0;
+    }});
+    try {{ localStorage.setItem('parents-niv', n); }} catch (e) {{}}
+  }}
+  bs.forEach(function (b) {{ b.addEventListener('click', function () {{ filtre(b.dataset.n); }}); }});
+  try {{ var m = localStorage.getItem('parents-niv'); if (m) filtre(m); }} catch (e) {{}}
+}})();
+</script>""", "/parents/", "Aider son enfant à la maison : jeux gratuits, sans publicité ni inscription, de la GS au CM2, pour réviser la lecture, la dictée, les tables d'addition et de multiplication.",
+        jsonld=[{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Faire réviser son enfant à la maison", "url": SITE + "/parents/", "inLanguage": "fr-FR",
+                 "audience": {"@type": "Audience", "audienceType": "Parents"},
+                 "about": ["devoirs à la maison", "lecture", "dictée", "calcul mental", "tables de multiplication"]}]))
+
     write("/qui-suis-je/", page("Qui suis-je ?", """<section class="wrap narrow prose">
   <h1>Qui suis-je&nbsp;?</h1>
   <p class="lead">Bienvenue sur ce site&nbsp;!</p>
@@ -972,7 +1063,7 @@ def main():
   <p><a class="btn" href="/outils-pedagogiques/">Toutes les ressources</a></p>
 </section>""", "/", jsonld=[
         {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE + "/", "inLanguage": "fr-FR",
-         "description": "Jeux et outils pédagogiques gratuits pour les cycles 2 et 3 : lecture, contes du cercle conteur, numération, calcul, évaluations."},
+         "description": "Jeux et outils pédagogiques gratuits pour les cycles 2 et 3, en classe ou à la maison : lecture, contes du cercle conteur, numération, calcul, évaluations."},
         {"@context": "https://schema.org", "@type": "Organization", "name": SITE_NAME, "url": SITE + "/", "logo": SITE + "/logo.png"}]),
         lastmod=max(p["date"] for p in posts)[:10])
 
