@@ -409,6 +409,10 @@ PARENTS_BESOINS = [
      ["les-explorateurs-du-cerveau", "la-tour-de-controle"]),
 ]
 
+PARENTS_ICONES = {"Reconnaître les sons et lire des syllabes": "🔤", "Confondre b, d, p, q": "🔍", "Lire les mots plus vite": "⚡",
+    "Lire des phrases avec fluidité": "📖", "Comprendre ce qu'il lit": "💡", "Apprendre sa dictée et l'orthographe": "✏️",
+    "Lire et comprendre les nombres": "🔢", "Apprendre les tables d'addition et calculer": "➕", "Apprendre les tables de multiplication": "✖️",
+    "Résoudre des problèmes": "🧩", "Apprendre ses leçons": "🧠"}
 
 FILTRES_JS = """<script>
 document.querySelectorAll('.filtres button').forEach(function (b) {
@@ -955,8 +959,8 @@ def main():
         niv = " ".join((p.get("jeu") or {}).get("niveaux") or niveaux_de(p))
         return card(p).replace('<a class="card"', f'<a class="card" data-niv="{esc(niv)}"', 1)
     psections = "".join(f"""<section class="besoin">
-  <h2>{esc(t)}</h2>
-  <p class="muted">{d}</p>
+  <h2><span class="besoin-ic" aria-hidden="true">{PARENTS_ICONES.get(t, "⭐")}</span> {esc(t)}</h2>
+  <p class="besoin-intro">{d}</p>
   <div class="grid">{"".join(pcard(p) for p in lst)}</div>
 </section>""" for t, d, lst in besoins)
     pniv = ["GS", "CP", "CE1", "CE2", "CM1", "CM2"]

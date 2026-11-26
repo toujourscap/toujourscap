@@ -300,8 +300,11 @@ article:has(.embed-large) .prose > :not(.embed):not(script):not(style) { max-wid
 .sommaire-parents { margin: 0 0 8px; line-height: 1.9; }
 .sommaire-parents a { margin-right: 14px; white-space: nowrap; }
 .sommaire-parents a[hidden] { display: none; }
-.besoin { margin-top: 28px; }
-.besoin h2 { margin-bottom: 4px; }
-.besoin > p { margin-top: 0; }
+.besoin { margin-top: 40px; scroll-margin-top: 80px; }
+.besoin h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; padding: 12px 20px; font-size: 1.7rem; line-height: 1.25;
+  color: #fff; background: var(--accent); border-radius: 14px; box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+.besoin-ic { flex: none; display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; font-size: .9em; background: #fff; border-radius: 50%; }
+.besoin-intro { margin: 0 0 16px; padding-left: 4px; font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+@media (max-width: 600px) { .besoin h2 { font-size: 1.35rem; padding: 10px 14px; gap: 10px; } }
 .filtres-niv button { font: inherit; cursor: pointer; }
 .conseils-parents { margin-top: 36px; }
