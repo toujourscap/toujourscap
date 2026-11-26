@@ -75,7 +75,7 @@ select,input[type=text]{font:inherit;padding:8px 12px;border:1px solid #e7e0d4;b
     <button type="button" id="effacer" class="no">Supprimer</button>
   </div>
   <p class="etat" id="etat"></p>
-  <label class="m"><input type="checkbox" id="auto" checked> Après chaque enregistrement : réécouter puis passer à la case vide suivante</label>
+  <div class="aide">Après chaque enregistrement, tu l'entends une fois et on passe tout seul à la case vide suivante.</div>
 </div>
 <div id="groupes"></div>
 <h2>Essayer comme dans un jeu</h2>
@@ -281,12 +281,13 @@ async function traiter(p, retire){
     const d = await r.json();
     if(!r.ok || !d.ok) throw new Error(d.erreur || r.status);
     voix[it.cle] = d.maj; maj(); etat("✓ « " + it.texte + " » enregistré");
-    if($("auto").checked) ecouter([it.cle], () => {
-      if(items[courant] !== it) return;
+    // Toujours : on réécoute et on passe tout de suite à la case vide suivante.
+    ecouter([it.cle]);
+    if(items[courant] === it){
       let j = items.findIndex((x, k) => k > courant && !voix[x.cle]);
       if(j < 0) j = items.findIndex((x) => !voix[x.cle]);
-      if(j >= 0) choisir(j); else etat("🎉 Toute la liste est enregistrée !");
-    });
+      if(j >= 0){ choisir(j); etat("✓ « " + it.texte + " » enregistré — case suivante"); } else etat("🎉 Toute la liste est enregistrée !");
+    }
   } catch(e){ etat("Échec de l'enregistrement (" + e.message + "). Réessaie.", true); }
 }
 
