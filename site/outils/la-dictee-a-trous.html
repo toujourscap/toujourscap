@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dictée à trous</title><link rel="canonical" href="https://toujourscap.com/post/la-dictee-a-trous/"><meta name="description" content="Collez votre dictée : les mots difficiles sont repérés automatiquement (ou choisis par vous d&#x27;un clic) et remplacés par des trous. Fiche élève et corrigé à…">
+<title>Dictée à trous</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
@@ -109,6 +109,8 @@
   .ha-barre div{height:100%;width:0;background:#1f8a4c;transition:width .3s}
   .ha-zone{text-align:center}
   .ha-zone .el-ecoute{justify-content:center}
+  #haPhrase.conseil{border-color:#c9732d;background:var(--gap-soft);color:#7a3f12;font-weight:600}
+  #haPhrase.conseil::after{content:" ← ce mot se dit comme un autre";font-weight:400;font-size:13px}
   #haIn{font-family:Andika,sans-serif;font-size:34px;text-align:center;width:min(100%,420px);border:0;border-bottom:3px solid #23302c;background:#f4f8f6;border-radius:8px 8px 0 0;padding:6px 10px;color:#1d4fa3;margin:10px 0 4px}
   #haIn:focus{outline:3px solid #4fa3ff;outline-offset:1px;background:#fff}
   #haIn.ok{border-bottom-color:#1f8a4c;background:#e4f4ea;color:#1f8a4c}
@@ -689,10 +691,9 @@ function phraseDuMot(m){
 }
 function direMot(avecPhrase){
   if (!ha || !ha.cur) return;
-  const m = ha.cur, ph = phraseDuMot(m);
-  // homophones (a/à, et/est…) : le mot seul est ambigu, on le dit dans sa phrase
-  const phrase = avecPhrase || HOMOPHONES.has(m.k);
-  direHa(phrase && ph ? `${m.aff}… ${ph} … ${m.aff}.` : m.aff);
+  const m = ha.cur, ph = avecPhrase ? phraseDuMot(m) : "";
+  // « Écouter le mot » : le mot seul ; « Dans la phrase » : le mot, sa phrase, puis le mot
+  direHa(ph ? `${m.aff}… ${ph} … ${m.aff}.` : m.aff);
 }
 function direHa(txt){
   if (!synth) return;
@@ -731,6 +732,8 @@ function haSuivant(){
   const inp = $("haIn"); inp.value = ""; inp.readOnly = false; inp.classList.remove("ok","ko");
   $("haMsg").className = "ha-msg"; $("haMsg").innerHTML = "";
   $("haValider").textContent = "✔ Valider";
+  // homophones (a/à, et/est…) : le mot seul est ambigu, on invite à l'écouter dans la phrase
+  $("haPhrase").classList.toggle("conseil", HOMOPHONES.has(ha.cur.k));
   inp.focus();
   setTimeout(() => direMot(false), 250);
 }
