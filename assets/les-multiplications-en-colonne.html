@@ -115,30 +115,10 @@ h1{font-size:1.7em;margin:.3em 0 .1em;text-align:center}
 #table li.ici{background:#fff3c4;border-radius:6px}
 #table button{position:absolute;top:4px;right:6px;border:none;background:none;font-size:1.1em}
 
-/* ---------- à plusieurs (chaque joueur dans sa zone) ---------- */
-#regMeme.cache{display:none}
-body.multi{font-size:clamp(12px, calc(.9vw + .9vh), 18px);background-attachment:scroll}
-body.multi .ecran{padding:6px}
-body.multi #haut, body.multi #fin .choix{display:none}
-/* opération à gauche ; calcul en ligne, consigne, clavier et boutons à droite */
-body.multi #jeu.actif{display:grid;height:100%;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto 1fr auto;
-  grid-template-areas:"op enligne" "op message" "op clavier" "op bas";gap:4px 10px;align-items:center;justify-items:center}
-body.multi #zone{display:contents}
-body.multi #operation{grid-area:op;align-self:center;background-color:#fff;background-image:linear-gradient(#dfe7f3 1px,transparent 1px),linear-gradient(90deg,#dfe7f3 1px,transparent 1px);
-  background-size:22px 22px;border-radius:14px;box-shadow:0 4px 16px rgba(80,50,10,.3);padding:8px 10px}
-body.multi #enligne{grid-area:enligne;font-size:1.25em;margin:0}
-body.multi #message{grid-area:message;min-height:5.2em;margin:0;padding:.2em .5em;width:100%}
-body.multi #clavier{grid-area:clavier;background:rgba(255,253,247,.9);padding:6px;border-radius:14px}
-body.multi #bas{grid-area:bas;margin:0;padding:4px 6px}
-body.multi #bas button{padding:.4em .8em}
-body.multi #table{font-size:.9em;right:6px;bottom:6px}
-body.multi #etoiles{font-size:2.2em}
 body.equipe #pastilles{visibility:hidden}
 body.equipe #haut{min-height:44px}
-#attente{display:none;color:var(--doux);font-weight:bold}
-body.multi #attente{display:block}
 </style>
-<script src="multijoueur.js"></script><script src="course-equipes.js"></script><script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
+<script src="course-equipes.js"></script><script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
 </head>
 <body>
 
@@ -173,20 +153,7 @@ body.multi #attente{display:block}
     </div>
   </div>
   <div class="reglage">
-    <h2>4. Combien de joueurs ?</h2>
-    <div class="choix" data-reglage="joueurs">
-      <button data-v="1" aria-pressed="true">1 joueur</button>
-      <button data-v="2" aria-pressed="false">2 joueurs<small>écran partagé</small></button>
-      <button data-v="3" aria-pressed="false">3 joueurs<small>écran partagé</small></button>
-      <button data-v="4" aria-pressed="false">4 joueurs<small>écran partagé</small></button>
-    </div>
-    <div class="choix cache" data-reglage="meme" id="regMeme" style="margin-top:8px">
-      <button data-v="1" aria-pressed="true">Mêmes calculs pour tous<small>pour comparer</small></button>
-      <button data-v="0" aria-pressed="false">Calculs différents<small>chacun les siens</small></button>
-    </div>
-  </div>
-  <div class="reglage">
-    <h2>5. Course par équipes <small>(plusieurs tablettes + l'écran de l'enseignant)</small></h2>
+    <h2>4. Course par équipes <small>(plusieurs tablettes + l'écran de l'enseignant)</small></h2>
     <div id="equipes"></div>
   </div>
 
@@ -234,7 +201,6 @@ body.multi #attente{display:block}
   <div id="etoiles"></div>
   <p id="phraseFin"></p>
   <table id="recap"></table>
-  <p id="attente">⏳ J'attends les autres joueurs…</p>
   <div class="choix" style="width:min(640px,100%)">
     <button id="rejouer">↻ Rejouer</button>
     <button id="imprBilan">📄 Bilan de la partie</button>
@@ -251,8 +217,7 @@ var NOMS = {u:"unités", d:"dizaines", c:"centaines", m:"milliers"};
 /* niveaux : la = chiffres du 1er nombre, lb = chiffres du multiplicateur, C = colonnes */
 var NIV = {"1":{la:2,lb:1,C:3,lib:"niveau 1 (d u × u)"}, "2":{la:3,lb:1,C:4,lib:"niveau 2 (c d u × u)"}, "3":{la:4,lb:1,C:4,lib:"niveau 3 (m c d u × u)"},
            "4":{la:2,lb:2,C:4,lib:"niveau 4 (d u × d u)"}, "5":{la:3,lb:2,C:4,lib:"niveau 5 (c d u × d u)"}};
-var reg = {type:"avec", n:"1", guide:true, joueurs:"1", meme:true};
-var MULTI = !!(window.TCMulti && TCMulti.joueur);
+var reg = {type:"avec", n:"1", guide:true};
 var EQUIPE = false; // course par équipes en cours sur cette tablette
 var partie=null, calc=null, active=null, etapes=[], etape=0, erreursCase=0;
 
@@ -376,12 +341,6 @@ function hauteurCase(o){
 /* rétrécit les cases tant que la page dépasse la hauteur de l'écran */
 function ajuste(){
   var g=$("operation"); if(!calc||!g||!$("jeu").classList.contains("actif")) return;
-  if(MULTI){ // à plusieurs : cases réduites jusqu'à ce que tout tienne dans la zone du joueur
-    var r=document.documentElement, k=84;
-    r.style.setProperty("--case",k+"px");
-    while(k>22 && (r.scrollHeight>window.innerHeight+1 || r.scrollWidth>window.innerWidth+1)){ k-=2; r.style.setProperty("--case",k+"px"); }
-    dessineFleche(); return;
-  }
   var c=hauteurCase(calc); g.style.setProperty("--case",c+"px");
   var bas=function(){return $("bas").getBoundingClientRect().bottom+8;};
   while(c>34 && bas()>window.innerHeight){ c-=2; g.style.setProperty("--case",c+"px"); }
@@ -394,8 +353,7 @@ document.querySelectorAll(".choix[data-reglage]").forEach(function(bloc){
     var bt=ev.target.closest("button"); if(!bt) return;
     bloc.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed", x===bt?"true":"false");});
     var k=bloc.dataset.reglage, v=bt.dataset.v;
-    reg[k] = (k==="guide"||k==="meme") ? v==="1" : v;
-    $("regMeme").classList.toggle("cache", reg.joueurs==="1");
+    reg[k] = k==="guide" ? v==="1" : v;
     dessineExemple();
   });
 });
@@ -410,29 +368,9 @@ function montre(id){document.querySelectorAll(".ecran").forEach(function(e){e.cl
 
 /* ---------- partie ---------- */
 $("jouer").onclick=function(){
-  if(reg.joueurs!=="1" && window.TCMulti){ aPlusieurs(); return; }
   partie={liste:liste(reg.type,reg.n,NB), i:0, resultats:[], type:reg.type, n:reg.n, guide:reg.guide};
   montre("jeu"); construireClavier(); charger();
 };
-/* ---------- à plusieurs : chaque joueur a sa zone (même page, ?joueur=1…4) ---------- */
-function aPlusieurs(){
-  var R={type:reg.type, n:reg.n, guide:reg.guide};
-  TCMulti.lancer({nb:+reg.joueurs, meme:reg.meme, titre:"multiplications "+libelleType(R.type)+", "+NIV[R.n].lib,
-    reglages:R, liste:function(){return liste(R.type,R.n,NB);},
-    fiche:function(){ouvrirFiche(R.type,R.n,1);},
-    bilan:function(corps){ DocEcrit.ouvrir({titre:"Bilan de la partie à plusieurs", jeu:"Les multiplications en colonne", nom:"Bilan multiplications en colonne", prenom:false, html:function(){
-      return "<p>Multiplications "+libelleType(R.type)+" — "+NIV[R.n].lib+" — mode "+(R.guide?"pas à pas":"tout seul")+" — "+reg.joueurs+" joueurs</p>"+corps
-        +"<p style=\"font-size:12px;color:#666\">Simple outil d'observation, sans valeur officielle.</p>"; }}); }
-  });
-}
-function ligneRes(x){return x.a+" × "+x.b+" = "+x.p+" : "+(x.erreurs===0&&!x.aide?"✔ du premier coup":x.erreurs+" erreur"+(x.erreurs>1?"s":"")+(x.aide?", aide":""));}
-function departMulti(){
-  var CFG=TCMulti.config(); if(!CFG) return;
-  document.body.classList.add("multi");
-  reg=CFG.reglages;
-  partie={liste:JSON.parse(JSON.stringify(CFG.liste)), i:0, resultats:[], type:reg.type, n:reg.n, guide:reg.guide};
-  montre("jeu"); construireClavier(); charger();
-}
 function pastilles(){
   var p=$("pastilles"); p.innerHTML="";
   for(var i=0;i<NB;i++){
@@ -441,7 +379,6 @@ function pastilles(){
     if(r) s.classList.add(r.erreurs===0 && !r.aide ? "faite":"aidee"); else if(i===partie.i) s.classList.add("encours");
     p.appendChild(s);
   }
-  if(MULTI) TCMulti.progres(partie.resultats.length,NB);
 }
 function lettreP(p){return lettres(calc.C)[calc.C-1-p];}
 function nomP(p){var l=lettreP(p);return "<b class='"+l+"'>"+NOMS[l]+"</b>";}
@@ -598,14 +535,15 @@ function coupDePouce(){
 }
 $("pouce").onclick=coupDePouce;
 
+var pause=false; // petite pause après une bonne réponse, avant la case suivante
 function taper(v){
-  if(!active||calc.fini) return;
+  if(!active||calc.fini||pause) return;
   var boite=active.querySelector(".boite");
   if(v==="x"){ boite.textContent=""; active.classList.remove("juste","oups"); return; }
   boite.textContent=v; active.classList.remove("oups","juste");
   if(partie.guide){
     var e=etapes[etape];
-    if(+v===e.val){ active.classList.add("juste"); etape++; setTimeout(allerEtape,350); }
+    if(+v===e.val){ active.classList.add("juste"); etape++; pause=true; setTimeout(function(){ pause=false; allerEtape(); },350); }
     else {
       void active.offsetWidth; active.classList.add("oups"); erreursCase++; calc.erreurs++;
       if(e.g==="zero") dire("Je multiplie par des dizaines : aux unités, j'écris toujours <b>0</b>.");
@@ -638,7 +576,7 @@ function terminer(){
   pastilles();
   var bravo=["Bravo !","Super !","C'est juste !","Bien joué !","Excellent !"][hasard(0,4)];
   dire("<b>"+bravo+"</b> "+calc.a+" × "+calc.b+" = <b>"+calc.p+"</b>");
-  if(!MULTI) parler(calc.a+" fois "+calc.b+" égale "+calc.p); // à plusieurs, les voix se couperaient
+  parler(calc.a+" fois "+calc.b+" égale "+calc.p);
   $("enligne").textContent=calc.a+" × "+calc.b+" = "+calc.p;
   ["pouce","voirTable","verifier"].forEach(function(id){$(id).classList.add("cache");});
   var s=$("suivant"); s.textContent = partie.i<NB-1 ? "Multiplication suivante ➜" : "Voir mon bilan ➜";
@@ -702,8 +640,7 @@ function fin(){
   var et = seul>=9?3 : seul>=6?2 : 1;
   $("etoiles").textContent="★".repeat(et)+"☆".repeat(3-et);
   $("phraseFin").innerHTML="<b>"+seul+" multiplications sur "+NB+"</b> réussies du premier coup, sans aide.";
-  if(MULTI) TCMulti.fini({seul:seul, nb:NB, lignes:r.map(ligneRes)});
-  else try{ TDC.note({s:seul, n:NB, g:seul>=8, niv:"Multiplications "+libelleType(partie.type)+", "+NIV[partie.n].lib,
+  try{ TDC.note({s:seul, n:NB, g:seul>=8, niv:"Multiplications "+libelleType(partie.type)+", "+NIV[partie.n].lib,
     d:seul+" / "+NB+" multiplications posées réussies du premier coup ("+libelleType(partie.type)+", "+NIV[partie.n].lib+", "+(partie.guide?"pas à pas":"tout seul")+")"}); }catch(e){}
   var t=$("recap"); t.innerHTML="";
   r.forEach(function(x){
@@ -782,11 +719,10 @@ $("imprBilan").onclick=function(){
       +"<p style=\"font-size:12px;color:#666\">Simple outil d'observation, sans valeur officielle.</p>";
   }});
 };
-if(MULTI) departMulti();
 /* ---------- course par équipes (plusieurs tablettes, relais /api/salle) ---------- */
 function graineRandom(g){ return function(){ g|=0; g=g+0x6D2B79F5|0; var x=Math.imul(g^g>>>15,1|g); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
 function listeGraine(type,n,nb,g){ var sauve=Math.random; Math.random=graineRandom(g); try{ return liste(type,n,nb); } finally{ Math.random=sauve; } }
-if(!MULTI && window.TCEquipes) TCEquipes.init({
+if(window.TCEquipes) TCEquipes.init({
   jeu:"colonnes-multiplications", unite:"multiplications", panneau:$("equipes"),
   reglages:function(){ return {type:reg.type, n:reg.n, guide:reg.guide}; },
   libelle:function(R){ return "Multiplications "+libelleType(R.type)+", "+(NIV[R.n]?NIV[R.n].lib:"")+(R.guide?", pas à pas":", tout seul"); },
