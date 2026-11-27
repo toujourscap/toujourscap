@@ -18,7 +18,7 @@ const SCHEMA = [
   "CREATE INDEX IF NOT EXISTS idx_bilan_classe ON bilan_lecture (classe, epreuve)",
 ];
 const CLASSES = new Set(["GS", "CP", "CE1", "CE2", "Autre"]);
-const EPREUVES = new Set(["sy1", "sy2", "ph1", "ph2", "vs", "vc", "ms", "mc", "ts", "tc", "cph", "ctx", "cmo", "cto", "dsy", "dmo", "vis", "ecr", "aud", "par", "e1", "e2", "e3", "let", "mi", "tl", "cl", "dph"]);
+const EPREUVES = new Set(["sy1", "sy2", "ph1", "ph2", "vs", "vc", "ms", "mc", "ts", "tc", "cph", "ctx", "cmo", "cto", "dsy", "dmo", "vis", "ecr", "aud", "par", "e1", "e2", "e3", "let", "mi", "tl", "cl", "dph", "dmx"]);
 const ID_RE = /^[a-z0-9]{8,24}$/;
 
 const PERIODES = new Set(["debut", "milieu", "fin"]);

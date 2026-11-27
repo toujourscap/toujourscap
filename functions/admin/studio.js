@@ -131,12 +131,14 @@ const LISTES = [
     const PAIRES = await donnees("bilan-de-lecture", "PAIRES", "];");
     const AUD = await donnees("bilan-de-lecture", "AUD", "];");
     const DSYL = await donnees("bilan-de-lecture", "DSYL", "];");
-    const DMOT = await donnees("bilan-de-lecture", "DMOT", "];");
+    const DMOT = await donnees("bilan-de-lecture", "DMOT", "};");
+    const DMX = await donnees("bilan-de-lecture", "DMX", "};");
     return [
       { titre:"Pareil ou différent ? (dis les deux mots dans un seul enregistrement, avec un petit silence entre les deux)", mots:true, items:phrases(PAIRES.map(([a,b]) => a + " … " + b)) },
       { titre:"b, d, p, c (auditif) : par quelle lettre commence ce mot ?", mots:true, items:phrases(AUD.map((x) => x[0])) },
       { titre:"Syllabes dictées", mots:true, items:phrases(DSYL) },
-      { titre:"Mots dictés", mots:true, items:phrases(DMOT) },
+      { titre:"Mots dictés (CP, CE1, CE2)", mots:true, items:phrases(Object.values(DMOT).flat()) },
+      { titre:"Mots outils dictés : dis le mot, la phrase, puis le mot (« et. Le chat et le chien jouent. et. »)", mots:true, items:phrases(Object.values(DMX).flat().map(([m,p]) => m + ". " + p + " " + m + ".")) },
     ];
   }},
   { id:"sous-marin", titre:"Lecture – Le sous-marin des syllabes (pla, bra, cri…)", charger: async () => {

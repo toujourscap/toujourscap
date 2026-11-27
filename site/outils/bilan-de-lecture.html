@@ -2,9 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<script src="/outils/mesure.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bilan de lecture — cycle 2</title><link rel="canonical" href="https://toujourscap.com/post/bilan-de-lecture/"><meta name="description" content="Un bilan de lecture à faire passer en tête-à-tête à un élève de cycle 2 : voyelles simples et complexes, mots, fluence sur deux textes, discrimination…">
+<title>Bilan de lecture — cycle 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Playwrite+FR+Trad&display=swap" rel="stylesheet">
 <style>
@@ -161,7 +160,11 @@ const MIROIR={b:['d','p'],d:['b','q'],p:['q','b'],q:['p','d']};
 const LETTRES='aeioucfjlmnrstvz'.split('');
 const PROCHES={a:'oe',e:'cao',o:'aec',c:'eo',u:'nv',n:'mu',m:'n',i:'jl',l:'it',t:'lf',f:'t',j:'i',r:'n',s:'z',z:'s',v:'u'};
 
-const REPERES={CP:50,CE1:70,CE2:90};
+// Repères de fluence du programme 2025 (BO n° 41 du 31/10/2024), d'après la version du bilan (pas la classe) :
+// fin CP 30 mots/min sans préparation (50 après préparation), fin CE1 70, fin CE2 90 ; en cours de CP : 15 à 30.
+const repFluence=()=>{const v=reglages.version;if(!REP_V[v])return 0;return v==='cp'&&reglages.periode==='milieu'?15:REP_V[v]};
+const labRep=()=>{const v=reglages.version;if(!REP_V[v])return '';if(v==='cp'&&reglages.periode==='milieu')return 'repère en cours de CP : 15 à 30';
+ return `repère de fin ${({cp:'CP',ce1:'CE1',ce2:'CE2'})[v]} : ${REP_V[v]}${v==='cp'?' sans préparation, 50 après préparation':''}${reglages.periode==='milieu'?' ; en milieu d\'année, il est normal d\'en être encore en dessous':''}`};
 // Types d'erreurs de lecture que l'enseignant peut noter à la fin d'un texte.
 const TYPES_ERR=[['sons','Confusion de sons ou de lettres (b/d, p/q, f/v…)'],['complexe','Son complexe mal lu (ou, on, an, oi, ch…)'],['lettres','Lettre ou syllabe oubliée, ajoutée ou inversée'],['devine','Mot deviné ou remplacé'],['saute','Mot ou ligne sauté'],['muettes','Lettres muettes, fin de mot'],['irr','Mot irrégulier ou outil'],['autre','Autre']];
 const HISTOIRE_FILOU="Le petit chat Filou a très faim. Il court à la cuisine pour manger, mais son bol est vide. Alors Filou va voir la fermière. Elle lui donne un grand bol de lait. Filou boit tout le lait, puis il s'endort au soleil.";
@@ -184,7 +187,12 @@ const TEXTE_LILA="Chaque soir, Lila laisse une soucoupe de lait au fond du jardi
 const QLILA=[["Où Lila pose-t-elle la soucoupe ?","au fond du jardin",["devant la maison","au fond du jardin","dans la cuisine"]],["Pourquoi le chat ne peut-il pas être le visiteur ?","il est trop gros pour passer",["il n'aime pas le lait","il est trop gros pour passer","il dort la nuit"]],["Pourquoi Lila prend-elle une lampe de poche ?","parce qu'il fait nuit",["pour lire une histoire","parce qu'il fait nuit","pour faire peur au chat"]],["Qui est le visiteur ?","un hérisson",["un écureuil","un hérisson","le chat de la voisine"]],["Pourquoi Lila met-elle de l'eau à la place du lait ?","le lait rend les hérissons malades",["le hérisson n'aime pas le lait","il n'y a plus de lait","le lait rend les hérissons malades"]]];
 const DPHR=["Le chat dort.","Papa lit un livre.","Les enfants jouent dans la cour.","Ma petite sœur mange une pomme rouge.","Demain, nous irons à la piscine avec nos amis."];
 const DSYL = ['la','mi','ro','tu','fé','cha','jo','pon','tri','bla'];
-const DMOT = ['lune','vélo','salade','lapin','chapeau','maison','poisson','train'];
+const DMOT = {cp:['lune','vélo','salade','lapin','chapeau','maison','poisson','train'],ce1:['chemin','bateau','garçon','jardin','oiseau','fenêtre','histoire','grand-père'],ce2:['famille','printemps','montagne','ensemble','question','heureux','dimanche','anniversaire']};
+// Mots outils dictés (programme 2025 + liste de fréquence Éduscol), du plus facile au plus difficile : [mot, phrase].
+const DMX = {cp:[['et',"Le chat et le chien jouent."],['un',"J'ai un vélo."],['le',"Le bébé dort."],['il',"Il fait beau."],['sur',"Le livre est sur la table."],['les',"Les enfants chantent."],['dans',"Le poisson nage dans l'eau."],['avec',"Je joue avec mon ami."],['mais',"Il pleut, mais je sors."],["c'est","C'est mon cartable."]],
+ ce1:[['pour',"Ce cadeau est pour toi."],['par',"Il passe par la porte."],['sous',"Le chat dort sous le lit."],['ici',"Viens ici !"],['puis',"Je mange, puis je joue."],['loin',"La plage est loin."],['chez',"Je vais chez ma tante."],['après',"Je lis après le repas."],['alors',"Il pleut, alors je prends mon parapluie."],['aussitôt',"Il arrive et repart aussitôt."]],
+ ce2:[['si',"Si tu veux, on joue."],['bien',"Tu chantes bien."],['très',"Ce gâteau est très bon."],['demain',"Demain, nous irons au parc."],['jamais',"Je ne mens jamais."],['toujours',"Il est toujours content."],['assez',"J'ai assez mangé."],['beaucoup',"Il y a beaucoup de monde."],['doucement',"Parle doucement."],["aujourd'hui","Aujourd'hui, il neige."]]};
+const niv3=()=>reglages.version==='ce2'?'ce2':reglages.version==='ce1'?'ce1':'cp';
 // Listes dites à voix haute (lues aussi par le studio /admin/studio pour enregistrer la voix de l'enseignant).
 const AUD = [['bébé','b'],['papa','p'],['dodo','d'],['canard','c'],['bulle','b'],['poule','p'],['dune','d'],['cube','c'],['bain','b'],['pain','p'],['dent','d'],['coq','c']];
 const PAIRES = [['bain','pain'],['dent','dent'],['bon','don'],['pas','pas'],['bille','quille'],['dos','dos'],['pont','bon'],['qui','qui']];
@@ -245,8 +253,12 @@ const TOUTES=[
   items:()=>DSYL.map(w=>({w,att:w})),
   consigne:"Dites la syllabe (maintenez 👁) ou faites-la écouter 🔊 : « Écris la syllabe… ». « 📝 Sur la feuille » : validez ce qu'il a écrit et notez son écriture en cas d'erreur. « ⌨️ Sur l'écran » : l'élève écrit au clavier puis ✔ ; l'ordinateur corrige tout seul (les accents comptent : fé)."},
  {id:'dmo',groupe:'Écriture',titre:'Mots dictés',type:'oral',icone:'✏️',question:"Écris le mot sur ta feuille.",
-  items:()=>DMOT.map(w=>({w,att:w})),
-  consigne:"« Écris le mot… » Comptez juste une écriture phonologiquement correcte (« lapin », pas « lapain ») ; notez l'orthographe exacte dans la case si besoin."},
+  items:()=>DMOT[niv3()].map(w=>({w,att:w})),
+  get consigne(){return niv3()==='cp'?"« Écris le mot… » En CP, comptez juste une écriture phonologiquement correcte (« lapin », pas « lapain ») ; notez l'orthographe exacte dans la case si besoin."
+   :"« Écris le mot… » Mots fréquents, réguliers puis irréguliers : seule l'orthographe exacte est comptée juste (programme 2025). Une écriture qui se lit juste mais mal orthographiée est une erreur ; notez-la dans la case."}},
+ {id:'dmx',groupe:'Écriture',titre:'Mots outils dictés',type:'oral',icone:'✏️',question:"Écris le mot sur ta feuille.",
+  items:()=>DMX[niv3()].map(([m,p])=>({w:m,att:m,dire:`${m}. ${p} ${m}.`,vu:`${m}  —  ${p}`})),
+  consigne:"Dites le mot, puis la phrase, puis le mot (maintenez 👁 pour les voir, ou 🔊) : « et. Le chat et le chien jouent. et. » L'élève écrit seulement le mot. Orthographe exacte attendue. En cas d'erreur, précisez : « se lit juste » (encodage correct, orthographe pas mémorisée) ou « ne se lit pas juste » (erreur d'encodage). « ⌨️ Sur l'écran » : l'ordinateur corrige tout seul."},
  {id:'e1',groupe:'Empan visuel',titre:'Empan : 1 lettre',type:'choix',sorte:'empan',n:1,items:()=>genEmpan(1),
   consigne:"« Une lettre va apparaître très vite puis se cacher. Regarde bien, puis montre-moi celle que tu as vue. » Cliquez sur « Montrer » quand l'élève est prêt et regarde l'écran."},
  {id:'e2',groupe:'Empan visuel',titre:'Empan : 2 lettres',type:'choix',sorte:'empan',n:2,items:()=>genEmpan(2),
@@ -276,9 +288,9 @@ const periodeAuto=(d=new Date())=>{const m=d.getMonth()+1;return m>=9?'debut':m<
 // Une évaluation par niveau, d'après les attendus de fin d'année (Éduscol) : en début d'année, on évalue les attendus du niveau précédent.
 const VERSIONS_L={
  gs:{lab:'attendus de fin de GS',ids:['cmo','cto','sy1','sy2','ph1','par','let','vis','ecr','e1','e2']},
- cp:{lab:'attendus de fin de CP',ids:['cmo','cto','sy2','ph1','ph2','aud','par','vis','ecr','vs','vc','ms','mc','ts','cph','ctx','dsy','dmo','e1','e2','e3']},
- ce1:{lab:'attendus de fin de CE1',ids:['cto','ph2','vc','mc','mi','ts','tc','cph','ctx','cl','dmo','dph','e2','e3']},
- ce2:{lab:'attendus de fin de CE2',ids:['mc','mi','tc','tl','ctx','cl','dmo','dph','e3']}};
+ cp:{lab:'attendus de fin de CP',ids:['cmo','cto','sy2','ph1','ph2','aud','par','vis','ecr','vs','vc','ms','mc','ts','cph','ctx','dsy','dmo','dmx','e1','e2','e3']},
+ ce1:{lab:'attendus de fin de CE1',ids:['cto','ph2','vc','mc','mi','ts','tc','cph','ctx','cl','dmo','dmx','dph','e2','e3']},
+ ce2:{lab:'attendus de fin de CE2',ids:['mc','mi','tc','tl','ctx','cl','dmo','dmx','dph','e3']}};
 const versionDeL=(c,p)=>({GS:'gs',CP:p==='debut'?'gs':'cp',CE1:p==='debut'?'cp':'ce1',CE2:p==='debut'?'ce1':'ce2',Autre:'cp'})[c]||'';
 let EPREUVES=TOUTES;
 function choisirVersion(){const v=versionDeL(reglages.classe,reglages.periode);reglages.version=v;EPREUVES=v?VERSIONS_L[v].ids.map(id=>TOUTES.find(e=>e.id===id)):TOUTES;reglages.choisies=EPREUVES.map(e=>e.id)}
@@ -408,6 +420,7 @@ const CONSIGNES_ELEVE={
  cto:"Écoute bien l'histoire. Ensuite, pour chaque question, touche la bonne image.",
  dsy:"Écoute la syllabe, puis écris-la avec le clavier. Appuie sur la coche verte pour valider.",
  dmo:"Écoute le mot, puis écris-le avec le clavier. Appuie sur la coche verte pour valider.",
+ dmx:"Écoute le mot et la petite phrase. Écris seulement le mot avec le clavier. Appuie sur la coche verte pour valider.",
  vis:"Regarde la lettre dans le cadre jaune. Touche la même lettre en dessous.",
  ecr:"Voici une lettre. Touche la même lettre écrite autrement.",
  aud:"Écoute le mot. Par quelle lettre commence-t-il ? Touche la lettre.",
@@ -420,7 +433,7 @@ function motLu(alts,w){const y=colle(w);return alts.some(a=>{const x=colle(a);re
 function specLecture(ep,it){
  if(ep.id==='sy1')return {html:`<div class="question">Combien de syllabes dans ce mot ?</div><div class="stim l">👂</div>`,parle:`${it.q} ${it.w} ?`,saisie:'choix',choix:['1','2','3','4','5'],juste:c=>c===it.att};
  if(ep.type==='lire')return {html:`<div class="question">Lis ce mot.</div><div class="stim ${ep.taille}">${esc(it)}</div>`,saisie:'voix',juste:a=>motLu(a,it)};
- return {html:`<div class="question">${esc(ep.question.replace('sur ta feuille','avec le clavier'))}</div><div class="stim l">✏️</div>`,parle:it.w,jouer:true,saisie:'texte',juste:r=>normer(r)===normer(it.w)};
+ return {html:`<div class="question">${esc(ep.question.replace('sur ta feuille','avec le clavier'))}</div><div class="stim l">✏️</div>`,parle:it.dire||it.w,jouer:true,saisie:'texte',juste:r=>normer(String(r).replace(/[’‘`]/g,"'"))===normer(it.att||it.w)};
 }
 function ecranHistoire(){
  const ep=R.ep,ecoute=()=>jouer(ep.histoire,ep.cleHistoire);
@@ -512,7 +525,7 @@ function accueil(){
   <div class="actions"><button class="b prim" id="go">▶ Commencer le bilan</button><button class="b" id="docImpr">🖨 Document à imprimer</button></div>
  </div>
  ${h.length?`<div class="carte noprint"><h2>Bilans enregistrés sur cet appareil</h2><ul class="histo">${h.map((x,i)=>`<li>${esc(x.titre)} <button class="b petit" data-voir="${i}">Voir</button></li>`).join('')}</ul><button class="b petit" id="effacer">Effacer la liste</button></div>`:''}
- <p class="note">Repères de fluence (mots correctement lus en une minute, attendus de fin d'année, Éduscol) : CP 50 · CE1 70 · CE2 90.</p>`;
+ <p class="note">Repères de fluence du programme 2025 (mots correctement lus en une minute) : fin CP 30 sur un texte découvert (50 après préparation) · fin CE1 70 · fin CE2 90.</p>`;
  $$('.mode input').forEach(r=>r.onchange=()=>{const c=reglages.choisies;lireForm();reglages.choisies=[...new Set(reglages.choisies.concat(c))];reglages.mode=r.value;accueil()});
  // Case du titre d'un groupe : coche ou décoche tout le groupe en un clic
  const majGroupes=()=>$$('.groupe').forEach(g=>{const e=[...g.querySelectorAll('input.ep')],n=e.filter(c=>c.checked).length,t=g.querySelector('input.tg');t.checked=n===e.length;t.indeterminate=n>0&&n<e.length});
@@ -590,6 +603,7 @@ function finEpreuve(versBilan){
  if(ep.type!=='texte'&&R.res.length){
   const r={titre:ep.titre,groupe:ep.groupe,type:ep.type,prevus:R.items.length,faits:R.res.length,anticipe:!!R.anticipe,arret:!!R.arret,
    ok:R.res.filter(x=>x.v==='ok').length,hes:R.res.filter(x=>x.v==='hes'),err:R.res.filter(x=>x.v==='ko'),sec:(Date.now()-R.tEp)/1000};
+  if(ep.id==='dmx'){const n=t=>R.res.filter(x=>x.v==='ko'&&x.t===t).length;r.typesD=[['se lit juste (orthographe pas mémorisée)',n('mem')],['ne se lit pas juste (encodage)',n('enc')]].filter(x=>x[1])}
   resultats[ep.id]=r;
  }
  R.anticipe=false;R.arret=false;
@@ -601,31 +615,31 @@ function finEpreuve(versBilan){
 function ecranLire(){
  const ep=R.ep,it=R.items[R.k],oral=ep.type==='oral';
  if(auto())return ecranEleve(specLecture(ep,it),(v,rep)=>{R.res.push({item:oral?it.w:it,v,rep:v==='ok'?'':rep});R.k++;suivant()});
- const dictee=ep.id==='dsy',ecran=dictee&&surEcranL;
+ const dictee=ep.id==='dsy'||ep.id==='dmx',ecran=dictee&&surEcranL,unite=ep.id==='dsy'?'la syllabe':'le mot';
  const support=dictee?`<div class="support noprint"><button data-s="feuille" class="${ecran?'':'on'}">📝 Sur la feuille</button><button data-s="ecran" class="${ecran?'on':''}">⌨️ Sur l'écran</button></div>`:'';
- const saisie=ecran?`<div class="question">Écris la syllabe que tu entends.</div><div><input type="text" id="saisieS" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="écris ici…" style="font-size:min(9vw,44px);padding:8px 12px;border-radius:14px;border:3px solid #cfd8e3;width:min(60vw,260px);text-align:center"> <button class="b ok" id="valS">✔</button></div>`:'';
- app.innerHTML=barre()+(oral?cache(it.w+(it.att&&it.att!==it.w?'  →  '+it.att:''))+`<div class="scene">${support}${ecran?saisie:`<div class="question">${esc(it.q?(it.q.endsWith(':')?it.q+' « … »':it.q+' « … » ?'):ep.question||'')}</div><div class="stim l">${ep.icone}</div>`}</div>`:`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>`)+(ecran?`
- <div class="adulte"><span class="lab">Correction automatique :</span> dites la syllabe (ou 🔊), l'élève l'écrit puis ✔. <input type="hidden" id="rep">
+ const saisie=ecran?`<div class="question">Écris ${unite} que tu entends.</div><div><input type="text" id="saisieS" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="écris ici…" style="font-size:min(9vw,44px);padding:8px 12px;border-radius:14px;border:3px solid #cfd8e3;width:min(60vw,260px);text-align:center"> <button class="b ok" id="valS">✔</button></div>`:'';
+ app.innerHTML=barre()+(oral?cache(it.vu||(it.w+(it.att&&it.att!==it.w?'  →  '+it.att:'')))+`<div class="scene">${support}${ecran?saisie:`<div class="question">${esc(it.q?(it.q.endsWith(':')?it.q+' « … »':it.q+' « … » ?'):ep.question||'')}</div><div class="stim l">${ep.icone}</div>`}</div>`:`<div class="scene"><div class="stim ${ep.taille}">${esc(it)}</div></div>`)+(ecran?`
+ <div class="adulte"><span class="lab">Correction automatique :</span> dites ${unite} (ou 🔊), l'élève l'écrit puis ✔. <input type="hidden" id="rep">
   <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`:`
  <div class="adulte"><span class="lab">Adulte :</span>
   <button class="b ok" data-v="ok">✔ Juste<kbd>←</kbd></button>
   <button class="b hes" data-v="hes">≈ Hésitant / autocorrigé<kbd>↑</kbd></button>
-  <button class="b ko" data-v="ko">✘ Erreur<kbd>→</kbd></button>
+  ${ep.id==='dmx'?`<button class="b ko" data-v="ko" data-t="mem">✘ Se lit juste (pas mémorisé)<kbd>→</kbd></button><button class="b ko" data-v="ko" data-t="enc">✘ Ne se lit pas juste (encodage)<kbd>↓</kbd></button>`:`<button class="b ko" data-v="ko">✘ Erreur<kbd>→</kbd></button>`}
   <input type="text" id="rep" placeholder="${ep.icone==='✏️'?"Ce que l'élève a écrit":"Ce que l'élève a dit"} (facultatif)">
   <button class="b petit" id="retour">${R.k?'↶ Retour':'↶ Page précédente'}</button></div>`);
- lierBarre();if(oral)lierCache(it.w);
+ lierBarre();if(oral)lierCache(it.dire||it.w);
  // Après la validation de l'adulte, le mot (ou la syllabe) suivant est dit tout de suite (🔊 pour répéter).
- if(oral&&R.direSuivant)timers.push(setTimeout(()=>jouer(it.w),400));R.direSuivant=false;
- const noter=v=>{R.res.push({item:oral?it.w:it,v,rep:$('#rep').value.trim()});R.k++;R.direSuivant=oral;suivant()};
- $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v));
+ if(oral&&R.direSuivant)timers.push(setTimeout(()=>jouer(it.dire||it.w),400));R.direSuivant=false;
+ const noter=(v,t)=>{R.res.push({item:oral?it.w:it,v,rep:$('#rep').value.trim(),t:t||''});R.k++;R.direSuivant=oral;suivant()};
+ $$('.adulte [data-v]').forEach(b=>b.onclick=()=>noter(b.dataset.v,b.dataset.t));
  $('#rep').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();noter('ko')}});
  $('#retour').onclick=()=>{if(R.k){R.k--;R.res.pop();suivant()}else intro()};
- onKey=e=>{const m={ArrowLeft:'ok',ArrowUp:'hes',ArrowRight:'ko'}[e.key];if(m){e.preventDefault();noter(m)}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
+ onKey=e=>{const m={ArrowLeft:'ok',ArrowUp:'hes',ArrowRight:'ko',ArrowDown:ep.id==='dmx'?'ko':''}[e.key];if(m){e.preventDefault();noter(m,ep.id==='dmx'?(e.key==='ArrowDown'?'enc':'mem'):'')}else if(e.key==='Backspace'){e.preventDefault();$('#retour').click()}};
  $$('.support [data-s]').forEach(b=>b.onclick=()=>{surEcranL=b.dataset.s==='ecran';try{localStorage.setItem('bilanLectureSupport',surEcranL?'ecran':'feuille')}catch(e){}ecranLire()});
  if(ecran){
   // Correction automatique : majuscules et espaces ne comptent pas, les accents oui (fé ≠ fe).
   let fini=false;const champ=$('#saisieS');setTimeout(()=>champ.focus(),50);
-  const net=x=>String(x).trim().toLowerCase().normalize('NFC').replace(/\s+/g,'');
+  const net=x=>String(x).trim().toLowerCase().normalize('NFC').replace(/[’‘`]/g,"'").replace(/\s+/g,'');
   const valider=()=>{const v=champ.value.trim();if(fini||!v)return;fini=true;champ.disabled=true;const juste=net(v)===net(it.att);
    R.res.push({item:it.w,v:juste?'ok':'ko',rep:juste?'':v});R.k++;timers.push(setTimeout(()=>{R.direSuivant=true;suivant()},350))};
   $('#valS').onclick=valider;champ.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();valider()}});onKey=null;
@@ -746,7 +760,7 @@ function idsBilan(){const ids=EPREUVES.map(e=>e.id);
  Object.keys(resultats).filter(id=>!ids.includes(id)).forEach(id=>{const g=TOUTES.find(e=>e.id===id).groupe;let k=-1;ids.forEach((x,i)=>{if(TOUTES.find(e=>e.id===x).groupe===g)k=i});ids.splice(k<0?ids.length:k+1,0,id)});
  return ids}
 function proposer(r,tid){
- const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0,complexe=tid!=='ts',rep=REPERES[reglages.classe]||50;
+ const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0,complexe=tid!=='ts',rep=repFluence()||30;
  const assez=r.lus>=Math.min(r.total,30);
  const niv=prec>=95&&assez?'aise':prec>=85&&assez?'moyen':'diff';
  const lent=r.mclm<rep*.7;
@@ -777,7 +791,7 @@ function orientation(){
  const [nv,cl]=P.niv==='aise'?['Lecture aisée','p-a']:P.niv==='moyen'?['Lecture en cours','p-e']:['Lecture difficile','p-n'];
  const groupes=[...new Set(pool.map(e=>e.groupe))];
  app.innerHTML=`<div class="carte"><p class="note" style="margin:0">Texte d'abord</p><h2>📖 Après la lecture du texte</h2>
- <p><b>${esc(r.titre)}</b> : ${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''} → <b>${r.mclm} mots correctement lus / min</b> (repère de fin ${esc(reglages.classe)} : ${REPERES[reglages.classe]}) · précision ${P.prec} % <span class="pastille ${cl}">${nv}</span></p>
+ <p><b>${esc(r.titre)}</b> : ${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''} → <b>${r.mclm} mots correctement lus / min</b> ${labRep()?`(${esc(labRep())})`:''} · précision ${P.prec} % <span class="pastille ${cl}">${nv}</span></p>
  <div class="consigne"><b>Proposition :</b> ${esc(P.msg[0].toUpperCase()+P.msg.slice(1))}.<br>Les épreuves cochées sont proposées pour la suite ; vous pouvez en cocher ou en décocher.</div>
  ${pool.length?`<div class="grille">${groupes.map(g=>`<div class="groupe"><h3>${esc(g)}</h3>${pool.filter(e=>e.groupe===g).map(e=>`<label><input type="checkbox" class="or" value="${e.id}" ${garder.includes(e.id)?'checked':''}> ${esc(e.titre)}${garder.includes(e.id)?(P.ajout.includes(e.id)?' <span class="note">(ajoutée)</span>':''):' <span class="note">(pas nécessaire)</span>'}</label>`).join('')}</div>`).join('')}</div>
  <div class="actions"><button class="b petit" id="orTout">Tout cocher</button><button class="b petit" id="orProp">↺ Revenir à la proposition</button></div>`:'<p class="note">Aucune autre épreuve n\'était cochée.</p>'}
@@ -795,7 +809,7 @@ function niveau(p){return p>=80?['Acquis','p-a']:p>=50?['En cours','p-e']:['Non 
 function bilan(){
  stopTimers();onKey=null;
  const ids=idsBilan().filter(id=>resultats[id]);
- const rep=REPERES[reglages.classe];
+ const rep=repFluence();
  const lignes=[],texteL=[];
  const age=PERIODES[reglages.periode];
  const titreAnon=`Bilan de lecture — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
@@ -808,16 +822,16 @@ function bilan(){
   if(r.type==='texte'){
    const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0;
    const [nv,cl]=rep?(r.mclm>=rep?['Atteint','p-a']:r.mclm>=rep*.7?['Proche','p-e']:['En dessous','p-n']):niveau(prec);
-   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''} · précision ${prec} %`+(r.types&&r.types.length?`<br>Types d'erreurs : ${esc(r.types.map(([l,n])=>l+' × '+n).join(' ; '))}`:'')+(r.motsErr.length?`<br><span class="note">Mots mal lus : ${esc(r.motsErr.join(', '))}</span>`:'');
+   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (${esc(labRep())})`:''} · précision ${prec} %`+(r.types&&r.types.length?`<br>Types d'erreurs : ${esc(r.types.map(([l,n])=>l+' × '+n).join(' ; '))}`:'')+(r.motsErr.length?`<br><span class="note">Mots mal lus : ${esc(r.motsErr.join(', '))}</span>`:'');
    lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (repère fin ${reglages.classe} : ${rep})`:''}, précision ${prec} %.`+(r.types&&r.types.length?` Types d'erreurs : ${r.types.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')+(r.motsErr.length?` Mots mal lus : ${r.motsErr.join(', ')}.`:''));
+   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (${labRep()})`:''}, précision ${prec} %.`+(r.types&&r.types.length?` Types d'erreurs : ${r.types.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')+(r.motsErr.length?` Mots mal lus : ${r.motsErr.join(', ')}.`:''));
   }else{
    const juste=r.ok+r.hes.length,sur=r.arret?r.prevus:r.faits,p=Math.round(juste/sur*100),[nv,cl]=niveau(p);
    const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
    const hesTxt=r.hes.map(x=>x.item).join(', ');
-   const det=[r.arret?`⛔ Arrêtée après 3 erreurs de suite (item ${r.faits} sur ${r.prevus}) : les items suivants, plus difficiles, sont comptés non réussis.`:r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
+   const det=[r.arret?`⛔ Arrêtée après 3 erreurs de suite (item ${r.faits} sur ${r.prevus}) : les items suivants, plus difficiles, sont comptés non réussis.`:r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.typesD&&r.typesD.length?`Types d'erreurs : ${esc(r.typesD.map(([l,n])=>l+' × '+n).join(' ; '))}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
    lignes.push(`<tr><td>${r.titre}</td><td>${juste} / ${sur} (${p} %)</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${juste}/${sur} (${p} %) — ${nv}.`+(r.arret?` Arrêtée après 3 erreurs de suite (items suivants comptés non réussis).`:r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:''));
+   texteL.push(`- ${r.titre} : ${juste}/${sur} (${p} %) — ${nv}.`+(r.arret?` Arrêtée après 3 erreurs de suite (items suivants comptés non réussis).`:r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:'')+(r.typesD&&r.typesD.length?` Types d'erreurs : ${r.typesD.map(([l,n])=>l+' × '+n).join(' ; ')}.`:''));
   }
  });
  const nonP=R&&R.nonProposees&&R.nonProposees.length?R.nonProposees.map(id=>TOUTES.find(e=>e.id===id).titre):[];
@@ -940,7 +954,7 @@ function docPassation(d){
  const tete=`<h2>${esc(ep.groupe)} — ${esc(ep.titre)}</h2><div class="dcons">${esc(texteBrut(ep.consigne||''))}</div>`;
  if(ep.type==='texte')return tete+`<div class="dtexteA">${numTexte(ep.texte)}</div><div class="dcalc"><div>Mots lus :</div><div>Erreurs :</div><div>Temps (s) :</div><div>MCLM = (lus − erreurs) × 60 ÷ temps</div></div><table><tr><th>Type d'erreur</th><th style="width:40mm">Nombre (bâtons)</th></tr>${TYPES_ERR.map(([k,l])=>`<tr><td>${esc(l)}</td><td></td></tr>`).join('')}</table>`;
  const pre=ep.histoire?`<p class="dcons"><b>Histoire à lire :</b> ${esc(ep.histoire)}</p>`:'';
- const lib=it=>ep.type==='lire'?esc(it):ep.type==='oral'?esc((it.q?it.q+' ':'')+it.w):esc(it.label||it.q||'');
+ const lib=it=>ep.type==='lire'?esc(it):ep.type==='oral'?esc(it.vu||((it.q?it.q+' ':'')+it.w)):esc(it.label||it.q||'');
  const att=it=>ep.type==='lire'?'':ep.type==='oral'?esc(it.att||it.w):esc(it.bonne);
  return tete+pre+`<table><tr><th>N°</th><th>${ep.type==='oral'||so==='auditif'||so==='pareil'||so==='emoji'?'À dire':'Item'}</th><th>Attendu</th><th>✔</th><th>≈</th><th>✘</th><th>Ce que l'élève a dit</th></tr>${items.map((it,i)=>`<tr><td>${i+1}</td><td>${lib(it)}</td><td>${att(it)}</td>${ligneCases()}</tr>`).join('')}</table><div class="dtot">Score : <b></b> / ${items.length}</div>`;
 }
@@ -967,7 +981,8 @@ const JEUX={
  'les-devinettes-de-la-foret':['Les devinettes de la forêt',['CP','CE1','CE2']],
  'le-chateau-des-detectives':['Le Château des Détectives',['CP','CE1']],
  'la-dictee-de-la-feuille-pliee':['Prépare ta dictée !',['CP','CE1','CE2']],
- 'redis-la-regle':['Apprends les règles d\'orthographe',['CP','CE1','CE2']]};
+ 'redis-la-regle':['Apprends les règles d\'orthographe',['CP','CE1','CE2']],
+ 'la-dictee-a-trous':['La dictée à trous',['CP','CE1','CE2']]};
 // Pour chaque épreuve : les jeux qui la travaillent (du plus simple au plus avancé).
 const JEUX_EP={cmo:['le-cercle-conteur'],cto:['le-cercle-conteur','la-bibliotheque-des-contes'],
  sy1:['les-fusees-des-syllabes'],sy2:['les-fusees-des-syllabes'],ph1:['le-kiosque-des-mots'],ph2:['le-kiosque-des-mots'],
@@ -977,7 +992,7 @@ const JEUX_EP={cmo:['le-cercle-conteur'],cto:['le-cercle-conteur','la-bibliotheq
  ms:['le-chemin-des-sons','les-formules-du-sorcier','la-fiole-de-la-grenouille'],mc:['les-cristaux-de-la-planete-sonora','le-chemin-des-sons','lecture-rapide-de-mots-tachistoscope'],
  mi:['lecture-rapide-de-mots-tachistoscope','la-fiole-de-la-grenouille'],
  cph:['images-du-quotidien'],ctx:['les-devinettes-de-la-foret','le-chateau-des-detectives'],cl:['le-chateau-des-detectives','la-bibliotheque-des-contes'],
- dsy:['les-fusees-des-syllabes','le-kiosque-des-mots'],dmo:['le-kiosque-des-mots','la-dictee-de-la-feuille-pliee'],dph:['la-dictee-de-la-feuille-pliee','redis-la-regle']};
+ dsy:['les-fusees-des-syllabes','le-kiosque-des-mots'],dmo:['le-kiosque-des-mots','la-dictee-de-la-feuille-pliee'],dph:['la-dictee-de-la-feuille-pliee','redis-la-regle'],dmx:['la-dictee-de-la-feuille-pliee','la-dictee-a-trous']};
 // Types d'erreurs notés dans un texte → jeux ciblés.
 const JEUX_TYPE={sons:['la-roue-du-magicien'],complexe:['les-cristaux-de-la-planete-sonora'],lettres:['les-formules-du-sorcier'],devine:['les-formules-du-sorcier','lecture-rapide-de-mots-tachistoscope'],saute:['teleprompteur-de-lecture'],muettes:['redis-la-regle'],irr:['lecture-rapide-de-mots-tachistoscope']};
 function propositionJeux(ids){
@@ -986,7 +1001,7 @@ function propositionJeux(ids){
  const ajouter=(slugs,raison,prio)=>slugs.filter(pour).forEach(s=>{const x=choix.get(s)||{r:[],p:999};if(!x.r.includes(raison))x.r.push(raison);x.p=Math.min(x.p,prio);choix.set(s,x)});
  ids.forEach(id=>{const r=resultats[id];if(!r)return;
   if(r.type==='texte'){
-   const prec=r.lus?(r.lus-r.nbErr)/r.lus*100:0,rep=REPERES[cl]||50;
+   const prec=r.lus?(r.lus-r.nbErr)/r.lus*100:0,rep=repFluence()||30;
    if(prec<90)ajouter(['le-chemin-des-sons','les-cristaux-de-la-planete-sonora','les-formules-du-sorcier'],'déchiffrage ('+r.titre.toLowerCase()+')',prec);
    if(r.mclm<rep)ajouter(['teleprompteur-a-l-ecoute','lecture-rapide-de-mots-tachistoscope','la-fiole-de-la-grenouille'],'fluence',Math.round(r.mclm/rep*100));
    (r.types||[]).forEach(([l])=>{const t=TYPES_ERR.find(x=>x[1]===l);if(t&&JEUX_TYPE[t[0]])ajouter(JEUX_TYPE[t[0]],'erreurs : '+l.replace(/ \(.*\)$/,'').toLowerCase(),60)});
@@ -1008,7 +1023,7 @@ function synthese(ids,pctDe,att,liens,lab){
  if(!rows.length)return {html:'',lignes:[]};
  const ok=rows.filter(r=>r.m>=80),prio=rows.filter(r=>r.m<80).sort((a,b)=>a.m-b.m);
  const html=`<div class="synth" id="synth"><h3>🎯 Par rapport aux attendus de ${esc(lab)}</h3>
-  <table><tr><th>Domaine</th><th>Attendu officiel (Éduscol)</th><th>Résultat</th></tr>${rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${esc(r.a)}</td><td><span class="${r.st[1]}">${r.st[0]}</span> (${r.m} %)</td></tr>`).join('')}</table>
+  <table><tr><th>Domaine</th><th>Attendu (programme 2025)</th><th>Résultat</th></tr>${rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${esc(r.a)}</td><td><span class="${r.st[1]}">${r.st[0]}</span> (${r.m} %)</td></tr>`).join('')}</table>
   <p><b>Points d'appui :</b> ${ok.length?ok.map(r=>esc(r.g)).join(', '):'aucun domaine atteint pour l\'instant.'}</p>
   <p><b>Priorités :</b> ${prio.length?prio.map(r=>`${esc(r.g)}${r.l?` (<a href="${r.l}" target="_blank" rel="noopener">jeux du site</a>)`:''}`).join(' ; '):'tous les domaines évalués sont atteints : on peut proposer le bilan du niveau suivant.'}</p>
   <p class="note">Synthèse automatique, sur peu d'items : elle aide à repérer les priorités, elle ne remplace pas le regard de l'enseignant. Seules les épreuves passées sont prises en compte. ${AVERT}</p></div>`;
@@ -1020,17 +1035,17 @@ function synthese(ids,pctDe,att,liens,lab){
 const ATT_L={
  "Compréhension orale":"Comprendre des mots et une histoire entendus.",
  "Conscience phonologique":{gs:"Manipuler les syllabes ; repérer les sons-voyelles et quelques consonnes.",def:"Isoler les sons d'un mot (premier son, dernier son)."},
- "Discrimination auditive":"Distinguer des sons proches à l'oreille.",
- "Discrimination visuelle":"Distinguer les lettres proches et reconnaître une lettre dans ses différentes écritures.",
+ "Discrimination auditive":"Distinguer des sons proches à l'oreille (repère complémentaire, lié à la conscience phonologique).",
+ "Discrimination visuelle":"Reconnaître une lettre dans ses différentes écritures ; distinguer les lettres proches b, d, p, q (repère complémentaire, hors programme).",
  "Lettres":"Connaître le nom des lettres.",
- "Lecture":{cp:"Décoder les sons simples et complexes ; lire un texte (50 mots correctement lus par minute en fin de CP).",ce1:"Lire des mots irréguliers et un texte (70 mots par minute en fin de CE1).",ce2:"Lire des mots longs et irréguliers et un texte long (90 mots par minute en fin de CE2).",def:"Lire des sons, des mots et un texte."},
+ "Lecture":{cp:"Décoder les sons simples et complexes ; lire un texte découvert (au moins 30 mots correctement lus par minute en fin de CP sans préparation, 50 après préparation).",ce1:"Décoder toutes les correspondances, y compris complexes ; lire un texte adapté à son niveau à 70 mots par minute en fin de CE1.",ce2:"Avoir automatisé toutes les correspondances ; lire un texte adapté à son niveau à 90 mots par minute en fin de CE2.",def:"Lire des sons, des mots et un texte."},
  "Compréhension de l'écrit":{cp:"Comprendre des phrases et un court texte lus seul.",def:"Comprendre un texte lu seul, y compris ce qui n'est pas écrit (inférences)."},
- "Écriture":{cp:"Écrire sous la dictée des syllabes et des mots simples.",def:"Écrire sous la dictée des mots et de courtes phrases correctement orthographiés."},
- "Empan visuel":"Prendre plusieurs lettres en un seul coup d'œil."};
+ "Écriture":{cp:"Écrire sous la dictée des syllabes, des mots simples et les mots outils les plus fréquents.",ce1:"Orthographier correctement les mots fréquents, réguliers puis irréguliers ; écrire de courtes phrases sous la dictée.",ce2:"Orthographier correctement les mots fréquents, réguliers et irréguliers, et des phrases selon les accords étudiés.",def:"Écrire sous la dictée des mots et de courtes phrases correctement orthographiés."},
+ "Empan visuel":"Prendre plusieurs lettres en un seul coup d'œil (repère complémentaire, hors programme)."};
 const attL=()=>{const v=reglages.version||'cp',o={};for(const [g,a] of Object.entries(ATT_L))o[g]=typeof a==='string'?a:(a[v]||a.def);return o};
 const LIENS_L={"Compréhension orale":"/francais/cercle-conteur/","Conscience phonologique":"/francais/lecture/","Discrimination auditive":"/francais/lecture/","Discrimination visuelle":"/francais/discrimination-visuelle/","Lettres":"/francais/discrimination-visuelle/","Lecture":"/francais/lecture/","Compréhension de l'écrit":"/francais/lecture/","Écriture":"/francais/etude-langue/","Empan visuel":"/francais/discrimination-visuelle/"};
-const REP_V={cp:50,ce1:70,ce2:90};
-const pctLecture=r=>{if(!r)return null;if(r.type==='texte'){const rep=REP_V[reglages.version];return rep?Math.min(100,Math.round(r.mclm/rep*100)):(r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0)}
+const REP_V={cp:30,ce1:70,ce2:90};
+const pctLecture=r=>{if(!r)return null;if(r.type==='texte'){const rep=repFluence();return rep?Math.min(100,Math.round(r.mclm/rep*100)):(r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0)}
  if(!r.faits)return null;const j=r.ok+r.hes.length;return Math.round(j/(r.arret?r.prevus:r.faits)*100)};
 majEntete();accueil();
 </script>
