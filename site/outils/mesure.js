@@ -7,6 +7,7 @@
   var noop = { fin: function () {}, doc: function () {} };
   window.TCStats = noop;
   if (!/^https?:$/.test(location.protocol) || !navigator.sendBeacon) return;
+  if (/[?&]joueur=\d/.test(location.search)) return; // zone d'un joueur (partie à plusieurs) : déjà comptée par la page principale
   var jeu = (location.pathname.split("/").pop() || "").replace(/\.html$/, "");
   if (!jeu) return;
   var ses = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
