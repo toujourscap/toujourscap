@@ -121,6 +121,7 @@ table.dom td.dom-att{background:#fafbfd;border-right:1px solid #dde3ea;line-heig
 table.dom .lbl{font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#5b6b7d;margin-bottom:5px}
 table.dom .ep{padding:6px 8px;margin:0 0 6px}table.dom .ep:last-child{margin-bottom:0}
 table.dom .ep{border-left:6px solid #cfd8e3;border-radius:4px}table.dom .ep.ep-a{border-left-color:#2e9d5b;background:#f3fbf6}table.dom .ep.ep-e{border-left-color:#e8912d;background:#fff9f0}table.dom .ep.ep-n{border-left-color:#d0453a;background:#fdf3f2}
+table.dom .pt{font-size:1.15em;vertical-align:-1px}
 table.dom .ep-det{font-size:.86rem;color:#5b6b7d;margin-top:3px;line-height:1.4}
 table.dom .moy{font-size:.78rem;color:#8a96a3;margin-top:3px}
 @media(max-width:640px){table.dom,table.dom tbody,table.dom tr,table.dom td,table.dom th{display:block;width:auto}table.dom td.dom-att{border-right:0}table.dom .dom-st{float:none;display:block;margin-top:2px}}
@@ -1192,7 +1193,7 @@ function rapport(items,pctDe,att,liens,lab){
   <p>🎯 <b>À travailler en priorité :</b> ${prio.length?prio.map(d=>esc(d.g)+lien(d)).join(' ; '):'rien de prioritaire : tous les domaines évalués sont atteints, on peut proposer le bilan du niveau suivant.'}</p></div>`;
  const doms=G.map(d=>`<table class="dom dom-${d.st[1]}"><tr><th colspan="2"><span class="dom-nom">${esc(d.g)}</span><span class="dom-st">${d.st[0]}${d.m!=null?' · '+d.m+' %':''}</span></th></tr>
   <tr><td class="dom-att"><div class="lbl">📘 Ce qui est attendu (programme 2025)</div>${d.a?esc(d.a):'—'}</td>
-  <td class="dom-fait"><div class="lbl">✏️ Ce qu’a réalisé l’élève</div>${d.its.map(it=>`<div class="ep ${CL[it.cl]||''}"><div><span class="pastille ${it.cl}">${it.nv}</span> <b>${it.titre}</b> : ${it.score}</div>${it.det?`<div class="ep-det">${it.det}</div>`:''}<div class="moy noprint" data-e="${it.id}"></div></div>`).join('')}</td></tr></table>`).join('');
+  <td class="dom-fait"><div class="lbl">✏️ Ce qu’a réalisé l’élève</div>${d.its.map(it=>`<div class="ep ${CL[it.cl]||''}"><div><span class="pastille ${it.cl}">${it.nv}</span> <b>${it.titre}</b> : <span class="pt" title="${it.nv}">${PT[it.cl]||''}</span> ${it.score}</div>${it.det?`<div class="ep-det">${it.det}</div>`:''}<div class="moy noprint" data-e="${it.id}"></div></div>`).join('')}</td></tr></table>`).join('');
  const html=`<div class="rapport" id="rapport">${bref}<h3 class="rap-t">Domaine par domaine</h3>${doms}</div>`;
  const lignes=['EN BREF','Code couleur : 🟢 acquis (80 % et plus) · 🟠 en cours (50 à 79 %) · 🔴 non acquis (moins de 50 %).',`${ok.length} domaine(s) sur ${ev.length} au niveau des attendus de ${lab}.`,'Points d’appui : '+(ok.length?ok.map(d=>d.g).join(', '):'aucun pour l’instant')+'.','À travailler en priorité : '+(prio.length?prio.map(d=>d.g).join(', '):'rien de prioritaire')+'.'];
  G.forEach(d=>{lignes.push('',d.g.toUpperCase()+' — '+d.st[0].replace(/^\S+ /,'')+(d.m!=null?` (${d.m} %)`:''),'Attendu (programme 2025) : '+(d.a||'—'),'Ce qu’a réalisé l’élève :');d.its.forEach(it=>lignes.push(`${PT[it.cl]||'-'} ${texteBrut(it.titre)} : ${texteBrut(it.score)} (${it.nv}).${it.detTxt?' '+it.detTxt:''}`))});
