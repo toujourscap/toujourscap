@@ -82,6 +82,9 @@ pre{white-space:pre-wrap;font-family:inherit;background:#faf6ee;border-radius:10
 .histo li{margin:4px 0}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9}
 .modal .carte{max-width:760px;width:100%;max-height:85vh;overflow:auto}
+.annexe{width:100%;border-collapse:collapse;font-size:15px}.annexe th,.annexe td{border:1px solid #d8dee8;padding:6px 8px;vertical-align:top;text-align:left}.annexe ul{margin:0;padding-left:18px}.annexe p{margin:0 0 4px}
+.modal .carte:has(.annexe){max-width:980px}
+@media(max-width:640px){.annexe,.annexe tbody,.annexe tr,.annexe td{display:block;width:auto}.annexe tr:first-child{display:none}.annexe tr{border:1px solid #d8dee8;border-radius:8px;margin-bottom:8px}.annexe td{border:none;padding:4px 8px}}
 .mode{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px}
 .mode label{border:2px solid var(--ligne);border-radius:14px;padding:10px 12px;cursor:pointer;display:block;line-height:1.35}
 .mode label.on{border-color:var(--bleu);background:#eef3f9}
@@ -202,7 +205,11 @@ function figure(nom){
  const f={carre:`<rect x="55" y="25" width="110" height="110" ${st}/>`,rectangle:`<rect x="20" y="45" width="180" height="80" ${st}/>`,
   rectv:`<rect x="75" y="15" width="70" height="130" ${st}/>`,triangle:`<polygon points="25,140 195,140 125,20" ${st}/>`,disque:`<circle cx="110" cy="80" r="65" ${st}/>`,
   trect:`<polygon points="45,140 185,140 45,25" ${st}/><polyline points="45,122 63,122 63,140" fill="none" stroke="${TRAIT}" stroke-width="3"/>`,
-  losange:`<polygon points="110,10 180,80 110,150 40,80" ${st}/>`}[nom];
+  losange:`<polygon points="110,10 180,80 110,150 40,80" ${st}/>`,
+  pentagone:`<polygon points="110,12 182,64 155,148 65,148 38,64" ${st}/>`,
+  hexagone:`<polygon points="70,12 150,12 192,80 150,148 70,148 28,80" ${st}/>`,
+  cercle:`<circle cx="110" cy="80" r="65" fill="none" stroke="${TRAIT}" stroke-width="4"/>`,
+  quadri:`<polygon points="30,130 70,25 190,50 170,145" ${st}/>`}[nom];
  return svg(220,160,f)}
 function solide(nom){
  const s=`stroke="${TRAIT}" stroke-width="3" stroke-linejoin="round"`;
@@ -234,6 +241,38 @@ function balance(g,d){
 function sousTable(){
  return svg(300,190,`<rect x="40" y="60" width="220" height="16" rx="4" fill="#b98a5c" stroke="${TRAIT}" stroke-width="3"/><rect x="55" y="76" width="14" height="100" fill="#b98a5c" stroke="${TRAIT}" stroke-width="3"/><rect x="231" y="76" width="14" height="100" fill="#b98a5c" stroke="${TRAIT}" stroke-width="3"/>
  <text x="110" y="54" font-size="48" text-anchor="middle">🐱</text><text x="200" y="54" font-size="40" text-anchor="middle">📕</text><text x="150" y="172" font-size="46" text-anchor="middle">⚽</text>`)}
+// Patron : liste de cases [colonne, ligne] d'un assemblage de 6 carrés
+function patron(cases){
+ const u=44;let c='';cases.forEach(([x,y])=>c+=`<rect x="${10+x*u}" y="${10+y*u}" width="${u}" height="${u}" fill="#cfe3f7" stroke="${TRAIT}" stroke-width="3"/>`);
+ const W=Math.max(...cases.map(p=>p[0]))+1,H=Math.max(...cases.map(p=>p[1]))+1;return svg(W*u+20,H*u+20,c)}
+// Figure et trait rouge : est-ce un axe de symétrie ?
+function axeSym(cas){
+ const st=`fill="#cfe3f7" stroke="${TRAIT}" stroke-width="4" stroke-linejoin="round"`,ax=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${ROUGE2}" stroke-width="4" stroke-dasharray="10 6"/>`;
+ const f={rectMed:`<rect x="30" y="40" width="160" height="80" ${st}/>`+ax(110,20,110,140),rectDiag:`<rect x="30" y="40" width="160" height="80" ${st}/>`+ax(20,32,200,128),
+  maison:`<polygon points="50,150 50,70 110,20 170,70 170,150" ${st}/>`+ax(110,5,110,160)}[cas];
+ return svg(220,165,f)}
+// Robot orienté (dir : d = droite, h = haut) sur un quadrillage, avec des lettres
+function grilleR(lettres,dir){
+ const C=6,L=4,u=62;let c='';
+ for(let i=0;i<=C;i++)c+=`<line x1="${10+i*u}" y1="10" x2="${10+i*u}" y2="${10+L*u}" stroke="#9fb3c8" stroke-width="2"/>`;
+ for(let j=0;j<=L;j++)c+=`<line x1="10" y1="${10+j*u}" x2="${10+C*u}" y2="${10+j*u}" stroke="#9fb3c8" stroke-width="2"/>`;
+ const cx=10+u/2,cy=10+3*u+u/2,rot={d:0,h:-90}[dir||'d'];
+ c+=`<g transform="rotate(${rot} ${cx} ${cy})"><polygon points="${cx-20},${cy-18} ${cx+24},${cy} ${cx-20},${cy+18}" fill="#2f6fb2" stroke="${TRAIT}" stroke-width="2"/></g>`;
+ Object.entries(lettres).forEach(([l,[x,y]])=>c+=`<text x="${10+x*u+u/2}" y="${10+y*u+u/2+12}" font-size="34" text-anchor="middle" font-weight="700" fill="#24527a">${l}</text>`);
+ return svg(C*u+20,L*u+20,c)}
+// Deux rubans ou crayons horizontaux (GS : comparer des longueurs)
+function rubans(a,b){
+ return svg(340,120,`<rect x="20" y="20" width="${a}" height="26" rx="8" fill="#2f6fb2"/><rect x="20" y="74" width="${b}" height="26" rx="8" fill="${ROUGE2}"/>`)}
+// Diagramme en barres à l'échelle adaptée (CE2) : graduation de pas en pas
+const LIVRES=[['CP',30],['CE1',45],['CE2',60],['CM1',20]];
+function barresEchelle(){
+ const pas=10,max=70,u=4,x0=60,y0=36+max*u;let c=`<text x="8" y="16" font-size="15" fill="${TRAIT}">livres</text>`;
+ for(let v=0;v<=max;v+=pas)c+=`<line x1="${x0}" y1="${y0-v*u}" x2="${x0+330}" y2="${y0-v*u}" stroke="#d9e2ec" stroke-width="1.5"/><text x="${x0-10}" y="${y0-v*u+6}" font-size="16" text-anchor="end" fill="${TRAIT}">${v}</text>`;
+ LIVRES.forEach(([n,v],i)=>{const x=x0+25+i*78;c+=`<rect x="${x}" y="${y0-v*u}" width="50" height="${v*u}" fill="${['#e35d5d','#f2c14e','#6d8fc9','#93cf9c'][i]}" stroke="${TRAIT}" stroke-width="2"/><text x="${x+25}" y="${y0+28}" font-size="18" text-anchor="middle" fill="${TRAIT}">${n}</text>`});
+ c+=`<line x1="${x0}" y1="${y0}" x2="${x0+330}" y2="${y0}" stroke="${TRAIT}" stroke-width="3"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="14" stroke="${TRAIT}" stroke-width="3"/>`;
+ return svg(400,y0+40,c)}
+const FRATRIE=[0,1,2,3],FRATRIE_N=[5,9,7,3];
+const tabFratrie=()=>`<table class="tab"><tr><th>Nombre de frères et sœurs</th>${FRATRIE.map(n=>`<td>${n}</td>`).join('')}</tr><tr><th>Nombre d'élèves</th>${FRATRIE_N.map(n=>`<td>${n}</td>`).join('')}</tr></table>`;
 const TRANSPORTS=[['À pied',12,9],['À vélo',7,18],['En voiture',10,8],['En bus',5,6]];
 const tableau=()=>`<table class="tab"><tr><th>Comment viens-tu à l'école ?</th><th>Filles</th><th>Garçons</th></tr>${TRANSPORTS.map(([a,f,g])=>`<tr><th>${a}</th><td>${f}</td><td>${g}</td></tr>`).join('')}</table>`;
 const FRUITS=[['🍎','pomme',6],['🍌','banane',9],['🍓','fraise',4],['🍊','orange',2]];
@@ -246,7 +285,7 @@ function barres(){
 
 /* ---------- Contenus (programme de mathématiques du cycle 2, BO n°41 du 31/10/2024 : objectifs de fin de CE1) ---------- */
 const V=(q,att,o={})=>Object.assign({q,att},o);               // l'adulte valide
-const C=(q,bonne,choix,o={})=>Object.assign({q,bonne,choix:choix.map(String)},o); // l'élève montre une réponse
+const C=(q,bonne,choix,o={})=>Object.assign({q,bonne:String(bonne),choix:choix.map(String)},o); // l'élève montre une réponse
 const CMP=['<','>','='];
 function paliers(...ps){return reglages.aleatoire?melange(ps.flat()):ps.flat()}
 function tirer(n,f){const out=[],vu=new Set();let g=0;while(out.length<n&&g++<800){const t=f();if(!t||vu.has(t[0]))continue;vu.add(t[0]);out.push(V(t[0],t[1]))}return melange(out)}
@@ -263,7 +302,8 @@ function tablesMul(){return paliers(
  tirer(4,()=>{const a=hasard([2,10]),b=de(1,10);return Math.random()<.5?[`${a} × ${b} = …`,a*b]:[`${b} × ${a} = …`,a*b]}),
  tirer(4,()=>{const b=de(1,10);return[`5 × ${b} = …`,5*b]}),
  tirer(4,()=>{const a=hasard([3,4]),b=de(1,10);return[`${a} × ${b} = …`,a*b]}),
- tirer(4,()=>{const a=hasard([2,3,4,5,10]),b=de(2,10);return Math.random()<.5?[`${a} × … = ${a*b}`,b]:[`${a*b} = ${a} × …`,b]}))}
+ tirer(2,()=>{const a=hasard([2,3,4,5,10]),b=de(2,10);return Math.random()<.5?[`${a} × … = ${a*b}`,b]:[`${a*b} = ${a} × …`,b]}),
+ tirer(2,()=>{const a=hasard([6,7,8,9]),b=de(1,5);return Math.random()<.5?[`${a} × ${b} = …`,a*b]:[`${b} × ${a} = …`,a*b]}))}
 const CALCUL_MENTAL=[['157 − 5',152],['128 + 30',158],['234 + 60',294],['300 + 700',1000],['640 − 300',340],['354 + 500',854],['765 − 200',565],['45 + 9',54],['82 − 9',73],['8 × 4',32],['72 × 10',720],['541 − 20',521],['63 + 19',82],['523 − 7',516],['746 + 80',826],['25 + 75',100],['la moitié de 470',235],['13 × 7',91]];
 const PROBLEMES=[
  ["Paul a 15 billes. Il en gagne 10. Combien de billes a-t-il maintenant ?","25 billes","Transformation, recherche de l'état final"],
@@ -331,10 +371,10 @@ const EP_FIN=[
  {id:'c1',groupe:'Calcul',titre:'Tables d\'addition',mode:'valider',taille:'l',repere:60,attendu:12,
   items:tablesAdd,consigne:"« Dis-moi le nombre qui manque. » Pas de compte à rebours : 16 calculs du plus facile au plus difficile ; la durée est mesurée discrètement et indiquée dans le bilan. Repère de fin de CE1 : <b>12 égalités justes en 1 minute</b>, dans les deux sens (4 + … = 12 ; 10 = 7 + …)."},
  {id:'c2',groupe:'Calcul',titre:'Tables de multiplication',mode:'valider',taille:'l',repere:60,attendu:8,
-  items:tablesMul,consigne:"Même passation (16 calculs, durée mesurée discrètement). Tables de 2, 3, 4, 5 et 10, dans les deux sens (4 × … = 12 ; 10 = 2 × …). Repère de fin de CE1 : <b>8 égalités justes en 1 minute</b>. À adapter selon les tables déjà apprises (elles s'étalent sur toute l'année)."},
- {id:'c3',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',
-  items:()=>ordre([['Le double de 7',14],['La moitié de 16',8],['Le double de 15',30],['La moitié de 80',40],['La moitié de 30',15],['Le double de 35',70],['4 fois 25',100],['Le double de 250',500],['La moitié de 600',300],['La moitié de 1 000',500]]).map(([q,a])=>V(q,a)),
-  consigne:"« Dis-moi le résultat. » Faits multiplicatifs à mémoriser : doubles, moitiés, multiples de 25. Notez « Hésitant » si l'élève recalcule longuement."},
+  items:tablesMul,consigne:"Même passation (16 calculs, durée mesurée discrètement). Programme 2025 : tables de 0 à 10, dans les deux sens (4 × … = 12 ; 10 = 2 × …). D'abord 2, 10, 5, 3 et 4, puis deux calculs des tables de 6 à 9. Repère de fin de CE1 : <b>8 égalités justes en 1 minute</b>. L'apprentissage s'étale sur toute l'année et la mémorisation peut rester imparfaite jusqu'au CE2 : arrêtez l'épreuve si les tables n'ont pas encore été vues."},
+ {id:'c3',groupe:'Calcul',titre:'Doubles, moitiés, multiples de 25',mode:'valider',taille:'m',repere:60,attendu:8,
+  items:()=>ordre([['Le double de 7',14],['La moitié de 16',8],['Le double de 12',24],['La moitié de 30',15],['Le double de 15',30],['La moitié de 24',12],['Le double de 20',40],['2 fois 25',50],['La moitié de 28',14],['Le double de 40',80],['3 fois 25',75],['4 fois 25',100]]).map(([q,a])=>V(q,a)),
+  consigne:"« Dis-moi le résultat. » Faits multiplicatifs du programme de CE1 : doubles de 1 à 15 et de 20 à 50, moitiés des nombres pairs de 2 à 30, multiples de 25 (de 1 × 25 à 4 × 25). Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE1 : <b>8 justes en 1 minute</b>."},
  {id:'c4',groupe:'Calcul',titre:'Calcul mental',mode:'valider',taille:'l',repere:180,attendu:12,
   items:()=>ordre(CALCUL_MENTAL).map(([q,a])=>V(q.startsWith('la')?q[0].toUpperCase()+q.slice(1):q+' = …',a)),
   consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE1 : <b>12 résultats justes en 3 minutes</b> (ajouter des dizaines ou des centaines, ajouter 9 ou 19, retirer 9, multiplier par 10…)."},
@@ -378,13 +418,13 @@ const EP_FIN=[
   consigne:"Lisez la question. L'élève montre la réponse. Il peut compter les pièces avec le doigt."},
  // Espace et géométrie
  {id:'s1',groupe:'Espace et géométrie',titre:'Figures planes',mode:'choix',question:'Comment s\'appelle cette figure ?',
-  items:()=>ordre([['carre','carré'],['rectangle','rectangle'],['triangle','triangle'],['disque','disque'],['trect','triangle rectangle'],['losange','carré'],['rectv','rectangle']]).map(([f,n])=>C('',n,melange(['carré','rectangle','triangle','disque','triangle rectangle'].filter(x=>x!==n)).slice(0,3).concat(n).sort(()=>Math.random()-.5),{fig:figure(f)}))
+  items:()=>ordre([['carre','carré'],['rectangle','rectangle'],['triangle','triangle'],['disque','disque'],['cercle','cercle'],['trect','triangle rectangle'],['losange','carré'],['rectv','rectangle']]).map(([f,n])=>C('',n,melange(['carré','rectangle','triangle','disque','cercle','triangle rectangle'].filter(x=>x!==n)).slice(0,3).concat(n).sort(()=>Math.random()-.5),{fig:figure(f)}))
    .concat([C('Combien d\'angles droits a un rectangle ?','4',['2','3','4','0']),C('Un rectangle a ses côtés opposés…','de même longueur',['de même longueur','tous différents'])]),
-  consigne:"« Comment s'appelle cette figure ? » Un carré peut être posé sur la pointe. Les deux dernières questions portent sur les propriétés du rectangle."},
+  consigne:"« Comment s'appelle cette figure ? » Un carré peut être posé sur la pointe. Le cercle est le trait, le disque est la surface. Les deux dernières questions portent sur les propriétés du rectangle."},
  {id:'s2',groupe:'Espace et géométrie',titre:'Solides',mode:'choix',question:'Comment s\'appelle ce solide ?',
   items:()=>ordre([['cube','cube'],['pave','pavé'],['cylindre','cylindre'],['cone','cône'],['pyramide','pyramide'],['boule','boule']]).map(([f,n])=>C('',n,melange(['cube','pavé','cylindre','cône','pyramide','boule'].filter(x=>x!==n)).slice(0,3).concat(n).sort(()=>Math.random()-.5),{fig:solide(f)}))
-   .concat([C('Combien de faces a un cube ?','6',['4','6','8','12'],{fig:solide('cube')}),C('Combien de sommets a un cube ?','8',['4','6','8','12'],{fig:solide('cube')})]),
-  consigne:"« Comment s'appelle ce solide ? » Puis faces et sommets du cube (si possible, donnez un vrai cube à manipuler)."},
+   .concat([C('Combien de faces a un cube ?','6',['4','6','8','12'],{fig:solide('cube')}),C('Combien de sommets a un cube ?','8',['4','6','8','12'],{fig:solide('cube')}),C('Combien d\'arêtes a un cube ?','12',['6','8','10','12'],{fig:solide('cube')})]),
+  consigne:"« Comment s'appelle ce solide ? » Puis faces, sommets et arêtes du cube (si possible, donnez un vrai cube à manipuler)."},
  {id:'s3',groupe:'Espace et géométrie',titre:'Angles et alignement',mode:'choix',
   items:()=>ordre([C('Cet angle est…','un angle droit',['un angle droit','un angle aigu','un angle obtus'],{fig:angle(90,0)}),C('Cet angle est…','un angle aigu',['un angle droit','un angle aigu','un angle obtus'],{fig:angle(45,10)}),
    C('Cet angle est…','un angle obtus',['un angle droit','un angle aigu','un angle obtus'],{fig:angle(130,0)}),C('Cet angle est…','un angle droit',['un angle droit','un angle aigu','un angle obtus'],{fig:angle(90,30)}),
@@ -392,10 +432,11 @@ const EP_FIN=[
   consigne:"Donnez une équerre et une règle : l'élève vérifie sur l'écran avant de répondre (l'équerre se pose sur l'angle, la règle sur les points)."},
  {id:'s4',groupe:'Espace et géométrie',titre:'Se repérer, se déplacer',mode:'choix',
   items:()=>[C('Qui est à gauche de la maison ?','🐶',['🐶','🐱','🚗','🌳'],{fig:'<div class="rang">🌳🐶🏠🐱🚗</div>',emo:true}),C('Qui est entre la maison et la voiture ?','🐱',['🌳','🐶','🐱','🚗'],{fig:'<div class="rang">🌳🐶🏠🐱🚗</div>',emo:true}),
-   C('Qu\'est-ce qui est sous la table ?','⚽',['🐱','📕','⚽'],{fig:sousTable(),emo:true}),C('Qui est sur la table, à côté du livre ?','🐱',['🐱','⚽'],{fig:sousTable(),emo:true}),
-   C('Le robot avance de 3 cases vers la droite, puis de 2 cases vers le haut. Sur quelle lettre arrive-t-il ?','B',['A','B','C','D'],{fig:grille({A:[2,1],B:[3,1],C:[3,0],D:[1,2]})}),
-   C('Le robot avance de 2 cases vers le haut, puis de 4 cases vers la droite. Sur quelle lettre arrive-t-il ?','A',['A','B','C','D'],{fig:grille({A:[4,1],B:[4,2],C:[2,1],D:[3,0]})})],
-  consigne:"Lisez la question. Gauche et droite sont ceux de l'élève qui regarde l'écran. Pour le robot, l'élève peut suivre avec le doigt."},
+   C('Qui est sur la table, à côté du livre ?','🐱',['🐱','⚽'],{fig:sousTable(),emo:true}),
+   C('Le robot regarde vers la droite. Il avance de 2 cases, tourne à gauche, puis avance de 2 cases. Sur quelle lettre arrive-t-il ?','B',['A','B','C','D'],{fig:grilleR({A:[2,3],B:[2,1],C:[0,1],D:[4,3]},'d')}),
+   C('Le robot regarde vers la droite. Il avance de 3 cases, tourne à gauche, avance de 1 case, tourne à droite, puis avance de 1 case. Sur quelle lettre arrive-t-il ?','C',['A','B','C','D'],{fig:grilleR({A:[3,2],B:[4,3],C:[4,2],D:[3,1]},'d')}),
+   C('Le robot regarde vers le haut. Il tourne à droite, avance de 4 cases, tourne à gauche, puis avance de 2 cases. Sur quelle lettre arrive-t-il ?','D',['A','B','C','D'],{fig:grilleR({A:[0,1],B:[4,3],C:[2,1],D:[4,1]},'h')})],
+  consigne:"Lisez la question. Gauche et droite sont ceux de l'élève qui regarde l'écran. Pour le robot, la flèche bleue montre où il regarde ; « tourner » se fait sur place, sans avancer (quart de tour). L'élève peut suivre avec le doigt ou tourner sa feuille."},
  // Données
  {id:'d1',groupe:'Organiser des données',titre:'Tableaux et diagrammes',mode:'choix',
   items:()=>[C('Combien de garçons viennent à vélo ?','18',['7','18','25','9'],{fig:tableau()}),C('Combien de filles viennent à pied ?','12',['9','12','21','10'],{fig:tableau()}),C('Combien d\'enfants viennent en bus ?','11',['5','6','11','56'],{fig:tableau()}),
@@ -422,7 +463,7 @@ const CALCUL_CP=[['63 + 2',65],['38 − 1',37],['32 + 4',36],['45 + 10',55],['58
 const PROBLEMES_CP=[
  ["Zoé a 4 billes. Elle en gagne 3. Combien de billes a-t-elle maintenant ?","7 billes","Transformation, recherche de l'état final"],
  ["Léa a 6 billes. Tom a 2 billes de plus que Léa. Combien de billes a Tom ?","8 billes","Comparaison"],
- ["Anna a 9 cerises. Elle en mange 4. Combien de cerises lui reste-t-il ?","5 cerises","Parties-tout, une étape"],
+ ["Dans un bouquet, il y a 9 fleurs. 4 fleurs sont rouges, les autres sont jaunes. Combien y a-t-il de fleurs jaunes ?","5 fleurs jaunes","Parties-tout, une étape"],
  ["Hugo a 7 images. Il voudrait en avoir 10. Combien d'images lui manque-t-il ?","3 images","Transformation, recherche de l'écart"],
  ["Un train a trois wagons. Il y a 4 passagers dans le premier, 3 dans le deuxième et 2 dans le troisième. Combien y a-t-il de passagers en tout ?","9 passagers","Parties-tout, trois parties"],
  ["Maman achète 3 paquets de 2 biscuits. Combien de biscuits a-t-elle en tout ?","6 biscuits","Multiplicatif : valeur du tout"],
@@ -543,7 +584,18 @@ const EP_GS=[
   consigne:"« Comment s'appelle cette forme ? Montre le bon mot. » (rond ou disque acceptés)"},
  {id:'m9',groupe:'Formes et suites',titre:'Suites organisées',mode:'choix',question:'Qu\'est-ce qui vient ensuite ?',
   items:()=>[C('🔴🔵🔴🔵🔴🔵 …','🔴',['🔵','🔴','🟢'],{rang:true}),C('⭐⭐🌙⭐⭐🌙⭐⭐ …','🌙',['⭐','🌙','☀️'],{rang:true}),C('🍎🍐🍌🍎🍐🍌🍎 …','🍐',['🍎','🍐','🍌'],{rang:true})],
-  consigne:"« Regarde bien comment c'est construit. Qu'est-ce qui vient ensuite ? »"}];
+  consigne:"« Regarde bien comment c'est construit. Qu'est-ce qui vient ensuite ? »"},
+ {id:'m10',groupe:'Nombres jusqu\'à 30',titre:'Le rang, la position',mode:'choix',
+  items:()=>[C('Qui est le premier de la file ? (on part de la gauche)','🐶',['🐶','🐱','🐰','🐻'],{fig:'<div class="rang">🐶🐱🐰🐻🐸</div>',emo:true}),C('Qui est le troisième ?','🐰',['🐶','🐱','🐰','🐻'],{fig:'<div class="rang">🐶🐱🐰🐻🐸</div>',emo:true}),
+   C('Qui est le dernier ?','🐸',['🐶','🐰','🐻','🐸'],{fig:'<div class="rang">🐶🐱🐰🐻🐸</div>',emo:true}),C('Qui est le deuxième ?','🚲',['🚗','🚲','🚌','🚂'],{fig:'<div class="rang">🚗🚲🚌🚂</div>',emo:true})],
+  consigne:"« Montre-moi… » On compte toujours à partir de la gauche (montrez le début de la file). Attendu de maternelle : utiliser le nombre pour désigner un rang, une position."},
+ {id:'m11',groupe:'Formes et suites',titre:'Reconnaître les solides',mode:'choix',question:'Comment s\'appelle ce solide ?',
+  items:()=>[['cube','cube'],['boule','boule'],['pyramide','pyramide'],['cylindre','cylindre']].map(([f,n])=>C('',n,['cube','boule','pyramide','cylindre'],{fig:solide(f)})),
+  consigne:"« Comment s'appelle ce solide ? Montre le bon mot. » Si possible, montrez aussi de vrais objets (dé, balle, boîte de conserve)."},
+ {id:'m12',groupe:'Grandeurs',titre:'Comparer des longueurs et des masses',mode:'choix',
+  items:()=>[C('Quel ruban est le plus long ?','le bleu',['le bleu','le rouge'],{fig:rubans(280,170)}),C('Quel ruban est le plus court ?','le bleu',['le bleu','le rouge'],{fig:rubans(120,230)}),
+   C('Quel fruit est le plus lourd ?','🍉',['🍉','🍒'],{fig:balance('🍉','🍒'),emo:true}),C('Qu\'est-ce qui est le plus léger ?','une plume',['une plume','un livre'])],
+  consigne:"« Montre-moi… » L'élève compare à l'œil (rubans alignés à gauche) et lit la balance : le côté qui descend est le plus lourd."},];
 
 // ---------- Fin de CE2 ----------
 function tablesMulCE2(){return paliers(
@@ -559,7 +611,9 @@ const PROBLEMES_CE2=[
  ["Lou a 15 €. Son frère a 3 fois plus d'argent que Lou. Combien d'argent a son frère ?","45 €","Comparaison multiplicative"],
  ["Un car part avec 52 passagers. Au premier arrêt, 18 passagers descendent et 9 montent. Combien de passagers y a-t-il maintenant ?","43 passagers","Deux étapes"],
  ["Un cahier coûte 3 € et un stylo coûte 2 €. Combien coûtent 4 cahiers et 1 stylo ?","14 €","Deux étapes : multiplicative puis additive"],
- ["On partage 24 billes entre 4 enfants. Chacun en a autant. Combien de billes a chaque enfant ?","6 billes","Partage : valeur d'une part"]];
+ ["On partage 24 billes entre 4 enfants. Chacun en a autant. Combien de billes a chaque enfant ?","6 billes","Partage : valeur d'une part"],
+ ["Léa a 3 jupes et 4 tee-shirts. Combien de tenues différentes peut-elle faire avec une jupe et un tee-shirt ?","12 tenues","Produit cartésien"],
+ ["Au marché, Paul achète 3 kg de pommes à 2 € le kilo et un melon à 4 €. Il paie avec un billet de 20 €. Combien d'argent lui rend-on ?","10 €","Trois étapes"]];
 const EP_CE2=[
  {id:'k1',groupe:'Nombres jusqu\'à 10 000',titre:'Lire des nombres',mode:'valider',taille:'xl',question:'Lis ce nombre.',
   items:()=>ordre([[1000,'mille'],[1200,'mille-deux-cents'],[2500,'deux-mille-cinq-cents'],[4300,'quatre-mille-trois-cents'],[3047,'trois-mille-quarante-sept'],[5080,'cinq-mille-quatre-vingts'],[7438,'sept-mille-quatre-cent-trente-huit'],[9005,'neuf-mille-cinq'],[6999,'six-mille-neuf-cent-quatre-vingt-dix-neuf'],[10000,'dix-mille']]).map(([n,l])=>V(nb(n),l)),
@@ -584,15 +638,16 @@ const EP_CE2=[
  {id:'k7',groupe:'Fractions',titre:'Fractions',mode:'choix',
   items:()=>ordre([C('Quelle part de la figure est coloriée ?','3/4',['1/4','3/4','4/3','3/3'],{fig:frac(4,3,'disque')}),C('Quelle part de la figure est coloriée ?','5/12',['5/7','7/12','5/12','12/5'],{fig:frac(12,5,'rect')}),
    C('3/10 … 7/10','<',CMP,{grand:true}),C('1/3 … 1/6','>',CMP,{grand:true}),C('2/5 + 3/5 = …','1',['5/10','1','6/5','1/5'],{grand:true}),
-   C('1/2 = …','2/4',['1/4','2/4','2/2','4/2'],{grand:true}),C('5/10 = …','1/2',['1/5','1/2','5/5','2/1'],{grand:true})]),
-  consigne:"« Montre-moi la bonne réponse. » Fractions inférieures ou égales à 1, de dénominateur jusqu'à 12 : lire, comparer, additionner, fractions égales (programme de CE2)."},
+   C('1/2 = …','2/4',['1/4','2/4','2/2','4/2'],{grand:true}),C('5/10 = …','1/2',['1/5','1/2','5/5','2/1'],{grand:true}),
+   C('2/3 … 2/5','>',CMP,{grand:true}),C('1/2 + 1/4 = …','3/4',['2/6','2/4','3/4','1/8'],{grand:true}),C('1/3 … 2/6','=',CMP,{grand:true})]),
+  consigne:"« Montre-moi la bonne réponse. » Fractions inférieures ou égales à 1, de dénominateur jusqu'à 12 : lire, comparer (même dénominateur, même numérateur, ou un dénominateur multiple de l'autre), additionner, fractions égales (programme de CE2). On peut faire dessiner."},
  {id:'k8',groupe:'Calcul',titre:'Tables d\'addition',mode:'valider',taille:'l',repere:60,attendu:15,
   items:tablesAdd,consigne:"« Dis-moi le nombre qui manque. » Pas de compte à rebours : 16 calculs du plus facile au plus difficile ; la durée est indiquée dans le bilan. Repère de fin de CE2 : <b>15 égalités justes en 1 minute</b>."},
  {id:'k9',groupe:'Calcul',titre:'Tables de multiplication',mode:'valider',taille:'l',repere:60,attendu:12,
   items:tablesMulCE2,consigne:"Même passation (16 calculs, durée mesurée discrètement). Tables de 2 à 9, dans les deux sens (7 × … = 56 ; 42 = 6 × …). Repère de fin de CE2 : <b>12 égalités justes en 1 minute</b>."},
- {id:'k10',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',
-  items:()=>ordre([['Le double de 8',16],['La moitié de 14',7],['Le double de 15',30],['La moitié de 30',15],['Le double de 25',50],['La moitié de 50',25],['Le double de 19',38],['La moitié de 38',19],['Le double de 60',120],['La moitié de 100',50]]).map(([q,a])=>V(q,a)),
-  consigne:"« Dis-moi le résultat. » Doubles des nombres de 1 à 20, de 25, 30… 100 ; moitiés des nombres pairs jusqu'à 40, de 50, 60, 100."},
+ {id:'k10',groupe:'Calcul',titre:'Doubles et moitiés',mode:'valider',taille:'m',repere:60,attendu:12,
+  items:()=>ordre([['Le double de 8',16],['La moitié de 14',7],['Le double de 15',30],['La moitié de 30',15],['Le double de 25',50],['La moitié de 50',25],['Le double de 19',38],['La moitié de 38',19],['Le double de 60',120],['La moitié de 100',50],['3 fois 25',75],['La moitié de 60',30]]).map(([q,a])=>V(q,a)),
+  consigne:"« Dis-moi le résultat. » Faits multiplicatifs : doubles des nombres de 1 à 20, de 25, 30… 100 ; moitiés des nombres pairs jusqu'à 40, de 50, 60, 100 ; multiples de 25. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE2 : <b>12 justes en 1 minute</b>."},
  {id:'k11',groupe:'Calcul',titre:'Calcul mental',mode:'valider',taille:'l',repere:180,attendu:15,
   items:()=>ordre(CALCUL_CE2).map(([q,a])=>V(q.startsWith('la')||q.startsWith('le')?q[0].toUpperCase()+q.slice(1):q+' = …',a)),
   consigne:"« Calcule dans ta tête et dis-moi le résultat. » L'élève peut expliquer sa méthode. Pas de compte à rebours ; la durée est indiquée dans le bilan. Repère de fin de CE2 : <b>15 résultats justes en 3 minutes</b>."},
@@ -607,37 +662,45 @@ const EP_CE2=[
   consigne:"« Pose la multiplication et calcule-la. » D'abord par un nombre à un chiffre, puis par un nombre à deux chiffres (si elle a été apprise ; sinon, arrêtez l'épreuve)."},
  {id:'kpb',groupe:'Résolution de problèmes',titre:'Problèmes',mode:'valider',taille:'s',
   items:()=>PROBLEMES_CE2.map(([q,a,t])=>V(q,a,{dire:q,type:t})),
-  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille puis donne sa réponse. Validez la réponse avec l'unité. Les nombres restent simples : on évalue le type de problème (parties-tout, multiplicatif, comparaison « fois plus », deux étapes, partage)."},
+  consigne:"Lisez l'énoncé à voix haute (ou 🔊), il reste affiché. L'élève cherche sur sa feuille puis donne sa réponse. Validez la réponse avec l'unité. Les nombres restent simples : on évalue le type de problème (parties-tout, multiplicatif, comparaison « fois plus », partage, produit cartésien, deux ou trois étapes)."},
  {id:'k15',groupe:'Grandeurs et mesures',titre:'Heures et durées',mode:'choix',
   items:()=>[[2,10],[7,25],[11,40],[5,55]].map(([h,m])=>{const t=`${h} h ${String(m).padStart(2,'0')}`,f=[`${h} h ${String(m).padStart(2,'0')}`,`${(m/5)%12||12} h ${String(h*5%60).padStart(2,'0')}`,`${h+1} h ${String(m).padStart(2,'0')}`,`${h} h ${String((m+30)%60).padStart(2,'0')}`];return C('Quelle heure est-il ?',t,melange([...new Set(f)]),{fig:horloge(h,m)})})
-   .concat([C('Le film commence à 14 h et finit à 15 h 30. Combien de temps dure-t-il ?','1 h 30',['1 h','1 h 30','30 min','2 h 30']),C('1 heure = … minutes','60',['10','24','60','100'])]),
-  consigne:"« Quelle heure indique l'horloge ? » Heures et minutes (de 5 en 5), puis une durée et une équivalence."},
+   .concat([C('Il est 3 heures de l\'après-midi. On écrit aussi…','15 h',['3 h','13 h','15 h','17 h']),C('Le film commence à 14 h et finit à 15 h 30. Combien de temps dure-t-il ?','1 h 30',['1 h','1 h 30','30 min','2 h 30']),
+   C('Le spectacle commence à 18 h 45 et dure 30 minutes. À quelle heure finit-il ?','19 h 15',['18 h 75','19 h 15','19 h 45','18 h 15']),C('1 heure = … minutes','60',['10','24','60','100'])]),
+  consigne:"« Quelle heure indique l'horloge ? » Heures et minutes (de 5 en 5), écriture jusqu'à 24 h, puis des durées dans une même journée et une équivalence."},
  {id:'k16',groupe:'Grandeurs et mesures',titre:'Mesures',mode:'choix',
-  items:()=>[C('1 m = … cm','100',['10','100','1 000']),C('1 km = … m','1 000',['10','100','1 000']),C('1 kg = … g','1 000',['10','100','1 000']),C('1 L = … dL','10',['10','100','1 000']),
-   C('2 m 30 cm = … cm','230',['23','230','2 030','2 300']),C('Qu\'est-ce qui est le plus lourd ?','1 kg',['900 g','1 kg','pareil'])],
-  consigne:"« Montre-moi la bonne réponse. » Longueurs, masses et contenances."},
+  items:()=>[C('1 m = … cm','100',['10','100','1 000']),C('1 km = … m','1 000',['10','100','1 000']),C('1 kg = … g','1 000',['10','100','1 000']),C('1 L = … dL','10',['10','100','1 000']),C('1 L = … cL','100',['10','100','1 000']),
+   C('1 cm = … mm','10',['10','100','1 000']),C('1 m = … dm','10',['10','100','1 000']),C('1 t = … kg','1 000',['10','100','1 000']),C('2 m 30 cm = … cm','230',['23','230','2 030','2 300']),C('Qu\'est-ce qui est le plus lourd ?','1 kg',['900 g','1 kg','pareil'])],
+  consigne:"« Montre-moi la bonne réponse. » Longueurs (mm, cm, dm, m, km), masses (g, kg, t) et contenances (L, dL, cL)."},
  {id:'k17',groupe:'Grandeurs et mesures',titre:'Monnaie et prix',mode:'choix',
-  items:()=>[C('1 € = … centimes','100',['10','100','1 000']),C('2 € et 50 centimes s\'écrit…','2,50 €',['2,05 €','2,50 €','250 €','25 €']),C('J\'ai 5 €. J\'achète un jus à 1,50 €. On me rend…','3,50 €',['3,50 €','4,50 €','3,05 €','6,50 €'])],
-  consigne:"« Montre-moi la bonne réponse. » Prix écrits avec une virgule (programme de CE2)."},
+  items:()=>[C('1 € = … centimes','100',['10','100','1 000']),C('2 € et 50 centimes s\'écrit…','2,50 €',['2,05 €','2,50 €','250 €','25 €']),C('J\'ai 5 €. J\'achète un jus à 1,50 €. On me rend…','3,50 €',['3,50 €','4,50 €','3,05 €','6,50 €']),
+   C('3,40 € + 2,35 € = …','5,75 €',['5,75 €','5,57 €','6,75 €','57,5 €'],{grand:true}),C('J\'achète un livre à 6,30 €. Je paie avec un billet de 10 €. On me rend…','3,70 €',['4,70 €','3,70 €','3,30 €','16,30 €'])],
+  consigne:"« Montre-moi la bonne réponse. » L'écriture des prix avec une virgule est vue dès le CE1 ; au CE2, on calcule sur des prix (addition et soustraction posées) et on rend la monnaie en complétant. L'élève peut poser le calcul sur sa feuille."},
  {id:'k18',groupe:'Grandeurs et mesures',titre:'Périmètre',mode:'choix',
   items:()=>[C('Un carré a des côtés de 5 cm. Quel est son périmètre ?','20 cm',['10 cm','20 cm','25 cm','15 cm']),C('Un rectangle mesure 6 cm sur 3 cm. Quel est son périmètre ?','18 cm',['9 cm','18 cm','12 cm','36 cm']),C('Un triangle a trois côtés de 4 cm. Quel est son périmètre ?','12 cm',['8 cm','12 cm','16 cm','4 cm'])],
   consigne:"« Le périmètre, c'est la longueur du tour de la figure. » L'élève additionne les longueurs des côtés (aucune formule n'est attendue au CE2) ; il peut dessiner."},
  {id:'k19',groupe:'Espace et géométrie',titre:'Géométrie',mode:'choix',
-  items:()=>[C('Comment s\'appelle cette figure ?','triangle rectangle',['triangle','triangle rectangle','carré','rectangle'],{fig:figure('trect')}),C('Combien de faces a un cube ?','6',['4','6','8','12']),
-   C('Le point au milieu d\'un cercle s\'appelle…','le centre',['le rayon','le centre','le sommet']),C('Une ligne qui partage une figure en deux parties qui se superposent en la pliant s\'appelle…','un axe de symétrie',['un angle droit','un axe de symétrie','un côté'])],
-  consigne:"« Montre-moi la bonne réponse. » Figures, solides, cercle, symétrie."}];
+  items:()=>ordre([['losange','losange'],['pentagone','pentagone'],['hexagone','hexagone'],['quadri','quadrilatère']]).map(([f,n])=>C('Comment s\'appelle cette figure ?',n,['losange','quadrilatère','pentagone','hexagone'],{fig:figure(f)}))
+   .concat([C('Le point au milieu d\'un cercle s\'appelle…','le centre',['le rayon','le centre','le sommet']),C('Un cercle a un rayon de 3 cm. Son diamètre mesure…','6 cm',['3 cm','6 cm','9 cm','1,5 cm']),
+   C('Le trait rouge est-il un axe de symétrie de la figure ?','oui',['oui','non'],{fig:axeSym('maison')}),C('Le trait rouge est-il un axe de symétrie du rectangle ?','non',['oui','non'],{fig:axeSym('rectDiag')}),
+   C('Ce dessin est-il un patron de cube ?','oui',['oui','non'],{fig:patron([[1,0],[0,1],[1,1],[2,1],[3,1],[1,2]])}),C('Ce dessin est-il un patron de cube ?','non',['oui','non'],{fig:patron([[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]])}),
+   C('Une pyramide dont la base est un carré a combien de faces ?','5',['4','5','6','8'],{fig:solide('pyramide')})]),
+  consigne:"« Montre-moi la bonne réponse. » Polygones (losange, quadrilatère, pentagone, hexagone), cercle (centre, rayon, diamètre), axes de symétrie, patron du cube, pyramide décrite par sa base. Pour la symétrie et le patron, l'élève peut s'aider d'un papier calque ou découper."},
+ {id:'k20',groupe:'Organiser des données',titre:'Tableaux et diagrammes',mode:'choix',
+  items:()=>[C('Combien d\'élèves ont 2 frères ou sœurs ?','7',['2','7','9','3'],{fig:tabFratrie()}),C('Combien d\'élèves n\'ont ni frère ni sœur ?','5',['0','5','9','3'],{fig:tabFratrie()}),C('Combien d\'élèves y a-t-il en tout dans la classe ?','24',['4','6','24','21'],{fig:tabFratrie()}),
+   C('Combien de livres la classe de CE2 a-t-elle empruntés ?','60',['6','50','60','70'],{fig:barresEchelle()}),C('Combien de livres la classe de CE1 a-t-elle empruntés ?','45',['4','40','45','50'],{fig:barresEchelle()}),C('Combien de livres de plus que le CP le CE2 a-t-il empruntés ?','30',['3','30','90','20'],{fig:barresEchelle()})],
+  consigne:"Lisez la question. Tableau de données numériques (nombre de frères et sœurs), puis diagramme en barres gradué de 10 en 10 : une barre peut s'arrêter entre deux graduations (45)."}];
 const VERSIONS={
  debut:{lab:'fin de CP',court:'fin CP',titre:'attendus de fin de CP',ep:EP_DEBUT,att:'fin de CP',
   reperes:"Repères de fluence en calcul (fin de CP, programme 2025) : tables d'addition 8 égalités en 1 min · doubles et moitiés 8 en 1 min · calcul mental 9 résultats en 3 min."},
  fin:{lab:'fin de CE1',court:'fin CE1',titre:'attendus de fin de CE1',ep:null,att:'fin de CE1',
-  reperes:"Repères de fluence en calcul (fin de CE1, programme 2025) : tables d'addition 12 égalités en 1 min · tables de multiplication 8 égalités en 1 min · calcul mental 12 résultats en 3 min."}};
+  reperes:"Repères de fluence en calcul (fin de CE1, programme 2025) : tables d'addition 12 égalités en 1 min · tables de multiplication 8 égalités en 1 min · doubles, moitiés et multiples de 25 : 8 en 1 min · calcul mental 12 résultats en 3 min."}};
 VERSIONS.fin.ep=EP_FIN;
 VERSIONS.gs={lab:'fin de GS',court:'fin GS',titre:'attendus de fin de GS',ep:EP_GS,att:'fin de GS',
-  reperes:"Attendus de fin d'école maternelle : dire la suite des nombres jusqu'à 30 ; dénombrer, comparer, composer et décomposer des quantités jusqu'à 10 ; lire les nombres écrits en chiffres jusqu'à 10."};
+  reperes:"Attendus de fin d'école maternelle : dire la suite des nombres jusqu'à 30 ; dénombrer, comparer, composer et décomposer des quantités jusqu'à 10 ; lire les nombres écrits en chiffres jusqu'à 10 ; désigner un rang ; reconnaître des formes et des solides ; comparer des longueurs et des masses."};
 VERSIONS.ce2={lab:'fin de CE2',court:'fin CE2',titre:'attendus de fin de CE2',att:'fin de CE2',
-  reperes:"Repères de fluence en calcul (fin de CE2) : tables d'addition 15 égalités en 1 min · tables de multiplication 12 égalités en 1 min · calcul mental 15 résultats en 3 min."};
-// d1 (tableaux et diagrammes) est commun avec la fin de CE1
-VERSIONS.ce2.ep=EP_CE2.concat(EP_FIN.filter(e=>e.id==='d1'));
+  reperes:"Repères de fluence en calcul (fin de CE2, programme 2025) : tables d'addition 15 égalités en 1 min · tables de multiplication 12 égalités en 1 min · faits multiplicatifs 12 en 1 min · calcul mental 15 résultats en 3 min."};
+VERSIONS.ce2.ep=EP_CE2;
 let EPREUVES=EP_DEBUT;
 const AVERT="Ce bilan s'appuie sur les programmes officiels de l'école en France (Éducation nationale, programmes 2025), mais il n'a aucune valeur officielle ni mesurable : c'est un simple outil d'observation proposé par le site Toujours cap ! (toujourscap.com).";
 const PERIODES={debut:'début d\'année',milieu:'milieu d\'année',fin:'fin d\'année'};
@@ -770,7 +833,7 @@ function accueil(){
  <div class="carte">
   <h2>1. L'élève</h2>
   ${blocMode(EPREUVES.filter(e=>!dispoAuto(e)).map(e=>e.titre).join(', '))}
-  <p class="note" style="margin-top:0;color:#a35a00"><b>⚠️ ${AVERT}</b></p>
+  <p class="note" style="margin-top:0;color:#a35a00"><b>⚠️ ${AVERT}</b> <button class="b petit noprint" data-annexe>📜 Annexe : en quoi ce bilan correspond aux programmes officiels</button></p>
   <p class="note" style="margin-top:0">Une évaluation par niveau, d'après les attendus de fin d'année (Éduscol) : <b>fin de GS</b>, <b>fin de CP</b>, <b>fin de CE1</b> ou <b>fin de CE2</b>. En début d'année, l'élève passe celle du niveau précédent ; en milieu et en fin d'année, celle de son niveau. Les épreuves suivent le programme de mathématiques du cycle 2 (BO n°41 du 31 octobre 2024). L'élève répond à l'oral ou montre sa réponse, l'adulte valide. À la fin, seuls le niveau, le moment de l'année et les scores sont enregistrés (anonymement) pour calculer les moyennes du site. Le prénom n'est jamais enregistré. Dans chaque épreuve, les items vont du plus facile au plus difficile ; après 3 erreurs de suite, l'épreuve s'arrête et on passe à la suivante. L'adulte peut aussi arrêter une épreuve à tout moment (⏭).</p>
   <div class="grille">
    <label>Niveau <b style="color:var(--rouge)">*</b><br><select id="classe"><option value="">— choisir —</option>${['GS','CP','CE1','CE2','Autre'].map(c=>`<option ${c===reglages.classe?'selected':''}>${c}</option>`).join('')}</select></label>
@@ -993,7 +1056,7 @@ function bilan(){
  ${ids.length?`<table class="res"><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment<br>(sans valeur statistique)</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Calculs (tables, doubles, calcul mental) : pas de compte à rebours ; la durée mesurée est donnée à titre indicatif, à comparer aux repères de ${V0.att} du programme 2025, selon le moment de l'année.</p>
- <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b></p>
+ <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b> <button class="b petit noprint" data-annexe>📜 Annexe : correspondance avec les programmes officiels</button></p>
  <p class="note">⚠️ Moyenne du site : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
  ${SY.html}
  <h3>Prénom de l'élève (pour le document)</h3>
@@ -1119,12 +1182,76 @@ function synthese(ids,pctDe,att,liens,lab){
 }
 
 const ATT_M={
- gs:{"Nombres jusqu'à 30":"Dire la suite des nombres jusqu'à 30 ; lire les nombres jusqu'à 10.","Quantités":"Dénombrer, comparer, composer et décomposer des quantités jusqu'à 10.","Problèmes":"Résoudre de petits problèmes d'ajout et de retrait.","Formes et suites":"Reconnaître les formes simples ; prolonger une suite organisée."},
+ gs:{"Nombres jusqu'à 30":"Dire la suite des nombres jusqu'à 30 ; lire les nombres jusqu'à 10.","Quantités":"Dénombrer, comparer, composer et décomposer des quantités jusqu'à 10.","Problèmes":"Résoudre de petits problèmes d'ajout et de retrait.","Formes et suites":"Reconnaître les formes simples et quelques solides ; prolonger une suite organisée.","Grandeurs":"Comparer des objets selon leur longueur ou leur masse."},
  debut:{"Nombres jusqu'à 100":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 100.","Calcul":"Tables d'addition (8 égalités en 1 min), doubles et moitiés, calcul mental (9 en 3 min), addition posée.","Résolution de problèmes":"Résoudre des problèmes additifs et multiplicatifs simples, en une ou deux étapes.","Grandeurs et mesures":"Lire l'heure (heures entières), comparer des longueurs et des masses, utiliser la monnaie.","Espace et géométrie":"Reconnaître les figures et solides usuels ; se repérer, alignement.","Organiser des données":"Lire un tableau et un diagramme simples."},
- fin:{"Nombres jusqu'à 1 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 1 000.","Fractions":"Lire, comparer, additionner et soustraire des fractions simples (dénominateurs 2 à 10).","Calcul":"Tables d'addition (12 en 1 min) et de multiplication (8 en 1 min), calcul mental (12 en 3 min), additions et soustractions posées.","Résolution de problèmes":"Résoudre des problèmes en une ou deux étapes (parties-tout, transformation, comparaison, multiplication, partage).","Grandeurs et mesures":"Lire l'heure (demi-heures, quarts d'heure), durées, longueurs, masses, monnaie.","Espace et géométrie":"Figures et solides, angle droit, alignement, se repérer et coder un déplacement.","Organiser des données":"Lire un tableau à double entrée et un diagramme en barres."},
- ce2:{"Nombres jusqu'à 10 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 10 000.","Fractions":"Fractions inférieures ou égales à 1 (dénominateurs jusqu'à 12) : comparer, additionner, fractions égales.","Calcul":"Tables d'addition (15 en 1 min) et de multiplication de 2 à 9 (12 en 1 min), calcul mental (15 en 3 min), opérations posées dont la multiplication.","Résolution de problèmes":"Résoudre des problèmes en une ou deux étapes, dont multiplicatifs, « fois plus » et partage.","Grandeurs et mesures":"Heures et minutes, durées, conversions (m, km, g, kg, L, dL, cL), prix à virgule, périmètre.","Espace et géométrie":"Cercle, angle droit, symétrie axiale, cube et pavé.","Organiser des données":"Lire un tableau à double entrée et un diagramme en barres."}};
-const LIENS_M={"Nombres jusqu'à 30":"/maths/numeration/","Quantités":"/maths/numeration/","Nombres jusqu'à 100":"/maths/numeration/","Nombres jusqu'à 1 000":"/maths/numeration/","Nombres jusqu'à 10 000":"/maths/numeration/","Calcul":"/maths/calcul/","Fractions":"/maths/","Problèmes":"/maths/problemes/","Résolution de problèmes":"/maths/problemes/","Grandeurs et mesures":"/maths/","Espace et géométrie":"/maths/","Formes et suites":"/maths/","Organiser des données":"/maths/"};
+ fin:{"Nombres jusqu'à 1 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 1 000.","Fractions":"Lire, comparer, additionner et soustraire des fractions simples (dénominateurs 2 à 10).","Calcul":"Tables d'addition (12 en 1 min) et de multiplication (8 en 1 min), doubles, moitiés et multiples de 25 (8 en 1 min), calcul mental (12 en 3 min), additions et soustractions posées.","Résolution de problèmes":"Résoudre des problèmes en une ou deux étapes (parties-tout, transformation, comparaison, multiplication, partage).","Grandeurs et mesures":"Lire l'heure (demi-heures, quarts d'heure), durées, longueurs (km, m, cm), masses (g, kg), monnaie avec les centimes.","Espace et géométrie":"Figures (dont le cercle) et solides (faces, sommets, arêtes), angles droit, aigu, obtus, alignement, coder un déplacement avec des quarts de tour.","Organiser des données":"Lire un tableau à double entrée et un diagramme en barres."},
+ ce2:{"Nombres jusqu'à 10 000":"Lire, écrire, décomposer, comparer et ranger les nombres jusqu'à 10 000.","Fractions":"Fractions inférieures ou égales à 1 (dénominateurs jusqu'à 12) : comparer, additionner, fractions égales.","Calcul":"Tables d'addition (15 en 1 min) et de multiplication de 2 à 9 (12 en 1 min), faits multiplicatifs (12 en 1 min), calcul mental (15 en 3 min), opérations posées dont la multiplication.","Résolution de problèmes":"Résoudre des problèmes en deux ou trois étapes, dont multiplicatifs, « fois plus », partage et produit cartésien.","Grandeurs et mesures":"Heures jusqu'à 24 h, durées, conversions (mm, dm, m, km, g, kg, t, L, dL, cL), calculs sur des prix, périmètre.","Espace et géométrie":"Polygones (losange, pentagone, hexagone), cercle (rayon, diamètre), axes de symétrie, patron du cube, pyramides.","Organiser des données":"Lire des données numériques dans un tableau et un diagramme à l'échelle adaptée."}};
+const LIENS_M={"Nombres jusqu'à 30":"/maths/numeration/","Quantités":"/maths/numeration/","Nombres jusqu'à 100":"/maths/numeration/","Nombres jusqu'à 1 000":"/maths/numeration/","Nombres jusqu'à 10 000":"/maths/numeration/","Calcul":"/maths/calcul/","Fractions":"/maths/","Problèmes":"/maths/problemes/","Résolution de problèmes":"/maths/problemes/","Grandeurs et mesures":"/maths/","Espace et géométrie":"/maths/","Formes et suites":"/maths/","Grandeurs":"/maths/","Organiser des données":"/maths/"};
 const pctMaths=r=>{if(!r||!r.faits)return null;const j=r.ok+r.hes.length;return Math.round(j/(r.arret?r.prevus:r.faits)*100)};
+/* ---------- Annexe : correspondance avec les programmes officiels ---------- */
+// Fenêtre ouverte par les boutons [data-annexe] (accueil et bilan). Contenu tiré du programme de mathématiques
+// du cycle 2 (annexe 4) et du programme du cycle 1, BO n° 41 du 31/10/2024.
+const NIV_M={gs:'GS',debut:'CP',fin:'CE1',ce2:'CE2'};
+const ANNEXE_M=[
+ ['Nombres : lire, écrire, comparer, ranger',['m1','m2','m3','m10','a1','a2','a3','a4','a5','a6','a7','n1','n2','n3','n4','n5','n6','n7','n8','k1','k2','k3','k4','k5','k6'],[
+  ['GS',"Dire la suite des nombres jusqu'à 30, à partir de n'importe quel nombre ; lire les nombres écrits en chiffres jusqu'à 10 ; utiliser le nombre pour désigner un rang."],
+  ['CP',"Nombres jusqu'à 100 ; écriture en lettres maîtrisée jusqu'à cinquante ; nombres ordinaux jusqu'à « vingtième »."],
+  ['CE1',"Nombres jusqu'à 1 000 : écrire sous la dictée, lire, écrire en lettres, comparer, ranger, encadrer ; parité d'un nombre."],
+  ['CE2',"Nombres jusqu'à 10 000 : lire, écrire en chiffres et en lettres (traits d'union entre tous les mots), comparer, ranger."]]],
+ ['Quantités',['m4','m5','m6'],[['GS',"Dénombrer, comparer, composer et décomposer des collections jusqu'à 10."]]],
+ ['Suites organisées',['m9','a8','n9'],[['GS',"Reconnaître et prolonger une suite organisée."],['CP',"Suites répétitives (ABAB…)."],['CE1',"Suites répétitives et évolutives (1, 2, 4, 7, 11…)."]]],
+ ['Fractions',['f1','f2','f3','k7'],[
+  ['CE1',"Fractions inférieures ou égales à 1, dénominateurs 2, 3, 4, 5, 6, 8 et 10 : comparer (même dénominateur ou numérateur 1), additionner et soustraire (même dénominateur)."],
+  ['CE2',"Dénominateurs jusqu'à 12 : égalités entre fractions ; comparer (même dénominateur, même numérateur ou un dénominateur multiple de l'autre) ; additionner et soustraire."]]],
+ ['Faits numériques et calcul mental (fluence)',['a9','a10','a11','a12','c1','c2','c3','c4','k8','k9','k10','k11'],[
+  ['CP',"Tables d'addition : 8 égalités en 1 min ; doubles et moitiés : 8 en 1 min ; calcul mental : 9 résultats en 3 min ; le mot « fois » pour des additions itérées."],
+  ['CE1',"Tables d'addition : 12 en 1 min ; tables de multiplication de 0 à 10 dans les deux sens : 8 en 1 min ; doubles, moitiés et multiples de 25 : 8 en 1 min ; calcul mental : 12 en 3 min."],
+  ['CE2',"Tables d'addition : 15 en 1 min ; tables de multiplication : 12 en 1 min ; faits multiplicatifs : 12 en 1 min ; calcul mental : 15 en 3 min."]],
+  "Repères de fin d'année. Le bilan n'utilise pas de compte à rebours : il mesure la durée et la compare au repère."],
+ ['Opérations posées',['a13','c5','c6','k12','k13','k14'],[
+  ['CP',"Addition posée introduite en période 4 ou 5."],['CE1',"Addition et soustraction posées (soustraction au plus tard en période 3)."],
+  ['CE2',"Addition et soustraction jusqu'à 10 000 ; multiplication posée au plus tard en période 4."]]],
+ ['Résolution de problèmes',['m7','apb','pb','kpb'],[
+  ['GS',"Résoudre de petits problèmes (ajout, retrait, réunion) sur des quantités jusqu'à 10."],
+  ['CP',"Problèmes additifs en une étape (parties-tout, transformation, comparaison) ; additifs en deux étapes et multiplicatifs (nombres jusqu'à 30) ; partages. Au moins 10 problèmes par semaine."],
+  ['CE1',"Mêmes types, plus des problèmes mixtes en deux étapes (une additive, une multiplicative)."],
+  ['CE2',"Comparaison multiplicative (« fois plus »), produit cartésien, problèmes mixtes en deux ou trois étapes."]],
+  "Les nombres sont volontairement petits : on évalue la compréhension du type de problème, pas le calcul."],
+ ['Grandeurs et mesures',['m12','a14','a15','a16','g1','g2','g3','g4','g5','k15','k16','k17','k18'],[
+  ['GS',"Comparer des objets selon leur longueur ou leur masse."],
+  ['CP',"Heures entières ; longueurs en m et cm (1 m = 100 cm) ; comparer des masses (lourd, léger) ; monnaie en euros jusqu'à 100 €."],
+  ['CE1',"Heures, demi-heures, quarts d'heure, matin et après-midi, 1 h = 60 min ; km, m, cm, encadrer une longueur ; g et kg ; centimes et écriture à virgule."],
+  ['CE2',"Heures jusqu'à 24 h et durées ; mm, dm, conversions, périmètre des polygones ; tonne ; L, dL, cL ; calculs sur des prix, rendu de monnaie."]]],
+ ['Espace et géométrie',['m8','m11','a17','a18','a19','s1','s2','s3','s4','k19'],[
+  ['GS',"Reconnaître des formes planes et quelques solides (cube, pyramide, boule, cylindre)."],
+  ['CP',"Cube, boule, cône, cylindre, pavé ; disque, carré, rectangle, triangle ; vérifier un alignement à la règle ; gauche, droite, sur, sous, devant, derrière ; avancer, reculer, tourner."],
+  ['CE1',"Pyramide ; faces, sommets, arêtes ; cercle et disque ; angles droit, aigu, obtus (équerre) ; coder un déplacement (jusqu'à 15 instructions dont 4 rotations), plans."],
+  ['CE2',"Losange, quadrilatère, pentagone, hexagone, rayon, diamètre ; axes de symétrie ; patron du cube ; pyramides décrites par leur base."]]],
+ ['Organiser et gérer des données',['a20','d1','k20'],[
+  ['CP',"Organiser des données dans un tableau et un diagramme en barres ; lire un tableau à double entrée."],
+  ['CE1',"Diagramme en barres gradué de 1 en 1 ; répondre à des questions à partir de tableaux."],
+  ['CE2',"Données numériques (ex. nombre de frères et sœurs) ; diagrammes à l'échelle adaptée ; problèmes à partir de tableaux et de diagrammes."]]]];
+function annexeProgrammes(){
+ const TOUTES=[...new Map(Object.values(VERSIONS).flatMap(v=>v.ep).map(e=>[e.id,e])).values()];
+ const nivs=id=>Object.entries(VERSIONS).filter(([v,x])=>x.ep.some(e=>e.id===id)).map(([v])=>NIV_M[v]);
+ const eps=ids=>ids.map(id=>{const e=TOUTES.find(x=>x.id===id);if(!e)return '';const n=nivs(id);return `<li>${esc(e.titre)}${n.length?` <span class="note">(${n.join(', ')})</span>`:''}</li>`}).join('');
+ const actuel=reglages.version?`<p class="avert">Bilan choisi : <b>${esc(VERSIONS[reglages.version].lab)}</b> (${esc(VERSIONS[reglages.version].titre)})${reglages.classe?`, pour un élève de ${esc(reglages.classe)} en ${esc(PERIODES[reglages.periode])}`:''}. En début d'année, ce sont les attendus du niveau précédent qui sont évalués.</p>`:'';
+ const html=`<h2>📜 Annexe — Correspondance avec les programmes officiels</h2>
+ <p><b>Textes de référence</b> : programme de mathématiques du cycle 2 (CP, CE1, CE2) et programme du cycle 1 pour l'acquisition des premiers outils mathématiques (GS), publiés au Bulletin officiel n° 41 du 31 octobre 2024, en vigueur depuis la rentrée 2025. Chaque version du bilan reprend les attendus de fin d'année d'un niveau.</p>
+ ${actuel}
+ <table class="annexe"><tr><th>Domaine</th><th>Épreuves du bilan <span class="note">(niveaux)</span></th><th>Ce que demande le programme</th></tr>
+ ${ANNEXE_M.map(([g,ids,att,note])=>`<tr><td><b>${esc(g)}</b></td><td><ul>${eps(ids)}</ul></td><td>${att.map(([n,t])=>`<p><b>${n}</b> : ${esc(t)}</p>`).join('')}${note?`<p class="note">${esc(note)}</p>`:''}</td></tr>`).join('')}
+ </table>
+ <h3>Ce que ce bilan n'évalue pas</h3>
+ <p>Les gestes et la manipulation (tracer, reproduire une figure, mesurer ou peser de vrais objets, construire des solides), le recueil de données par une enquête, l'explication orale des procédures et le nombre de problèmes résolus en classe. Pour ces points, appuyez-vous sur vos observations. Les épreuves comptent peu d'items : elles donnent une indication, pas une mesure complète.</p>
+ <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b></p>`;
+ const d=document.createElement('div');d.className='modal';
+ d.innerHTML=`<div class="carte" role="dialog" aria-modal="true" aria-label="Correspondance avec les programmes officiels">${html}<div class="actions"><button class="b" id="mfermer">Fermer</button></div></div>`;
+ document.body.appendChild(d);const fermer=()=>{d.remove();document.removeEventListener('keydown',esc_,true)};
+ const esc_=e=>{if(e.key==='Escape'){e.stopPropagation();fermer()}};document.addEventListener('keydown',esc_,true);
+ d.onclick=e=>{if(e.target===d||e.target.id==='mfermer')fermer()};$('#mfermer').focus({preventScroll:true});
+}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-annexe]'))annexeProgrammes()});
 majEntete();accueil();
 </script>
 </body>
