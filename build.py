@@ -321,9 +321,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
 <meta name="twitter:card" content="summary_large_image">
 {ld}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/polices.css">
 <link rel="stylesheet" href="/style.css?v={CSS_V}">
 </head>
 <body class="fond fond-{fond}">
@@ -343,6 +341,7 @@ def page(title, body, active="", desc="", og_image="", og_type="website", jsonld
   <div class="wrap">
     <p><strong>Toujours cap&nbsp;!</strong> — ressources pédagogiques pour les cycles 2 et 3.</p>
     <p class="muted">© {datetime.now().year} Toujours cap&nbsp;! — Contenus sous licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a> : libres pour la classe, avec mention de la source, sans usage commercial.</p>
+    <p class="muted"><a href="/confidentialite/">Confidentialité et mentions légales</a></p>
   </div>
 </footer>
 <script>{VUE_JS}</script>
@@ -766,6 +765,7 @@ def main():
     shutil.copytree(os.path.join(ROOT, "assets", "images"), os.path.join(OUT, "images"))
     shutil.copytree(os.path.join(ROOT, "assets", "fichiers"), os.path.join(OUT, "fichiers"))  # PDF à télécharger
     shutil.copytree(os.path.join(ROOT, "assets", "audio"), os.path.join(OUT, "audio"))  # voix enregistrées des jeux
+    shutil.copytree(os.path.join(ROOT, "assets", "fonts"), os.path.join(OUT, "fonts"))  # polices hébergées sur le site (pas de Google Fonts)
     for outil in ("le-jackpot-des-contes.html", "lecture-rapide-de-mots-avec-le-tachitoscope.html", "teleprompteur-de-lecture.html", "teleprompteur-a-l-ecoute.html", "les-formules-du-sorcier.html", "puissance-4-syllabique.html", "tour-des-nombres.html", "la-course-des-additions.html", "la-course-des-multiplications.html", "le-chateau-des-nombres.html", "le-puzzle-du-chateau.html", "la-minute-des-syllabes.html", "la-maison-de-briques.html", "le-tape-taupe-des-additions.html", "images-du-quotidien.html", "le-chemin-des-sons.html", "le-chateau-des-detectives.html", "les-fusees-des-syllabes.html", "le-secret-de-la-pyramide.html", "le-mistigri-des-attitudes.html", "les-explorateurs-du-cerveau.html", "la-dictee-de-la-feuille-pliee.html", "redis-la-regle.html", "la-bibliotheque-des-contes.html", "la-roue-du-magicien.html", "le-sous-marin-des-syllabes.html", "les-fleches-de-robin.html", "la-tour-de-controle.html", "les-devinettes-de-la-foret.html", "le-puzzle-magique-des-additions.html", "la-machine-a-conjuguer.html", "la-fiole-de-la-grenouille.html", "la-grande-roue-des-complements.html", "les-jumeaux-des-doubles.html", "le-crocodile-glouton.html", "la-pizzeria-des-fractions.html", "l-atelier-des-barres.html", "les-additions-en-colonne.html", "les-multiplications-en-colonne.html", "le-bal-masque-des-nombres.html", "le-saut-des-virelangues.html", "les-nombres-farceurs.html", "la-dictee-a-trous.html", "le-jour-du-marche.html", "le-jour-du-marche-a-imprimer.html", "le-kiosque-des-mots.html", "les-cristaux-de-la-planete-sonora.html", "bilan-de-lecture.html", "bilan-de-lecture-documents.html", "bilan-de-maths.html", "tour-de-controle.js", "voix.js", "document-ecrit.js", "mesure.js", "course-equipes.js"):
         shutil.copy(os.path.join(ROOT, "assets", outil), os.path.join(OUT, "outils"))
     for copie, source in COPIES.items():
@@ -1045,6 +1045,45 @@ def main():
     </div>
   </aside>
 """ if DON_URL else "") + """</section>""", "/qui-suis-je/", "Présentation de l'auteur du site : enseignant spécialisé, ESADP, qui partage ses outils pédagogiques du quotidien."))
+    write("/confidentialite/", page("Confidentialité et mentions légales", """<section class="wrap narrow prose">
+  <h1>Confidentialité et mentions légales</h1>
+  <p class="lead">Ce site ne vend rien, n'affiche aucune publicité et ne vous suit pas d'un site à l'autre.</p>
+
+  <h2>Éditeur et hébergeur</h2>
+  <p>Toujours cap&nbsp;! est un site personnel et non commercial, édité par un enseignant à titre non professionnel. Conformément à l'article 6-III-2 de la loi n°&nbsp;2004-575 du 21 juin 2004 (LCEN), l'éditeur a choisi de rester anonyme&nbsp;: ses coordonnées ont été communiquées à l'hébergeur.</p>
+  <p><strong>Hébergeur</strong>&nbsp;: Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis — +1 (650) 319-8930 — cloudflare.com.</p>
+  <p>Contenus sous licence <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a>.</p>
+
+  <h2>Ce qui n'est jamais fait</h2>
+  <ul>
+    <li>Aucun cookie publicitaire ni outil de suivi externe (pas de Google Analytics, pas de pixel Facebook).</li>
+    <li>Aucune adresse IP enregistrée.</li>
+    <li>Les polices de caractères sont hébergées sur le site lui-même&nbsp;: votre navigateur ne contacte pas Google pour les afficher.</li>
+    <li>Aucun prénom d'élève n'est enregistré sur le site.</li>
+  </ul>
+
+  <h2>Ce qui est enregistré, et pourquoi</h2>
+  <ul>
+    <li><strong>Mesure d'audience maison</strong>&nbsp;: page vue, temps passé, provenance (site d'origine), pays et région, utilisation des jeux. Un visiteur n'est reconnu que le temps d'une journée, par une empreinte chiffrée qui ne contient pas son adresse IP. Un simple repère «&nbsp;déjà venu&nbsp;» (sans identifiant) est gardé dans votre navigateur.</li>
+    <li><strong>Commentaires</strong>&nbsp;: le nom ou pseudo que vous choisissez et votre message, lus avant publication. Une alerte de nouveau commentaire est transmise par le service d'e-mail Resend. Mettez un pseudo si vous ne voulez pas apparaître sous votre nom.</li>
+    <li><strong>Bilans de lecture et de maths</strong>&nbsp;: seulement le niveau, le moment de l'année et les résultats, pour calculer les moyennes du site. Le prénom éventuel ne sert qu'au document téléchargé et reste sur votre appareil.</li>
+    <li><strong>Suivi des élèves par l'enseignant</strong>&nbsp;: des pseudos d'animaux et les résultats des jeux, effacés au plus tard au bout de 400 jours. Les vrais prénoms restent sur l'appareil de l'enseignant.</li>
+    <li><strong>Jeux à plusieurs écrans</strong>&nbsp;: le nom d'équipe ou de joueur saisi et les scores, effacés après 24&nbsp;heures.</li>
+    <li><strong>Préférences</strong>&nbsp;: certains jeux gardent vos réglages et vos résultats dans votre navigateur (stockage local). Ils ne quittent pas votre appareil&nbsp;; vous pouvez les effacer en supprimant les données du site dans votre navigateur.</li>
+  </ul>
+
+  <h2>Services extérieurs utilisés par certains jeux</h2>
+  <ul>
+    <li><strong>Micro et dictée vocale</strong>&nbsp;: quand un jeu propose de parler, la transcription est faite par votre navigateur (dans Chrome, par les serveurs de Google). Aucun enregistrement de voix d'élève n'est conservé par le site.</li>
+    <li><strong>Correction par IA</strong>&nbsp;: dans les jeux qui la proposent, la phrase de l'élève (texte seulement, sans nom) est envoyée à Anthropic (Claude) pour être corrigée. Ne faites pas écrire de prénom ou d'information personnelle dans ces phrases.</li>
+    <li><strong>Anti-robot</strong>&nbsp;: Cloudflare Turnstile peut vérifier que vous n'êtes pas un robot.</li>
+    <li><strong>Dons</strong>&nbsp;: le bouton «&nbsp;Offrir un café&nbsp;» de la page Qui suis-je&nbsp;? est fourni par Ko-fi, qui traite seul les paiements.</li>
+  </ul>
+
+  <h2>Vos droits</h2>
+  <p>Vous pouvez demander à consulter, corriger ou supprimer un commentaire ou toute donnée vous concernant&nbsp;: laissez un commentaire en précisant «&nbsp;à ne pas publier&nbsp;» (il est lu avant toute publication). Vous pouvez aussi saisir la <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">CNIL</a>.</p>
+  <p class="muted">Mise à jour : novembre 2026.</p>
+</section>""", "", "Confidentialité et mentions légales du site Toujours cap ! : données enregistrées, services utilisés, hébergeur, vos droits."))
 
     domains = [
         ("/francais/", "Lecture-compréhension · Langage oral · Étude de la langue", "Français", "Découvrez des activités ludiques testées et validées par nos petits écoliers.", "/images/domaines/lettrine.jpg"),
