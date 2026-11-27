@@ -114,6 +114,26 @@ label.indispo{opacity:.45}
 .synth{border:2px solid #24527a;border-radius:12px;padding:10px 14px;margin:14px 0}
 .synth h3{margin:.2em 0 .5em}.synth table{width:100%;border-collapse:collapse}.synth td,.synth th{border-bottom:1px solid #dde3ea;padding:6px;text-align:left;vertical-align:top}
 .st-a{color:#1d6b40;font-weight:700}.st-e{color:#a35a00;font-weight:700}.st-n{color:#b3261e;font-weight:700}
+/* ---------- Rapport par domaine ---------- */
+.enbref{background:#eef4fb;border:2px solid #24527a;border-radius:12px;padding:10px 14px;margin:12px 0 16px}
+.legende{font-size:.9rem;color:#3a4a5c}.lg{display:inline-block;font-weight:700;padding:1px 9px;border-radius:20px;margin:0 4px 3px 0}.lg-a{background:#e3f4ea;color:#1d6b40}.lg-e{background:#fff3e0;color:#a35a00}.lg-n{background:#fdecea;color:#b3261e}
+.enbref h3{margin:.1em 0 .4em}.enbref p{margin:.35em 0}
+.rap-t{margin:18px 0 8px}
+table.dom{width:100%;border-collapse:separate;border-spacing:0;border:2px solid #cfd8e3;border-radius:12px;overflow:hidden;margin:0 0 14px;font-size:.95rem}
+table.dom th{background:#f2f5f9;padding:9px 12px;text-align:left;font-size:1.05rem;border:0}
+table.dom .dom-st{float:right;font-size:.95rem;font-weight:700}
+table.dom.dom-a{border-color:#9fd3b4}table.dom.dom-a th{background:#e3f4ea}table.dom.dom-a .dom-st{color:#1d6b40}
+table.dom.dom-e{border-color:#f0c48f}table.dom.dom-e th{background:#fff3e0}table.dom.dom-e .dom-st{color:#a35a00}
+table.dom.dom-n{border-color:#eab0ab}table.dom.dom-n th{background:#fdecea}table.dom.dom-n .dom-st{color:#b3261e}
+table.dom td{width:50%;padding:10px 12px;vertical-align:top;border:0;border-top:1px solid #dde3ea}
+table.dom td.dom-att{background:#fafbfd;border-right:1px solid #dde3ea;line-height:1.45}
+table.dom .lbl{font-size:.78rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#5b6b7d;margin-bottom:5px}
+table.dom .ep{padding:6px 8px;margin:0 0 6px}table.dom .ep:last-child{margin-bottom:0}
+table.dom .ep{border-left:6px solid #cfd8e3;border-radius:4px}table.dom .ep.ep-a{border-left-color:#2e9d5b;background:#f3fbf6}table.dom .ep.ep-e{border-left-color:#e8912d;background:#fff9f0}table.dom .ep.ep-n{border-left-color:#d0453a;background:#fdf3f2}
+table.dom .ep-det{font-size:.86rem;color:#5b6b7d;margin-top:3px;line-height:1.4}
+table.dom .moy{font-size:.78rem;color:#8a96a3;margin-top:3px}
+@media(max-width:640px){table.dom,table.dom tbody,table.dom tr,table.dom td,table.dom th{display:block;width:auto}table.dom td.dom-att{border-right:0}table.dom .dom-st{float:none;display:block;margin-top:2px}}
+@media print{table.dom{break-inside:avoid}}
 /* ---------- Document à imprimer ---------- */
 #docPages{max-width:210mm;margin:0 auto}
 .dpage{background:#fff;color:#222;padding:12mm 13mm;margin:0 0 14px;box-shadow:0 2px 10px rgba(0,0,0,.12);font-family:"Andika","Comic Sans MS",Arial,sans-serif}
@@ -851,43 +871,38 @@ function bilan(){
  stopTimers();onKey=null;
  const ids=idsBilan().filter(id=>resultats[id]);
  const rep=repFluence();
- const lignes=[],texteL=[];
+ const items=[],texteL=[];
  const age=PERIODES[reglages.periode];
  const titreAnon=`Bilan de lecture — ${reglages.classe} — ${age} — ${dateFr(reglages.date)}`;
  const titre=reglages.prenom?`Bilan de lecture — ${reglages.prenom} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
  texteL.push('TITRE',auto()?'Passation en autonomie (correction automatique, à vérifier).':'');
- let grp='';
  ids.forEach(id=>{
   const r=resultats[id];
-  if(r.groupe!==grp){grp=r.groupe;texteL.push(grp.toUpperCase())}
   if(r.type==='texte'){
    const prec=r.lus?Math.round((r.lus-r.nbErr)/r.lus*100):0;
    const [nv,cl]=rep?(r.mclm>=rep?['Atteint','p-a']:r.mclm>=rep*.7?['Proche','p-e']:['En dessous','p-n']):niveau(prec);
-   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)} → <b>${r.mclm} mots correctement lus / min</b>${r.estime?' <span class="note">(estimé au micro)</span>':''}${rep?` (${esc(labRep())})`:''} · précision ${prec} %`+(r.types&&r.types.length?`<br>Types d'erreurs : ${esc(r.types.map(([l,n])=>l+' × '+n).join(' ; '))}`:'')+(r.motsErr.length?`<br><span class="note">Mots mal lus : ${esc(r.motsErr.join(', '))}</span>`:'');
-   lignes.push(`<tr><td>${r.titre}</td><td>${r.mclm} MCLM</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)} → ${r.mclm} mots correctement lus par minute${r.estime?' (estimé au micro)':''}${rep?` (${labRep()})`:''}, précision ${prec} %.`+(r.types&&r.types.length?` Types d'erreurs : ${r.types.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')+(r.motsErr.length?` Mots mal lus : ${r.motsErr.join(', ')}.`:''));
+   const det=`${r.lus} mots lus sur ${r.total}, ${r.nbErr} erreur${r.nbErr>1?'s':''}, ${duree(r.sec)}${r.estime?' (estimé au micro)':''}${rep?` · repère : ${esc(labRep())}`:''} · précision ${prec} %`+(r.types&&r.types.length?`<br>Types d'erreurs : ${esc(r.types.map(([l,n])=>l+' × '+n).join(' ; '))}`:'')+(r.motsErr.length?`<br>Mots mal lus : ${esc(r.motsErr.join(', '))}`:'');
+   items.push({id,groupe:r.groupe,titre:r.titre,score:`<b>${r.mclm} mots correctement lus par minute</b>`,nv,cl,det,detTxt:`${r.lus}/${r.total} mots lus, ${r.nbErr} erreur(s), ${duree(r.sec)}${r.estime?' (estimé au micro)':''}${rep?`, repère : ${labRep()}`:''}, précision ${prec} %.`+(r.types&&r.types.length?` Types d'erreurs : ${r.types.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')+(r.motsErr.length?` Mots mal lus : ${r.motsErr.join(', ')}.`:'')});
   }else{
    const juste=r.ok+r.hes.length,sur=r.arret?r.prevus:r.faits,p=Math.round(juste/sur*100),[nv,cl]=niveau(p);
    const errTxt=r.err.map(x=>x.rep&&x.rep!==x.item?`${x.item} (→ ${x.rep})`:x.item).join(', ');
    const hesTxt=r.hes.map(x=>x.item).join(', ');
    const det=[r.arret?`⛔ Arrêtée après 3 erreurs de suite (item ${r.faits} sur ${r.prevus}) : les items suivants, plus difficiles, sont comptés non réussis.`:r.anticipe?`⏩ Acquis rapidement : ${r.faits} premiers items réussis sur ${r.prevus}, épreuve écourtée.`:r.faits<r.prevus?`Arrêtée après ${r.faits} items sur ${r.prevus}.`:'',errTxt?`Erreurs : ${esc(errTxt)}`:'Aucune erreur.',hesTxt?`Hésitations : ${esc(hesTxt)}`:'',r.typesD&&r.typesD.length?`Types d'erreurs : ${esc(r.typesD.map(([l,n])=>l+' × '+n).join(' ; '))}`:'',r.type==='lire'?`<span class="note">Durée : ${duree(r.sec)}</span>`:''].filter(Boolean).join('<br>');
-   lignes.push(`<tr><td>${r.titre}</td><td>${juste} / ${sur} (${p} %)</td><td><span class="pastille ${cl}">${nv}</span></td><td>${det}</td><td class="moy" data-e="${id}">…</td></tr>`);
-   texteL.push(`- ${r.titre} : ${juste}/${sur} (${p} %) — ${nv}.`+(r.arret?` Arrêtée après 3 erreurs de suite (items suivants comptés non réussis).`:r.anticipe?` Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?` Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:'')+(hesTxt?` Hésitations : ${hesTxt}.`:'')+(r.typesD&&r.typesD.length?` Types d'erreurs : ${r.typesD.map(([l,n])=>l+' × '+n).join(' ; ')}.`:''));
+   items.push({id,groupe:r.groupe,titre:r.titre,score:`${juste} réussi${juste>1?'s':''} sur ${sur} (${p} %)`,nv,cl,det,detTxt:(r.arret?`Arrêtée après 3 erreurs de suite (items suivants comptés non réussis).`:r.anticipe?`Acquis rapidement (${r.faits} premiers items réussis, épreuve écourtée).`:r.faits<r.prevus?`Arrêtée après ${r.faits}/${r.prevus}.`:'')+(errTxt?` Erreurs : ${errTxt}.`:' Aucune erreur.')+(hesTxt?` Hésitations : ${hesTxt}.`:'')+(r.typesD&&r.typesD.length?` Types d'erreurs : ${r.typesD.map(([l,n])=>l+' × '+n).join(' ; ')}.`:'')});
   }
  });
  const nonP=R&&R.nonProposees&&R.nonProposees.length?R.nonProposees.map(id=>TOUTES.find(e=>e.id===id).titre):[];
- if(nonP.length)texteL.push('',`Épreuves non proposées après la lecture du texte (${R.orientMsg}) : ${nonP.join(', ')}.`);
+ const SYp=[];if(nonP.length)SYp.push('',`Épreuves non proposées après la lecture du texte (${R.orientMsg}) : ${nonP.join(', ')}.`);
  const tot=(Date.now()-(R?R.t0:Date.now()))/1000;
- const SY=synthese(ids,pctLecture,attL(),LIENS_L,reglages.version?VERSIONS_L[reglages.version].lab.replace(/^attendus de /,''):reglages.classe);texteL.push('',...SY.lignes);
+ const SY=rapport(items,pctLecture,attL(),LIENS_L,reglages.version?VERSIONS_L[reglages.version].lab.replace(/^attendus de /,''):reglages.classe);texteL.push('',...SY.lignes,...SYp);
  const JX=propositionJeux(ids);texteL.push('',...JX.lignes);
  app.innerHTML=`<div class="carte"><h2>${esc(titre)}</h2>
- ${ids.length?`<table><tr><th>Épreuve</th><th>Score</th><th>Niveau</th><th>Détails</th><th>Moyenne du site<br><span class="note">même niveau · même moment<br>(sans valeur statistique)</span></th></tr>${lignes.join('')}</table>`:'<p>Aucune épreuve passée.</p>'}
+ ${SY.html}
  ${nonP.length?`<p class="avert">📖 <b>Texte d'abord</b> — ${esc(R.orientMsg)}. Épreuves non proposées : ${esc(nonP.join(', '))}.</p>`:''}
  ${auto()?`<p class="avert">🧒 <b>Passation en autonomie</b> : correction automatique (écran, clavier, micro), à vérifier. Les réponses « ne sait pas » et ce qui a été tapé ou entendu figurent dans les détails.</p>`:''}
  <p class="note">Durée totale de la passation : ${duree(tot)}. Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 % (les réponses hésitantes ou autocorrigées comptent comme justes). Fluence : mots correctement lus en une minute, comparés aux repères du programme 2025 (fin CP 30 sur un texte découvert, 50 après préparation ; fin CE1 70 ; fin CE2 90), à adapter selon le moment de l'année et les besoins de l'élève.</p>
  <p class="note" style="color:#a35a00"><b>⚠️ ${AVERT}</b> <button class="b petit noprint" data-annexe>📜 Annexe : correspondance avec les programmes officiels</button></p>
- <p class="note">⚠️ Moyenne du site : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
- ${SY.html}
+ <p class="note">⚠️ Moyenne du site (sous chaque épreuve) : simple curiosité, sans aucune valeur statistique (peu de passations, conditions de passation non contrôlées). Elle ne permet pas de situer un élève.</p>
  ${JX.html}
  <h3>Prénom de l'élève (pour le document)</h3>
  <input type="text" id="prenomFin" value="${esc(reglages.prenom)}" placeholder="facultatif, jamais enregistré sur le site" style="width:100%;max-width:320px">
@@ -906,15 +921,13 @@ function bilan(){
  // Document Word (fichier .doc lisible par Word et LibreOffice), avec le prénom ; rien n'est envoyé au site.
  $('#telech').onclick=()=>{enregistrer();
   const pr=$('#prenomFin').value.trim(),t=pr?`Bilan de lecture — ${pr} (${reglages.classe}, ${age}) — ${dateFr(reglages.date)}`:titreAnon;
-  const src=$('.carte table');const tab=src?src.cloneNode(true):null;
-  if(tab)tab.querySelectorAll('tr').forEach(tr=>{const c=tr.lastElementChild;if(c)c.remove()});
   const obs=$('#obs').value.trim();
   const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t)}</title>
-<style>body{font-family:Arial,sans-serif;font-size:11pt}h1{font-size:16pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px;vertical-align:top;font-size:10pt}th{background:#eee}</style></head><body>
+<style>body{font-family:Arial,sans-serif;font-size:11pt}h1{font-size:16pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px;vertical-align:top;font-size:10pt}th{background:#eee}.enbref{border:1.5pt solid #24527a;padding:6pt;margin:6pt 0 10pt;background:#eef4fb}table.dom{margin:0 0 8pt}table.dom th{text-align:left;font-size:11pt;background:#f2f5f9}table.dom.dom-a th{background:#e3f4ea}table.dom.dom-e th{background:#fff3e0}table.dom.dom-n th{background:#fdecea}.dom-st{font-weight:bold}td.dom-att{width:45%;background:#fafbfd}.lbl{font-size:8pt;font-weight:bold;color:#5b6b7d;text-transform:uppercase}.ep{margin:0 0 4pt}.ep-det{font-size:9pt;color:#555}.pastille{font-size:8pt;font-weight:bold;padding:0 4pt}.p-a{background:#2e9d5b;color:#fff}.p-e{background:#e8912d;color:#fff}.p-n{background:#d0453a;color:#fff}.ep-a{border-left:4pt solid #2e9d5b;background:#f3fbf6;padding-left:4pt}.ep-e{border-left:4pt solid #e8912d;background:#fff9f0;padding-left:4pt}.ep-n{border-left:4pt solid #d0453a;background:#fdf3f2;padding-left:4pt}.lg-a{background:#e3f4ea;color:#1d6b40;font-weight:bold}.lg-e{background:#fff3e0;color:#a35a00;font-weight:bold}.lg-n{background:#fdecea;color:#b3261e;font-weight:bold}</style></head><body>
 <h1>${esc(t)}</h1>${pr?`<p><b>Élève :</b> ${esc(pr)} · <b>Niveau :</b> ${esc(reglages.classe)} · <b>Moment :</b> ${esc(age)} · <b>Date :</b> ${dateFr(reglages.date)}</p>`:''}
 ${auto()?'<p>Passation en autonomie (correction automatique, à vérifier).</p>':''}
-${tab?tab.outerHTML:'<p>Aucune épreuve passée.</p>'}
-${$('#synth')?$('#synth').outerHTML.replace(/<p class="note">.*?<\/p>/,''):''}
+${rapportWord()}
+${nonP.length?`<p>Texte d'abord — ${esc(R.orientMsg)}. Épreuves non proposées : ${esc(nonP.join(', '))}.</p>`:''}
 ${$('#jeux')?$('#jeux').outerHTML.replace(/ href="\//g,' href="https://toujourscap.com/'):''}
 <h2 style="font-size:13pt">Observations</h2><p>${obs?esc(obs).replace(/\n/g,'<br>'):'&nbsp;'}</p>
 <p style="font-size:9pt;color:#666">Niveaux : acquis ≥ 80 %, en cours 50–79 %, non acquis &lt; 50 %.</p><p style="font-size:9pt;color:#a35a00"><b>${AVERT}</b></p></body></html>`;
@@ -934,8 +947,8 @@ async function envoyer(ids){
   const m=await (await fetch(`${API}?classe=${encodeURIComponent(reglages.classe)}&periode=${per}`)).json();
   const C={},A={};(m.classe||[]).forEach(x=>C[x.epreuve]=x);(m.periode||[]).forEach(x=>A[x.epreuve]=x);
   const f=(x,id)=>!x?'—':(id==='ts'||id==='tc'||id==='tl'?`${x.mclm} MCLM`:`${x.pct} %`)+` <span class="note">(${x.n})</span>`;
-  $$('td.moy').forEach(td=>{const id=td.dataset.e;td.innerHTML=`${reglages.classe}, ${PERIODES[per]} : ${f(A[id],id)}<br>${reglages.classe}, toute l'année : ${f(C[id],id)}`});
- }catch(e){$$('td.moy').forEach(td=>td.innerHTML='<span class="note">indisponible dans cet aperçu</span>')}
+  $$('.moy[data-e]').forEach(el=>{const id=el.dataset.e;el.innerHTML=MOY_TXT(per,f(A[id],id),f(C[id],id))});
+ }catch(e){$$('.moy[data-e]').forEach(el=>el.textContent='Moyenne du site : indisponible dans cet aperçu')}
 }
 // Autonomie : arrêter l'exercice en cours et passer au suivant
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#stopEpE')&&R&&R.ep){try{arreterReco()}catch(x){}try{speechSynthesis.cancel()}catch(x){}finEpreuve()}});
@@ -1055,23 +1068,32 @@ function propositionJeux(ids){
  return {html,lignes:['JEUX DU SITE À PROPOSER'+(plus?' POUR ALLER PLUS LOIN':'')].concat(liste.map(([s,x])=>`- ${JEUX[s][0]} (${x.r.join(' ; ')}) : https://toujourscap.com/post/${s}/`))};
 }
 
-/* ---------- Synthèse par rapport aux attendus du niveau ---------- */
-function synthese(ids,pctDe,att,liens,lab){
- const G={};
- ids.forEach(id=>{const r=resultats[id],p=pctDe(r);if(p==null)return;(G[r.groupe]=G[r.groupe]||[]).push(p)});
- const rows=Object.entries(G).map(([g,ps])=>{const m=Math.round(ps.reduce((a,b)=>a+b,0)/ps.length);
-  const st=m>=80?['✅ Atteint','st-a']:m>=50?['🟠 En cours','st-e']:['❌ Pas encore','st-n'];return {g,m,st,a:att[g]||'',l:liens[g]||''}});
- if(!rows.length)return {html:'',lignes:[]};
- const ok=rows.filter(r=>r.m>=80),prio=rows.filter(r=>r.m<80).sort((a,b)=>a.m-b.m);
- const html=`<div class="synth" id="synth"><h3>🎯 Par rapport aux attendus de ${esc(lab)}</h3>
-  <table><tr><th>Domaine</th><th>Attendu (programme 2025)</th><th>Résultat</th></tr>${rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${esc(r.a)}</td><td><span class="${r.st[1]}">${r.st[0]}</span> (${r.m} %)</td></tr>`).join('')}</table>
-  <p><b>Points d'appui :</b> ${ok.length?ok.map(r=>esc(r.g)).join(', '):'aucun domaine atteint pour l\'instant.'}</p>
-  <p><b>Priorités :</b> ${prio.length?prio.map(r=>`${esc(r.g)}${r.l?` (<a href="${r.l}" target="_blank" rel="noopener">jeux du site</a>)`:''}`).join(' ; '):'tous les domaines évalués sont atteints : on peut proposer le bilan du niveau suivant.'}</p>
-  <p class="note">Synthèse automatique, sur peu d'items : elle aide à repérer les priorités, elle ne remplace pas le regard de l'enseignant. Seules les épreuves passées sont prises en compte. ${AVERT}</p></div>`;
- const lignes=['PAR RAPPORT AUX ATTENDUS DE '+lab.toUpperCase()].concat(rows.map(r=>`- ${r.g} : ${r.st[0].replace(/^\S+ /,'')} (${r.m} %) — attendu : ${r.a}`),
-  ['Points d\'appui : '+(ok.length?ok.map(r=>r.g).join(', '):'aucun pour l\'instant')+'.','Priorités : '+(prio.length?prio.map(r=>r.g).join(', '):'aucune')+'.']);
+/* ---------- Rapport par domaine : attendu officiel ↔ ce qu'a réalisé l'élève ---------- */
+function rapport(items,pctDe,att,liens,lab){
+ const G=[],idx={};
+ items.forEach(it=>{if(!(it.groupe in idx)){idx[it.groupe]=G.length;G.push({g:it.groupe,its:[],ps:[]})}const d=G[idx[it.groupe]];d.its.push(it);const p=pctDe(resultats[it.id]);if(p!=null)d.ps.push(p)});
+ if(!G.length)return {html:'<p>Aucune épreuve passée.</p>',lignes:[]};
+ G.forEach(d=>{d.m=d.ps.length?Math.round(d.ps.reduce((a,b)=>a+b,0)/d.ps.length):null;
+  d.st=d.m==null?['Non évalué','x']:d.m>=80?['🟢 Attendu atteint','a']:d.m>=50?['🟠 En cours d’acquisition','e']:['🔴 Pas encore atteint','n'];d.a=att[d.g]||'';d.l=liens[d.g]||''});
+ const ev=G.filter(d=>d.m!=null),ok=ev.filter(d=>d.m>=80),prio=ev.filter(d=>d.m<80).sort((a,b)=>a.m-b.m);
+ const PT={'p-a':'🟢','p-e':'🟠','p-n':'🔴'},CL={'p-a':'ep-a','p-e':'ep-e','p-n':'ep-n'};
+ const lien=d=>d.l?` <a class="noprint" href="${d.l}" target="_blank" rel="noopener">(jeux du site)</a>`:'';
+ const bref=`<div class="enbref"><h3>🔎 En bref</h3>
+  <p class="legende"><span class="lg lg-a">🟢 Acquis</span> 80 % et plus <span class="lg lg-e">🟠 En cours</span> de 50 à 79 % <span class="lg lg-n">🔴 Non acquis</span> moins de 50 %</p>
+  <p><b>${ok.length} domaine${ok.length>1?'s':''} sur ${ev.length}</b> au niveau des attendus de ${esc(lab)}.</p>
+  <p>👍 <b>Points d’appui :</b> ${ok.length?ok.map(d=>esc(d.g)).join(', '):'aucun domaine atteint pour l’instant.'}</p>
+  <p>🎯 <b>À travailler en priorité :</b> ${prio.length?prio.map(d=>esc(d.g)+lien(d)).join(' ; '):'rien de prioritaire : tous les domaines évalués sont atteints, on peut proposer le bilan du niveau suivant.'}</p></div>`;
+ const doms=G.map(d=>`<table class="dom dom-${d.st[1]}"><tr><th colspan="2"><span class="dom-nom">${esc(d.g)}</span><span class="dom-st">${d.st[0]}${d.m!=null?' · '+d.m+' %':''}</span></th></tr>
+  <tr><td class="dom-att"><div class="lbl">📘 Ce qui est attendu (programme 2025)</div>${d.a?esc(d.a):'—'}</td>
+  <td class="dom-fait"><div class="lbl">✏️ Ce qu’a réalisé l’élève</div>${d.its.map(it=>`<div class="ep ${CL[it.cl]||''}"><div><span class="pastille ${it.cl}">${it.nv}</span> <b>${it.titre}</b> : ${it.score}</div>${it.det?`<div class="ep-det">${it.det}</div>`:''}<div class="moy noprint" data-e="${it.id}"></div></div>`).join('')}</td></tr></table>`).join('');
+ const html=`<div class="rapport" id="rapport">${bref}<h3 class="rap-t">Domaine par domaine</h3>${doms}</div>`;
+ const lignes=['EN BREF','Code couleur : 🟢 acquis (80 % et plus) · 🟠 en cours (50 à 79 %) · 🔴 non acquis (moins de 50 %).',`${ok.length} domaine(s) sur ${ev.length} au niveau des attendus de ${lab}.`,'Points d’appui : '+(ok.length?ok.map(d=>d.g).join(', '):'aucun pour l’instant')+'.','À travailler en priorité : '+(prio.length?prio.map(d=>d.g).join(', '):'rien de prioritaire')+'.'];
+ G.forEach(d=>{lignes.push('',d.g.toUpperCase()+' — '+d.st[0].replace(/^\S+ /,'')+(d.m!=null?` (${d.m} %)`:''),'Attendu (programme 2025) : '+(d.a||'—'),'Ce qu’a réalisé l’élève :');d.its.forEach(it=>lignes.push(`${PT[it.cl]||'-'} ${texteBrut(it.titre)} : ${texteBrut(it.score)} (${it.nv}).${it.detTxt?' '+it.detTxt:''}`))});
  return {html,lignes};
 }
+// Version du rapport pour le document Word : sans liens internes ni moyennes du site.
+function rapportWord(){const r=$('#rapport');if(!r)return '<p>Aucune épreuve passée.</p>';const c=r.cloneNode(true);c.querySelectorAll('.noprint').forEach(x=>x.remove());return c.outerHTML}
+const MOY_TXT=(per,a,c)=>`Moyenne du site (sans valeur statistique) — ${esc(reglages.classe)}, ${esc(PERIODES[per])} : ${a} · toute l’année : ${c}`;
 
 const ATT_L={
  "Compréhension orale":"Comprendre des mots et une histoire entendus.",
