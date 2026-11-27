@@ -36,7 +36,8 @@ export async function onRequestGet({ request, env }) {
   const now = Date.now();
   const s = await b.prepare("SELECT jeu, statut, reglages, debut, manche, etape, etape_t FROM salles WHERE code = ?").bind(code).first();
   if (!s) return json({ erreur: "Aucune course avec ce code." }, 404);
-  if (id) await b.prepare("UPDATE salle_joueurs SET vu = ? WHERE salle = ? AND id = ?").bind(now, code, id).run();
+  // « Encore là » noté au plus toutes les 8 s (et non à chaque interrogation) : beaucoup moins d'écritures D1.
+  if (id) await b.prepare("UPDATE salle_joueurs SET vu = ? WHERE salle = ? AND id = ? AND vu < ?").bind(now, code, id, now - 8000).run();
   const { results } = await b.prepare(
     "SELECT id, nom, bons, erreurs, temps, vu, donnees FROM salle_joueurs WHERE salle = ? ORDER BY id").bind(code).all();
   const joueurs = results
