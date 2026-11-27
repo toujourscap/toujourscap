@@ -133,10 +133,12 @@ body.multi #bas{grid-area:bas;margin:0;padding:4px 6px}
 body.multi #bas button{padding:.4em .8em}
 body.multi #table{font-size:.9em;right:6px;bottom:6px}
 body.multi #etoiles{font-size:2.2em}
+body.equipe #pastilles{visibility:hidden}
+body.equipe #haut{min-height:44px}
 #attente{display:none;color:var(--doux);font-weight:bold}
 body.multi #attente{display:block}
 </style>
-<script src="multijoueur.js"></script><script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
+<script src="multijoueur.js"></script><script src="course-equipes.js"></script><script src="tour-de-controle.js"></script><script src="voix.js"></script><script src="document-ecrit.js"></script>
 </head>
 <body>
 
@@ -182,6 +184,10 @@ body.multi #attente{display:block}
       <button data-v="1" aria-pressed="true">Mêmes calculs pour tous<small>pour comparer</small></button>
       <button data-v="0" aria-pressed="false">Calculs différents<small>chacun les siens</small></button>
     </div>
+  </div>
+  <div class="reglage">
+    <h2>5. Course par équipes <small>(plusieurs tablettes + l'écran de l'enseignant)</small></h2>
+    <div id="equipes"></div>
   </div>
 
   <button class="gros" id="jouer">Jouer (10 multiplications)</button>
@@ -247,9 +253,11 @@ var NIV = {"1":{la:2,lb:1,C:3,lib:"niveau 1 (d u × u)"}, "2":{la:3,lb:1,C:4,lib
            "4":{la:2,lb:2,C:4,lib:"niveau 4 (d u × d u)"}, "5":{la:3,lb:2,C:4,lib:"niveau 5 (c d u × d u)"}};
 var reg = {type:"avec", n:"1", guide:true, joueurs:"1", meme:true};
 var MULTI = !!(window.TCMulti && TCMulti.joueur);
+var EQUIPE = false; // course par équipes en cours sur cette tablette
 var partie=null, calc=null, active=null, etapes=[], etape=0, erreursCase=0;
 
 var $ = function(id){return document.getElementById(id);};
+function melange(l){for(var i=l.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=l[i];l[i]=l[j];l[j]=x;}return l;}
 function hasard(a,b){return a + Math.floor(Math.random()*(b-a+1));}
 function lettres(n){return ["m","c","d","u"].slice(4-n);}
 function pos(x){var t=[];do{t.push(x%10);x=Math.floor(x/10);}while(x>0);return t;} // chiffres par position (0 = unités)
@@ -311,7 +319,7 @@ function nouvelle(type,niv,deja){
 function liste(type,niv,nb){
   var l=[];
   for(var i=0;i<nb;i++) l.push(nouvelle(type==="mix"?(i%2?"avec":"sans"):type,niv,l));
-  if(type==="mix") l.sort(function(){return Math.random()-.5;});
+  if(type==="mix") melange(l);
   return l;
 }
 
@@ -634,6 +642,11 @@ function terminer(){
   $("enligne").textContent=calc.a+" × "+calc.b+" = "+calc.p;
   ["pouce","voirTable","verifier"].forEach(function(id){$(id).classList.add("cache");});
   var s=$("suivant"); s.textContent = partie.i<NB-1 ? "Multiplication suivante ➜" : "Voir mon bilan ➜";
+  if(EQUIPE){ // course par équipes : on compte, puis calcul suivant tout seul
+    TCEquipes.resolu(calc.erreurs);
+    setTimeout(function(){ if(EQUIPE && calc && calc.fini){ partie.i++; charger(); } },1200);
+    return;
+  }
   s.classList.remove("cache"); s.focus();
 }
 $("suivant").onclick=function(){ partie.i++; if(partie.i>=NB) fin(); else charger(); };
@@ -679,7 +692,7 @@ function parler(t){
 }
 $("ecouter").onclick=function(){ if(calc) parler(calc.a+" fois "+calc.b); };
 $("pleinEcran").onclick=function(){ var d=document; try{ if(!d.fullscreenElement) d.documentElement.requestFullscreen(); else d.exitFullscreen(); }catch(e){} };
-$("arreter").onclick=function(){ try{speechSynthesis.cancel();}catch(e){} fermerTable(); montre("accueil"); };
+$("arreter").onclick=function(){ try{speechSynthesis.cancel();}catch(e){} fermerTable(); if(EQUIPE){ if(!confirm("Quitter la course de l'équipe ?")) return; TCEquipes.quitter(); return; } montre("accueil"); };
 
 /* ---------- fin ---------- */
 function libelleType(t){return t==="sans"?"sans retenue":t==="avec"?"avec retenue":"avec et sans retenue";}
@@ -770,6 +783,25 @@ $("imprBilan").onclick=function(){
   }});
 };
 if(MULTI) departMulti();
+/* ---------- course par équipes (plusieurs tablettes, relais /api/salle) ---------- */
+function graineRandom(g){ return function(){ g|=0; g=g+0x6D2B79F5|0; var x=Math.imul(g^g>>>15,1|g); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
+function listeGraine(type,n,nb,g){ var sauve=Math.random; Math.random=graineRandom(g); try{ return liste(type,n,nb); } finally{ Math.random=sauve; } }
+if(!MULTI && window.TCEquipes) TCEquipes.init({
+  jeu:"colonnes-multiplications", unite:"multiplications", panneau:$("equipes"),
+  reglages:function(){ return {type:reg.type, n:reg.n, guide:reg.guide}; },
+  libelle:function(R){ return "Multiplications "+libelleType(R.type)+", "+(NIV[R.n]?NIV[R.n].lib:"")+(R.guide?", pas à pas":", tout seul"); },
+  demarrer:function(R){
+    EQUIPE=true; document.body.classList.add("equipe");
+    partie={liste:listeGraine(R.type,R.n,300,R.graine), i:0, resultats:[], type:R.type, n:R.n, guide:R.guide};
+    montre("jeu"); construireClavier(); charger();
+  },
+  arreter:function(){
+    if(!EQUIPE) return; EQUIPE=false; document.body.classList.remove("equipe");
+    if(calc) calc.fini=true; try{speechSynthesis.cancel();}catch(e){} fermerTable(); montre("accueil");
+  },
+  bilan:function(html){ DocEcrit.ouvrir({titre:"Bilan de la course par équipes", jeu:"Les multiplications en colonne", nom:"Bilan course multiplications en colonne", prenom:false, html:function(){
+    return html+"<p style=\"font-size:12px;color:#666\">Simple outil d'observation, sans valeur officielle.</p>"; }}); }
+});
 })();
 </script>
 </body>

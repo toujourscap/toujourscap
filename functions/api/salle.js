@@ -125,7 +125,7 @@ export async function onRequestPost({ request, env }) {
 
   const id = Math.trunc(+d.id) || 0, jt = String(d.jeton || "");
   if (d.a === "score") {
-    const bons = Math.max(0, Math.min(50, Math.trunc(+d.bons) || 0));
+    const bons = Math.max(0, Math.min(500, Math.trunc(+d.bons) || 0)); // 500 : courses chronométrées
     const erreurs = Math.max(0, Math.min(999, Math.trunc(+d.erreurs) || 0));
     const temps = d.temps == null ? null : Math.max(0, Math.min(3600000, Math.trunc(+d.temps) || 0));
     await b.prepare("UPDATE salle_joueurs SET bons = ?, erreurs = ?, temps = ?, donnees = ?, vu = ? WHERE salle = ? AND id = ? AND jeton = ?")
