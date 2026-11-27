@@ -65,6 +65,84 @@ function nomPays(code) {
   try { nomsPays = nomsPays || new Intl.DisplayNames(["fr"], { type: "region" }); return nomsPays.of(code) || code; } catch { return code; }
 }
 
+// Calcule toutes les statistiques d'une période à partir des vues triées par jour, visiteur, id.
+// f = filtre sur une page (ou "") : on ne garde alors que les visites passées par cette page.
+function analyse(lignes, f) {
+  const plus = (m, k, n = 1) => m.set(k, (m.get(k) || 0) + n);
+  const liste = (m, nom) => [...m].map(([k, n]) => ({ [nom]: k, n })).sort((a, b) => b.n - a.n);
+  const tot = { vues: 0, visites: 0, duree: null };
+  const vis = { n: 0, une: 0, neufs: 0, connus: 0, pages: 0 };
+  const jours = new Map(), pages = new Map(), sources = new Map(), pays = new Map(), regions = new Map(),
+    heures = new Map(), semaine = new Map(), appareils = new Map(), entrees = new Map(), sorties = new Map(),
+    avant = new Map(), apres = new Map();
+  let dS = 0, dN = 0;
+  for (let i = 0; i < lignes.length;) {
+    // vs = les vues d'une même visite (même jour, même visiteur), dans l'ordre.
+    let j = i;
+    while (j < lignes.length && lignes[j].jour === lignes[i].jour && lignes[j].visiteur === lignes[i].visiteur) j++;
+    const vs = lignes.slice(i, j);
+    i = j;
+    const vues = f ? vs.filter((r) => r.page === f) : vs;
+    if (!vues.length) continue;
+
+    // Totaux, visites par jour, pages les plus vues.
+    tot.vues += vues.length;
+    tot.visites++;
+    plus(jours, vs[0].jour);
+    const dejaCompte = new Set();
+    for (const r of vues) {
+      if (r.duree > 0) { dS += r.duree; dN++; }
+      let p = pages.get(r.page);
+      if (!p) pages.set(r.page, (p = { page: r.page, vues: 0, visites: 0, s: 0, k: 0 }));
+      p.vues++;
+      if (r.duree > 0) { p.s += r.duree; p.k++; }
+      if (!dejaCompte.has(r.page)) { dejaCompte.add(r.page); p.visites++; }
+    }
+
+    // Première page de la visite (e) : provenance, pays, heure, appareil…
+    const e = vs[0], nb = vs.length;
+    vis.n++;
+    vis.pages += nb;
+    if (nb === 1) vis.une++;
+    if (e.nouveau != null) { vis.connus++; if (e.nouveau === 1) vis.neufs++; }
+    plus(sources, e.source);
+    plus(pays, e.pays);
+    plus(appareils, e.appareil);
+    if (e.region != null) plus(regions, JSON.stringify([e.region, e.pays]));
+    if (e.heure != null) plus(heures, e.heure);
+    plus(semaine, new Date(e.jour + "T00:00:00Z").getUTCDay());
+    let en = entrees.get(e.page);
+    if (!en) entrees.set(e.page, (en = { page: e.page, n: 0, une: 0 }));
+    en.n++;
+    if (nb === 1) en.une++;
+    if (nb > 1) plus(sorties, vs[nb - 1].page);
+
+    // Avec un filtre : pages vues juste avant et juste après la page.
+    if (f) for (let k = 0; k < nb; k++) if (vs[k].page === f) {
+      if (k > 0 && vs[k - 1].page !== f) plus(avant, vs[k - 1].page);
+      if (k < nb - 1 && vs[k + 1].page !== f) plus(apres, vs[k + 1].page);
+    }
+  }
+  tot.duree = dN ? dS / dN : null;
+  return {
+    tot, vis,
+    parJour: [...jours].map(([jour, visites]) => ({ jour, visites })),
+    pagesL: [...pages.values()].map((p) => ({ page: p.page, vues: p.vues, visites: p.visites, duree: p.k ? p.s / p.k : null }))
+      .sort((a, b) => b.vues - a.vues),
+    sourcesL: [...sources].map(([source, n]) => ({ source, n })),
+    paysL: liste(pays, "pays"),
+    regionsL: [...regions].map(([k, n]) => { const [region, p] = JSON.parse(k); return { region, pays: p, n }; })
+      .sort((a, b) => b.n - a.n),
+    heuresL: [...heures].map(([heure, n]) => ({ heure, n })),
+    semaineL: [...semaine].map(([w, n]) => ({ w, n })),
+    appareilsL: liste(appareils, "appareil"),
+    entreesL: [...entrees.values()].sort((a, b) => b.n - a.n),
+    sortiesL: liste(sorties, "page"),
+    avantL: liste(avant, "page"),
+    apresL: liste(apres, "page"),
+  };
+}
+
 export async function onRequestGet({ request, env }) {
   if (!autorise(request, env)) return refus(env);
   let base;
@@ -101,46 +179,30 @@ export async function onRequestGet({ request, env }) {
   const nomJeu = (j) => (jeux[j] ? jeux[j].titre : j.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase()));
 
   const q = (sql, p) => base.prepare(sql).bind(...p).all().then((r) => r.results);
-  const PF = f ? " AND page = ?" : "";
-  const pf = f ? [f] : [];
-  // e = la première page de chaque visite (avec le nombre de pages de la visite) ; avec un filtre : visites passées par cette page.
-  const cte = (d1, d2) => [`WITH v AS (SELECT id, jour, visiteur, page, source, appareil, pays, region, nouveau, heure,
-      ROW_NUMBER() OVER (PARTITION BY jour, visiteur ORDER BY id) AS rn, COUNT(*) OVER (PARTITION BY jour, visiteur) AS nb
-      FROM vues WHERE jour BETWEEN ? AND ?),
-    e AS (SELECT * FROM v WHERE rn = 1${f ? " AND jour || visiteur IN (SELECT jour || visiteur FROM vues WHERE jour BETWEEN ? AND ? AND page = ?)" : ""}) `,
-  f ? [d1, d2, d1, d2, f] : [d1, d2]];
-  const [C, Cp] = cte(debut, fin), [P, Pp] = cte(pdebut, pfin);
   const jeuxDe = f ? Object.keys(jeux).filter((j) => jeux[j].article === f) : null;
   const JF = jeuxDe ? ` AND jeu IN (${jeuxDe.map(() => "?").join(",") || "''"})` : "";
   const jf = jeuxDe || [];
 
   const SQL_JEUX = `SELECT jeu, SUM(type = 'ouvert') AS o, SUM(type = 'commence') AS c, SUM(type = 'fin') AS f,
-      SUM(CASE WHEN type = 'duree' THEN valeur ELSE 0 END) AS d, SUM(type = 'doc') AS doc, SUM(type = 'word') AS w, SUM(type = 'impr') AS i
-      FROM jeux_ev WHERE jour BETWEEN ? AND ?${JF}`;
-  const [
-    [tot], [ptot], [vis], [pvis], parJour, pagesL, pagesP, sourcesL, paysL, regionsL, heuresL, semaineL, appareilsL,
-    entreesL, sortiesL, jeuxL, [pjeux], avantL, apresL,
-  ] = await Promise.all([
-    q(`SELECT COUNT(*) AS vues, COUNT(DISTINCT jour || visiteur) AS visites, AVG(CASE WHEN duree > 0 THEN duree END) AS duree FROM vues WHERE jour BETWEEN ? AND ?${PF}`, [debut, fin, ...pf]),
-    q(`SELECT COUNT(*) AS vues, COUNT(DISTINCT jour || visiteur) AS visites, AVG(CASE WHEN duree > 0 THEN duree END) AS duree FROM vues WHERE jour BETWEEN ? AND ?${PF}`, [pdebut, pfin, ...pf]),
-    q(C + "SELECT COUNT(*) AS n, SUM(nb = 1) AS une, SUM(nouveau = 1) AS neufs, SUM(nouveau IS NOT NULL) AS connus, SUM(nb) AS pages FROM e", Cp),
-    q(P + "SELECT COUNT(*) AS n, SUM(nb = 1) AS une, SUM(nouveau = 1) AS neufs, SUM(nouveau IS NOT NULL) AS connus, SUM(nb) AS pages FROM e", Pp),
-    q(`SELECT jour, COUNT(DISTINCT jour || visiteur) AS visites FROM vues WHERE jour BETWEEN ? AND ?${PF} GROUP BY jour`, [debut, fin, ...pf]),
-    f ? [] : q("SELECT page, COUNT(*) AS vues, COUNT(DISTINCT jour || visiteur) AS visites, AVG(CASE WHEN duree > 0 THEN duree END) AS duree FROM vues WHERE jour BETWEEN ? AND ? GROUP BY page ORDER BY vues DESC LIMIT 60", [debut, fin]),
-    f ? [] : q("SELECT page, COUNT(*) AS vues FROM vues WHERE jour BETWEEN ? AND ? GROUP BY page", [pdebut, pfin]),
-    q(C + "SELECT source, COUNT(*) AS n FROM e GROUP BY source", Cp),
-    q(C + "SELECT pays, COUNT(*) AS n FROM e GROUP BY pays ORDER BY n DESC LIMIT 15", Cp),
-    q(C + "SELECT region, pays, COUNT(*) AS n FROM e WHERE region IS NOT NULL GROUP BY region, pays ORDER BY n DESC LIMIT 15", Cp),
-    q(C + "SELECT heure, COUNT(*) AS n FROM e WHERE heure IS NOT NULL GROUP BY heure", Cp),
-    q(C + "SELECT CAST(strftime('%w', jour) AS INTEGER) AS w, COUNT(*) AS n FROM e GROUP BY w", Cp),
-    q(C + "SELECT appareil, COUNT(*) AS n FROM e GROUP BY appareil ORDER BY n DESC", Cp),
-    f ? [] : q(C + "SELECT page, COUNT(*) AS n, SUM(nb = 1) AS une FROM e GROUP BY page ORDER BY n DESC LIMIT 15", Cp),
-    f ? [] : q(C + "SELECT page, COUNT(*) AS n FROM v WHERE rn = nb AND nb > 1 GROUP BY page ORDER BY n DESC LIMIT 15", Cp),
+  SUM(CASE WHEN type = 'duree' THEN valeur ELSE 0 END) AS d, SUM(type = 'doc') AS doc, SUM(type = 'word') AS w, SUM(type = 'impr') AS i
+  FROM jeux_ev WHERE jour BETWEEN ? AND ?${JF}`;
+
+  // Une seule lecture de la table vues par période ; tous les calculs se font ensuite en JavaScript (analyse).
+  const COLS = "id, jour, visiteur, page, source, appareil, pays, region, nouveau, heure, duree";
+  const lire = (d1, d2) => q(`SELECT ${COLS} FROM vues WHERE jour BETWEEN ? AND ? ORDER BY jour, visiteur, id`, [d1, d2]);
+  const [lignes, plignes, jeuxL, [pjeux]] = await Promise.all([
+    lire(debut, fin),
+    lire(pdebut, pfin),
     q(`${SQL_JEUX} GROUP BY jeu ORDER BY c DESC, o DESC`, [debut, fin, ...jf]),
     q(SQL_JEUX, [pdebut, pfin, ...jf]),
-    f ? q("SELECT prec AS page, COUNT(*) AS n FROM (SELECT page, LAG(page) OVER (PARTITION BY jour, visiteur ORDER BY id) AS prec FROM vues WHERE jour BETWEEN ? AND ?) WHERE page = ? AND prec IS NOT NULL AND prec <> page GROUP BY prec ORDER BY n DESC LIMIT 10", [debut, fin, f]) : [],
-    f ? q("SELECT suiv AS page, COUNT(*) AS n FROM (SELECT page, LEAD(page) OVER (PARTITION BY jour, visiteur ORDER BY id) AS suiv FROM vues WHERE jour BETWEEN ? AND ?) WHERE page = ? AND suiv IS NOT NULL AND suiv <> page GROUP BY suiv ORDER BY n DESC LIMIT 10", [debut, fin, f]) : [],
   ]);
+  const A = analyse(lignes, f), B = analyse(plignes, f);
+  const tot = A.tot, ptot = B.tot, vis = A.vis, pvis = B.vis, parJour = A.parJour;
+  const pagesL = f ? [] : A.pagesL.slice(0, 60), pagesP = f ? [] : B.pagesL;
+  const sourcesL = A.sourcesL, paysL = A.paysL.slice(0, 15), regionsL = A.regionsL.slice(0, 15);
+  const heuresL = A.heuresL, semaineL = A.semaineL, appareilsL = A.appareilsL;
+  const entreesL = f ? [] : A.entreesL.slice(0, 15), sortiesL = f ? [] : A.sortiesL.slice(0, 15);
+  const avantL = f ? A.avantL.slice(0, 10) : [], apresL = f ? A.apresL.slice(0, 10) : [];
 
   // Provenance regroupée.
   const cats = {}, details = {};
