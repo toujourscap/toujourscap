@@ -125,6 +125,22 @@
   .ha-fin ul{font-family:Andika,sans-serif;font-size:20px;line-height:1.8;margin:6px 0 14px}
   .ha-fin .barre{color:#b02a2a;text-decoration:line-through}
   .ha-debut{text-align:center;font-size:18px}
+  /* ---- Dictée entière ---- */
+  #entiere{display:none;max-width:980px;margin:0 auto;padding:18px 20px 40px}
+  body.mode-entiere header, body.mode-entiere main{display:none}
+  body.mode-entiere #entiere{display:block}
+  #enIn{width:100%;min-height:260px;font-family:Andika,sans-serif;font-size:24px;line-height:1.9;color:#1d4fa3;border:2px solid var(--line);border-radius:10px;padding:12px 14px;background:#f9fbfa;resize:vertical}
+  #enIn:focus{outline:3px solid #4fa3ff;outline-offset:1px;background:#fff}
+  .en-cor{font-family:Andika,sans-serif;font-size:23px;line-height:2.3}
+  .en-cor p{margin:0 0 .3em}
+  .en-cor .ok{color:#1f8a4c}
+  .en-cor .maj{background:#fdeee6;border-bottom:2.5px solid #e8835a;border-radius:4px;padding:0 2px}
+  .en-cor .ko{background:#fde8e8;border-bottom:2.5px solid #d23c3c;border-radius:4px;padding:0 3px;color:#1f8a4c;font-weight:700}
+  .en-cor .ko s,.en-cor .plus{color:#b02a2a;font-weight:400;font-size:.8em;margin-right:3px}
+  .en-cor .oubli{background:#fff4d6;border:1.5px dashed #c9932d;border-radius:4px;padding:0 3px;color:#8a5a00;font-weight:700}
+  .en-cor .plus{text-decoration:line-through;color:#9a8f86}
+  .en-leg{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:4px 0 12px}
+  .en-leg i{font-style:normal;padding:0 5px;border-radius:4px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:16mm 15mm}
@@ -232,8 +248,10 @@
     <h2 style="margin-top:22px"><span class="step">5</span> Sur l'ordinateur</h2>
     <div class="choix" id="ecranChoix">
       <button type="button" data-e="trous" class="active">✏️ Dictée à trous</button>
+      <button type="button" data-e="entiere">📝 Dictée entière</button>
       <button type="button" data-e="hasard">🎲 Mots au hasard</button>
     </div>
+    <p class="hint" id="entiereHint" hidden style="margin:0 0 10px">L'élève écoute la dictée et écrit tout le texte. Puis l'ordinateur corrige mot par mot : mots justes, mots faux (avec le bon mot), mots oubliés. Les trous ne servent pas ici.</p>
     <div id="hasardOpts" class="off" style="margin-bottom:10px">
       <label for="source">Mots tirés au hasard</label>
       <select id="source">
@@ -247,7 +265,7 @@
       <button id="creerLien">🔗 Créer le lien pour les élèves</button>
     </div>
     <div class="lien-box" id="lienBox"><input type="text" id="lienTxt" readonly><button id="copierLien">Copier</button></div>
-    <p class="hint">L'élève écoute la dictée, écrit les mots dans les trous puis vérifie. Le lien contient la dictée : rien n'est enregistré sur un serveur.</p>
+    <p class="hint"><span id="ecranHint">L'élève écoute la dictée, écrit les mots dans les trous puis vérifie.</span> Le lien contient la dictée : rien n'est enregistré sur un serveur.</p>
     <p class="hint" id="printHint">Imprimer : fiche élève puis corrigé (si coché). Le fichier Word se modifie avant impression.</p>
   </section>
 </main>
@@ -306,6 +324,42 @@
     </div>
   </div>
   <div class="el-card ha-fin" id="haFin" hidden></div>
+</section>
+
+<section id="entiere">
+  <div class="el-top">
+    <h2 id="enTitre">Dictée</h2>
+    <button id="enRetour">← Retour aux réglages</button>
+  </div>
+  <div class="el-card">
+    <div class="el-ecoute" id="enEcoute">
+      <button class="primary" id="enTout">🔊 Écouter toute la dictée</button>
+      <button id="enPrec" title="Phrase précédente">◀</button>
+      <button id="enPhrase">🔊 Phrase <span id="enNum">1</span> / <span id="enNbP">1</span></button>
+      <button id="enSuiv" title="Phrase suivante">▶</button>
+      <button id="enStop">⏹</button>
+      <label class="phr" style="display:flex;gap:6px;align-items:center;margin:0">Vitesse
+        <select id="enVit" style="width:auto;padding:4px"><option value="0.6">lente</option><option value="0.8" selected>normale</option><option value="1">rapide</option></select></label>
+    </div>
+    <div id="enEcrire">
+      <textarea id="enIn" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Écris la dictée" placeholder="Écoute la dictée et écris-la ici…"></textarea>
+      <div class="accents" id="enAcc"></div>
+      <div class="btns">
+        <button class="primary" id="enCorriger">✔ J'ai fini : corriger</button>
+        <button id="enEffacer">Tout effacer</button>
+      </div>
+    </div>
+    <div id="enCorrection" hidden>
+      <div class="en-leg"><span><i style="color:#1f8a4c">vert</i> juste</span><span><i style="background:#fde8e8"><s style="color:#b02a2a">faux</s> bon mot</i></span><span><i style="background:#fff4d6">mot oublié</i></span><span><i style="background:#fdeee6">majuscule</i></span><span><i style="color:#9a8f86;text-decoration:line-through">mot en trop</i></span></div>
+      <div class="en-cor" id="enCor"></div>
+      <div class="el-res" id="enRes"></div>
+      <div class="btns">
+        <button class="primary" id="enReprendre">✏️ Corriger ma dictée</button>
+        <button id="enRecom">Recommencer à zéro</button>
+        <button id="enDoc">📄 Bilan à imprimer ou télécharger</button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <div id="printArea"></div>
@@ -561,12 +615,12 @@ function phrasesDe(texte){
 let elPhrases = [], elIdx = 0;
 const synth = window.speechSynthesis;
 function voixFr(){ try { return synth.getVoices().filter(v => /^fr/i.test(v.lang)).sort((a,b)=> (/fr-FR/i.test(b.lang)) - (/fr-FR/i.test(a.lang)))[0]; } catch(e){ return null; } }
-function dire(txt){
+function dire(txt, vit){
   if (!synth) return;
   try {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(txt.replace(/\n/g," "));
-    u.lang = "fr-FR"; u.rate = +$("elVit").value; const v = voixFr(); if (v) u.voice = v;
+    u.lang = "fr-FR"; u.rate = +$(vit || "elVit").value; const v = voixFr(); if (v) u.voice = v;
     synth.speak(u);
   } catch(e){}
 }
@@ -793,23 +847,135 @@ $("haRetour").onclick = () => {
   ha = null; document.body.classList.remove("mode-hasard"); toutRendre();
 };
 
-// Choix de l'écran : dictée à trous ou mots au hasard
+/* ============ Dictée entière ============ */
+// L'élève écrit tout le texte ; on aligne ses mots sur ceux de la dictée (distance d'édition pondérée).
+let en = null;
+const motsDe = txt => (txt.replace(/[’`]/g,"'").match(WORD_RE) || []);
+const sansAcc = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function lev(a, b){
+  const m = a.length, n = b.length; if (!m) return n; if (!n) return m;
+  let p = Array.from({length:n+1}, (_, j) => j);
+  for (let i = 1; i <= m; i++){ const c = [i]; for (let j = 1; j <= n; j++) c[j] = Math.min(p[j]+1, c[j-1]+1, p[j-1] + (a[i-1] === b[j-1] ? 0 : 1)); p = c; }
+  return p[n];
+}
+function coutSub(r, e){
+  if (r === e) return 0;
+  if (r.toLowerCase() === e.toLowerCase()) return 0.05;
+  const a = sansAcc(r), b = sansAcc(e);
+  if (a === b) return 0.3;
+  return 0.4 + 1.2 * lev(a, b) / Math.max(a.length, b.length);   // > 2 (= oubli + mot en trop) si trop différent
+}
+function aligner(ref, ecr){
+  const m = ref.length, n = ecr.length;
+  const D = Array.from({length:m+1}, () => new Float64Array(n+1));
+  for (let i = 1; i <= m; i++) D[i][0] = i;
+  for (let j = 1; j <= n; j++) D[0][j] = j;
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+    D[i][j] = Math.min(D[i-1][j] + 1, D[i][j-1] + 1, D[i-1][j-1] + coutSub(ref[i-1], ecr[j-1]));
+  // remontée : pour chaque mot de la dictée, ce qui a été écrit (ou rien) + les mots en trop placés avant lui
+  const res = ref.map(() => ({e: null, avant: []})), fin = [];
+  let i = m, j = n;
+  while (i > 0 || j > 0){
+    if (i > 0 && j > 0 && Math.abs(D[i][j] - (D[i-1][j-1] + coutSub(ref[i-1], ecr[j-1]))) < 1e-9){ res[i-1].e = ecr[j-1]; i--; j--; }
+    else if (i > 0 && Math.abs(D[i][j] - (D[i-1][j] + 1)) < 1e-9){ i--; }
+    else { (i < m ? res[i].avant : fin).unshift(ecr[j-1]); j--; }
+  }
+  return {res, fin};
+}
+function ouvrirEntiere(d){
+  $("enTitre").textContent = d.t || "Dictée";
+  en = {d, phrases: phrasesDe(d.x || ""), idx: 0, essais: 0, bilan: null};
+  $("enNum").textContent = 1; $("enNbP").textContent = en.phrases.length || 1;
+  $("enEcoute").style.display = synth ? "" : "none";
+  $("enIn").value = ""; $("enEcrire").hidden = false; $("enCorrection").hidden = true;
+  $("enDoc").style.display = window.DocEcrit ? "" : "none";
+  $("enRetour").style.display = elDepuisLien ? "none" : "";
+  document.body.classList.remove("mode-eleve","mode-hasard"); document.body.classList.add("mode-entiere");
+  window.scrollTo(0,0); setTimeout(() => $("enIn").focus(), 50);
+}
+function enCorriger(){
+  const ecr = motsDe($("enIn").value);
+  if (!ecr.length){ $("enIn").focus(); return toast("Écris d'abord la dictée."); }
+  try { synth.cancel(); } catch(e){}
+  en.essais++;
+  const toks = decouper(en.d.x || ""), mots = toks.filter(t => t.word);
+  const {res, fin} = aligner(mots.map(t => t.t.replace(/[’`]/g,"'")), ecr);
+  let ok = 0, maj = 0; const erreurs = [];
+  const plus = arr => arr.map(w => `<span class="plus" title="mot en trop">${esc(w)}</span> `).join("");
+  let html = "<p>", k = 0;
+  toks.forEach(tk => {
+    if (tk.br){ html += "</p><p>"; return; }
+    if (!tk.word){ html += esc(tk.t); return; }
+    const r = res[k++], bon = tk.t.replace(/[’`]/g,"'");
+    html += plus(r.avant);
+    if (r.e === bon){ ok++; html += `<span class="ok">${esc(tk.t)}</span>`; }
+    else if (r.e && r.e.toLowerCase() === bon.toLowerCase()){ maj++; html += `<span class="maj" title="attention à la majuscule">${esc(r.e)}</span>`; erreurs.push({bon: tk.t, e: r.e, type: "majuscule"}); }
+    else if (r.e){ html += `<span class="ko" title="tu as écrit : ${esc(r.e)}"><s>${esc(r.e)}</s>${esc(tk.t)}</span>`; erreurs.push({bon: tk.t, e: r.e, type: "faux"}); }
+    else { html += `<span class="oubli" title="mot oublié">${esc(tk.t)}</span>`; erreurs.push({bon: tk.t, e: "", type: "oublié"}); }
+  });
+  html += (fin.length ? " " + plus(fin) : "") + "</p>";
+  const enTrop = res.reduce((s, r) => s + r.avant.length, 0) + fin.length;
+  $("enCor").innerHTML = html.replace(/<p><\/p>/g, "");
+  const n = mots.length, faux = erreurs.filter(e => e.type === "faux").length, oub = erreurs.filter(e => e.type === "oublié").length;
+  $("enRes").innerHTML = ok === n && !enTrop ? `Bravo ! Les ${n} mots sont justes. 🎉`
+    : `<b>${ok}</b> mot${ok > 1 ? "s" : ""} juste${ok > 1 ? "s" : ""} sur ${n}` +
+      [faux && `${faux} mot${faux > 1 ? "s" : ""} faux`, oub && `${oub} oublié${oub > 1 ? "s" : ""}`, maj && `${maj} majuscule${maj > 1 ? "s" : ""}`, enTrop && `${enTrop} mot${enTrop > 1 ? "s" : ""} en trop`].filter(Boolean).map(x => " · " + x).join("") +
+      `<div style="font-weight:400;font-size:15px;color:var(--muted);margin-top:4px">La ponctuation n'est pas corrigée. Clique sur « Corriger ma dictée » pour reprendre ton texte.</div>`;
+  if (!en.bilan) en.bilan = {ok, n, erreurs, texte: $("enIn").value};   // bilan = premier essai
+  en.dernier = {ok, n, erreurs, texte: $("enIn").value};
+  $("enEcrire").hidden = true; $("enCorrection").hidden = false;
+  window.scrollTo(0, 0);
+}
+function enDocument(){
+  const b = en.bilan, l = en.dernier, titre = en.d.t || "Dictée";
+  const lignes = arr => arr.map(e => `<tr><td><b>${esc(e.bon)}</b></td><td>${e.type}</td><td>${e.e ? esc(e.e) : "—"}</td></tr>`).join("");
+  const aRevoir = [...new Map(b.erreurs.filter(e => e.type !== "majuscule").map(e => [e.bon.toLowerCase(), e.bon])).values()];
+  DocEcrit.ouvrir({ titre: "Bilan – dictée entière", jeu: "La dictée à trous", nom: "Bilan dictee entiere", prenom: true,
+    html: () => `<p><b>${esc(titre)}</b> — premier essai : <b>${b.ok}</b> mot${b.ok > 1 ? "s" : ""} juste${b.ok > 1 ? "s" : ""} sur ${b.n}` +
+      (en.essais > 1 ? ` ; après ${en.essais} essais : <b>${l.ok}</b> sur ${l.n}` : "") + `.</p>
+      <h2>Ce que l'élève a écrit (premier essai)</h2><p style="white-space:pre-wrap">${esc(b.texte)}</p>
+      <h2>Les erreurs</h2>${b.erreurs.length ? `<table><tr><th>Mot de la dictée</th><th>Erreur</th><th>Écrit par l'élève</th></tr>${lignes(b.erreurs)}</table>` : "<p>Aucune erreur. 🎉</p>"}
+      ${aRevoir.length ? `<h2>Je m'entraîne : j'écris chaque mot 3 fois</h2><table>${aRevoir.map(m => `<tr><td style="width:28%"><b>${esc(m)}</b></td><td style="width:24%">&nbsp;</td><td style="width:24%">&nbsp;</td><td style="width:24%">&nbsp;</td></tr>`).join("")}</table>` : ""}
+      <h2>Le texte de la dictée</h2><p style="white-space:pre-wrap">${esc(en.d.x || "")}</p>` });
+}
+$("enCorriger").onclick = enCorriger;
+$("enEffacer").onclick = () => { if (!$("enIn").value || confirmEffacer()) { $("enIn").value = ""; $("enIn").focus(); } };
+function confirmEffacer(){ const b = $("enEffacer"); if (b.dataset.sur){ delete b.dataset.sur; b.textContent = "Tout effacer"; return true; } b.dataset.sur = 1; b.textContent = "Sûr ? Clique encore"; setTimeout(() => { delete b.dataset.sur; b.textContent = "Tout effacer"; }, 3000); return false; }
+$("enReprendre").onclick = () => { $("enCorrection").hidden = true; $("enEcrire").hidden = false; $("enIn").focus(); };
+$("enRecom").onclick = () => { en.bilan = null; en.essais = 0; $("enIn").value = ""; $("enCorrection").hidden = true; $("enEcrire").hidden = false; $("enIn").focus(); };
+$("enDoc").onclick = () => { if (window.DocEcrit && en && en.bilan) enDocument(); };
+clavier($("enAcc"), () => $("enIn"));
+$("enTout").onclick = () => dire(en.phrases.join(" "), "enVit");
+$("enPhrase").onclick = () => dire(en.phrases[en.idx] || "", "enVit");
+$("enPrec").onclick = () => { en.idx = Math.max(0, en.idx-1); $("enNum").textContent = en.idx+1; dire(en.phrases[en.idx] || "", "enVit"); };
+$("enSuiv").onclick = () => { en.idx = Math.min(en.phrases.length-1, en.idx+1); $("enNum").textContent = en.idx+1; dire(en.phrases[en.idx] || "", "enVit"); };
+$("enStop").onclick = () => { try { synth.cancel(); } catch(e){} };
+$("enRetour").onclick = () => {
+  try { synth.cancel(); } catch(e){}
+  en = null; document.body.classList.remove("mode-entiere"); toutRendre();
+};
+function ouvrirSelon(d){ if (d.m === "entiere") ouvrirEntiere(d); else if (d.r) ouvrirHasard(d); else ouvrirEleve(d); }
+
+// Choix de l'écran : dictée à trous, dictée entière ou mots au hasard
 let ecran = "trous";
 function setEcran(e){
-  ecran = e === "hasard" ? "hasard" : "trous";
+  ecran = ["hasard","entiere"].includes(e) ? e : "trous";
   document.querySelectorAll("#ecranChoix button").forEach(b => b.classList.toggle("active", b.dataset.e === ecran));
   $("hasardOpts").classList.toggle("off", ecran !== "hasard");
-  $("faireEcran").textContent = ecran === "hasard" ? "▶ Lancer les mots au hasard" : "▶ Faire la dictée à l'écran";
+  $("entiereHint").hidden = ecran !== "entiere";
+  $("faireEcran").textContent = ecran === "hasard" ? "▶ Lancer les mots au hasard" : ecran === "entiere" ? "▶ Faire la dictée entière à l'écran" : "▶ Faire la dictée à l'écran";
+  $("ecranHint").textContent = ecran === "hasard" ? "L'élève écoute chaque mot et l'écrit." : ecran === "entiere" ? "L'élève écoute la dictée, l'écrit en entier puis la fait corriger." : "L'élève écoute la dictée, écrit les mots dans les trous puis vérifie.";
   $("lienBox").classList.remove("on");
 }
 document.querySelectorAll("#ecranChoix button").forEach(b => b.onclick = () => { setEcran(b.dataset.e); sauver(); });
 $("source").addEventListener("input", () => { $("lienBox").classList.remove("on"); sauver(); });
-const besoinTrous = () => ecran === "trous" || $("source").value === "trous";
+const besoinTrous = () => ecran === "trous" || (ecran === "hasard" && $("source").value === "trous");
 
 // Données de la dictée (texte + trous) <-> lien
 function donnees(){
   const d = {t:$("titre").value.trim(), x:$("texte").value, h:tokens.filter(t=>t.word&&t.on).map(t=>t.id), i:$("ini").checked, b:$("banque").checked, e:$("egal").checked};
   if (ecran === "hasard") d.r = $("source").value;
+  if (ecran === "entiere"){ d.m = "entiere"; delete d.h; delete d.b; delete d.i; delete d.e; }
   return d;
 }
 function encoder(d){ const b = new TextEncoder().encode(JSON.stringify(d)); let s = ""; b.forEach(c => s += String.fromCharCode(c)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
@@ -818,8 +984,9 @@ function decoder(s){ s = s.replace(/-/g,"+").replace(/_/g,"/"); const bin = atob
 let etatEnseignant = null;
 $("faireEcran").onclick = () => {
   if (besoinTrous() && !tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  if (!tokens.some(t=>t.word)) return toast("Colle d'abord le texte de la dictée.");
   etatEnseignant = donnees();
-  if (etatEnseignant.r) ouvrirHasard(etatEnseignant); else ouvrirEleve(etatEnseignant);
+  ouvrirSelon(etatEnseignant);
 };
 $("elRetour").onclick = () => {
   try { synth.cancel(); } catch(e){}
@@ -830,6 +997,7 @@ $("elRetour").onclick = () => {
 };
 $("creerLien").onclick = () => {
   if (besoinTrous() && !tokens.some(t=>t.on)) return toast("Aucun trou sélectionné.");
+  if (!tokens.some(t=>t.word)) return toast("Colle d'abord le texte de la dictée.");
   const base = location.origin + location.pathname.replace(/\.html$/,"");
   $("lienTxt").value = base + "#d=" + encoder(donnees());
   $("lienBox").classList.add("on"); $("lienTxt").select();
@@ -866,7 +1034,7 @@ function charger(){
 majSeuil();
 const mLien = location.hash.match(/^#d=([\w-]+)/);
 let lienOk = false;
-if (mLien){ try { const d = decoder(mLien[1]); elDepuisLien = true; if (d.r) ouvrirHasard(d); else ouvrirEleve(d); lienOk = true; } catch(e){ toast("Lien de dictée illisible."); } }
+if (mLien){ try { const d = decoder(mLien[1]); elDepuisLien = true; ouvrirSelon(d); lienOk = true; } catch(e){ toast("Lien de dictée illisible."); } }
 if (lienOk){ /* écran élève seul */ }
 else if (!charger()){
   $("titre").value = "Dictée – l'automne";
