@@ -1108,7 +1108,7 @@ def main():
       <p class="eyebrow">Cycles 2 et 3</p>
       <h1>Apprendre en jouant&nbsp;!</h1>
       <p class="lead">Un espace dédié aux enseignants et aux parents d'enfants du primaire. Des ressources structurées et des outils concrets pour accompagner les élèves du cycle 2 et l'enseignement spécialisé, quelques exercices pour le cycle 3, ainsi que des bilans en français et en mathématiques.</p>
-      <p class="note-accueil">Des jeux et des outils pour la lecture, le langage oral et les maths, principalement pour le cycle 2&nbsp;: à imprimer pour jouer sur table, à faire seul, à projeter au tableau ou à partager sur plusieurs écrans pour que tous les élèves jouent ensemble. Aucune publicité.<br>Apprendre, c'est s'élancer, sauter, oser, changer, bousculer son point de vue&nbsp;!</p>
+      <p class="note-accueil">Jouez en solo, projetez en classe, jouez à plusieurs en direct sur plusieurs écrans, imprimez les documents, répondez à l'ordinateur au micro, ou dialoguez avec l'IA dans certaines activités.<br>Apprendre, c'est s'élancer, sauter, oser, changer, bousculer son point de vue&nbsp;!</p>
       <p><a class="btn" href="/outils-pedagogiques/">Explorer nos ressources</a></p>
     </div>
     <figure class="hero-cadre">
