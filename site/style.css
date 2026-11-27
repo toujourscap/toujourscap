@@ -149,7 +149,7 @@ body.fond { background: transparent; }
 body.fond::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--bg) center / cover no-repeat; }
 .fond-lac-foret::before { background-image: url("/images/fonds/lac-foret.jpg") !important; }
 .fond-canopee::before { background-image: url("/images/fonds/canopee.jpg") !important; }
-.fond-lac-montagne::before { background-image: url("/images/fonds/lac-montagne.jpg") !important; }
+.fond-riviere::before { background-image: url("/images/fonds/riviere.jpg") !important; }
 .fond-cascade::before { background-image: url("/images/fonds/cascade.jpg") !important; }
 .fond-lac-brume::before { background-image: url("/images/fonds/lac-brume.jpg") !important; }
 .fond-vagues::before { background-image: url("/images/fonds/vagues.jpg") !important; }

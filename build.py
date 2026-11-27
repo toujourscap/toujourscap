@@ -289,7 +289,7 @@ NAV = [("/", "Accueil"), ("/outils-pedagogiques/", "Outils pédagogiques"), ("/f
 DOM_NOMS = {"francais": "Français", "maths": "Maths", "divers": "Divers"}
 
 
-FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "lac-montagne", "/blog/": "cascade",
+FONDS = {"/": "lac-foret", "/francais/": "canopee", "/maths/": "riviere", "/blog/": "cascade",
     "/outils-pedagogiques/": "lac-brume", "/divers/": "vagues", "/evaluations/": "cascade", "/parents/": "lac-foret"}
 
 
